@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.14
-Release: 15.2
+Release: 15.4
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -21,6 +21,7 @@ Patch: cups-1.1.14-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.15-security.patch
 Patch3: cups-1.1.17-pdftops.patch
+Patch4: cups-1.1.14-str75.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -68,6 +69,7 @@ natively, without needing the lp/lpr commands.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .security
 %patch3 -p1 -b .pdftops
+%patch4 -p1 -b .str75
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 autoconf
 
@@ -232,6 +234,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.4
+- Updated HTTP blocking fix; now based on cups-1.1.18-str75.patchv2.
+
+* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.3
+- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+
 * Wed Jan  8 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.2
 - Add 'exit 0' to postun scriptlet, and fix init script 'condrestart'
   behaviour.
