@@ -6,10 +6,10 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc2.1
+Release: 1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc2-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -23,7 +23,6 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
-Patch4: cups-ippfail.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -39,9 +38,7 @@ Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
-Patch31: cups-overread.patch
 Patch32: cups-pid.patch
-Patch33: cups-str970.patch
 Patch34: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -94,12 +91,11 @@ The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %prep
-%setup -q -n %{name}-%{version}rc2
+%setup -q
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
-%patch4 -p1 -b .ippfail
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -117,9 +113,7 @@ natively, without needing the lp/lpr commands.
 %patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
 #%patch30 -p1 -b .session-printing
-%patch31 -p1 -b .overread
 %patch32 -p1 -b .pid
-%patch33 -p1 -b .str970
 %if %use_dbus
 %patch34 -p1 -b .dbus
 %endif
@@ -345,6 +339,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Nov  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-1
+- 1.1.22.
+- No longer need ippfail, overread or str970 patches.
+
 * Tue Oct 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc2.1
 - Make cancel-cups(1) man page point to lp-cups(1) not lp(1) (bug #136973).
 - Use upstream patch for STR #953.
