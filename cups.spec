@@ -4,7 +4,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 13.3
+Release: 13.3.0.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -29,6 +29,7 @@ Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sigchld.patch
 Patch11: cups-1.1.18-str75.patchv2
+Patch12: cups-1.1.17-loop.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -85,6 +86,7 @@ natively, without needing the lp/lpr commands.
 %patch9 -p1 -b .ppdsdat
 %patch10 -p1 -b .sigchld
 %patch11 -p1 -b .str75
+%patch12 -p1 -b .loop
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
 autoconf
@@ -275,6 +277,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Oct 14 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.2
+- Attempt to fix bug #97958 less invasively by back-porting a fix from
+  1.1.19.
+
+* Mon Sep  1 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.1
+- Attempt to fix bug #97958.
+
 * Thu May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3
 - Fix typo and rebuild for proper debug stripping.
 
