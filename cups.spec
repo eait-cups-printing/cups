@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.15
-Release: 8
+Release: 9
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -236,6 +236,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Mon Aug 19 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-9
+- Fix prefix in pstoraster (bug #69573).
+
 * Mon Aug 19 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-8
 - Disable cups-lpd by default (bug #71712).
 - No need for fread patch now that glibc is fixed.
