@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -32,6 +32,7 @@ Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
+Patch13: cups-CAN-2005-0064.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -117,6 +118,7 @@ lpd emulation.
 %patch10 -p1 -b .sanity
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
+%patch13 -p1 -b .CAN-2005-0064
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -392,6 +394,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Wed Jan 19 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-3
+- Applied patch to fix CAN-2005-0064.
+
 * Thu Jan  6 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-2
 - Fixed patch from STR #1023.
 
