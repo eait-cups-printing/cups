@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# "$Id: cups.sh,v 1.10 2000/03/30 05:19:16 mike Exp $"
+#
+#   Startup/shutdown script for the Common UNIX Printing System (CUPS).
+#
+#   Linux chkconfig stuff:
+#
+#   chkconfig: 2345 99 00
+#   description: Startup/shutdown script for the Common UNIX \
+#                Printing System (CUPS).
+#
+#   Copyright 1997-2000 by Easy Software Products, all rights reserved.
+#
+#   These coded instructions, statements, and computer programs are the
+#   property of Easy Software Products and are protected by Federal
+#   copyright law.  Distribution and use rights are outlined in the file
+#   "LICENSE.txt" which should have been included with this file.  If this
+#   file is missing or damaged please contact Easy Software Products
+#   at:
+#
+#       Attn: CUPS Licensing Information
+#       Easy Software Products
+#       44141 Airport View Drive, Suite 204
+#       Hollywood, Maryland 20636-3111 USA
+#
+#       Voice: (301) 373-9603
+#       EMail: cups-info@cups.org
+#         WWW: http://www.cups.org
+#
+# heavily edited so that it's more like other scripts in init.d on Red Hat
+# Linux
+
+# Source function library.
+if [ -f /etc/init.d/functions ] ; then
+	. /etc/init.d/functions
+elif [ -f /etc/rc.d/init.d/functions ] ; then
+	. /etc/rc.d/init.d/functions
+else
+	exit 0
+fi
+
+DAEMON=cupsd
+
+start () {
+	# start daemon
+	echo -n "Starting cupsd: "
+	daemon $DAEMON
+        RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/cups
+	return $RETVAL
+}
+
+stop () {
+	# stop daemon
+	echo -n "Stopping cups: "
+	killproc $DAEMON
+	RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/cups
+}
+
+restart() {
+	stop
+	start
+}
+
+case $1 in
+	start)
+		start
+	;;
+	stop)
+		stop
+	;;
+	restart)
+		restart
+	;;
+	condrestart)
+		[ -f /var/lock/subsys/cups ] && restart
+	;;	
+	status)
+		status $DAEMON
+	;;
+	*)
+
+	echo "Usage: $DAEMON {start|stop|restart|status|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL
