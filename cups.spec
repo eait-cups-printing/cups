@@ -9,7 +9,7 @@ Version: 1.1.21
 Release: 2
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc2-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -90,7 +90,7 @@ The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %prep
-%setup -q -n %{name}-%{version}rc2
+%setup -q
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
