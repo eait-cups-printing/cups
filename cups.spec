@@ -4,7 +4,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 13.3.0.2
+Release: 13.3.0.3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -24,7 +24,7 @@ Patch3: cups-1.1.17-backend.patch
 Patch4: cups-1.1.17-uninit.patch
 Patch5: cups-idefense-v2.patch
 Patch6: cups-1.1.17-pdftops.patch
-Patch7: cups-1.1.17-error.patch
+Patch7: cups-1.1.17-lpd.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sigchld.patch
@@ -81,7 +81,7 @@ natively, without needing the lp/lpr commands.
 %patch4 -p1 -b .uninit
 %patch5 -p0 -b .security
 %patch6 -p1 -b .pdftops
-%patch7 -p1 -b .error
+%patch7 -p1 -b .lpd
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
 %patch10 -p1 -b .sigchld
@@ -277,6 +277,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Mon Oct 20 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.3
+- Backport 1.1.19 fix for lpd.c signal handling (bug #107256).
+
 * Tue Oct 14 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.2
 - Attempt to fix bug #97958 less invasively by back-porting a fix from
   1.1.19.
