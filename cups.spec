@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 0.7
+Release: 0.9
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -27,6 +27,8 @@ Patch2: cups-1.1.17-uninit.patch
 Patch3: cups-idefense-v2.patch
 Patch4: cups-1.1.17-pdftops.patch
 Patch5: cups-1.1.18-str75.patchv2
+Patch6: cups-1.1.17-loop.patch
+Patch7: cups-1.1.17-lpd.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -76,6 +78,8 @@ natively, without needing the lp/lpr commands.
 %patch3 -p0 -b .security
 %patch4 -p1 -b .pdftops
 %patch5 -p1 -b .str75
+%patch6 -p1 -b .loop
+%patch7 -p1 -b .lpd
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 autoconf
 
@@ -252,6 +256,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Oct 29 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.9
+- Backport 1.1.19 fix for lpd.c signal handling (bug #107256).
+- Attempt to fix bug #97958 less invasively by back-porting a fix from
+  1.1.19.
+
+* Mon Sep  1 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.8
+- Prevent libcups busy loop (bug #97958).
+
 * Fri May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.7
 - Rebuild for debug stripping.
 
