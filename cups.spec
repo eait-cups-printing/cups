@@ -6,13 +6,12 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.20
-Release: 2
+Release: 5.1
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
-Source4: cupsconfig
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
@@ -34,12 +33,13 @@ Patch15: cups-shutdown.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
-Patch19: cups-dbus.patch
+Patch19: cups-gcc34.patch
+Patch20: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{epoch}:%{version} htmlview xinetd
+Requires: %{name}-libs = %{epoch}:%{version} xinetd
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -51,7 +51,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 %if %use_dbus
-BuildPrereq: dbus-devel >= 0.11
+BuildPrereq: dbus-devel = 0.20
+Requires: dbus = 0.20
 %endif
 
 %package devel
@@ -101,11 +102,13 @@ natively, without needing the lp/lpr commands.
 %endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
+%patch19 -p1 -b .gcc34
 %if %use_dbus
-%patch19 -p1 -b .dbus
+%patch20 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
+aclocal -I config-scripts
 autoconf
 
 cp %{SOURCE5} cups-lpd.real
@@ -157,7 +160,6 @@ popd
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
 install -c -m 755 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_libdir}/cups/backend/ncp
@@ -199,6 +201,10 @@ install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups.conf
 %endif
+
+# Symlinks to avoid conflicting with bash builtins
+ln -s enable $RPM_BUILD_ROOT%{_bindir}/cups-enable
+ln -s disable $RPM_BUILD_ROOT%{_bindir}/cups-disable
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
@@ -276,11 +282,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/pam.d/cups
 %doc %{_docdir}/cups-%{version}
 %config %{initdir}/cups
-%{_bindir}/cupsconfig
 %{_bindir}/cupstestppd
 %{_bindir}/cancel*
 %{_bindir}/enable*
 %{_bindir}/disable*
+%{_bindir}/cups-enable*
+%{_bindir}/cups-disable*
 %{_bindir}/lp*
 %{_libdir}/cups
 %{_mandir}/man?/*
@@ -318,6 +325,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Fri Feb  6 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-4
+- Tracked D-BUS API changes.
+- Updated D-BUS configuration file.
+- Symlinks to avoid conflicting with bash builtins (bug #102490).
+
+* Thu Feb  5 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-3
+- Improved PIE patch.
+- Fixed compilation with GCC 3.4.
+
+* Thu Jan 29 2004 Tim Waugh <twaugh@redhat.com>
+- Don't ship cupsconfig now that nothing uses it.
+
 * Wed Jan  7 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-2
 - Try harder to find a translated page for the web interface (bug #107619).
 - Added build_as_pie conditional to spec file to facilitate debugging.
