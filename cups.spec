@@ -3,13 +3,14 @@
 %define use_dbus 1
 %define build_as_pie 1
 
+%define rc1 rc1
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.20
-Release: 15
+Version: 1.1.21
+Release: 0.rc1.1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -33,10 +34,6 @@ Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
-Patch20: cups-str716.patch
-Patch21: cups-encryption.patch
-Patch22: cups-str718.patch
-Patch23: cups-authtype.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch26: cups-dbus.patch
@@ -91,7 +88,7 @@ The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{rc1}
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
@@ -108,10 +105,6 @@ natively, without needing the lp/lpr commands.
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
 %patch19 -p1 -b .gcc34
-%patch20 -p1 -b .str716
-%patch21 -p1 -b .encryption
-%patch22 -p1 -b .str718
-%patch23 -p1 -b .authtype
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %if %use_dbus
@@ -207,10 +200,6 @@ install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
 install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups.conf
 %endif
-
-# Symlinks to avoid conflicting with bash builtins
-ln -s enable $RPM_BUILD_ROOT%{_bindir}/cupsenable
-ln -s disable $RPM_BUILD_ROOT%{_bindir}/cupsdisable
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
@@ -331,6 +320,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Thu Jun  3 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-0.rc1.1
+- 1.1.21rc1.
+- No longer need str716, str718, authtype or encryption patches.
+
 * Wed Jun  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-15
 - Build on ppc and ppc64 again.
 
