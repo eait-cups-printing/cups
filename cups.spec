@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.20
-Release: 5.1
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -325,6 +325,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Apr  6 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-6
+- Fix pie patch (bug #120078).
+
+* Fri Apr  2 2004 Tim Waugh <twaugh@redhat.com>
+- Fix rcp patch for new system-config-printer name.
+
 * Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
 - rebuilt
 
