@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc1.1
+Release: 0.rc1.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
@@ -23,6 +23,7 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
+Patch4: cups-ippfail.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -97,6 +98,7 @@ natively, without needing the lp/lpr commands.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
+%patch4 -p1 -b .ippfail
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -339,6 +341,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Oct 13 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.2
+- Fail better when receiving corrupt IPP responses (bug #135502).
+
 * Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.1
 - 1.1.22rc1.
 
