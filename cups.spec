@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.7
+Release: 1.rc1.8
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -327,6 +327,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Aug 13 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.8
+- Preserve DBUS_SESSION_BUS_ADDRESS in environment (Colin Walters).
+- Fixed enabledisable patch.
+
 * Fri Aug 13 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.7
 - Bumped DBUS version to 0.22.
 
