@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 0.rc1.1
+Release: 0.rc1.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -36,7 +36,8 @@ Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
-Patch26: cups-dbus.patch
+Patch26: cups-state.patch
+Patch27: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -54,8 +55,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.20
-Requires: dbus = 0.20
+BuildPrereq: dbus-devel = 0.21
+Requires: dbus = 0.21
 %endif
 
 %package devel
@@ -107,8 +108,9 @@ natively, without needing the lp/lpr commands.
 %patch19 -p1 -b .gcc34
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
+%patch26 -p1 -b .state
 %if %use_dbus
-%patch26 -p1 -b .dbus
+%patch27 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -126,10 +128,11 @@ if pkg-config openssl ; then
   export CPPFLAGS=`pkg-config --cflags-only-I openssl`
   export LDFLAGS=`pkg-config --libs-only-L openssl`
 fi
-%configure --with-docdir=%{_docdir}/cups-%{version}
+%configure --with-docdir=%{_docdir}/cups-%{version} \
+	--with-optim="$RPM_OPT_FLAGS $CFLAGS"
 
 # If we got this far, all prerequisite libraries must be here.
-make OPTIM="$RPM_OPT_FLAGS $CFLAGS"
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -320,6 +323,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Jun  4 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-0.rc1.2
+- Build for dbus-0.21.
+- Fix SetPrinterState().
+
+* Thu Jun  3 2004 Tim Waugh <twaugh@redhat.com>
+- Use configure's --with-optim parameter instead of setting OPTIM at
+  make time (bug #125228).
+
 * Thu Jun  3 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-0.rc1.1
 - 1.1.21rc1.
 - No longer need str716, str718, authtype or encryption patches.
