@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.4
+Release: 1.rc1.5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -57,7 +57,7 @@ BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
 BuildPrereq: dbus-devel = 0.21.cvs20040722
-Requires: dbus = 0.21
+Requires: dbus = 0.21.cvs20040722
 %endif
 
 %package devel
@@ -325,6 +325,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Sun Aug  1 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.5
+- Really bumped DBUS version.
+
 * Fri Jul 30 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.4
 - Bumped DBUS version.
 
