@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -24,6 +24,7 @@ Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
 Patch4: cups-ext.patch
+Patch5: cups-str1023.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -108,6 +109,7 @@ lpd emulation.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ext
+%patch5 -p1 -b .str1023
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -390,6 +392,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Jan  6 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-2
+- Fixed patch from STR #1023.
+
 * Tue Jan  4 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-1
 - 1.1.23.
 
