@@ -88,18 +88,18 @@ Requires: %{name} = %{epoch}:%{version} xinetd
 
 %description
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. It has been developed by Easy Software Products 
+UNIXÂ® operating systems. It has been developed by Easy Software Products 
 to promote a standard printing solution for all UNIX vendors and users. 
 CUPS provides the System V and Berkeley command-line interfaces. 
 
 %description devel
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. This is the development package for creating
+UNIXÂ® operating systems. This is the development package for creating
 additional printer drivers, and other CUPS services.
 
 %description libs
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. It has been developed by Easy Software Products 
+UNIXÂ® operating systems. It has been developed by Easy Software Products 
 to promote a standard printing solution for all UNIX vendors and users. 
 CUPS provides the System V and Berkeley command-line interfaces. 
 The cups-libs package provides libraries used by applications to use CUPS
@@ -107,7 +107,7 @@ natively, without needing the lp/lpr commands.
 
 %description lpd
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. This is the package that provices standard 
+UNIXÂ® operating systems. This is the package that provices standard 
 lpd emulation.
 
 %prep
@@ -407,6 +407,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Feb 22 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-11
+- UTF-8-ify spec file (bug #149293).
+
 * Fri Feb 18 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-10
 - Fixed build with GCC 4.
 
