@@ -41,7 +41,7 @@ Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
 Patch31: cups-overread.patch
 Patch32: cups-pid.patch
-Patch33: cups-numeric.patch
+Patch33: cups-str970.patch
 Patch34: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -119,7 +119,7 @@ natively, without needing the lp/lpr commands.
 #%patch30 -p1 -b .session-printing
 %patch31 -p1 -b .overread
 %patch32 -p1 -b .pid
-%patch33 -p1 -b .numeric
+%patch33 -p1 -b .str970
 %if %use_dbus
 %patch34 -p1 -b .dbus
 %endif
@@ -345,7 +345,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.6
 - Prevent filters generating incorrect PS in locales where "," is the
-  decimal separator (bug #136102).
+  decimal separator (bug #136102).  Patch from STR #970.
 
 * Thu Oct 14 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.5
 - Fixed another typo in last patch!
