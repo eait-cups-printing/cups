@@ -1,11 +1,11 @@
 %define initdir /etc/rc.d/init.d
-%define patchlevel 1
+%define patchlevel %{nil}
 %define use_alternatives 1
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.15
-Release: 10
+Version: 1.1.17
+Release: 0.2
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -23,6 +23,9 @@ Source7: pstoraster.convs
 Source8: postscript.ppd.gz
 Patch: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
+Patch2: cups-1.1.17-uninit.patch
+Patch3: cups-idefense-v2.patch
+Patch4: cups-1.1.17-pdftops.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -68,6 +71,9 @@ natively, without needing the lp/lpr commands.
 %setup -q
 %patch -p1 -b .noinit
 %patch1 -p1 -b .doclink
+%patch2 -p1 -b .uninit
+%patch3 -p0 -b .security
+%patch4 -p1 -b .pdftops
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 autoconf
 
@@ -137,6 +143,10 @@ If your browser does not support redirection, please use
 EOF
 done
 
+# Remove unshipped files.
+rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat? \
+	$RPM_BUILD_ROOT%{_mandir}/fr
+                                                                                
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/cups/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
@@ -240,6 +250,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Jan  8 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.2
+- Fix 'condrestart' behaviour in init script.
+
+* Fri Dec 13 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-0.1
+- 1.1.17.
+- Fix cupsd startup hang (bug #79346).
+- Don't install files not shipped.
+- Security fixes.
+
 * Fri Aug 30 2002 Bernhard Rosenkraenzer <bero@redhat.de> 1.1.15-10
 - Add generic postscript PPD file (#73061)
 
