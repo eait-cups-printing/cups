@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -212,6 +212,15 @@ install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 
+# Remove .pdf from docs, fix links
+for pdf in cmp.pdf ipp.pdf sam.pdf spm.pdf ssr.pdf sum.pdf translation.pdf \
+           idd.pdf overview.pdf sdd.pdf sps.pdf stp.pdf svd.pdf
+do
+    perl -p -i -e "s@$pdf@http://www.cups.org/$pdf@" $RPM_BUILD_ROOT%{_docdir}/cups-%{version}/documentation.html
+done
+find $RPM_BUILD_ROOT%{_docdir}/cups-%{version} -name *.pdf |xargs rm
+
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -328,6 +337,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Sep 29 2004 Warren Togami <wtogami@redhat.com> 1:1.1.21-4
+- Remove .pdf from docs, fix links
+
 * Fri Sep 24 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-3
 - Write a pid file (bug #132987).
 
