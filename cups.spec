@@ -44,7 +44,7 @@ Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{epoch}:%{version} xinetd
+Requires: %{name}-libs = %{epoch}:%{version}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -71,6 +71,11 @@ Requires: openssl-devel
 Summary: Common Unix Printing System - libraries
 Group: System Environment/Libraries
 
+%package lpd
+Summary: Common Unix Printing System - lpd emulation
+Group: System Environment/Daemons
+Requires: %{name} = %{epoch}:%{version} xinetd
+
 %description
 The Common UNIX Printing System provides a portable printing layer for 
 UNIX® operating systems. It has been developed by Easy Software Products 
@@ -89,6 +94,11 @@ to promote a standard printing solution for all UNIX vendors and users.
 CUPS provides the System V and Berkeley command-line interfaces. 
 The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
+
+%description lpd
+The Common UNIX Printing System provides a portable printing layer for 
+UNIX® operating systems. This is the package that provices standard 
+lpd emulation.
 
 %prep
 %setup -q
@@ -303,7 +313,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cupsenable*
 %{_bindir}/cupsdisable*
 %{_bindir}/lp*
-%{_libdir}/cups
+%dir %{_libdir}/cups
+%{_libdir}/cups/backend
+%{_libdir}/cups/cgi-bin
+%dir %{_libdir}/cups/daemon
+%{_libdir}/cups/daemon/cups-polld
+%{_libdir}/cups/filter
 %{_mandir}/man?/*
 %{_mandir}/*/man?/*
 %{_sbindir}/*
@@ -320,7 +335,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(1700,root,sys) /var/spool/cups/tmp
 %dir %attr(0710,root,sys) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
-%config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %if %use_dbus
@@ -338,7 +352,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.a
 %{_includedir}/cups
 
+%files lpd
+%defattr(-,root,root)
+%config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
+%dir %{_libdir}/cups
+%dir %{_libdir}/cups/daemon
+%{_libdir}/cups/daemon/cups-lpd
+
 %changelog
+* Mon Nov  8 2004 Tim Waugh <twaugh@redhat.com>
+- New lpd subpackage, from patch by Matthew Galgoci.
+
 * Tue Nov  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-1
 - 1.1.22.
 - No longer need ippfail, overread or str970 patches.
