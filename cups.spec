@@ -40,6 +40,7 @@ Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
+Patch20: cups-gcc4.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
@@ -64,8 +65,10 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.30.cvs20050128
-Requires: dbus = 0.30.cvs20050128
+#BuildPrereq: dbus-devel = 0.30.cvs20050128
+#Requires: dbus = 0.30.cvs20050128
+BuildPrereq: dbus-devel = 0.23
+Requires: dbus = 0.23
 %endif
 
 %package devel
@@ -131,6 +134,7 @@ lpd emulation.
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
 %patch19 -p1 -b .gcc34
+%patch20 -p1 -b .gcc4
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
@@ -403,8 +407,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Fri Feb 11 2005 Tim Waugh <twaugh@redhat.com>
-- New DBUS API.
+* Fri Feb 18 2005 Tim Waugh <twaugh@redhat.com>
+- Fixed build with GCC 4.
 
 * Thu Feb 10 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-9
 - Back to old DBUS API since new DBUS isn't built yet.
