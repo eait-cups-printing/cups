@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -399,7 +399,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com>
+* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-7
 - Applied patch to prevent file descriptor confusion (STR #1068).
 
 * Fri Jan 28 2005 Tim Waugh <twaugh@redhat.com>
