@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc1.5
+Release: 0.rc1.6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
@@ -41,7 +41,8 @@ Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
 Patch31: cups-overread.patch
 Patch32: cups-pid.patch
-Patch33: cups-dbus.patch
+Patch33: cups-numeric.patch
+Patch34: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -118,8 +119,9 @@ natively, without needing the lp/lpr commands.
 #%patch30 -p1 -b .session-printing
 %patch31 -p1 -b .overread
 %patch32 -p1 -b .pid
+%patch33 -p1 -b .numeric
 %if %use_dbus
-%patch33 -p1 -b .dbus
+%patch34 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -341,6 +343,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.6
+- Prevent filters generating incorrect PS in locales where "," is the
+  decimal separator (bug #136102).
+
 * Thu Oct 14 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.5
 - Fixed another typo in last patch!
 
