@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.19
-Release: 13
+Release: 13.1
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -32,7 +32,8 @@ Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
 Patch13: cups-1.1.17-loop.patch
 Patch14: cups-1.1.19-str226.patch
-Patch15: cups-dbus.patch
+Patch15: cups-zero-len-udp-dos.patch
+Patch16: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -44,7 +45,7 @@ Prereq: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd lpr LPRng
+Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
@@ -95,8 +96,9 @@ natively, without needing the lp/lpr commands.
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .loop
 %patch14 -p1 -b .str226
+%patch15 -p1 -b .zero-len-udp-dos
 %if %use_dbus
-%patch15 -p1 -b .dbus
+%patch16 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
@@ -313,6 +315,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Mon Aug 23 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.19-13.1
+- Add version to LPRng obsoletes: tag.
+- Apply patch to fix CAN-2004-0558 (bug #130646).
+
 * Thu Oct  2 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-13
 - Apply patch from STR 226 to make CUPS reload better behaved (bug #101507).
 
