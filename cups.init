@@ -6,7 +6,7 @@
 #
 #   Linux chkconfig stuff:
 #
-#   chkconfig: 2345 99 00
+#   chkconfig: 2345 90 10
 #   description: Startup/shutdown script for the Common UNIX \
 #                Printing System (CUPS).
 #
@@ -77,7 +77,7 @@ case $1 in
 		restart
 	;;
 	condrestart)
-		[ -f /var/lock/subsys/cups ] && restart || :
+		[ -f /var/lock/subsys/cups ] && restart
 	;;	
 	status)
 		status $DAEMON

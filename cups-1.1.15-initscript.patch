@@ -1,0 +1,55 @@
+--- cups-1.1.15/systemv/Makefile.noinit	Wed Jun  5 17:11:58 2002
++++ cups-1.1.15/systemv/Makefile	Fri Jun 21 11:22:34 2002
+@@ -76,7 +76,7 @@
+ 	$(INSTALL_BIN) lpoptions $(BINDIR)
+ 	$(INSTALL_BIN) lpstat $(BINDIR)
+ 	$(INSTALL_BIN) lppasswd $(BINDIR)
+-	-$(INSTALL_BIN) -m 4755 -o $(CUPS_USER) -g $(CUPS_GROUP) lppasswd $(BINDIR)
++	-$(INSTALL_BIN) -m 4755 lppasswd $(BINDIR)
+ 
+ 
+ #
+--- cups-1.1.15/Makefile.noinit	Tue Apr 23 19:49:34 2002
++++ cups-1.1.15/Makefile	Fri Jun 21 11:22:07 2002
+@@ -89,30 +89,6 @@
+ 	echo Installing cups-config script...
+ 	$(INSTALL_DIR) $(BINDIR)
+ 	$(INSTALL_SCRIPT) cups-config $(BINDIR)/cups-config
+-	echo Installing startup script...
+-	if test "x$(INITDIR)" != "x"; then \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDIR)/init.d; \
+-		$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDIR)/init.d/cups; \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDIR)/rc0.d; \
+-		$(INSTALL_SCRIPT) cups.sh  $(BUILDROOT)$(INITDIR)/rc0.d/K00cups; \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDIR)/rc2.d; \
+-		$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDIR)/rc2.d/S99cups; \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDIR)/rc3.d; \
+-		$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDIR)/rc3.d/S99cups; \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDIR)/rc5.d; \
+-		$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDIR)/rc5.d/S99cups; \
+-	fi
+-	if test "x$(INITDIR)" = "x" -a "x$(INITDDIR)" != "x"; then \
+-		$(INSTALL_DIR) $(BUILDROOT)$(INITDDIR); \
+-		if test "$(INITDDIR)" = "/System/Library/StartupItems/PrintingServices"; then \
+-			$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDDIR)/PrintingServices; \
+-			$(INSTALL_DATA) cups.plist $(BUILDROOT)$(INITDDIR)/StartupParameters.plist; \
+-			$(INSTALL_DIR) $(BUILDROOT)$(INITDDIR)/Resources/English.lproj; \
+-			$(INSTALL_DATA) cups.strings $(BUILDROOT)$(INITDDIR)/Resources/English.lproj/Localizable.strings; \
+-		else \
+-			$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDDIR)/cups; \
+-		fi \
+-	fi
+ 
+ #
+ # Install source and header files...
+--- cups-1.1.15/Makedefs.in.noinit	Tue Jun  4 22:32:02 2002
++++ cups-1.1.15/Makedefs.in	Fri Jun 21 11:21:08 2002
+@@ -47,7 +47,7 @@
+ # Installation programs...
+ #
+ 
+-INSTALL_BIN	=	$(LIBTOOL) $(INSTALL) -m 755 -s
++INSTALL_BIN	=	$(LIBTOOL) $(INSTALL) -m 755
+ INSTALL_DATA	=	$(INSTALL) -m 644
+ INSTALL_DIR	=	$(INSTALL) -d
+ INSTALL_LIB	=	$(LIBTOOL) $(INSTALL) -m 755

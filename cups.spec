@@ -1,11 +1,11 @@
 %define initdir /etc/rc.d/init.d
-%define patchlevel %{nil}
+%define patchlevel 1
 %define use_alternatives 1
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.14
-Release: 15.4
+Version: 1.1.15
+Release: 8
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -17,16 +17,16 @@ Source1: cups.init
 Source2: cupsprinter.png
 Source3: cups.desktop
 Source4: cupsconfig
-Patch: cups-1.1.14-initscript.patch
+Source5: cups-lpd
+Source6: pstoraster
+Source7: pstoraster.convs
+Patch: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
-Patch2: cups-1.1.15-security.patch
-Patch3: cups-1.1.17-pdftops.patch
-Patch4: cups-1.1.14-str75.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{version} htmlview
+Requires: %{name}-libs = %{version} htmlview xinetd
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -67,9 +67,6 @@ natively, without needing the lp/lpr commands.
 %setup -q
 %patch -p1 -b .noinit
 %patch1 -p1 -b .doclink
-%patch2 -p1 -b .security
-%patch3 -p1 -b .pdftops
-%patch4 -p1 -b .str75
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 autoconf
 
@@ -77,9 +74,10 @@ autoconf
 CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" ./configure --sysconfdir=/etc \
             --with-docdir=%{_docdir}/cups-%{version} \
             --mandir=%{_mandir}
+perl -pi -e "s,^DSO	=.*,DSO=gcc -fpic," Makedefs
 
 # If we got this far, all prerequisite libraries must be here.
-make OPTIM="$RPM_OPT_FLAGS"
+make OPTIM="$RPM_OPT_FLAGS -fpic"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -106,12 +104,13 @@ cd $RPM_BUILD_ROOT%{_mandir}/man8
 mv lpc.8 lpc-cups.8
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig
 install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
-
+install -c -m 755 %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
 # correct http://localhost:631/
@@ -137,8 +136,9 @@ If your browser does not support redirection, please use
 EOF
 done
 
-# Remove unshipped files.
-rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
+# Ship pstoraster (bug #69573).
+install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/cups/filter
+install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
@@ -202,6 +202,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/mime.types
 /etc/cups/mime.convs
 /etc/cups/ppd
+/etc/cups/pstoraster.convs
 /etc/pam.d/cups
 %doc %{_docdir}/cups-%{version}
 %config %{initdir}/cups
@@ -220,6 +221,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,lp,root) /var/log/cups
 %{_sysconfdir}/X11/sysconfig/cups.desktop
 %{_sysconfdir}/X11/applnk/System/cups.desktop
+%config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
 %{_datadir}/pixmaps/cupsprinter.png
 
 %files libs
@@ -234,20 +236,45 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
-* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.4
-- Updated HTTP blocking fix; now based on cups-1.1.18-str75.patchv2.
+* Mon Aug 19 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-8
+- Disable cups-lpd by default (bug #71712).
+- No need for fread patch now that glibc is fixed.
 
-* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.3
-- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+* Thu Aug 15 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-7
+- Really add cups-lpd xinetd file (bug #63919).
+- Ship pstoraster (bug #69573).
+- Prevent fread from trying to read from beyond EOF (fixes a segfault
+  with new glibc).
 
-* Wed Jan  8 2003 Tim Waugh <twaugh@redhat.com> 1.1.14-15.2
-- Add 'exit 0' to postun scriptlet, and fix init script 'condrestart'
-  behaviour.
+* Sat Aug 10 2002 Elliot Lee <sopwith@redhat.com> 1.1.15-6
+- rebuilt with gcc-3.2 (we hope)
 
-* Fri Dec 13 2002 Tim Waugh <twaugh@redhat.com> 1.1.14-15.1
+* Mon Aug  5 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.15-5
+- Add cups-lpd xinetd file (#63919)
+
+* Tue Jul 23 2002 Florian La Roche <Florian.LaRoche@redhat.de> 1.1.15-4
+- add a "exit 0" to postun script
+
+* Tue Jul  2 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.15-3
+- Add a symlink /usr/share/cups/doc -> /usr/share/doc/cups-devel-1.1.15
+  because some applications expect to find the cups docs in
+  /usr/share/cups/doc
+
+* Fri Jun 21 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Fri Jun 21 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.15-1
+- 1.1.15-1
 - Fix up smb printing trigger (samba-client, not samba-clients)
-- Don't install files not shipped.
-- Security fixes.
+- Start cupsd earlier, apparently it needs to be running before samba
+  starts up for smb printing to work.
+
+* Thu May 23 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Tue May  7 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.14-17
+- Rebuild in current environment
+- [-16 never existed because of build system breakage]
 
 * Wed Apr 17 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.14-15
 - Fix bug #63387
