@@ -163,9 +163,11 @@ done
 cd $RPM_BUILD_ROOT%{_sbindir}
 mv lpc lpc.cups
 cd $RPM_BUILD_ROOT%{_mandir}/man1
-for i in cancel lp lpq lpr lprm lpstat; do
+for i in lp lpq lpr lprm lpstat; do
 	mv $i.1 $i-cups.1
 done
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/cancel.1
+ln -s lp-cups.1 $RPM_BUILD_ROOT%{_mandir}/man1/cancel-cups.1
 cd $RPM_BUILD_ROOT%{_mandir}/man8
 mv lpc.8 lpc-cups.8
 popd
@@ -344,6 +346,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Oct 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc2.1
+- Make cancel-cups(1) man page point to lp-cups(1) not lp(1) (bug #136973).
 - Use upstream patch for STR #953.
 - 1.1.22rc2.
 
