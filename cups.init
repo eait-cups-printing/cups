@@ -42,9 +42,23 @@ fi
 
 DAEMON=cupsd
 
+prog=cups
+
+config () {
+	# Is this a printconf system?
+	if [ -x /usr/sbin/printconf-backend ]
+	then
+		# run printconf-backend to set up the configuration.
+		/usr/sbin/printconf-backend
+	fi
+}
+
 start () {
+	echo -n $"Starting $prog: "
+
+	config
+
 	# start daemon
-	echo -n "Starting cupsd: "
 	daemon $DAEMON
         RETVAL=$?
 	echo
@@ -54,7 +68,7 @@ start () {
 
 stop () {
 	# stop daemon
-	echo -n "Stopping cups: "
+	echo -n "Stopping $prog: "
 	killproc $DAEMON
 	RETVAL=$?
 	echo
@@ -79,12 +93,25 @@ case $1 in
 	condrestart)
 		[ -f /var/lock/subsys/cups ] && restart || :
 	;;	
+	reload)
+		echo -n $"Reloading $prog: "
+		config
+		killproc $DAEMON -HUP
+		RETVAL=$?
+		echo
+		if [ $RETVAL -ne 0 ]
+		then
+			# Rebuild ppds.dat file if the daemon wasn't
+			# there to do it.
+			$DAEMON --ppdsdat
+		fi
+	;;
 	status)
 		status $DAEMON
 	;;
 	*)
 
-	echo "Usage: $DAEMON {start|stop|restart|status|condrestart}"
+	echo "Usage: $DAEMON {start|stop|restart|condrestart|reload|status}"
 	exit 1
 esac
 

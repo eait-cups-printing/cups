@@ -1,0 +1,8 @@
+/var/log/cups/*_log {
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+        /etc/init.d/cups condrestart >/dev/null 2>&1 || true
+    endscript
+}

@@ -1,39 +1,38 @@
 %define initdir /etc/rc.d/init.d
-%define patchlevel %{nil}
 %define use_alternatives 1
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 0.9
+Release: 13
 License: GPL
 Group: System Environment/Daemons
-%if "%{patchlevel}" != ""
-Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-%{patchlevel}-source.tar.bz2
-%else
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
-%endif
 Source1: cups.init
 Source2: cupsprinter.png
-Source3: cups.desktop
 Source4: cupsconfig
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
 Source8: postscript.ppd.gz
-Patch: cups-1.1.15-initscript.patch
+Source9: cups.logrotate
+Source10: ncp.backend
+Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
-Patch2: cups-1.1.17-uninit.patch
-Patch3: cups-idefense-v2.patch
-Patch4: cups-1.1.17-pdftops.patch
-Patch5: cups-1.1.18-str75.patchv2
-Patch6: cups-1.1.17-loop.patch
-Patch7: cups-1.1.17-lpd.patch
+Patch2: cups-1.1.16-system-auth.patch
+Patch3: cups-1.1.17-backend.patch
+Patch4: cups-1.1.17-uninit.patch
+Patch5: cups-idefense-v2.patch
+Patch6: cups-1.1.17-pdftops.patch
+Patch7: cups-1.1.17-error.patch
+Patch8: cups-1.1.17-rcp.patch
+Patch9: cups-1.1.17-ppdsdat.patch
+Patch10: cups-1.1.17-sigchld.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{version} htmlview xinetd
+Requires: %{name}-libs = %{epoch}:%{version} htmlview xinetd
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -41,11 +40,12 @@ Prereq: /usr/sbin/alternatives
 Obsoletes: lpd lpr LPRng printconf printconf-gui printconf-tui printtool
 Provides: lpd lpr LPRng
 %endif
+BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
-Requires: %{name}-libs = %{version}
+Requires: %{name}-libs = %{epoch}:%{version}
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -72,25 +72,35 @@ natively, without needing the lp/lpr commands.
 
 %prep
 %setup -q
-%patch -p1 -b .noinit
+%patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
-%patch2 -p1 -b .uninit
-%patch3 -p0 -b .security
-%patch4 -p1 -b .pdftops
-%patch5 -p1 -b .str75
-%patch6 -p1 -b .loop
-%patch7 -p1 -b .lpd
+%patch2 -p1 -b .system-auth
+%patch3 -p1 -b .backend
+%patch4 -p1 -b .uninit
+%patch5 -p0 -b .security
+%patch6 -p1 -b .pdftops
+%patch7 -p1 -b .error
+%patch8 -p1 -b .rcp
+%patch9 -p1 -b .ppdsdat
+%patch10 -p1 -b .sigchld
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
+perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
 autoconf
 
+cp %{SOURCE5} cups-lpd.real
+perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
+
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" ./configure --sysconfdir=/etc \
-            --with-docdir=%{_docdir}/cups-%{version} \
-            --mandir=%{_mandir}
+if pkg-config openssl ; then
+  export CFLAGS=`pkg-config --cflags openssl`
+  export CPPFLAGS=`pkg-config --cflags-only-I openssl`
+  export LDFLAGS=`pkg-config --libs-only-L openssl`
+fi
+%configure --with-docdir=%{_docdir}/cups-%{version}
 perl -pi -e "s,^DSO	=.*,DSO=gcc -fpic," Makedefs
 
 # If we got this far, all prerequisite libraries must be here.
-make OPTIM="$RPM_OPT_FLAGS -fpic"
+make OPTIM="$RPM_OPT_FLAGS $CFLAGS -fpic"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -103,7 +113,7 @@ install -m 755 $RPM_SOURCE_DIR/cups.init $RPM_BUILD_ROOT%{initdir}/cups
 find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -9f
 
 %if %use_alternatives
-cd $RPM_BUILD_ROOT%{_bindir}
+pushd $RPM_BUILD_ROOT%{_bindir}
 for i in cancel lp lpq lpr lprm lpstat; do
 	mv $i $i.cups
 done
@@ -115,14 +125,15 @@ for i in cancel lp lpq lpr lprm lpstat; do
 done
 cd $RPM_BUILD_ROOT%{_mandir}/man8
 mv lpc.8 lpc-cups.8
+popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig
-install -c -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
-install -c -m 755 %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+install -c -m 755 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
+install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
+install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_libdir}/cups/backend/ncp
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
@@ -149,10 +160,6 @@ If your browser does not support redirection, please use
 EOF
 done
 
-# Remove unshipped files.
-rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat? \
-	$RPM_BUILD_ROOT%{_mandir}/fr
-                                                                                
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/cups/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
@@ -160,11 +167,14 @@ install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 
+# Remove unshipped files.
+rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
 %if %use_alternatives
-/usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 20 \
+/usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
 	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
 	 --slave %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
 	 --slave %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
@@ -180,6 +190,10 @@ install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz \
 	 --initscript cups
 %endif
+if [ $1 -eq 1 ]; then
+  # First install.  Build ppds.dat.
+  /sbin/service cups reload >/dev/null 2>&1 || :
+fi
 exit 0
 
 %post libs -p /sbin/ldconfig
@@ -215,13 +229,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir /etc/cups
-/etc/cups/certs
-%config /etc/cups/*.conf
+%dir %attr(0755,lp,sys) /etc/cups
+%dir %attr(0711,lp,sys) /etc/cups/certs
+%config(noreplace) %attr(0600,lp,sys) /etc/cups/classes.conf
+%config(noreplace) %attr(0600,lp,sys) /etc/cups/cupsd.conf
+%config(noreplace) %attr(0600,lp,sys) /etc/cups/printers.conf
+%config(noreplace) /etc/cups/client.conf
 /etc/cups/interfaces
 /etc/cups/mime.types
 /etc/cups/mime.convs
-/etc/cups/ppd
+%dir %attr(0755,lp,sys) /etc/cups/ppd
 /etc/cups/pstoraster.convs
 /etc/pam.d/cups
 %doc %{_docdir}/cups-%{version}
@@ -233,15 +250,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/lp*
 %{_libdir}/cups
 %{_mandir}/man?/*
+%{_mandir}/*/man?/*
 %{_sbindir}/*
 %{_datadir}/cups
 %{_datadir}/locale/*/*
-%dir %attr(1700,lp,root) /var/spool/cups/tmp
-%dir %attr(0700,lp,root) /var/spool/cups
-%dir %attr(0755,lp,root) /var/log/cups
-%{_sysconfdir}/X11/sysconfig/cups.desktop
-%{_sysconfdir}/X11/applnk/System/cups.desktop
+%dir %attr(1700,lp,sys) /var/spool/cups/tmp
+%dir %attr(0700,lp,sys) /var/spool/cups
+%dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
+%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
 
 %files libs
@@ -256,34 +273,84 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
-* Wed Oct 29 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.9
-- Backport 1.1.19 fix for lpd.c signal handling (bug #107256).
-- Attempt to fix bug #97958 less invasively by back-porting a fix from
-  1.1.19.
+* Wed Feb 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13
+- Don't set SIGCHLD to SIG_IGN when using wait4 (via pclose) (bug #84101).
 
-* Mon Sep  1 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.8
-- Prevent libcups busy loop (bug #97958).
+* Tue Feb  4 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-12
+- Fix cups-lpd (bug #83452).
 
-* Fri May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.7
-- Rebuild for debug stripping.
+* Fri Jan 31 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-11
+- Build ppds.dat on first install.
 
-* Thu May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.5
-- Fix typo.
+* Fri Jan 24 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-10
+- Add support for rebuilding ppds.dat without running the scheduler
+  proper (for bug #82500).
 
-* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.4
-- Update HTTP blocking fix to cups-1.1.18-str75.patchv2.
+* Wed Jan 22 2003 Tim Powers <timp@redhat.com> 1.1.17-9
+- rebuilt
 
-* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.3
-- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+* Wed Jan 22 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-8
+- Warn against editing queues managed by redhat-config-printer
+  (bug #82267).
 
-* Wed Jan  8 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.2
-- Fix 'condrestart' behaviour in init script.
+* Wed Jan 22 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-7
+- Fix up error reporting in lpd backend.
 
-* Fri Dec 13 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-0.1
-- 1.1.17.
-- Fix cupsd startup hang (bug #79346).
-- Don't install files not shipped.
+* Thu Jan  9 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-6
+- Add epoch to internal requirements.
+- Make 'condrestart' return success exit code when daemon isn't running.
+
+* Tue Jan  7 2003 Nalin Dahyabhai <nalin@redhat.com> 1.1.17-5
+- Use pkg-config information to find SSL libraries.
+
+* Thu Dec 19 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-4
 - Security fixes.
+- Make 'service cups reload' update the configuration first (bug #79953).
+
+* Tue Dec 10 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-3
+- Fix cupsd startup hang (bug #79346).
+
+* Mon Dec  9 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-2
+- Fix parallel backend behaviour when cancelling jobs.
+
+* Mon Dec  9 2002 Tim Waugh <twaugh@redhat.com> 1.1.17-1
+- 1.1.17.
+- No longer need libdir patch.
+- Fix logrotate script (bug #76791).
+
+* Wed Nov 20 2002 Tim Waugh <twaugh@redhat.com>
+- Build requires XFree86-devel (bug #78362).
+
+* Wed Nov 20 2002 Tim Waugh <twaugh@redhat.com>
+- 1.1.16.
+- Updated system-auth patch.
+- Add ncp backend script.
+
+* Wed Nov 13 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-15
+- Set alternatives priority to 40.
+
+* Mon Nov 11 2002 Nalin Dahyabhai <nalin@redhat.com> 1.1.15-14
+- Buildrequire pam-devel.
+- Patch default PAM config file to remove directory names from module paths,
+  allowing the configuration files to work equally well on multilib systems.
+- Patch default PAM config file to use system-auth, require the file at build-
+  time because that's what data/Makefile checks for.
+
+* Fri Nov  8 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-13
+- Use logrotate for log rotation (bug #76791).
+- No longer need cups.desktop, since redhat-config-printer handles it.
+
+* Thu Oct 17 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-12
+- Revert to libdir for CUPS_SERVERBIN.
+
+* Thu Oct 17 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-11
+- Use %%configure for multilib correctness.
+- Use libexec instead of lib for CUPS_SERVERBIN.
+- Ship translated man pages.
+- Remove unshipped files.
+- Fix file list permissions (bug #59021, bug #74738).
+- Fix messy initscript output (bug #65857).
+- Add 'reload' to initscript (bug #76114).
 
 * Fri Aug 30 2002 Bernhard Rosenkraenzer <bero@redhat.de> 1.1.15-10
 - Add generic postscript PPD file (#73061)
