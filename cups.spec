@@ -3,14 +3,13 @@
 %define use_dbus 1
 %define build_as_pie 1
 
-%define rc1 rc1
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.9
+Release: 1.rc2.1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc2-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -36,11 +35,10 @@ Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
-Patch26: cups-state.patch
-Patch27: cups-str743.patch
 Patch28: cups-no-propagate-ipp-port.patch
-Patch29: cups-1.1.21-reload-timeout.patch
-Patch30: cups-dbus.patch
+Patch30: cups-session-printing.patch
+Patch31: cups-overread.patch
+Patch32: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -92,7 +90,7 @@ The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %prep
-%setup -q -n %{name}-%{version}%{rc1}
+%setup -q -n %{name}-%{version}rc2
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
@@ -111,12 +109,11 @@ natively, without needing the lp/lpr commands.
 %patch19 -p1 -b .gcc34
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
-%patch26 -p1 -b .state
-%patch27 -p1 -b .str743
 %patch28 -p1 -b .no-propagate-ipp-port
-%patch29 -p1 -b .reload-timeout
+#%patch30 -p1 -b .session-printing
+%patch31 -p1 -b .overread
 %if %use_dbus
-%patch30 -p1 -b .dbus
+%patch32 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -329,6 +326,19 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Aug 24 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc2.1
+- 1.1.21rc2.
+- No longer need state, reload-timeout or str743 patches.
+- httpnBase64 patch no longer applies; alternate method implemented
+  upstream.
+- Fix single byte overread in usersys.c (spotted by Colin Walters).
+
+* Wed Aug 18 2004 Tim Waugh <twaugh@redhat.com>
+- Applied httpnEncode64 patch from Colin Walters.
+
+* Sun Aug 15 2004 Tim Waugh <twaugh@redhat.com>
+- Session printing patch (Colin Walters).  Disabled for now.
+
 * Sun Aug 15 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.9
 - Shorter reload timeout (Colin Walters).
 - Updated DBUS patch from Colin Walters.
