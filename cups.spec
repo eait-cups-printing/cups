@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -339,7 +339,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_docdir}/cups-%{version}/svd.html
 %doc %{_docdir}/cups-%{version}/translation.html
 %doc %{_docdir}/cups-%{version}/robots.txt
-%config %{initdir}/cups
+%config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cancel*
 %{_bindir}/enable*
@@ -394,6 +394,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-4
+- Mark the initscript noreplace (bug #145629).
+
 * Wed Jan 19 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-3
 - Applied patch to fix CAN-2005-0064.
 
