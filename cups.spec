@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.3
+Release: 1.rc1.4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -50,13 +50,13 @@ Prereq: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd lpr LPRng
+Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.21
+BuildPrereq: dbus-devel = 0.21.cvs20040722
 Requires: dbus = 0.21
 %endif
 
@@ -325,6 +325,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Jul 30 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.4
+- Bumped DBUS version.
+
+* Fri Jul 16 2004 Tim Waugh <twaugh@redhat.com>
+- Added version to LPRng obsoletes: tag (bug #128024).
+
 * Thu Jul  8 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.3
 - Updated DBUS patch.
 
