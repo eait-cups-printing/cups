@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 5
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -61,8 +61,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.22
-Requires: dbus = 0.22
+BuildPrereq: dbus-devel = 0.23
+Requires: dbus = 0.23
 %endif
 
 %package devel
@@ -397,6 +397,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Jan 24 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-6
+- Build against new dbus.
+
 * Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-5
 - Use tmpwatch to remove unused files in the spool temporary directory
   (bug #110026).
