@@ -6,10 +6,10 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 0.rc1.1
+Release: 1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -102,7 +102,7 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q -n %{name}-%{version}rc1
+%setup -q
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
@@ -390,6 +390,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Jan  4 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-1
+- 1.1.23.
+
 * Mon Dec 20 2004 Tim Waugh <twaugh@redhat.com> 1.1.23-0.rc1.1
 - 1.1.23rc1.
 - No longer need ioctl, ref-before-use, str1023 or str1024 patches.
