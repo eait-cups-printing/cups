@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 12
+Release: 13
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -65,10 +65,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-#BuildPrereq: dbus-devel = 0.30.cvs20050128
-#Requires: dbus = 0.30.cvs20050128
-BuildPrereq: dbus-devel = 0.23
-Requires: dbus = 0.23
+BuildPrereq: dbus-devel = 0.31
+Requires: dbus = 0.31
 %endif
 
 %package devel
@@ -407,6 +405,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Mar  7 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-13
+- Fixed up dbus patch to work with dbus 0.31
+
 * Tue Mar  1 2005 Tomas Mraz <tmraz@redhat.com> 1:1.1.23-12
 - rebuild for openssl-0.9.7e
 
