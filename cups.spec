@@ -184,7 +184,7 @@ popd
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -c -m 755 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
+install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_libdir}/cups/backend/ncp
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
@@ -366,10 +366,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Nov 22 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-2
+- Fixed cups-lpd file mode (bug #137325).
 - Convert all man pages to UTF-8 (bug #107118).  Patch from Miloslav Trmac.
 
 * Mon Nov  8 2004 Tim Waugh <twaugh@redhat.com>
-- New lpd subpackage, from patch by Matthew Galgoci.
+- New lpd subpackage, from patch by Matthew Galgoci (bug #137325).
 
 * Tue Nov  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-1
 - 1.1.22.
