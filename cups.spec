@@ -315,7 +315,30 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,root,sys) /etc/cups/ppd
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
-%doc %{_docdir}/cups-%{version}
+%dir %{_docdir}/cups-%{version}
+%{_docdir}/cups-%{version}/images
+%{_docdir}/cups-%{version}/*.css
+%{_docdir}/cups-%{version}/documentation.html
+%{_docdir}/cups-%{version}/??
+%{_docdir}/cups-%{version}/admin
+%{_docdir}/cups-%{version}/classes
+%{_docdir}/cups-%{version}/jobs
+%{_docdir}/cups-%{version}/printers
+%doc %{_docdir}/cups-%{version}/index.html
+%doc %{_docdir}/cups-%{version}/cmp.html
+%doc %{_docdir}/cups-%{version}/idd.html
+%doc %{_docdir}/cups-%{version}/ipp.html
+%doc %{_docdir}/cups-%{version}/overview.html
+%doc %{_docdir}/cups-%{version}/sam.html
+%doc %{_docdir}/cups-%{version}/sdd.html
+%doc %{_docdir}/cups-%{version}/spm.html
+%doc %{_docdir}/cups-%{version}/sps.html
+%doc %{_docdir}/cups-%{version}/ssr.html
+%doc %{_docdir}/cups-%{version}/stp.html
+%doc %{_docdir}/cups-%{version}/sum.html
+%doc %{_docdir}/cups-%{version}/svd.html
+%doc %{_docdir}/cups-%{version}/translation.html
+%doc %{_docdir}/cups-%{version}/robots.txt
 %config %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cancel*
@@ -371,6 +394,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Dec  9 2004 Tim Waugh <twaugh@redhat.com>
+- Not all files in the doc directory are pure documentation (bug #67337).
+
 * Thu Dec  9 2004 Tim Waugh <twaugh@redhat.com>
 - Fixed ioctl parameter size in usb backend.  Spotted by David A. Marlin.
 
