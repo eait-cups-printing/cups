@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -26,6 +26,7 @@ Patch3: cups-1.1.17-backend.patch
 Patch4: cups-reload.patch
 Patch5: cups-str920.patch
 Patch6: cups-1.1.17-pdftops.patch
+Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
@@ -101,6 +102,7 @@ natively, without needing the lp/lpr commands.
 %patch4 -p1 -b .reload
 %patch5 -p1 -b .str920
 %patch6 -p1 -b .pdftops
+%patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
 %patch10 -p1 -b .sanity
@@ -341,6 +343,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Oct  5 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-7
+- Set LogFilePerm 0600 in default config file.
+
 * Tue Oct  5 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-6
 - Apply patch to fix CAN-2004-0923 (bug #134601).
 
