@@ -23,6 +23,7 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
+Patch4: cups-ext.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -106,6 +107,7 @@ lpd emulation.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
+%patch4 -p1 -b .ext
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -365,6 +367,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Nov 29 2004 Tim Waugh <twaugh@redhat.com>
+- Copied "ext" patch over from xpdf RPM package.
+
 * Mon Nov 22 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-2
 - Fixed cups-lpd file mode (bug #137325).
 - Convert all man pages to UTF-8 (bug #107118).  Patch from Miloslav Trmac.
