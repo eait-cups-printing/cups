@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.14
-Release: 14
+Release: 15
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -224,6 +224,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Apr 17 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.14-15
+- Fix bug #63387
+
 * Mon Apr 15 2002 Bernhard Rosenkraenzer <bero@redhat.com> 1.1.14-14
 - Fix dangling symlink created by samba-clients trigger
 
