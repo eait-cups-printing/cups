@@ -64,10 +64,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.23
-Requires: dbus = 0.23
-#BuildPrereq: dbus-devel = 0.30.cvs20050128
-#Requires: dbus = 0.30.cvs20050128
+BuildPrereq: dbus-devel = 0.30.cvs20050128
+Requires: dbus = 0.30.cvs20050128
 %endif
 
 %package devel
@@ -405,6 +403,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Feb 11 2005 Tim Waugh <twaugh@redhat.com>
+- New DBUS API.
+
 * Thu Feb 10 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-9
 - Back to old DBUS API since new DBUS isn't built yet.
 
