@@ -137,6 +137,11 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
+for i in man/{es,fr}/*.man; do
+	iconv -f iso-8859-1 -t utf-8 < "$i" > "${i}_"
+	mv "${i}_" "$i"
+done
+
 %build
 if pkg-config openssl ; then
   export CFLAGS=`pkg-config --cflags openssl`
@@ -360,6 +365,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Nov 22 2004 Tim Waugh <twaugh@redhat.com>
+- Convert all man pages to UTF-8 (bug #107118).  Patch from Miloslav Trmac.
+
 * Mon Nov  8 2004 Tim Waugh <twaugh@redhat.com>
 - New lpd subpackage, from patch by Matthew Galgoci.
 
