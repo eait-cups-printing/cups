@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 8
+Release: 9
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -403,6 +403,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Feb 10 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-9
+- Back to old DBUS API since new DBUS isn't built yet.
+
 * Mon Feb  7 2005 Tim Waugh <twaugh@redhat.com>
 - Use upstream patch for STR #1068.
 - Apply patch to fix remainder of CAN-2004-0888 (bug #135378).
