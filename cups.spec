@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.8
+Release: 1.rc1.9
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -39,7 +39,8 @@ Patch25: cups-enabledisable.patch
 Patch26: cups-state.patch
 Patch27: cups-str743.patch
 Patch28: cups-no-propagate-ipp-port.patch
-Patch29: cups-dbus.patch
+Patch29: cups-1.1.21-reload-timeout.patch
+Patch30: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -113,8 +114,9 @@ natively, without needing the lp/lpr commands.
 %patch26 -p1 -b .state
 %patch27 -p1 -b .str743
 %patch28 -p1 -b .no-propagate-ipp-port
+%patch29 -p1 -b .reload-timeout
 %if %use_dbus
-%patch29 -p1 -b .dbus
+%patch30 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -327,6 +329,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Sun Aug 15 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.9
+- Shorter reload timeout (Colin Walters).
+- Updated DBUS patch from Colin Walters.
+
+* Fri Aug 13 2004 Tim Waugh <twaugh@redhat.com>
+- Updated IPP backend IPP_PORT patch from Colin Walters.
+
 * Fri Aug 13 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.8
 - Preserve DBUS_SESSION_BUS_ADDRESS in environment (Colin Walters).
 - Fixed enabledisable patch.
