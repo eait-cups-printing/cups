@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc2.1
+Release: 1.rc2.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc2-source.tar.bz2
@@ -326,6 +326,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Thu Sep  9 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc2.2
+- Updated DBUS patch (from Colin Walters).
+
 * Tue Aug 24 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc2.1
 - 1.1.21rc2.
 - No longer need state, reload-timeout or str743 patches.
