@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -23,6 +23,7 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
+Patch4: cups-reload.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
@@ -96,6 +97,7 @@ natively, without needing the lp/lpr commands.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
+%patch4 -p1 -b .reload
 %patch6 -p1 -b .pdftops
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
@@ -337,6 +339,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Mon Oct  4 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-5
+- Fixed reload logic (bug #134080).
+
 * Wed Sep 29 2004 Warren Togami <wtogami@redhat.com> 1:1.1.21-4
 - Remove .pdf from docs, fix links
 
