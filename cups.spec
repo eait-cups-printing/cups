@@ -34,7 +34,7 @@ Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
-Patch14: cups-recycled-fd.patch
+Patch14: cups-str1068.patch
 Patch15: cups-sigchld.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
@@ -123,7 +123,7 @@ lpd emulation.
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
-%patch14 -p1 -b .recycled-fd
+%patch14 -p1 -b .str1068
 %patch15 -p1 -b .sigchld
 %if %build_as_pie
 %patch16 -p1 -b .pie
@@ -404,6 +404,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Feb  7 2005 Tim Waugh <twaugh@redhat.com>
+- Use upstream patch for STR #1068.
 - Apply patch to fix remainder of CAN-2004-0888.
 
 * Wed Feb  2 2005 Tim Waugh <twaugh@redhat.com>
