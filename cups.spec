@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -141,7 +141,7 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
-for i in man/{es,fr}/*.man; do
+for i in man/{es,fr}/*.man templates/{de,fr}/*.tmpl; do
 	iconv -f iso-8859-1 -t utf-8 < "$i" > "${i}_"
 	mv "${i}_" "$i"
 done
@@ -369,6 +369,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Dec  3 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-4
+- Convert de and fr .tmpl files into UTF-8 (bug #136177).
+
 * Thu Dec  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-3
 - Fix ref-before-use bug in debug output (bug #141585).
 
