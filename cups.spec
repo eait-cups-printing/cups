@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -38,7 +38,8 @@ Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
 Patch31: cups-overread.patch
-Patch32: cups-dbus.patch
+Patch32: cups-pid.patch
+Patch33: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -112,8 +113,9 @@ natively, without needing the lp/lpr commands.
 %patch28 -p1 -b .no-propagate-ipp-port
 #%patch30 -p1 -b .session-printing
 %patch31 -p1 -b .overread
+%patch32 -p1 -b .pid
 %if %use_dbus
-%patch32 -p1 -b .dbus
+%patch33 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -326,6 +328,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Sep 24 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-3
+- Write a pid file (bug #132987).
+
 * Thu Sep 23 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-2
 - 1.1.21.
 
