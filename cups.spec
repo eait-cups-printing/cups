@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -397,7 +397,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com>
+* Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-5
 - Use tmpwatch to remove unused files in the spool temporary directory
   (bug #110026).
 
