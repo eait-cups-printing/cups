@@ -65,8 +65,8 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.31
-Requires: dbus = 0.31
+BuildPrereq: dbus-devel >= 0.31
+Requires: dbus >= 0.31
 %endif
 
 %package devel
@@ -405,6 +405,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Mar 31 2005 Tim Waugh <twaugh@redhat.com>
+- Don't require exact dbus version, just minimum.
+
 * Thu Mar 10 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-14
 - Fixed up dbus patch so that it compiles.
 
