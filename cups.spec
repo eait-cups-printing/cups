@@ -19,6 +19,7 @@ Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
+Source12: cups.cron
 Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
@@ -188,11 +189,12 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_libdir}/cups/backend/ncp
+install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
@@ -371,6 +373,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
+%{_sysconfdir}/cron.daily/cups
 %if %use_dbus
 %{_sysconfdir}/dbus-1/system.d/cups.conf
 %endif
@@ -394,6 +397,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com>
+- Use tmpwatch to remove unused files in the spool temporary directory
+  (bug #110026).
+
 * Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com>
 - Use gzip's -n flag for the PPDs.
 
