@@ -33,6 +33,7 @@ Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
 Patch13: cups-ref-before-use.patch
+Patch14: cups-str1023.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -119,6 +120,7 @@ lpd emulation.
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .ref-before-use
+%patch14 -p1 -b .str1023
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -394,6 +396,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Dec 16 2004 Tim Waugh <twaugh@redhat.com>
+- Fixed STR #1023 (part of bug #143086).
+
 * Thu Dec  9 2004 Tim Waugh <twaugh@redhat.com>
 - Not all files in the doc directory are pure documentation (bug #67337).
 
