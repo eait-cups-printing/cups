@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.20
-Release: 6
+Release: 14
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -29,12 +29,17 @@ Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
-Patch15: cups-shutdown.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
-Patch20: cups-dbus.patch
+Patch20: cups-str716.patch
+Patch21: cups-encryption.patch
+Patch22: cups-str718.patch
+Patch23: cups-authtype.patch
+Patch24: cups-maxlogsize.patch
+Patch25: cups-enabledisable.patch
+Patch26: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -50,10 +55,15 @@ Obsoletes: lpd lpr LPRng
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
+BuildRequires: make >= 1:3.80
 %if %use_dbus
 BuildPrereq: dbus-devel = 0.20
 Requires: dbus = 0.20
 %endif
+
+# Until the build system works..
+ExcludeArch: ppc
+ExcludeArch: ppc64
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -96,18 +106,22 @@ natively, without needing the lp/lpr commands.
 %patch10 -p1 -b .sanity
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
-%patch15 -p1 -b .shutdown
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
 %patch19 -p1 -b .gcc34
+%patch20 -p1 -b .str716
+%patch21 -p1 -b .encryption
+%patch22 -p1 -b .str718
+%patch23 -p1 -b .authtype
+%patch24 -p1 -b .maxlogsize
+%patch25 -p1 -b .enabledisable
 %if %use_dbus
-%patch20 -p1 -b .dbus
+%patch26 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
-perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
 
@@ -126,11 +140,7 @@ fi
 %configure --with-docdir=%{_docdir}/cups-%{version}
 
 # If we got this far, all prerequisite libraries must be here.
-%ifarch ia64
-make OPTIM="$RPM_OPT_FLAGS $CFLAGS -O0"
-%else
 make OPTIM="$RPM_OPT_FLAGS $CFLAGS"
-%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -203,8 +213,8 @@ install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups
 %endif
 
 # Symlinks to avoid conflicting with bash builtins
-ln -s enable $RPM_BUILD_ROOT%{_bindir}/cups-enable
-ln -s disable $RPM_BUILD_ROOT%{_bindir}/cups-disable
+ln -s enable $RPM_BUILD_ROOT%{_bindir}/cupsenable
+ln -s disable $RPM_BUILD_ROOT%{_bindir}/cupsdisable
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
@@ -286,8 +296,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cancel*
 %{_bindir}/enable*
 %{_bindir}/disable*
-%{_bindir}/cups-enable*
-%{_bindir}/cups-disable*
+%{_bindir}/cupsenable*
+%{_bindir}/cupsdisable*
 %{_bindir}/lp*
 %{_libdir}/cups
 %{_mandir}/man?/*
@@ -325,6 +335,47 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Jun  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-14
+- ExcludeArch ppc, ppc64.
+- More D-BUS changes.
+
+* Tue Jun  1 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-13
+- Enable optimizations on ia64 again.
+
+* Thu May 27 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-12
+- D-BUS changes.
+
+* Wed May 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-11
+- Build requires make >= 3.80 (bug #124472).
+
+* Wed May 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-10
+- Finish fix for cupsenable/cupsdisable (bug #102490).
+- Fix MaxLogSize setting (bug #123003).
+
+* Tue May 25 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-9
+- Apply patches from CVS (authtype) to fix STR #434, STR #611, and as a
+  result STR #719.  This fixes several problems including those noted in
+  bug #114999.
+
+* Mon May 24 2004 Tim Waugh <twaugh@redhat.com>
+- Use upstream patch for exit code fix for bug #110135 [STR 718].
+
+* Wed May 19 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-8
+- If cupsd fails to start, make it exit with an appropriate code so that
+  initlog notifies the user (bug #110135).
+
+* Thu May 13 2004 Tim Waugh <twaugh@redhat.com>
+- Fix cups/util.c:get_num_sdests() to use encryption when it is necessary
+  or requested (bug #118982).
+- Use upstream patch for the HTTP/1.1 Continue bug (from STR716).
+
+* Tue May 11 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-7
+- Fix non-conformance with HTTP/1.1, which caused failures when printing
+  to a Xerox Phaser 8200 via IPP (bug #122352).
+- Make lppasswd(1) PIE.
+- Rotate logs within cupsd (instead of relying on logrotate) if we start
+  to approach the filesystem file size limit (bug #123003).
+
 * Tue Apr  6 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-6
 - Fix pie patch (bug #120078).
 
