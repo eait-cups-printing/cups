@@ -1,11 +1,12 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define use_dbus 1
+%define build_as_pie 1
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.19
-Release: 13.1
+Version: 1.1.20
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -23,17 +24,17 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
-Patch5: cups-idefense-v2.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
-Patch13: cups-1.1.17-loop.patch
-Patch14: cups-1.1.19-str226.patch
-Patch15: cups-zero-len-udp-dos.patch
-Patch16: cups-dbus.patch
+Patch15: cups-shutdown.patch
+Patch16: cups-pie.patch
+Patch17: cups-1.1.19-no_rpath.patch
+Patch18: cups-language.patch
+Patch19: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -45,7 +46,7 @@ Prereq: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd lpr LPRng <= 3.8.15-3
+Obsoletes: lpd lpr LPRng
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
@@ -57,6 +58,7 @@ BuildPrereq: dbus-devel >= 0.11
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 Requires: %{name}-libs = %{epoch}:%{version}
+Requires: openssl-devel
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -87,18 +89,20 @@ natively, without needing the lp/lpr commands.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
-%patch5 -p1 -b .security
 %patch6 -p1 -b .pdftops
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
 %patch10 -p1 -b .sanity
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
-%patch13 -p1 -b .loop
-%patch14 -p1 -b .str226
-%patch15 -p1 -b .zero-len-udp-dos
+%patch15 -p1 -b .shutdown
+%if %build_as_pie
+%patch16 -p1 -b .pie
+%endif
+%patch17 -p1 -b .no_rpath
+%patch18 -p1 -b .language
 %if %use_dbus
-%patch16 -p1 -b .dbus
+%patch19 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
@@ -117,13 +121,12 @@ if pkg-config openssl ; then
   export LDFLAGS=`pkg-config --libs-only-L openssl`
 fi
 %configure --with-docdir=%{_docdir}/cups-%{version}
-perl -pi -e "s,^DSO	=.*,DSO=gcc -fpic," Makedefs
 
 # If we got this far, all prerequisite libraries must be here.
 %ifarch ia64
-make OPTIM="$RPM_OPT_FLAGS $CFLAGS -O0 -fpic"
+make OPTIM="$RPM_OPT_FLAGS $CFLAGS -O0"
 %else
-make OPTIM="$RPM_OPT_FLAGS $CFLAGS -fpic"
+make OPTIM="$RPM_OPT_FLAGS $CFLAGS"
 %endif
 
 %install
@@ -315,9 +318,31 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
-* Mon Aug 23 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.19-13.1
-- Add version to LPRng obsoletes: tag.
-- Apply patch to fix CAN-2004-0558 (bug #130646).
+* Wed Jan  7 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-2
+- Try harder to find a translated page for the web interface (bug #107619).
+- Added build_as_pie conditional to spec file to facilitate debugging.
+
+* Mon Dec  1 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.20-1
+- 1.1.20.
+- No longer need idefense, str226 patches.
+- Updated sanity patch.
+- The devel sub-package requires openssl-devel (bug #110772).
+
+* Wed Nov 26 2003 Thomas Woerner <twoerner@redhat.com> 1:1.1.19-16
+- removed -Wl,-rpath from cups-sharedlibs.m4 (replaced old no_rpath patch)
+
+* Tue Nov 25 2003 Thomas Woerner <twoerner@redhat.com> 1:1.1.19-15
+- no rpath in cups-config anymore
+
+* Thu Nov 20 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-14
+- Enable PIE for cupsd.
+
+* Fri Nov 14 2003 Tim Waugh <twaugh@redhat.com>
+- Don't ignore the file descriptor when ShutdownClient is called: it
+  might get closed before we next try to read it (bug #107787).
+
+* Tue Oct 14 2003 Tim Waugh <twaugh@redhat.com>
+- Removed busy-loop patch; 1.1.19 has its own fix for this.
 
 * Thu Oct  2 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-13
 - Apply patch from STR 226 to make CUPS reload better behaved (bug #101507).
