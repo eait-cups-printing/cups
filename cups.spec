@@ -405,7 +405,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Wed Mar  9 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-14
+* Thu Mar 10 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-14
+- Fixed up dbus patch so that it compiles.
+
+* Wed Mar  9 2005 John (J5) Palmieri <johnp@redhat.com>
 - Fix up dbus patch 
 
 * Mon Mar  7 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-13
