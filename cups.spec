@@ -4,7 +4,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 13
+Release: 13.3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -28,6 +28,7 @@ Patch7: cups-1.1.17-error.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sigchld.patch
+Patch11: cups-1.1.18-str75.patchv2
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -83,6 +84,7 @@ natively, without needing the lp/lpr commands.
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
 %patch10 -p1 -b .sigchld
+%patch11 -p1 -b .str75
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
 autoconf
@@ -273,6 +275,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Thu May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3
+- Fix typo and rebuild for proper debug stripping.
+
+* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.2
+- Updated HTTP blocking fix to cups-1.1.18-str75.patchv2.
+
+* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.1
+- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+
 * Wed Feb 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13
 - Don't set SIGCHLD to SIG_IGN when using wait4 (via pclose) (bug #84101).
 
