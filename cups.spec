@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -365,7 +365,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Mon Nov 22 2004 Tim Waugh <twaugh@redhat.com>
+* Mon Nov 22 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-2
 - Convert all man pages to UTF-8 (bug #107118).  Patch from Miloslav Trmac.
 
 * Mon Nov  8 2004 Tim Waugh <twaugh@redhat.com>
