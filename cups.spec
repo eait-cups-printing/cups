@@ -5,11 +5,11 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.22
-Release: 6
+Version: 1.1.23
+Release: 0.rc1.1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -24,7 +24,6 @@ Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
 Patch4: cups-ext.patch
-Patch5: cups-ioctl.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -32,9 +31,6 @@ Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
-Patch13: cups-ref-before-use.patch
-Patch14: cups-str1023.patch
-Patch15: cups-str1024.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -106,13 +102,12 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}rc1
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ext
-%patch5 -p1 -b .ioctl
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -120,9 +115,6 @@ lpd emulation.
 %patch10 -p1 -b .sanity
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
-%patch13 -p1 -b .ref-before-use
-%patch14 -p1 -b .str1023
-%patch15 -p1 -b .str1024
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -398,6 +390,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Dec 20 2004 Tim Waugh <twaugh@redhat.com> 1.1.23-0.rc1.1
+- 1.1.23rc1.
+- No longer need ioctl, ref-before-use, str1023 or str1024 patches.
+
 * Fri Dec 17 2004 Tim Waugh <twaugh@redhat.com> 1.1.22-6
 - Use upstream patches for bug #143086.
 
