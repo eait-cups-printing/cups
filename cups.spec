@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.15
-Release: 9
+Release: 10
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -20,6 +20,7 @@ Source4: cupsconfig
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
+Source8: postscript.ppd.gz
 Patch: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Epoch: 1
@@ -140,6 +141,9 @@ done
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/cups/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
+# Ship a generic postscript PPD file (#73061)
+install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -236,6 +240,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Aug 30 2002 Bernhard Rosenkraenzer <bero@redhat.de> 1.1.15-10
+- Add generic postscript PPD file (#73061)
+
 * Mon Aug 19 2002 Tim Waugh <twaugh@redhat.com> 1.1.15-9
 - Fix prefix in pstoraster (bug #69573).
 
