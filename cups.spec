@@ -344,6 +344,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Oct 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc2.1
+- Use upstream patch for STR #953.
 - 1.1.22rc2.
 
 * Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.7
