@@ -64,8 +64,10 @@ Provides: lpd lpr LPRng = 3.8.15-3
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
-BuildPrereq: dbus-devel = 0.30.cvs20050128
-Requires: dbus = 0.30.cvs20050128
+BuildPrereq: dbus-devel = 0.23
+Requires: dbus = 0.23
+#BuildPrereq: dbus-devel = 0.30.cvs20050128
+#Requires: dbus = 0.30.cvs20050128
 %endif
 
 %package devel
