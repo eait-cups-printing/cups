@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 9
+Release: 10
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -407,10 +407,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Fri Feb 18 2005 Tim Waugh <twaugh@redhat.com>
+* Fri Feb 18 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-10
 - Fixed build with GCC 4.
 
-* Thu Feb 10 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-9
+* Thu Feb 10 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-9
 - Back to old DBUS API since new DBUS isn't built yet.
 
 * Mon Feb  7 2005 Tim Waugh <twaugh@redhat.com>
@@ -420,10 +420,10 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Feb  2 2005 Tim Waugh <twaugh@redhat.com>
 - Applied patch to prevent occasional cupsd crash on reload (bug #146850).
 
-* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-8
+* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-8
 - New DBUS API.
 
-* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-7
+* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-7
 - Applied patch to prevent file descriptor confusion (STR #1068).
 
 * Fri Jan 28 2005 Tim Waugh <twaugh@redhat.com>
@@ -432,36 +432,36 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Jan 27 2005 Tim Waugh <twaugh@redhat.com>
 - Corrected directory modes so that they reflect what cupsd sets them to.
 
-* Mon Jan 24 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-6
+* Mon Jan 24 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-6
 - Build against new dbus.
 
-* Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-5
+* Fri Jan 21 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-5
 - Use tmpwatch to remove unused files in the spool temporary directory
   (bug #110026).
 
 * Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com>
 - Use gzip's -n flag for the PPDs.
 
-* Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-4
+* Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-4
 - Mark the initscript noreplace (bug #145629).
 
-* Wed Jan 19 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-3
+* Wed Jan 19 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-3
 - Applied patch to fix CAN-2005-0064.
 
-* Thu Jan  6 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-2
+* Thu Jan  6 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-2
 - Fixed patch from STR #1023.
 
-* Tue Jan  4 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-1
+* Tue Jan  4 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-1
 - 1.1.23.
 
-* Mon Dec 20 2004 Tim Waugh <twaugh@redhat.com> 1.1.23-0.rc1.1
+* Mon Dec 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.23-0.rc1.1
 - 1.1.23rc1.
 - No longer need ioctl, ref-before-use, str1023 or str1024 patches.
 
-* Fri Dec 17 2004 Tim Waugh <twaugh@redhat.com> 1.1.22-6
+* Fri Dec 17 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-6
 - Use upstream patches for bug #143086.
 
-* Thu Dec 16 2004 Tim Waugh <twaugh@redhat.com> 1.1.22-5
+* Thu Dec 16 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-5
 - Fixed STR #1023 (part of bug #143086).
 - Fixed STR #1024 (rest of bug #143086).
 
