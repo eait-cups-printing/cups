@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -31,6 +31,7 @@ Patch9: cups-1.1.17-ppdsdat.patch
 Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
+Patch13: cups-ref-before-use.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -115,6 +116,7 @@ lpd emulation.
 %patch10 -p1 -b .sanity
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
+%patch13 -p1 -b .ref-before-use
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -367,6 +369,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Dec  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-3
+- Fix ref-before-use bug in debug output (bug #141585).
+
 * Mon Nov 29 2004 Tim Waugh <twaugh@redhat.com>
 - Copied "ext" patch over from xpdf RPM package.
 
