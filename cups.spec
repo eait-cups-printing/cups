@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.1
+Release: 1.rc1.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -37,7 +37,8 @@ Patch19: cups-gcc34.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch26: cups-state.patch
-Patch27: cups-dbus.patch
+Patch27: cups-str743.patch
+Patch28: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -109,8 +110,9 @@ natively, without needing the lp/lpr commands.
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %patch26 -p1 -b .state
+%patch27 -p1 -b .str743
 %if %use_dbus
-%patch27 -p1 -b .dbus
+%patch28 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -323,6 +325,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Jun 29 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.2
+- Apply patch from STR #743 (bug #114999).
+
 * Fri Jun 25 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.1
 - Fix permissions on logrotate script (bug #126426).
 
