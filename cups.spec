@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 1.rc1.5
+Release: 1.rc1.6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -38,7 +38,8 @@ Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch26: cups-state.patch
 Patch27: cups-str743.patch
-Patch28: cups-dbus.patch
+Patch28: cups-no-propagate-ipp-port.patch
+Patch29: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -111,8 +112,9 @@ natively, without needing the lp/lpr commands.
 %patch25 -p1 -b .enabledisable
 %patch26 -p1 -b .state
 %patch27 -p1 -b .str743
+%patch28 -p1 -b .no-propagate-ipp-port
 %if %use_dbus
-%patch28 -p1 -b .dbus
+%patch29 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -325,6 +327,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri Aug  6 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.6
+- Patch from Colin Walters to prevent IPP backend using non-standard
+  IPP port.
+
 * Sun Aug  1 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-1.rc1.5
 - Really bumped DBUS version.
 
