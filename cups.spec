@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.20
-Release: 14
+Release: 15
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -60,10 +60,6 @@ BuildRequires: make >= 1:3.80
 BuildPrereq: dbus-devel = 0.20
 Requires: dbus = 0.20
 %endif
-
-# Until the build system works..
-ExcludeArch: ppc
-ExcludeArch: ppc64
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -335,6 +331,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Wed Jun  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-15
+- Build on ppc and ppc64 again.
+
 * Wed Jun  2 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.20-14
 - ExcludeArch ppc, ppc64.
 - More D-BUS changes.
