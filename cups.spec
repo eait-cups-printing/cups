@@ -99,7 +99,6 @@ natively, without needing the lp/lpr commands.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ippfail
-exit 1
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
