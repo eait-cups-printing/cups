@@ -168,7 +168,7 @@ make BUILDROOT=$RPM_BUILD_ROOT install
 
 install -m 755 $RPM_SOURCE_DIR/cups.init $RPM_BUILD_ROOT%{initdir}/cups
 
-find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -9f
+find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -n9f
 
 %if %use_alternatives
 pushd $RPM_BUILD_ROOT%{_bindir}
@@ -394,6 +394,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com>
+- Use gzip's -n flag for the PPDs.
+
 * Thu Jan 20 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-4
 - Mark the initscript noreplace (bug #145629).
 
