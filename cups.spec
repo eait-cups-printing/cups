@@ -24,6 +24,7 @@ Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
 Patch4: cups-ext.patch
+Patch5: cups-ioctl.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -109,6 +110,7 @@ lpd emulation.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ext
+%patch5 -p1 -b .ioctl
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -369,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Dec  9 2004 Tim Waugh <twaugh@redhat.com>
+- Fixed ioctl parameter size in usb backend.  Spotted by David A. Marlin.
+
 * Fri Dec  3 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-4
 - Convert de and fr .tmpl files into UTF-8 (bug #136177).
 
