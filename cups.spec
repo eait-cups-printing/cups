@@ -58,7 +58,7 @@ Prereq: /usr/sbin/alternatives
 Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
-BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
+BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
 %if %use_dbus
 BuildPrereq: dbus-devel = 0.23
@@ -397,6 +397,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Jan 28 2005 Tim Waugh <twaugh@redhat.com>
+- Build does not require XFree86-devel (bug #146397).
+
 * Thu Jan 27 2005 Tim Waugh <twaugh@redhat.com>
 - Corrected directory modes so that they reflect what cupsd sets them to.
 
