@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.21
-Release: 0.rc1.2
+Release: 1
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}%{rc1}-source.tar.bz2
@@ -323,6 +323,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Fri Jun  4 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-0.rc1.2
 - Build for dbus-0.21.
 - Fix SetPrinterState().
