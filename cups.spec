@@ -45,6 +45,7 @@ Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
 Patch32: cups-pid.patch
+Patch33: cups-CAN-2004-0888.patch
 Patch34: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -135,6 +136,7 @@ lpd emulation.
 %patch28 -p1 -b .no-propagate-ipp-port
 #%patch30 -p1 -b .session-printing
 %patch32 -p1 -b .pid
+%patch33 -p1 -b .CAN-2004-0888
 %if %use_dbus
 %patch34 -p1 -b .dbus
 %endif
@@ -401,6 +403,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Feb  7 2005 Tim Waugh <twaugh@redhat.com>
+- Apply patch to fix remainder of CAN-2004-0888.
+
 * Wed Feb  2 2005 Tim Waugh <twaugh@redhat.com>
 - Applied patch to prevent occasional cupsd crash on reload (bug #146850).
 
