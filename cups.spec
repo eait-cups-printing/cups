@@ -34,6 +34,7 @@ Patch10: cups-1.1.17-sanity.patch
 Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
+Patch14: cups-recycled-fd.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -120,6 +121,7 @@ lpd emulation.
 %patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
+%patch14 -p1 -b .recycled-fd
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -397,6 +399,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Feb  1 2005 Tim Waugh <twaugh@redhat.com>
+- Applied patch to prevent file descriptor confusion (STR #1068).
+
 * Fri Jan 28 2005 Tim Waugh <twaugh@redhat.com>
 - Build does not require XFree86-devel (bug #146397).
 
