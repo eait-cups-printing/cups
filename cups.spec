@@ -305,7 +305,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir %attr(0755,root,sys) /etc/cups
+%dir %attr(0775,root,sys) /etc/cups
 %dir %attr(0711,root,sys) /etc/cups/certs
 %config(noreplace) %attr(0640,root,sys) /etc/cups/classes.conf
 %config(noreplace) %attr(0640,root,sys) /etc/cups/cupsd.conf
@@ -368,7 +368,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/model
 %{_datadir}/cups/templates
 %{_datadir}/locale/*/*
-%dir %attr(1700,root,sys) /var/spool/cups/tmp
+%dir %attr(1770,root,sys) /var/spool/cups/tmp
 %dir %attr(0710,root,sys) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
@@ -397,6 +397,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Jan 27 2005 Tim Waugh <twaugh@redhat.com>
+- Corrected directory modes so that they reflect what cupsd sets them to.
+
 * Mon Jan 24 2005 Tim Waugh <twaugh@redhat.com> 1.1.23-6
 - Build against new dbus.
 
