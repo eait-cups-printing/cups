@@ -405,7 +405,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Mon Feb  7 2005 Tim Waugh <twaugh@redhat.com>
 - Use upstream patch for STR #1068.
-- Apply patch to fix remainder of CAN-2004-0888.
+- Apply patch to fix remainder of CAN-2004-0888 (bug #135378).
 
 * Wed Feb  2 2005 Tim Waugh <twaugh@redhat.com>
 - Applied patch to prevent occasional cupsd crash on reload (bug #146850).
