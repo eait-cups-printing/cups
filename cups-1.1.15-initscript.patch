@@ -1,6 +1,6 @@
---- cups-1.1.15/systemv/Makefile.noinit	Wed Jun  5 17:11:58 2002
-+++ cups-1.1.15/systemv/Makefile	Fri Jun 21 11:22:34 2002
-@@ -76,7 +76,7 @@
+--- cups-1.1.19rc4/systemv/Makefile.noinit	2002-12-20 19:39:48.000000000 +0000
++++ cups-1.1.19rc4/systemv/Makefile	2003-05-08 15:37:32.000000000 +0100
+@@ -78,7 +78,7 @@
  	$(INSTALL_BIN) lpoptions $(BINDIR)
  	$(INSTALL_BIN) lpstat $(BINDIR)
  	$(INSTALL_BIN) lppasswd $(BINDIR)
@@ -9,8 +9,8 @@
  
  
  #
---- cups-1.1.15/Makefile.noinit	Tue Apr 23 19:49:34 2002
-+++ cups-1.1.15/Makefile	Fri Jun 21 11:22:07 2002
+--- cups-1.1.19rc4/Makefile.noinit	2003-03-06 16:36:00.000000000 +0000
++++ cups-1.1.19rc4/Makefile	2003-05-08 15:39:38.000000000 +0100
 @@ -89,30 +89,6 @@
  	echo Installing cups-config script...
  	$(INSTALL_DIR) $(BINDIR)
@@ -31,7 +31,7 @@
 -	if test "x$(INITDIR)" = "x" -a "x$(INITDDIR)" != "x"; then \
 -		$(INSTALL_DIR) $(BUILDROOT)$(INITDDIR); \
 -		if test "$(INITDDIR)" = "/System/Library/StartupItems/PrintingServices"; then \
--			$(INSTALL_SCRIPT) cups.sh $(BUILDROOT)$(INITDDIR)/PrintingServices; \
+-			$(INSTALL_SCRIPT) cups.osx $(BUILDROOT)$(INITDDIR)/PrintingServices; \
 -			$(INSTALL_DATA) cups.plist $(BUILDROOT)$(INITDDIR)/StartupParameters.plist; \
 -			$(INSTALL_DIR) $(BUILDROOT)$(INITDDIR)/Resources/English.lproj; \
 -			$(INSTALL_DATA) cups.strings $(BUILDROOT)$(INITDDIR)/Resources/English.lproj/Localizable.strings; \
@@ -42,8 +42,8 @@
  
  #
  # Install source and header files...
---- cups-1.1.15/Makedefs.in.noinit	Tue Jun  4 22:32:02 2002
-+++ cups-1.1.15/Makedefs.in	Fri Jun 21 11:21:08 2002
+--- cups-1.1.19rc4/Makedefs.in.noinit	2003-04-17 15:20:47.000000000 +0100
++++ cups-1.1.19rc4/Makedefs.in	2003-05-08 15:37:32.000000000 +0100
 @@ -47,7 +47,7 @@
  # Installation programs...
  #

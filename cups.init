@@ -6,7 +6,7 @@
 #
 #   Linux chkconfig stuff:
 #
-#   chkconfig: 2345 90 10
+#   chkconfig: 2345 55 10
 #   description: Startup/shutdown script for the Common UNIX \
 #                Printing System (CUPS).
 #
@@ -68,7 +68,7 @@ start () {
 
 stop () {
 	# stop daemon
-	echo -n "Stopping $prog: "
+	echo -n $"Stopping $prog: "
 	killproc $DAEMON
 	RETVAL=$?
 	echo
@@ -111,7 +111,7 @@ case $1 in
 	;;
 	*)
 
-	echo "Usage: $DAEMON {start|stop|restart|condrestart|reload|status}"
+	echo $"Usage: $prog {start|stop|restart|condrestart|reload|status}"
 	exit 1
 esac
 

@@ -1,10 +1,11 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
+%define use_dbus 1
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.17
-Release: 13.3.0.4
+Version: 1.1.19
+Release: 13
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/cups-%{version}-source.tar.bz2
@@ -17,20 +18,21 @@ Source7: pstoraster.convs
 Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
+Source11: cups.conf
 Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
-Patch4: cups-1.1.17-uninit.patch
 Patch5: cups-idefense-v2.patch
 Patch6: cups-1.1.17-pdftops.patch
-Patch7: cups-1.1.17-lpd.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
-Patch10: cups-1.1.17-sigchld.patch
-Patch11: cups-1.1.18-str75.patchv2
-Patch12: cups-1.1.17-loop.patch
-Patch13: cups-multiple.patch
+Patch10: cups-1.1.17-sanity.patch
+Patch11: cups-1.1.19-lpstat.patch
+Patch12: cups-locale.patch
+Patch13: cups-1.1.17-loop.patch
+Patch14: cups-1.1.19-str226.patch
+Patch15: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -39,11 +41,16 @@ Requires: %{name}-libs = %{epoch}:%{version} htmlview xinetd
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
-%else
-Obsoletes: lpd lpr LPRng printconf printconf-gui printconf-tui printtool
-Provides: lpd lpr LPRng
 %endif
+
+# Unconditionally obsolete LPRng so that upgrades work properly.
+Obsoletes: lpd lpr LPRng
+Provides: lpd lpr LPRng = 3.8.15-3
+
 BuildPrereq: pam-devel XFree86-devel openssl-devel pkgconfig
+%if %use_dbus
+BuildPrereq: dbus-devel >= 0.11
+%endif
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -79,22 +86,27 @@ natively, without needing the lp/lpr commands.
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
-%patch4 -p1 -b .uninit
-%patch5 -p0 -b .security
+%patch5 -p1 -b .security
 %patch6 -p1 -b .pdftops
-%patch7 -p1 -b .lpd
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
-%patch10 -p1 -b .sigchld
-%patch11 -p1 -b .str75
-%patch12 -p1 -b .loop
-%patch13 -p1 -b .multiple
+%patch10 -p1 -b .sanity
+%patch11 -p1 -b .lpstat
+%patch12 -p1 -b .locale
+%patch13 -p1 -b .loop
+%patch14 -p1 -b .str226
+%if %use_dbus
+%patch15 -p1 -b .dbus
+%endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 perl -pi -e 's,^#(MaxLogSize\s+0),$1,' conf/cupsd.conf.in
 autoconf
 
 cp %{SOURCE5} cups-lpd.real
 perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
+
+# Let's look at the compilation command lines.
+perl -pi -e "s,^.SILENT:,," Makedefs.in
 
 %build
 if pkg-config openssl ; then
@@ -106,7 +118,11 @@ fi
 perl -pi -e "s,^DSO	=.*,DSO=gcc -fpic," Makedefs
 
 # If we got this far, all prerequisite libraries must be here.
+%ifarch ia64
+make OPTIM="$RPM_OPT_FLAGS $CFLAGS -O0 -fpic"
+%else
 make OPTIM="$RPM_OPT_FLAGS $CFLAGS -fpic"
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -173,6 +189,12 @@ install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 
+%if %use_dbus
+# D-BUS configuration.
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
+install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups.conf
+%endif
+
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 
@@ -235,21 +257,22 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir %attr(0755,lp,sys) /etc/cups
-%dir %attr(0711,lp,sys) /etc/cups/certs
-%config(noreplace) %attr(0600,lp,sys) /etc/cups/classes.conf
-%config(noreplace) %attr(0600,lp,sys) /etc/cups/cupsd.conf
-%config(noreplace) %attr(0600,lp,sys) /etc/cups/printers.conf
+%dir %attr(0755,root,sys) /etc/cups
+%dir %attr(0711,root,sys) /etc/cups/certs
+%config(noreplace) %attr(0640,root,sys) /etc/cups/classes.conf
+%config(noreplace) %attr(0640,root,sys) /etc/cups/cupsd.conf
+%config(noreplace) %attr(0640,root,sys) /etc/cups/printers.conf
 %config(noreplace) /etc/cups/client.conf
 /etc/cups/interfaces
-/etc/cups/mime.types
-/etc/cups/mime.convs
-%dir %attr(0755,lp,sys) /etc/cups/ppd
+%config(noreplace) /etc/cups/mime.types
+%config(noreplace) /etc/cups/mime.convs
+%dir %attr(0755,root,sys) /etc/cups/ppd
 /etc/cups/pstoraster.convs
-/etc/pam.d/cups
+%config(noreplace) /etc/pam.d/cups
 %doc %{_docdir}/cups-%{version}
 %config %{initdir}/cups
 %{_bindir}/cupsconfig
+%{_bindir}/cupstestppd
 %{_bindir}/cancel*
 %{_bindir}/enable*
 %{_bindir}/disable*
@@ -258,14 +281,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man?/*
 %{_mandir}/*/man?/*
 %{_sbindir}/*
-%{_datadir}/cups
+%dir %{_datadir}/cups
+%dir %{_datadir}/cups/banners
+%config(noreplace) %{_datadir}/cups/banners/*
+%{_datadir}/cups/charsets
+%{_datadir}/cups/data
+%{_datadir}/cups/doc
+%{_datadir}/cups/fonts
+%{_datadir}/cups/model
+%{_datadir}/cups/templates
 %{_datadir}/locale/*/*
-%dir %attr(1700,lp,sys) /var/spool/cups/tmp
-%dir %attr(0700,lp,sys) /var/spool/cups
+%dir %attr(1700,root,sys) /var/spool/cups/tmp
+%dir %attr(0710,root,sys) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
+%if %use_dbus
+%{_sysconfdir}/dbus-1/system.d/cups.conf
+%endif
 
 %files libs
 %defattr(-,root,root)
@@ -279,28 +313,94 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
-* Thu Dec 11 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.4
-- Backport some 1.1.20 fixes to try to fix accidental multiple copies
-  (bug #104360).
+* Thu Oct  2 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-13
+- Apply patch from STR 226 to make CUPS reload better behaved (bug #101507).
 
-* Mon Oct 20 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.3
-- Backport 1.1.19 fix for lpd.c signal handling (bug #107256).
+* Wed Sep 10 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-12
+- Prevent a libcups busy loop (bug #97958).
 
-* Tue Oct 14 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.2
-- Attempt to fix bug #97958 less invasively by back-porting a fix from
-  1.1.19.
+* Thu Aug 14 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-11
+- Another attempt to fix bug #100984.
 
-* Mon Sep  1 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3.0.1
-- Attempt to fix bug #97958.
+* Wed Aug 13 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-10
+- Pass correct attributes-natural-language through even in the absence
+  of translations for that language (bug #100984).
+- Show compilation command lines.
 
-* Thu May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.3
-- Fix typo and rebuild for proper debug stripping.
+* Wed Jul 30 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-9
+- Prevent lpstat displaying garbage.
 
-* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.2
-- Updated HTTP blocking fix to cups-1.1.18-str75.patchv2.
+* Mon Jul 21 2003 Tim Waugh <twaugh@redhat.com>
+- Mark mime.convs and mime.types as config files (bug #99461).
 
-* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13.1
-- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+* Mon Jun 23 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-8
+- Start cupsd before nfs server processes (bug #97767).
+
+* Tue Jun 17 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-7
+- Add some %if %use_dbus / %endif's to make it compile without dbus
+  (bug #97397).  Patch from Jos Vos.
+
+* Mon Jun 16 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-6
+- Don't busy loop in the client if the IPP port is in use by another
+  app (bug #97468).
+
+* Tue Jun 10 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-5
+- Mark pam.d/cups as config file not to be replaced (bug #92236).
+
+* Wed Jun 04 2003 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Tue Jun  3 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-3
+- Provide a version for LPRng (bug #92145).
+
+* Thu May 29 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-2
+- Obsolete LPRng now.
+
+* Tue May 27 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-1
+- 1.1.19.  No longer need optparse patch.
+
+* Sat May 17 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-0.rc5.4
+- Ship configuration file for D-BUS.
+
+* Fri May 16 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-0.rc5.3
+- Rebuild for dbus-0.11 API changes.
+- Fix ownership in file manifest (bug #90840).
+
+* Wed May 14 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-0.rc5.2
+- Fix option parsing in lpq (bug #90823).
+
+* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-0.rc5.1
+- 1.1.19rc5.
+
+* Thu May  8 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-0.rc4.1
+- 1.1.19rc4.  Ported initscript, idefense, ppdsdat, dbus patches.
+- No longer need error, sigchld patches.
+- Ship cupstestppd.
+
+* Thu Apr 24 2003 Tim Waugh <twaugh@redhat.com>
+- Mark banners as config files (bug #89069).
+
+* Sat Apr 12 2003 Havoc Pennington <hp@redhat.com> 1:1.1.18-4
+- adjust dbus patch - dbus_bus_get() sends the hello for you, 
+  and there were a couple of memleaks
+- buildprereq dbus 0.9
+- rebuild for new dbus
+- hope it works, I'm ssh'd in with no way to test. ;-)
+
+* Thu Apr 10 2003 Tim Waugh <twaugh@redhat.com> 1.1.18-3
+- Get on D-BUS.
+
+* Fri Mar 28 2003 Tim Waugh <twaugh@redhat.com> 1.1.18-2
+- Fix translation in the init script (bug #87551).
+
+* Wed Mar 26 2003 Tim Waugh <twaugh@redhat.com> 1.1.18-1.1
+- Turn off optimization on ia64 until bug #87383 is fixed.
+
+* Wed Mar 26 2003 Tim Waugh <twaugh@redhat.com> 1.1.18-1
+- 1.1.18.
+- No longer need uninit patch.
+- Some parts of the iDefense and pdftops patches seem to have been
+  picked up, but not others.
 
 * Wed Feb 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-13
 - Don't set SIGCHLD to SIG_IGN when using wait4 (via pclose) (bug #84101).
