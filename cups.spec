@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc1.4
+Release: 0.rc1.5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
@@ -99,6 +99,7 @@ natively, without needing the lp/lpr commands.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ippfail
+exit 1
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -341,6 +342,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Thu Oct 14 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.5
+- Fixed another typo in last patch!
+
 * Thu Oct 14 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.4
 - Fixed typo in last patch.
 
