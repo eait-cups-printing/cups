@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.17
-Release: 0.2
+Release: 0.7
 License: GPL
 Group: System Environment/Daemons
 %if "%{patchlevel}" != ""
@@ -26,6 +26,7 @@ Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.17-uninit.patch
 Patch3: cups-idefense-v2.patch
 Patch4: cups-1.1.17-pdftops.patch
+Patch5: cups-1.1.18-str75.patchv2
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -74,6 +75,7 @@ natively, without needing the lp/lpr commands.
 %patch2 -p1 -b .uninit
 %patch3 -p0 -b .security
 %patch4 -p1 -b .pdftops
+%patch5 -p1 -b .str75
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 autoconf
 
@@ -250,6 +252,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Fri May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.7
+- Rebuild for debug stripping.
+
+* Thu May 15 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.5
+- Fix typo.
+
+* Tue May 13 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.4
+- Update HTTP blocking fix to cups-1.1.18-str75.patchv2.
+
+* Mon May 12 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.3
+- Fix HTTP blocking issue with scheduler: http://www.cups.org/str.php?L75.
+
 * Wed Jan  8 2003 Tim Waugh <twaugh@redhat.com> 1.1.17-0.2
 - Fix 'condrestart' behaviour in init script.
 
