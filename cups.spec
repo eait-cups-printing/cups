@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc1.6
+Release: 0.rc1.7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
@@ -343,7 +343,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
-* Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.6
+* Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.7
 - Prevent filters generating incorrect PS in locales where "," is the
   decimal separator (bug #136102).  Patch from STR #970.
 
