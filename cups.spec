@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.22
-Release: 0.rc1.7
+Release: 0.rc1.8
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
@@ -42,7 +42,8 @@ Patch30: cups-session-printing.patch
 Patch31: cups-overread.patch
 Patch32: cups-pid.patch
 Patch33: cups-str970.patch
-Patch34: cups-dbus.patch
+Patch34: cups-135378.patch
+Patch35: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -120,8 +121,9 @@ natively, without needing the lp/lpr commands.
 %patch31 -p1 -b .overread
 %patch32 -p1 -b .pid
 %patch33 -p1 -b .str970
+%patch34 -p1 -b .135378
 %if %use_dbus
-%patch34 -p1 -b .dbus
+%patch35 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -343,6 +345,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Tue Oct 26 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.8
+- Apply patch to fix CAN-2004-0888 (bug #135378).
+
 * Wed Oct 20 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.7
 - Prevent filters generating incorrect PS in locales where "," is the
   decimal separator (bug #136102).  Patch from STR #970.
