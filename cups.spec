@@ -5,11 +5,11 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.21
-Release: 7
+Version: 1.1.22
+Release: 0.rc1.1
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}rc1-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -23,8 +23,6 @@ Patch0: cups-1.1.15-initscript.patch
 Patch1: cups-1.1.14-doclink.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
-Patch4: cups-reload.patch
-Patch5: cups-str920.patch
 Patch6: cups-1.1.17-pdftops.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
@@ -94,13 +92,11 @@ The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}rc1
 %patch0 -p1 -b .noinit
 %patch1 -p1 -b .doclink
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
-%patch4 -p1 -b .reload
-%patch5 -p1 -b .str920
 %patch6 -p1 -b .pdftops
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
@@ -343,6 +339,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/cups
 
 %changelog
+* Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.22-0.rc1.1
+- 1.1.22rc1.
+
 * Tue Oct  5 2004 Tim Waugh <twaugh@redhat.com> 1:1.1.21-7
 - Set LogFilePerm 0600 in default config file.
 
