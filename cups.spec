@@ -41,6 +41,7 @@ Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
 Patch20: cups-gcc4.patch
+Patch21: cups-slow.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
@@ -133,6 +134,7 @@ lpd emulation.
 %patch18 -p1 -b .language
 %patch19 -p1 -b .gcc34
 %patch20 -p1 -b .gcc4
+%patch21 -p1 -b .slow
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
@@ -405,6 +407,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Jun 16 2005 Tim Waugh <twaugh@redhat.com>
+- Make DeletePrinterFromClass faster (bug #160620).
+
 * Thu Mar 31 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-15
 - Don't require exact dbus version, just minimum.
 
