@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 15
+Release: 16
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -407,7 +407,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Thu Jun 16 2005 Tim Waugh <twaugh@redhat.com>
+* Thu Jun 16 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-16
 - Make DeletePrinterFromClass faster (bug #160620).
 
 * Thu Mar 31 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-15
