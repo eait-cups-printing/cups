@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 16
+Release: 17
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -48,7 +48,8 @@ Patch28: cups-no-propagate-ipp-port.patch
 Patch30: cups-session-printing.patch
 Patch32: cups-pid.patch
 Patch33: cups-CAN-2004-0888.patch
-Patch34: cups-dbus.patch
+Patch34: cups-CAN-2005-2097.patch
+Patch35: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -141,8 +142,9 @@ lpd emulation.
 #%patch30 -p1 -b .session-printing
 %patch32 -p1 -b .pid
 %patch33 -p1 -b .CAN-2004-0888
+%patch34 -p1 -b .CAN-2005-2097
 %if %use_dbus
-%patch34 -p1 -b .dbus
+%patch35 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -407,6 +409,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Sep  2 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-17
+- Fixed CAN-2005-2097 (bug #164510).
+
 * Thu Jun 16 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-16
 - Make DeletePrinterFromClass faster (bug #160620).
 
