@@ -49,7 +49,8 @@ Patch30: cups-session-printing.patch
 Patch32: cups-pid.patch
 Patch33: cups-CAN-2004-0888.patch
 Patch34: cups-CAN-2005-2097.patch
-Patch35: cups-dbus.patch
+Patch35: cups-strcasecmp.patch
+Patch36: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -143,8 +144,9 @@ lpd emulation.
 %patch32 -p1 -b .pid
 %patch33 -p1 -b .CAN-2004-0888
 %patch34 -p1 -b .CAN-2005-2097
+%patch35 -p1 -b .strcasecmp
 %if %use_dbus
-%patch35 -p1 -b .dbus
+%patch36 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -409,6 +411,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Wed Sep 28 2005 Tim Waugh <twaugh@redhat.com>
+- Added strcasecmp patch for better scaling (bug #164232).
+
 * Fri Sep  2 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-17
 - Fixed CAN-2005-2097 (bug #164510).
 
