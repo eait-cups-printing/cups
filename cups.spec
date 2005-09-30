@@ -413,6 +413,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Sep 30 2005 Tomas Mraz <tmraz@redhat.com>
+- use include instead of pam_stack in pam config
+
 * Thu Sep 29 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-18
 - Raise IPP_MAX_VALUES to 100 (bug #164232).  STR #1284.
 - Made FindDest better behaved in some instances (bug #164232).  STR #1283.
