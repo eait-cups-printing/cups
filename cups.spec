@@ -50,7 +50,7 @@ Patch32: cups-pid.patch
 Patch33: cups-CAN-2004-0888.patch
 Patch34: cups-CAN-2005-2097.patch
 Patch35: cups-finddest.patch
-Patch36: cups-IPP_MAX_VALUES.patch
+Patch36: cups-str1284.patch
 Patch37: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -146,7 +146,7 @@ lpd emulation.
 %patch33 -p1 -b .CAN-2004-0888
 %patch34 -p1 -b .CAN-2005-2097
 %patch35 -p1 -b .finddest
-%patch36 -p1 -b .IPP_MAX_VALUES
+%patch36 -p1 -b .str1284
 %if %use_dbus
 %patch37 -p1 -b .dbus
 %endif
@@ -413,6 +413,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Fri Sep 30 2005 Tim Waugh <twaugh@redhat.com>
+- Use upstream patch for STR #1284.
+
 * Fri Sep 30 2005 Tomas Mraz <tmraz@redhat.com>
 - use include instead of pam_stack in pam config
 
