@@ -414,7 +414,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Sep 29 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-18
-- Raise IPP_MAX_VALUES to 100 (bug #164232).
+- Raise IPP_MAX_VALUES to 100 (bug #164232).  STR #1284.
 - Made FindDest better behaved in some instances (bug #164232).  STR #1283.
 
 * Fri Sep  2 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-17
