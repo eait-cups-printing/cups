@@ -53,7 +53,8 @@ Patch35: cups-finddest.patch
 Patch36: cups-str1249.patch
 Patch37: cups-str1284.patch
 Patch38: cups-str1290.patch
-Patch39: cups-dbus.patch
+Patch39: cups-str1301.patch
+Patch40: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -151,8 +152,9 @@ lpd emulation.
 %patch36 -p1 -b .str1249
 %patch37 -p1 -b .str1284
 %patch38 -p1 -b .str1290
+%patch39 -p1 -b .str1301
 %if %use_dbus
-%patch39 -p1 -b .dbus
+%patch40 -p1 -b .dbus
 %endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -417,6 +419,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Oct 11 2005 Tim Waugh <twaugh@redhat.com>
+- Apply patch to fix STR #1301 (bug #169979).
+
 * Thu Oct  6 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-21
 - Apply patch to fix STR #1290.
 
