@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 21
+Release: 22
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -419,7 +419,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Tue Oct 11 2005 Tim Waugh <twaugh@redhat.com>
+* Tue Oct 11 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-22
 - Apply patch to fix STR #1301 (bug #169979).
 
 * Thu Oct  6 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-21
