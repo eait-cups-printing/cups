@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 22
+Release: 23
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -55,6 +55,7 @@ Patch37: cups-str1284.patch
 Patch38: cups-str1290.patch
 Patch39: cups-str1301.patch
 Patch40: cups-dbus.patch
+Patch41: cups-link.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -156,6 +157,7 @@ lpd emulation.
 %if %use_dbus
 %patch40 -p1 -b .dbus
 %endif
+%patch41 -p1
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -419,6 +421,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Sat Oct 15 2005 Florian La Roche <laroche@redhat.com>
+- link libcupsimage.so against libcups
+
 * Tue Oct 11 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-22
 - Apply patch to fix STR #1301 (bug #169979).
 
