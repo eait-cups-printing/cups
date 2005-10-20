@@ -72,6 +72,10 @@ Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildRequires: make >= 1:3.80
+
+# -fstack-protector-all requires GCC 4.0.1
+BuildRequires: gcc >= 4.0.1
+
 %if %use_dbus
 BuildPrereq: dbus-devel >= 0.31
 Requires: dbus >= 0.31
