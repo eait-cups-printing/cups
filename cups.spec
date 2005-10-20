@@ -180,7 +180,7 @@ if pkg-config openssl ; then
   export LDFLAGS=`pkg-config --libs-only-L openssl`
 fi
 %configure --with-docdir=%{_docdir}/cups-%{version} \
-	--with-optim="$RPM_OPT_FLAGS $CFLAGS"
+	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all"
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -421,7 +421,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
-* Sat Oct 15 2005 Florian La Roche <laroche@redhat.com>
+* Thu Oct 20 2005 Tim Waugh <twaugh@redhat.com>
+- Build with -fstack-protector-all.
+
+* Sat Oct 15 2005 Florian La Roche <laroche@redhat.com> 1:1.1.23-23
 - link libcupsimage.so against libcups
 
 * Tue Oct 11 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-22
