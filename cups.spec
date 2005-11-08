@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 24
+Release: 25
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -425,6 +425,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Nov  8 2005 Tomas Mraz <tmraz@redhat.com> 1:1.1.23-25
+- rebuilt with new openssl
+
 * Thu Oct 20 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-24
 - Build with -fstack-protector-all.
 
