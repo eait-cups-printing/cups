@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 25
+Release: 26
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -77,8 +77,8 @@ BuildRequires: make >= 1:3.80
 BuildRequires: gcc >= 4.0.1
 
 %if %use_dbus
-BuildPrereq: dbus-devel >= 0.31
-Requires: dbus >= 0.31
+BuildPrereq: dbus-devel >= 0.60
+Requires: dbus >= 0.60
 %endif
 
 %package devel
@@ -425,6 +425,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Thu Dec 01 2005 John (J5) Palmieri <johnp@redhat.com> - 1:1.1.23-26
+- rebuild for new dbus
+
 * Tue Nov  8 2005 Tomas Mraz <tmraz@redhat.com> 1:1.1.23-25
 - rebuilt with new openssl
 
