@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 26.1
+Release: 27
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -54,8 +54,9 @@ Patch36: cups-str1249.patch
 Patch37: cups-str1284.patch
 Patch38: cups-str1290.patch
 Patch39: cups-str1301.patch
-Patch40: cups-dbus.patch
-Patch41: cups-link.patch
+Patch40: cups-link.patch
+Patch41: cups-relro.patch
+Patch42: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -158,10 +159,11 @@ lpd emulation.
 %patch37 -p1 -b .str1284
 %patch38 -p1 -b .str1290
 %patch39 -p1 -b .str1301
+%patch40 -p1 -b .link
+%patch41 -p1 -b .relro
 %if %use_dbus
-%patch40 -p1 -b .dbus
+%patch42 -p1 -b .dbus
 %endif
-%patch41 -p1
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -425,6 +427,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Dec 19 2005 Tim Waugh <twaugh@redhat.com> 1:1.1.23-27
+- Link pdftops with -z relro.
+
 * Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
 - rebuilt
 
