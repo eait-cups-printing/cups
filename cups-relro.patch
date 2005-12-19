@@ -5,7 +5,7 @@
  
  include ../Makedefs
 -LDFLAGS += -pie
-+LDFLAGS += -pie -z relro
++LDFLAGS += -pie -Wl,-z,relro
  
  #
  # Object files...
