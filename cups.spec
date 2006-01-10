@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.1.23
-Release: 28
+Release: 29
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
@@ -42,6 +42,7 @@ Patch18: cups-language.patch
 Patch19: cups-gcc34.patch
 Patch20: cups-gcc4.patch
 Patch21: cups-slow.patch
+Patch22: cups-dest-cache-v2.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
@@ -148,6 +149,7 @@ lpd emulation.
 %patch19 -p1 -b .gcc34
 %patch20 -p1 -b .gcc4
 %patch21 -p1 -b .slow
+%patch22 -p1 -b .dest-cache-v2
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
@@ -429,6 +431,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Tue Jan 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.1.23-29
+- Apply dest-cache-v2 patch (bug #175847).
+
 * Wed Jan  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.1.23-28
 - Apply patch to fix CVE-2005-3625, CVE-2005-3626, CVE-2005-3627
   (bug #176868).
