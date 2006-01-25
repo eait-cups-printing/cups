@@ -433,6 +433,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Wed Jan 25 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed link patch.
+
 * Tue Jan 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.1.23-30
 - Include 'Autodetected' tag for better integration with autodetection tools.
 
