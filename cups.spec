@@ -47,7 +47,6 @@ Patch23: cups-autodetected-tag.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
-Patch30: cups-session-printing.patch
 Patch32: cups-pid.patch
 Patch33: cups-CAN-2004-0888.patch
 Patch34: cups-CAN-2005-2097.patch
@@ -155,7 +154,6 @@ lpd emulation.
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
-#%patch30 -p1 -b .session-printing
 %patch32 -p1 -b .pid
 %patch33 -p1 -b .CAN-2004-0888
 %patch34 -p1 -b .CAN-2005-2097
@@ -433,6 +431,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/cups/daemon/cups-lpd
 
 %changelog
+* Mon Feb 13 2006 Tim Waugh <twaugh@redhat.com>
+- Removed (unapplied) session printing patch.
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1:1.1.23-30.2
 - bump again for double-long bug on ppc(64)
 
