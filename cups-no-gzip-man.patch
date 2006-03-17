@@ -1,0 +1,17 @@
+--- cups-1.2svn-r5102/config-scripts/cups-manpages.m4.no-gzip-man	2006-02-13 02:46:10.000000000 +0000
++++ cups-1.2svn-r5102/config-scripts/cups-manpages.m4	2006-02-17 09:55:45.000000000 +0000
+@@ -80,10 +80,10 @@
+ 		;;
+ 	Linux* | GNU*)
+ 		# Linux and GNU Hurd
+-		MAN1EXT=1.gz
+-		MAN5EXT=5.gz
+-		MAN7EXT=7.gz
+-		MAN8EXT=8.gz
++		MAN1EXT=1
++		MAN5EXT=5
++		MAN7EXT=7
++		MAN8EXT=8
+ 		MAN8DIR=8
+ 		;;
+ 	*)

@@ -1,15 +1,16 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define use_dbus 1
 %define build_as_pie 1
+%define beta b2
+%define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.1.23
-Release: 30.2
+Version: 1.2
+Release: 0.1.%{beta}.2
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -21,44 +22,26 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Patch0: cups-1.1.15-initscript.patch
-Patch1: cups-1.1.14-doclink.patch
+Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-1.1.17-backend.patch
 Patch4: cups-ext.patch
-Patch5: cups-str1023.patch
-Patch6: cups-1.1.17-pdftops.patch
+Patch5: cups-policy.patch
+Patch6: cups-users.patch
 Patch7: cups-logfileperm.patch
 Patch8: cups-1.1.17-rcp.patch
 Patch9: cups-1.1.17-ppdsdat.patch
-Patch10: cups-1.1.17-sanity.patch
-Patch11: cups-1.1.19-lpstat.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
-Patch14: cups-str1068.patch
-Patch15: cups-sigchld.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
-Patch19: cups-gcc34.patch
-Patch20: cups-gcc4.patch
-Patch21: cups-slow.patch
 Patch22: cups-dest-cache-v2.patch
-Patch23: cups-autodetected-tag.patch
 Patch24: cups-maxlogsize.patch
-Patch25: cups-enabledisable.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch32: cups-pid.patch
-Patch33: cups-CAN-2004-0888.patch
-Patch34: cups-CAN-2005-2097.patch
-Patch35: cups-finddest.patch
-Patch36: cups-str1249.patch
-Patch37: cups-str1284.patch
-Patch38: cups-str1290.patch
-Patch39: cups-str1301.patch
 Patch40: cups-link.patch
 Patch41: cups-relro.patch
-Patch42: cups-CVE-2005-3625,6,7.patch
-Patch43: cups-dbus.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -74,15 +57,15 @@ Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel openssl-devel pkgconfig
+BuildPrereq: gnutls-devel
 BuildRequires: make >= 1:3.80
+BuildRequires: php-devel, aspell-devel, pcre-devel
 
 # -fstack-protector-all requires GCC 4.0.1
 BuildRequires: gcc >= 4.0.1
 
-%if %use_dbus
 BuildPrereq: dbus-devel >= 0.60
 Requires: dbus >= 0.60
-%endif
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -124,50 +107,30 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{beta}
 %patch0 -p1 -b .noinit
-%patch1 -p1 -b .doclink
+%patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .backend
 %patch4 -p1 -b .ext
-%patch5 -p1 -b .str1023
-%patch6 -p1 -b .pdftops
+%patch5 -p1 -b .policy
+%patch6 -p1 -b .users
 %patch7 -p1 -b .logfileperm
 %patch8 -p1 -b .rcp
 %patch9 -p1 -b .ppdsdat
-%patch10 -p1 -b .sanity
-%patch11 -p1 -b .lpstat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
-%patch14 -p1 -b .str1068
-%patch15 -p1 -b .sigchld
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
-%patch19 -p1 -b .gcc34
-%patch20 -p1 -b .gcc4
-%patch21 -p1 -b .slow
 %patch22 -p1 -b .dest-cache-v2
-%patch23 -p1 -b .autodetected-tag
 %patch24 -p1 -b .maxlogsize
-%patch25 -p1 -b .enabledisable
 %patch28 -p1 -b .no-propagate-ipp-port
 %patch32 -p1 -b .pid
-%patch33 -p1 -b .CAN-2004-0888
-%patch34 -p1 -b .CAN-2005-2097
-%patch35 -p1 -b .finddest
-%patch36 -p1 -b .str1249
-%patch37 -p1 -b .str1284
-%patch38 -p1 -b .str1290
-%patch39 -p1 -b .str1301
 %patch40 -p1 -b .link
 %patch41 -p1 -b .relro
-%patch42 -p1 -b .CVE-2005-3625,6,7
-%if %use_dbus
-%patch43 -p1 -b .dbus
-%endif
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -177,11 +140,6 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
-
-for i in man/{es,fr}/*.man templates/{de,fr}/*.tmpl; do
-	iconv -f iso-8859-1 -t utf-8 < "$i" > "${i}_"
-	mv "${i}_" "$i"
-done
 
 %build
 if pkg-config openssl ; then
@@ -227,7 +185,7 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sy
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
-install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_libdir}/cups/backend/ncp
+install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 # Deal with users trying to access the admin tool at
@@ -256,28 +214,20 @@ EOF
 done
 
 # Ship pstoraster (bug #69573).
-install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{_libdir}/cups/filter
+install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 
-%if %use_dbus
-# D-BUS configuration.
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d
-install -c -m 644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/dbus-1/system.d/cups.conf
-%endif
+# Ship a clients.conf file.
+touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
+
+# Ship an SSL directory
+mkdir $RPM_BUILD_ROOT%{_sysconfdir}/cups/ssl
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
-
-# Remove .pdf from docs, fix links
-for pdf in cmp.pdf ipp.pdf sam.pdf spm.pdf ssr.pdf sum.pdf translation.pdf \
-           idd.pdf overview.pdf sdd.pdf sps.pdf stp.pdf svd.pdf
-do
-    perl -p -i -e "s@$pdf@http://www.cups.org/$pdf@" $RPM_BUILD_ROOT%{_docdir}/cups-%{version}/documentation.html
-done
-find $RPM_BUILD_ROOT%{_docdir}/cups-%{version} -name *.pdf |xargs rm
 
 
 %post
@@ -327,90 +277,78 @@ fi
 exit 0
 
 %triggerin -- samba-client
-ln -sf ../../../bin/smbspool %{_libdir}/cups/backend/smb || :
+ln -sf ../../../bin/smbspool %{cups_serverbin}/backend/smb || :
 exit 0
 
 %triggerun -- samba-client
 [ $2 = 0 ] || exit 0
-rm -f %{_libdir}/cups/backend/smb
+rm -f %{cups_serverbin}/backend/smb
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir %attr(0775,root,sys) /etc/cups
-%dir %attr(0711,root,sys) /etc/cups/certs
-%config(noreplace) %attr(0640,root,sys) /etc/cups/classes.conf
-%config(noreplace) %attr(0640,root,sys) /etc/cups/cupsd.conf
-%config(noreplace) %attr(0640,root,sys) /etc/cups/printers.conf
-%config(noreplace) /etc/cups/client.conf
+%dir %attr(0755,root,nobody) /etc/cups
+%dir %attr(0511,lp,sys) /var/run/cups/certs
+%config(noreplace) %attr(0640,root,nobody) /etc/cups/cupsd.conf
+%attr(0640,root,nobody) /etc/cups/cupsd.conf.default
+%config(noreplace) %attr(0644,root,nobody) /etc/cups/client.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
-%dir %attr(0755,root,sys) /etc/cups/ppd
+%dir %attr(0755,root,nobody) /etc/cups/ppd
+%dir %attr(0700,root,nobody) /etc/cups/ssl
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %dir %{_docdir}/cups-%{version}
+%{_docdir}/cups-%{version}/favicon.ico
 %{_docdir}/cups-%{version}/images
+%{_docdir}/cups-%{version}/ja
 %{_docdir}/cups-%{version}/*.css
-%{_docdir}/cups-%{version}/documentation.html
-%{_docdir}/cups-%{version}/??
 %{_docdir}/cups-%{version}/admin
 %{_docdir}/cups-%{version}/classes
 %{_docdir}/cups-%{version}/jobs
 %{_docdir}/cups-%{version}/printers
 %doc %{_docdir}/cups-%{version}/index.html
-%doc %{_docdir}/cups-%{version}/cmp.html
-%doc %{_docdir}/cups-%{version}/idd.html
-%doc %{_docdir}/cups-%{version}/ipp.html
-%doc %{_docdir}/cups-%{version}/overview.html
-%doc %{_docdir}/cups-%{version}/sam.html
-%doc %{_docdir}/cups-%{version}/sdd.html
-%doc %{_docdir}/cups-%{version}/spm.html
-%doc %{_docdir}/cups-%{version}/sps.html
-%doc %{_docdir}/cups-%{version}/ssr.html
-%doc %{_docdir}/cups-%{version}/stp.html
-%doc %{_docdir}/cups-%{version}/sum.html
-%doc %{_docdir}/cups-%{version}/svd.html
-%doc %{_docdir}/cups-%{version}/translation.html
+%doc %{_docdir}/cups-%{version}/help
 %doc %{_docdir}/cups-%{version}/robots.txt
 %config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cancel*
-%{_bindir}/enable*
-%{_bindir}/disable*
-%{_bindir}/cupsenable*
-%{_bindir}/cupsdisable*
 %{_bindir}/lp*
-%dir %{_libdir}/cups
-%{_libdir}/cups/backend
-%{_libdir}/cups/cgi-bin
-%dir %{_libdir}/cups/daemon
-%{_libdir}/cups/daemon/cups-polld
-%{_libdir}/cups/filter
+%dir %{cups_serverbin}
+%{cups_serverbin}/backend
+%{cups_serverbin}/cgi-bin
+%dir %{cups_serverbin}/daemon
+%{cups_serverbin}/daemon/cups-polld
+%{cups_serverbin}/daemon/cups-deviced
+%{cups_serverbin}/daemon/cups-driverd
+%{cups_serverbin}/notifier/mailto
+%{cups_serverbin}/notifier/testnotify
+%{cups_serverbin}/filter
+%{cups_serverbin}/monitor
 %{_mandir}/man?/*
-%{_mandir}/*/man?/*
 %{_sbindir}/*
 %dir %{_datadir}/cups
 %dir %{_datadir}/cups/banners
 %config(noreplace) %{_datadir}/cups/banners/*
 %{_datadir}/cups/charsets
+%{_datadir}/cups/charmaps
 %{_datadir}/cups/data
 %{_datadir}/cups/doc
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
 %{_datadir}/cups/templates
 %{_datadir}/locale/*/*
-%dir %attr(1770,root,sys) /var/spool/cups/tmp
-%dir %attr(0710,root,sys) /var/spool/cups
+%dir %attr(1770,root,nobody) /var/spool/cups/tmp
+%dir %attr(0710,root,nobody) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
-%if %use_dbus
 %{_sysconfdir}/dbus-1/system.d/cups.conf
-%endif
+%{_libdir}/php/modules/*.so
 
 %files libs
 %defattr(-,root,root)
@@ -420,28 +358,71 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/cups-config
 %{_libdir}/*.so
-%{_libdir}/*.a
 %{_includedir}/cups
 
 %files lpd
 %defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
-%dir %{_libdir}/cups
-%dir %{_libdir}/cups/daemon
-%{_libdir}/cups/daemon/cups-lpd
+%dir %{cups_serverbin}
+%dir %{cups_serverbin}/daemon
+%{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon Feb 13 2006 Tim Waugh <twaugh@redhat.com>
+* Fri Mar 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.2
+- Rebuilt.
+
+* Tue Mar 14 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.1
+- Build requires gnutls-devel.
+- Fixed default policy name.
+- Fixed 'set-allowed-users' in web UI.
+
+* Mon Mar 13 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.0
+- 1.2b2.
+- Use new CUPS_SERVERBIN location (/usr/lib/cups even on 64-bit hosts).
+
+* Fri Mar 10 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed some permissions.
+
+* Fri Mar 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b1.1
+- Ship /etc/cups/ssl directory.
+
+* Thu Mar  9 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b1.0
+- 1.2b1.  No longer need devid patch.
+
+* Wed Mar  8 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5238.2
+- Fixed 'device-id' attribute in GET_DEVICES requests (STR #1467).
+
+* Tue Mar  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5238.1
+- New svn snapshot.
+- No longer need browse or raw patches.
+
+* Wed Mar  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5137.1
+- Fixed raw printing.
 - Removed (unapplied) session printing patch.
+- Fixed browse info.
 
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 1:1.1.23-30.2
-- bump again for double-long bug on ppc(64)
+* Thu Feb 23 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5137.0
+- New svn snapshot.
 
-* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 1:1.1.23-30.1
-- rebuilt for new gcc4.1 snapshot and glibc changes
+* Fri Feb 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5102.0
+- New svn snapshot.
+- No longer need enabledisable patch.
+- Fixed double-free in scheduler/policy.c (STR #1428).
 
-* Wed Jan 25 2006 Tim Waugh <twaugh@redhat.com>
-- Fixed link patch.
+* Fri Feb 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn5083.0
+- New svn snapshot.
+
+* Wed Jan 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.0.svn4964.0
+- Use -fPIE not -fpie in PIE patch.
+- Fix link patch.
+- Patch in PIE instead of using --enable-pie, since that doesn't work.
+
+* Fri Jan 20 2006 Tim Waugh <twaugh@redhat.com>
+- 1.2 svn snapshot.
+- No longer need doclink, str1023, pdftops, sanity, lpstat, str1068,
+  sigchld, gcc34, gcc4, slow, CAN-2004-0888, CAN-2005-2097, finddest,
+  str1249, str1284, str1290, str1301, CVE-2005-3625,6,7 patches.
+- Removed autodetect-tag patch.
 
 * Tue Jan 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.1.23-30
 - Include 'Autodetected' tag for better integration with autodetection tools.

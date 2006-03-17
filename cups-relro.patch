@@ -1,5 +1,5 @@
---- cups-1.1.23/pdftops/Makefile.relro	2005-12-19 16:48:14.000000000 +0000
-+++ cups-1.1.23/pdftops/Makefile	2005-12-19 16:50:49.000000000 +0000
+--- cups-1.2svn-r4964/pdftops/Makefile.relro	2006-01-25 16:56:03.000000000 +0000
++++ cups-1.2svn-r4964/pdftops/Makefile	2006-01-25 16:56:40.000000000 +0000
 @@ -9,7 +9,7 @@
  
  

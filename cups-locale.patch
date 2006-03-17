@@ -1,28 +1,39 @@
-diff -ruN cups-1.1.19.orig/cups/language.c cups-1.1.19/cups/language.c
---- cups-1.1.19.orig/cups/language.c	2003-08-14 20:13:18.000000000 +0900
-+++ cups-1.1.19/cups/language.c	2003-08-14 20:37:37.000000000 +0900
-@@ -188,6 +188,7 @@
- 			charset[16],	/* Character set */
- 			*ptr,		/* Pointer into language/ */
+--- cups-1.2svn-r5137/cups/language.c.locale	2006-02-15 20:11:10.000000000 +0000
++++ cups-1.2svn-r5137/cups/language.c	2006-02-23 14:43:59.000000000 +0000
+@@ -276,6 +276,7 @@
+ #endif /* CODESET */
+ 			*ptr,		/* Pointer into language/charset */
  			real[48],	/* Real language name */
 +			ll_cc[48],	/* Language + Country name */
- 			filename[1024],	/* Filename for language locale file */
- 			*localedir;	/* Directory for locale files */
+ 			filename[1024];	/* Filename for language locale file */
    cups_encoding_t	encoding;	/* Encoding to use */
-@@ -356,6 +357,7 @@
-   */
+   cups_lang_t		*lang;		/* Current language... */
+@@ -445,8 +446,10 @@
+   country[0] = '\0';
  
-   snprintf(real, sizeof(real), "%s_%s", langname, country);
-+  strcpy(ll_cc, real);
+   if (language == NULL || !language[0] ||
+-      !strcmp(language, "POSIX"))
++      !strcmp(language, "POSIX")) {
+     strcpy(langname, "C");
++    strcpy(ll_cc, langname);
++  }
+   else
+   {
+    /*
+@@ -476,6 +479,7 @@
+       *ptr = '\0';
+     }
  
-   if ((lang = cups_cache_lookup(real, encoding)) != NULL)
-     return (lang);
-@@ -468,7 +470,7 @@
++    snprintf(ll_cc, sizeof(ll_cc), "%s_%s", langname, country);
+     if (*language == '.' && !charset[0])
+     {
+      /*
+@@ -617,7 +621,7 @@
    */
  
    lang->used ++;
 -  strlcpy(lang->language, real, sizeof(lang->language));
 +  strlcpy(lang->language, ll_cc, sizeof(lang->language));
  
-   if (charset[0])
+   if (encoding != CUPS_AUTO_ENCODING)
      lang->encoding = encoding;
