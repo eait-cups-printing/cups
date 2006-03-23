@@ -226,7 +226,7 @@ mkdir $RPM_BUILD_ROOT%{_sysconfdir}/cups/ssl
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
-rm -f /usr/share/applications/cups.desktop
+rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 
 
 %post
