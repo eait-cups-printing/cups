@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.1.%{beta}.2
+Release: 0.1.%{beta}.3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -21,16 +21,15 @@ Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
-Patch0: cups-1.1.15-initscript.patch
-Patch1: cups-no-gzip-man.patch
-Patch2: cups-1.1.16-system-auth.patch
-Patch3: cups-1.1.17-backend.patch
-Patch4: cups-ext.patch
-Patch5: cups-policy.patch
-Patch6: cups-users.patch
-Patch7: cups-logfileperm.patch
-Patch8: cups-1.1.17-rcp.patch
-Patch9: cups-1.1.17-ppdsdat.patch
+Patch0: cups-1.2svn5322.patch
+Patch1: cups-1.1.15-initscript.patch
+Patch2: cups-no-gzip-man.patch
+Patch3: cups-1.1.16-system-auth.patch
+Patch4: cups-1.1.17-backend.patch
+Patch5: cups-ext.patch
+Patch8: cups-logfileperm.patch
+Patch9: cups-1.1.17-rcp.patch
+Patch10: cups-1.1.17-ppdsdat.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
 Patch16: cups-pie.patch
@@ -108,16 +107,15 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}%{beta}
-%patch0 -p1 -b .noinit
-%patch1 -p1 -b .no-gzip-man
-%patch2 -p1 -b .system-auth
-%patch3 -p1 -b .backend
-%patch4 -p1 -b .ext
-%patch5 -p1 -b .policy
-%patch6 -p1 -b .users
-%patch7 -p1 -b .logfileperm
-%patch8 -p1 -b .rcp
-%patch9 -p1 -b .ppdsdat
+%patch0 -p1 -b .svn5322
+%patch1 -p1 -b .noinit
+%patch2 -p1 -b .no-gzip-man
+%patch3 -p1 -b .system-auth
+%patch4 -p1 -b .backend
+%patch5 -p1 -b .ext
+%patch8 -p1 -b .logfileperm
+%patch9 -p1 -b .rcp
+%patch10 -p1 -b .ppdsdat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
 %if %build_as_pie
@@ -228,6 +226,7 @@ mkdir $RPM_BUILD_ROOT%{_sysconfdir}/cups/ssl
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
+rm -f /usr/share/applications/cups.desktop
 
 
 %post
@@ -305,6 +304,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/cups-%{version}/favicon.ico
 %{_docdir}/cups-%{version}/images
 %{_docdir}/cups-%{version}/ja
+%{_docdir}/cups-%{version}/es
 %{_docdir}/cups-%{version}/*.css
 %{_docdir}/cups-%{version}/admin
 %{_docdir}/cups-%{version}/classes
@@ -315,6 +315,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_docdir}/cups-%{version}/robots.txt
 %config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
+%{_bindir}/cupstestdsc
 %{_bindir}/cancel*
 %{_bindir}/lp*
 %dir %{cups_serverbin}
@@ -368,6 +369,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Mar 23 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.3
+- Update to svn snapshot.  No longer need users or policy patches.
+
 * Fri Mar 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.2
 - Rebuilt.
 
