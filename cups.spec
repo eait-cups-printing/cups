@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.1.%{beta}.4
+Release: 0.1.%{beta}.5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -27,6 +27,7 @@ Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
+Patch6: cups-kde.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
@@ -113,6 +114,7 @@ lpd emulation.
 %patch3 -p1 -b .system-auth
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
+%patch6 -p1 -b .kde
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
@@ -369,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Mar 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.5
+- Fix KDE compatibility symbols _ipp_add_attr/_ipp_free_attr.
+
 * Fri Mar 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.4
 - Update to svn snapshot.
 
