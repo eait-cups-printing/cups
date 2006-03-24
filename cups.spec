@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.1.%{beta}.5
+Release: 0.1.%{beta}.6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -371,6 +371,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Mar 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.6
+- Add KDE compatibility symbols _ipp_add_attr/_ipp_free_attr to ipp.h, with
+  a comment saying why they shouldn't be used.
+
 * Fri Mar 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.5
 - Fix KDE compatibility symbols _ipp_add_attr/_ipp_free_attr.
 
