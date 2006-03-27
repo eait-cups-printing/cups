@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.0
+Release: 0.2.%{beta}.1
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -218,7 +218,9 @@ install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 
-# Ship a clients.conf file.
+# Ship a printers.conf file, and a client.conf file.  That way, they get
+# their SELinux file contexts set correctly.
+touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
 
 # Ship an SSL directory
@@ -370,6 +372,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Mar 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.1
+- Ship a printers.conf file, and a client.conf file.  That way, they get
+  their SELinux file contexts set correctly.
+
 * Mon Mar 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.0
 - 1.2rc1.
 
