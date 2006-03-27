@@ -296,6 +296,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0640,root,nobody) /etc/cups/cupsd.conf
 %attr(0640,root,nobody) /etc/cups/cupsd.conf.default
 %config(noreplace) %attr(0644,root,nobody) /etc/cups/client.conf
+%config(noreplace) %attr(0600,root,nobody) /etc/cups/printers.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
