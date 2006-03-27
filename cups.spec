@@ -1,13 +1,13 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define build_as_pie 1
-%define beta b2
+%define beta rc1
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.1.%{beta}.6
+Release: 0.2.%{beta}.0
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -21,7 +21,6 @@ Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
-Patch0: cups-1.2svn5335.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -108,7 +107,6 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}%{beta}
-%patch0 -p1 -b .svn5335
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -229,6 +227,7 @@ mkdir $RPM_BUILD_ROOT%{_sysconfdir}/cups/ssl
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
+rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
 
 %post
@@ -371,6 +370,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Mar 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.0
+- 1.2rc1.
+
 * Fri Mar 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.1.b2.6
 - Add KDE compatibility symbols _ipp_add_attr/_ipp_free_attr to ipp.h, with
   a comment saying why they shouldn't be used.
