@@ -27,6 +27,7 @@ Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
 Patch6: cups-kde.patch
+Patch7: cups-str1515.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
@@ -113,6 +114,7 @@ lpd emulation.
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .kde
+%patch7 -p1 -b .str1515
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
@@ -373,6 +375,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Mar 28 2006 Tim Waugh <twaugh@redhat.com>
+- Fix lpq -h (STR#1515, bug #186686).
+
 * Mon Mar 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.1
 - Ship a printers.conf file, and a client.conf file.  That way, they get
   their SELinux file contexts set correctly.
