@@ -31,8 +31,10 @@ Patch7: cups-str1515.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
+Patch11: cups-parallel.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
+Patch14: cups-str1521.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -118,8 +120,10 @@ lpd emulation.
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
+%patch11 -p1 -b .parallel
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
+%patch14 -p1 -b .str1521
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -375,6 +379,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Mar 29 2006 Tim Waugh <twaugh@redhat.com>
+- Fix group list of non-root backends (STR #1521, bug #186954).
+
 * Tue Mar 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.2
 - Fix lpq -h (STR#1515, bug #186686).
 
