@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.2
+Release: 0.2.%{beta}.3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -379,7 +379,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Mar 29 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Mar 29 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.3
 - Fix group list of non-root backends (STR #1521, bug #186954).
 
 * Tue Mar 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.2
