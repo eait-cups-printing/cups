@@ -31,7 +31,6 @@ Patch7: cups-str1515.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
-Patch11: cups-parallel.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
 Patch14: cups-str1521.patch
@@ -120,7 +119,6 @@ lpd emulation.
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
-%patch11 -p1 -b .parallel
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
 %patch14 -p1 -b .str1521
