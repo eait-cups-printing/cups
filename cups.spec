@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.3
+Release: 0.2.%{beta}.4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -31,6 +31,7 @@ Patch7: cups-str1515.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
+Patch11: cups-str1528.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
 Patch14: cups-str1521.patch
@@ -119,6 +120,7 @@ lpd emulation.
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
+%patch11 -p1 -b .str1528
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
 %patch14 -p1 -b .str1521
@@ -377,6 +379,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Mar 31 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.4
+- Fixed interaction with CUPS 1.1 servers (STR #1528).
+
 * Wed Mar 29 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.3
 - Fix group list of non-root backends (STR #1521, bug #186954).
 
