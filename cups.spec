@@ -35,6 +35,7 @@ Patch11: cups-str1528.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
 Patch14: cups-str1521.patch
+Patch15: cups-string.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
@@ -124,6 +125,7 @@ lpd emulation.
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
 %patch14 -p1 -b .str1521
+%patch15 -p1 -b .string
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
@@ -379,6 +381,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sat Apr  1 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed _cupsStrFree() (STR #1529).
+
 * Fri Mar 31 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.4
 - Fixed interaction with CUPS 1.1 servers (STR #1528).
 
