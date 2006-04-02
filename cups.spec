@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.4
+Release: 0.2.%{beta}.5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -39,6 +39,7 @@ Patch15: cups-string.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
+Patch19: cups-gnome.patch
 Patch22: cups-dest-cache-v2.patch
 Patch24: cups-maxlogsize.patch
 Patch28: cups-no-propagate-ipp-port.patch
@@ -131,6 +132,7 @@ lpd emulation.
 %endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
+%patch19 -p1 -b .gnome
 %patch22 -p1 -b .dest-cache-v2
 %patch24 -p1 -b .maxlogsize
 %patch28 -p1 -b .no-propagate-ipp-port
@@ -381,6 +383,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sun Apr  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.5
+- Backported svn 5365:5366 change for mutex-protected stringpool.
+
 * Sat Apr  1 2006 Tim Waugh <twaugh@redhat.com>
 - Fixed _cupsStrFree() (STR #1529).
 
