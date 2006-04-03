@@ -384,7 +384,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sun Apr  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.5
-- Backported svn 5365:5366 change for mutex-protected stringpool.
+- Backported svn 5365:5366 change for mutex-protected stringpool (STR #1530).
 
 * Sat Apr  1 2006 Tim Waugh <twaugh@redhat.com>
 - Fixed _cupsStrFree() (STR #1529).
