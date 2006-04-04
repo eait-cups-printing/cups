@@ -63,6 +63,7 @@ Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel openssl-devel pkgconfig
 BuildPrereq: gnutls-devel
+BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, aspell-devel, pcre-devel
 
@@ -385,6 +386,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr  4 2006 Tim Waugh <twaugh@redhat.com>
+- Build requires openldap-devel.
+
 * Tue Apr  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.6
 - Tweak to allow 'usb:/dev/usb/lp0'-style URIs again.
 
