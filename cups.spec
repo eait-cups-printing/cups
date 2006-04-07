@@ -392,6 +392,7 @@ rm -rf $RPM_BUILD_ROOT
 - Build with LDAP_DEPRECATED=1, to pick up declarations of ldap_init() etc.
 - Only warn about ACLs once (STR #1532).
 - Fix imagetops filter (STR #1533).
+- Sync pstops.c with svn 5382.
 
 * Thu Apr  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.7
 - Build requires openldap-devel.
