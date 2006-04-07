@@ -45,6 +45,7 @@ Patch21: cups-pstops.patch
 Patch22: cups-dest-cache-v2.patch
 Patch23: cups-str1532.patch
 Patch24: cups-maxlogsize.patch
+Patch25: cups-str1533.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch32: cups-pid.patch
 Patch40: cups-link.patch
@@ -141,6 +142,7 @@ lpd emulation.
 %patch22 -p1 -b .dest-cache-v2
 %patch23 -p1 -b .str1532
 %patch24 -p1 -b .maxlogsize
+%patch25 -p1 -b .str1533
 %patch28 -p1 -b .no-propagate-ipp-port
 %patch32 -p1 -b .pid
 %patch40 -p1 -b .link
@@ -389,6 +391,7 @@ rm -rf $RPM_BUILD_ROOT
 - No longer need openssl-devel.
 - Build with LDAP_DEPRECATED=1, to pick up declarations of ldap_init() etc.
 - Only warn about ACLs once (STR #1532).
+- Fix imagetops filter (STR #1533).
 
 * Thu Apr  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.7
 - Build requires openldap-devel.
