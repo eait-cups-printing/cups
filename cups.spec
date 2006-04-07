@@ -46,6 +46,7 @@ Patch22: cups-dest-cache-v2.patch
 Patch23: cups-str1532.patch
 Patch24: cups-maxlogsize.patch
 Patch25: cups-str1533.patch
+Patch26: cups-scheduler.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch32: cups-pid.patch
 Patch40: cups-link.patch
@@ -143,6 +144,7 @@ lpd emulation.
 %patch23 -p1 -b .str1532
 %patch24 -p1 -b .maxlogsize
 %patch25 -p1 -b .str1533
+%patch26 -p1 -b .scheduler
 %patch28 -p1 -b .no-propagate-ipp-port
 %patch32 -p1 -b .pid
 %patch40 -p1 -b .link
@@ -387,6 +389,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com>
+- Sync scheduler/* with svn 5383.
+
 * Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.8
 - No longer need openssl-devel.
 - Build with LDAP_DEPRECATED=1, to pick up declarations of ldap_init() etc.
