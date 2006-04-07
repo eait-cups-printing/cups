@@ -57,7 +57,7 @@ Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel pkgconfig
-BuildPrereq: gnutls-devel
+BuildPrereq: gnutls-devel acl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, aspell-devel, pcre-devel
@@ -371,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com>
+- Build requires libacl-devel.
+
 * Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.4.rc2.1
 - 1.2rc2.
 
