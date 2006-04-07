@@ -1,13 +1,13 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define build_as_pie 1
-%define beta rc1
+%define beta rc2
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.9
+Release: 0.4.%{beta}.1
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -27,26 +27,17 @@ Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
 Patch6: cups-kde.patch
-Patch7: cups-str1515.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
-Patch11: cups-str1528.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
-Patch14: cups-str1521.patch
-Patch15: cups-string.patch
 Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
-Patch19: cups-gnome.patch
 Patch20: cups-direct-usb.patch
-Patch21: cups-pstops.patch
 Patch22: cups-dest-cache-v2.patch
-Patch23: cups-str1532.patch
 Patch24: cups-maxlogsize.patch
-Patch25: cups-str1533.patch
-Patch26: cups-scheduler.patch
 Patch28: cups-no-propagate-ipp-port.patch
 Patch32: cups-pid.patch
 Patch40: cups-link.patch
@@ -123,28 +114,19 @@ lpd emulation.
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .kde
-%patch7 -p1 -b .str1515
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
-%patch11 -p1 -b .str1528
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
-%patch14 -p1 -b .str1521
-%patch15 -p1 -b .string
 %if %build_as_pie
 %patch16 -p1 -b .pie
 %endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
-%patch19 -p1 -b .gnome
 %patch20 -p1 -b .direct-usb
-%patch21 -p1 -b .pstops
 %patch22 -p1 -b .dest-cache-v2
-%patch23 -p1 -b .str1532
 %patch24 -p1 -b .maxlogsize
-%patch25 -p1 -b .str1533
-%patch26 -p1 -b .scheduler
 %patch28 -p1 -b .no-propagate-ipp-port
 %patch32 -p1 -b .pid
 %patch40 -p1 -b .link
@@ -389,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.4.rc2.1
+- 1.2rc2.
+
 * Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.9
 - Sync scheduler/* with svn 5383.
 
