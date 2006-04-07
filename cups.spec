@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.2.%{beta}.7
+Release: 0.2.%{beta}.8
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -387,7 +387,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com>
+* Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.2.rc1.8
 - No longer need openssl-devel.
 - Build with LDAP_DEPRECATED=1, to pick up declarations of ldap_init() etc.
 - Only warn about ACLs once (STR #1532).
