@@ -21,6 +21,7 @@ Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
+Source13: pdftops.conf
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -57,7 +58,7 @@ Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr LPRng = 3.8.15-3
 
 BuildPrereq: pam-devel pkgconfig
-BuildPrereq: gnutls-devel acl-devel
+BuildPrereq: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, aspell-devel, pcre-devel
@@ -183,6 +184,7 @@ install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
+install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
@@ -295,6 +297,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0640,root,nobody) /etc/cups/cupsd.conf.default
 %config(noreplace) %attr(0644,root,nobody) /etc/cups/client.conf
 %config(noreplace) %attr(0600,root,nobody) /etc/cups/printers.conf
+%config(noreplace) %attr(0644,root,nobody) /etc/cups/pdftops.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
@@ -371,6 +374,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr 11 2006 Tim Waugh <twaugh@redhat.com>
+- Ship a /etc/cups/pdftops.conf file (bug #188583).
+
 * Fri Apr  7 2006 Tim Waugh <twaugh@redhat.com>
 - Build requires libacl-devel.
 
