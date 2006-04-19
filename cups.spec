@@ -28,6 +28,7 @@ Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
 Patch6: cups-kde.patch
+Patch7: cups-banners.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
@@ -115,6 +116,7 @@ lpd emulation.
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .kde
+%patch7 -p1 -b .banners
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
@@ -374,6 +376,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Apr 19 2006 Tim Waugh <twaugh@redhat.com>
+- Ignore .rpmnew and .rpmsave banner files.
+
 * Tue Apr 11 2006 Tim Waugh <twaugh@redhat.com>
 - Ship a /etc/cups/pdftops.conf file (bug #188583).
 
