@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.4.%{beta}.1
+Release: 0.4.%{beta}.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -22,12 +22,12 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
+Patch0: cups-rc2-5446.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
-Patch6: cups-kde.patch
 Patch7: cups-banners.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
@@ -110,12 +110,12 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}%{beta}
+%patch0 -p0 -b .rc2-5446
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
-%patch6 -p1 -b .kde
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
@@ -312,6 +312,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/cups-%{version}/images
 %{_docdir}/cups-%{version}/ja
 %{_docdir}/cups-%{version}/es
+%{_docdir}/cups-%{version}/sv
 %{_docdir}/cups-%{version}/*.css
 %{_docdir}/cups-%{version}/admin
 %{_docdir}/cups-%{version}/classes
@@ -376,6 +377,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Apr 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.4.rc2.2
+- Updated to svn 5446.
+
 * Wed Apr 19 2006 Tim Waugh <twaugh@redhat.com>
 - Ignore .rpmnew and .rpmsave banner files.
 
