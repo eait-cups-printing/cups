@@ -213,6 +213,13 @@ If your browser does not support redirection, please use
 EOF
 done
 
+cat >$RPM_BUILD_ROOT%{_sysconfdir}/cups/snmp.conf <<"EOF"
+#Address @LOCAL
+#Community public
+#DebugLevel 0
+#HostNameLookups off
+EOF
+
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
@@ -300,6 +307,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0644,root,nobody) /etc/cups/client.conf
 %config(noreplace) %attr(0600,root,nobody) /etc/cups/printers.conf
 %config(noreplace) %attr(0644,root,nobody) /etc/cups/pdftops.conf
+%config(noreplace) %attr(0644,root,nobody) /etc/cups/snmp.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
@@ -377,6 +385,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Apr 24 2006 Tim Waugh <twaugh@redhat.com>
+- Ship an snmp.conf.
+
 * Fri Apr 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.4.rc2.2
 - Updated to svn 5446.
 
