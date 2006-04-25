@@ -301,6 +301,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %dir %attr(0755,root,nobody) /etc/cups
+%dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
 %config(noreplace) %attr(0640,root,nobody) /etc/cups/cupsd.conf
 %attr(0640,root,nobody) /etc/cups/cupsd.conf.default
@@ -386,6 +387,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
+- Own /var/run/cups (bug #189561).
+
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.2
 - Patch pdftops to understand 'includeifexists', and use that in the
   pdftops.conf file (bug #189809).
