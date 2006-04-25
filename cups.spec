@@ -22,6 +22,7 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
+Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -110,6 +111,7 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}%{beta}
+%patch0 -p0 -b .svn
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -389,6 +391,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
 - Own /var/run/cups (bug #189561).
+- Sync from svn5460 to svn5462.
 
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.2
 - Patch pdftops to understand 'includeifexists', and use that in the
