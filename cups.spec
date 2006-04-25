@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.5.%{beta}.1
+Release: 0.5.%{beta}.2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -386,7 +386,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
+* Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.2
 - Patch pdftops to understand 'includeifexists', and use that in the
   pdftops.conf file (bug #189809).
 
