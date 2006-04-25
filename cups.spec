@@ -27,6 +27,7 @@ Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
+Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
@@ -114,6 +115,7 @@ lpd emulation.
 %patch3 -p1 -b .system-auth
 %patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
+%patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
@@ -384,6 +386,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
+- Patch pdftops to understand 'includeifexists', and use that in the
+  pdftops.conf file (bug #189809).
+
 * Mon Apr 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.1
 - 1.2rc3.
 - Ship an snmp.conf.
