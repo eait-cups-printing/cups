@@ -29,7 +29,6 @@ Patch3: cups-1.1.16-system-auth.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
-Patch8: cups-logfileperm.patch
 Patch9: cups-1.1.17-rcp.patch
 Patch10: cups-1.1.17-ppdsdat.patch
 Patch12: cups-locale.patch
@@ -117,7 +116,6 @@ lpd emulation.
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
-%patch8 -p1 -b .logfileperm
 %patch9 -p1 -b .rcp
 %patch10 -p1 -b .ppdsdat
 %patch12 -p1 -b .locale
@@ -147,7 +145,8 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 %build
 export CFLAGS="-DLDAP_DEPRECATED=1"
 %configure --with-docdir=%{_docdir}/cups-%{version} \
-	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all"
+	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
+	--with-log-file-perm=0700
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -389,6 +388,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Apr 26 2006 Tim Waugh <twaugh@redhat.com>
 - No longer need backend patch.
+- Use configure switch for LogFilePerm default instead of patch.
 
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
 - Own /var/run/cups (bug #189561).
