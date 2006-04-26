@@ -26,7 +26,6 @@ Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
-Patch4: cups-1.1.17-backend.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
@@ -115,7 +114,6 @@ lpd emulation.
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
-%patch4 -p1 -b .backend
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
@@ -389,6 +387,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Apr 26 2006 Tim Waugh <twaugh@redhat.com>
+- No longer need backend patch.
+
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
 - Own /var/run/cups (bug #189561).
 - Sync from svn5460 to svn5462.
