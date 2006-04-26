@@ -99,12 +99,6 @@ case $1 in
 		killproc $DAEMON -HUP
 		RETVAL=$?
 		echo
-		if [ $RETVAL -ne 0 ]
-		then
-			# Rebuild ppds.dat file if the daemon wasn't
-			# there to do it.
-			$DAEMON --ppdsdat
-		fi
 	;;
 	status)
 		status $DAEMON

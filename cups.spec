@@ -29,7 +29,6 @@ Patch3: cups-1.1.16-system-auth.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
-Patch10: cups-1.1.17-ppdsdat.patch
 Patch12: cups-locale.patch
 Patch13: cups-CAN-2005-0064.patch
 Patch16: cups-pie.patch
@@ -115,7 +114,6 @@ lpd emulation.
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
-%patch10 -p1 -b .ppdsdat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .CAN-2005-0064
 %if %build_as_pie
@@ -385,7 +383,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Apr 26 2006 Tim Waugh <twaugh@redhat.com>
-- No longer need backend, rcp patches.
+- No longer need backend, rcp, ppdsdat patches.
 - Use configure switch for LogFilePerm default instead of patch.
 
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
