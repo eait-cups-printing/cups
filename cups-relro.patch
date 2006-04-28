@@ -1,10 +1,36 @@
---- cups-1.2rc3/pdftops/Makefile.relro	2006-03-05 16:48:12.000000000 +0000
-+++ cups-1.2rc3/pdftops/Makefile	2006-04-28 13:40:58.000000000 +0100
-@@ -9,6 +9,7 @@
+--- cups-1.2rc3/Makedefs.in.relro	2006-04-28 13:52:04.000000000 +0100
++++ cups-1.2rc3/Makedefs.in	2006-04-28 13:52:22.000000000 +0100
+@@ -130,7 +130,7 @@
+ IMGLIBS		=	@IMGLIBS@ -lm
+ IMGFILTERS	=	@IMGFILTERS@
+ LDFLAGS		=	-L../cups -L../filter $(RC_CFLAGS) $(ARCHFLAGS) \
+-			@LDFLAGS@ @PIEFLAGS@ $(OPTIM)
++			@LDFLAGS@ @RELROFLAG@ @PIEFLAGS@ $(OPTIM)
+ LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
+ LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
+ LIBS		=	$(LINKCUPS) $(COMMONLIBS)
+--- cups-1.2rc3/config-scripts/cups-compiler.m4.relro	2006-04-28 13:51:49.000000000 +0100
++++ cups-1.2rc3/config-scripts/cups-compiler.m4	2006-04-28 13:51:49.000000000 +0100
+@@ -79,6 +79,9 @@
+ CXXLIBS=""
+ AC_SUBST(CXXLIBS)
  
++RELROFLAG=""
++AC_SUBST(RELROFLAG)
++
+ PIEFLAGS=""
+ AC_SUBST(PIEFLAGS)
  
- include ../Makedefs
-+LDFLAGS += -Wl,-z,relro
+@@ -98,6 +101,12 @@
  
- #
- # Object files...
+ 	case $uname in
+ 		Linux*)
++			RELROFLAG="-Wl,-z,relro"
++			;;
++	esac
++
++	case $uname in
++		Linux*)
+ 			if test x$enable_pie = xyes; then
+ 				PIEFLAGS="-pie -fpie"
+ 			fi

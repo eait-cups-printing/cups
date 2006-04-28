@@ -375,6 +375,7 @@ rm -rf $RPM_BUILD_ROOT
 - Sync to svn5470.
 - No longer need link, CAN-2005-0064, or no-propagate-ipp-port patches.
 - Switch to upstream PIE implementation (every single binary is PIE).
+- Extend relro to all binaries.
 
 * Wed Apr 26 2006 Tim Waugh <twaugh@redhat.com>
 - No longer need backend, rcp, or ppdsdat patches.
