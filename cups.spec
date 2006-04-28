@@ -1,6 +1,5 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define build_as_pie 1
 %define beta rc3
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
@@ -30,16 +29,12 @@ Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch12: cups-locale.patch
-Patch13: cups-CAN-2005-0064.patch
-Patch16: cups-pie.patch
 Patch17: cups-1.1.19-no_rpath.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
 Patch24: cups-maxlogsize.patch
-Patch28: cups-no-propagate-ipp-port.patch
 Patch32: cups-pid.patch
-Patch40: cups-link.patch
 Patch41: cups-relro.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -115,18 +110,12 @@ lpd emulation.
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch12 -p1 -b .locale
-%patch13 -p1 -b .CAN-2005-0064
-%if %build_as_pie
-%patch16 -p1 -b .pie
-%endif
 %patch17 -p1 -b .no_rpath
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
 %patch24 -p1 -b .maxlogsize
-%patch28 -p1 -b .no-propagate-ipp-port
 %patch32 -p1 -b .pid
-%patch40 -p1 -b .link
 %patch41 -p1 -b .relro
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
@@ -142,7 +131,7 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 export CFLAGS="-DLDAP_DEPRECATED=1"
 %configure --with-docdir=%{_docdir}/cups-%{version} \
 	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
-	--with-log-file-perm=0700
+	--with-log-file-perm=0700 --enable-pie
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -382,8 +371,13 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Apr 28 2006 Tim Waugh <twaugh@redhat.com>
+- Sync to svn5470.
+- No longer need link, CAN-2005-0064, or no-propagate-ipp-port patches.
+- Switch to upstream PIE implementation (every single binary is PIE).
+
 * Wed Apr 26 2006 Tim Waugh <twaugh@redhat.com>
-- No longer need backend, rcp, ppdsdat patches.
+- No longer need backend, rcp, or ppdsdat patches.
 - Use configure switch for LogFilePerm default instead of patch.
 
 * Tue Apr 25 2006 Tim Waugh <twaugh@redhat.com>
