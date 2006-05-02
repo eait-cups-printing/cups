@@ -371,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue May  2 2006 Tim Waugh <twaugh@redhat.com>
+- Sync to svn5473.
+
 * Fri Apr 28 2006 Tim Waugh <twaugh@redhat.com>
 - Sync to svn5470.
 - No longer need link, CAN-2005-0064, or no-propagate-ipp-port patches.
