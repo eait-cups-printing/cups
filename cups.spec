@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.5.%{beta}.2
+Release: 0.5.%{beta}.3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -371,8 +371,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue May  2 2006 Tim Waugh <twaugh@redhat.com>
-- Sync to svn5473.
+* Fri May  5 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.3
+- Sync to svn5491.
 
 * Fri Apr 28 2006 Tim Waugh <twaugh@redhat.com>
 - Sync to svn5470.
