@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2
-Release: 0.5.%{beta}.3
+Release: 0.5.%{beta}.4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
@@ -25,6 +25,7 @@ Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
+Patch4: cups-str1659.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
@@ -106,6 +107,7 @@ lpd emulation.
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
+%patch4 -p1 -b .str1659
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
@@ -371,6 +373,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri May  5 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.4
+- Sync to svn5493.
+
 * Fri May  5 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.3
 - Sync to svn5491.
 
