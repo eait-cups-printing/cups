@@ -1,15 +1,14 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define beta rc3
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2
-Release: 0.5.%{beta}.4
+Version: 1.2.0
+Release: 2
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test/cups-1.2%{beta}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source5: cups-lpd
@@ -21,7 +20,6 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
-Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -101,8 +99,7 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q -n %{name}-%{version}%{beta}
-%patch0 -p0 -b .svn
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -371,6 +368,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon May  8 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-2
+- 1.2.0.
+
 * Fri May  5 2006 Tim Waugh <twaugh@redhat.com> 1:1.2-0.5.rc3.4
 - Sync to svn5493.
 
