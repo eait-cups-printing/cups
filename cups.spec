@@ -67,6 +67,7 @@ Requires: dbus >= 0.60
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 Requires: %{name}-libs = %{epoch}:%{version}
+Requires: gnutls-devel
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -373,6 +374,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue May 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-3
 - Added image library build requirements.
+- The devel package requires gnutls-devel (bug #191908).
 
 * Mon May  8 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-2
 - 1.2.0.
