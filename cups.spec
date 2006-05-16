@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.0
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -53,6 +53,9 @@ BuildPrereq: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, aspell-devel, pcre-devel
+BuildRequires: libjpeg-devel
+BuildRequires: libpng-devel
+BuildRequires: libtiff-devel
 
 # -fstack-protector-all requires GCC 4.0.1
 BuildRequires: gcc >= 4.0.1
@@ -368,6 +371,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue May 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-3
+- Added image library build requirements.
+
 * Mon May  8 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-2
 - 1.2.0.
 
