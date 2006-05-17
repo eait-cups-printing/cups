@@ -44,19 +44,8 @@ DAEMON=cupsd
 
 prog=cups
 
-config () {
-	# Is this a printconf system?
-	if [ -x /usr/sbin/printconf-backend ]
-	then
-		# run printconf-backend to set up the configuration.
-		/usr/sbin/printconf-backend
-	fi
-}
-
 start () {
 	echo -n $"Starting $prog: "
-
-	config
 
 	# start daemon
 	daemon $DAEMON

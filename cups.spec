@@ -372,6 +372,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed May 16 2006 Tim Waugh <twaugh@redhat.com>
+- Initscript no longer needs to check for printconf-backend.
+
 * Tue May 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-3
 - Added image library build requirements.
 - The devel package requires gnutls-devel (bug #191908).
