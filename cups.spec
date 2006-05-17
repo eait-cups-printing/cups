@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.0
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -20,6 +20,7 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
+Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -104,6 +105,7 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p0 -b .svn
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -373,6 +375,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed May 16 2006 Tim Waugh <twaugh@redhat.com>
+- Sync to svn5538.
 - Added 'restartlog' to initscript, for clearing out error_log.  Useful
   for problem diagnosis.
 - Initscript no longer needs to check for printconf-backend.
