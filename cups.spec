@@ -373,6 +373,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed May 16 2006 Tim Waugh <twaugh@redhat.com>
+- Added 'restartlog' to initscript, for clearing out error_log.  Useful
+  for problem diagnosis.
 - Initscript no longer needs to check for printconf-backend.
 
 * Tue May 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-3

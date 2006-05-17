@@ -92,6 +92,11 @@ case $1 in
 	status)
 		status $DAEMON
 	;;
+	restartlog)
+		stop
+		cat /dev/null >/var/log/cups/error_log
+		start
+	;;
 	*)
 
 	echo $"Usage: $prog {start|stop|restart|condrestart|reload|status}"
