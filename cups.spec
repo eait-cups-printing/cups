@@ -35,6 +35,7 @@ Patch22: cups-dest-cache-v2.patch
 Patch24: cups-maxlogsize.patch
 Patch32: cups-pid.patch
 Patch41: cups-relro.patch
+Patch42: cups-str1670.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -120,6 +121,7 @@ lpd emulation.
 %patch24 -p1 -b .maxlogsize
 %patch32 -p1 -b .pid
 %patch41 -p1 -b .relro
+%patch42 -p1 -b .str1670
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -374,6 +376,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu May 18 2006 Tim Waugh <twaugh@redhat.com>
+- Fix for 'browsing stops on reload', STR #1670 (bug #191217).
+
 * Wed May 16 2006 Tim Waugh <twaugh@redhat.com>
 - Sync to svn5538.
 - Added 'restartlog' to initscript, for clearing out error_log.  Useful
