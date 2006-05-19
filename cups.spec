@@ -338,6 +338,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/notifier/testnotify
 %{cups_serverbin}/filter
 %{cups_serverbin}/monitor
+%{cups_serverbin}/driver
 %{_mandir}/man?/*
 %{_sbindir}/*
 %dir %{_datadir}/cups
@@ -378,6 +379,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri May 19 2006 Tim Waugh <twaugh@redhat.com>
+- Ship a driver directory.
+
 * Thu May 18 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-4
 - Disable back-channel data in the usb backend (STR #1705, bug #192034).
 - Fix for 'browsing stops on reload', STR #1670 (bug #191217).
