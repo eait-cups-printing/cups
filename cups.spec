@@ -380,6 +380,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri May 19 2006 Tim Waugh <twaugh@redhat.com>
+- Sync to svn5545.
 - Ship a driver directory.
 
 * Thu May 18 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-4
