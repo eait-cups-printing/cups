@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.0
-Release: 5
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -375,7 +375,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Sat May 20 2006 Tim Waugh <twaugh@redhat.com>
+* Sat May 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-6
 - Sync to svn5555.  No longer need str1670 or str1705 patches.
 
 * Fri May 19 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-5
