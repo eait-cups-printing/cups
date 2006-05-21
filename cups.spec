@@ -175,6 +175,12 @@ install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
+
+# Make the parallel backend run as root, at least until KDEPrint is fixed
+# not to incorrectly write 'Group sys' into cupsd.conf (bug #192548,
+# bug #192585).
+chmod 0700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/parallel
+
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
 # correct http://localhost:631/
@@ -375,6 +381,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sun May 21 2006 Tim Waugh <twaugh@redhat.com>
+- Make the parallel backend run as root, at least until KDEPrint is fixed
+  not to incorrectly write 'Group sys' into cupsd.conf (bug #192548,
+  bug #192585).
+
 * Sat May 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-6
 - Sync to svn5555.  No longer need str1670 or str1705 patches.
 
