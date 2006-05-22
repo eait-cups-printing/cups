@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.0
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -377,7 +377,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon May 22 2006 Tim Waugh <twaugh@redhat.com>
+* Mon May 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-7
 - Sync to svn5568.  No longer need rpath patch.
 - Added a 'conflicts:' for kdelibs to prevent bug #192548.
 
