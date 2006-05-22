@@ -4,8 +4,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.0
-Release: 7
+Version: 1.2.1
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -20,7 +20,6 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
-Patch0: cups-svn.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -108,7 +107,6 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p0 -b .svn
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -379,7 +377,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon May 22 2006 Tim Waugh <twaugh@redhat.com>
+* Mon May 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-2
+- 1.2.1.
 - Fixed devel package multilib conflict (bug #192664).
 
 * Mon May 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-7
