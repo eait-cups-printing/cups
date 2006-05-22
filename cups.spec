@@ -28,7 +28,6 @@ Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch12: cups-locale.patch
-Patch17: cups-rpath.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
@@ -116,7 +115,6 @@ lpd emulation.
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch12 -p1 -b .locale
-%patch17 -p1 -b .rpath
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
@@ -137,7 +135,7 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 export CFLAGS="-DLDAP_DEPRECATED=1"
 %configure --with-docdir=%{_docdir}/cups-%{version} \
 	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
-	--with-log-file-perm=0700 --enable-pie --disable-rpath
+	--with-log-file-perm=0700 --enable-pie
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -380,6 +378,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon May 22 2006 Tim Waugh <twaugh@redhat.com>
+- Sync to svn5568.  No longer need rpath patch.
 - Added a 'conflicts:' for kdelibs to prevent bug #192548.
 
 * Sat May 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.0-6
