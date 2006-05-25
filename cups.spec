@@ -28,6 +28,7 @@ Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch8: cups-str1705.patch
+Patch9: cups-localhost.patch
 Patch12: cups-locale.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
@@ -116,6 +117,7 @@ lpd emulation.
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .str1705
+%patch9 -p1 -b .localhost
 %patch12 -p1 -b .locale
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
@@ -379,6 +381,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu May 25 2006 Tim Waugh <twaugh@redhat.com>
+- Fix 'localhost' fallback in httpAddrGetList() (bug #192628, STR #1723).
+
 * Mon May 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-2
 - 1.2.1.
 - Another STR #1705 fix (bug #192034).
