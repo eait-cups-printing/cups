@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -381,6 +381,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-4
+- Fix 'service cups reload' not to give an error message.
+
 * Thu May 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-3
 - Fix 'localhost' fallback in httpAddrGetList() (bug #192628, STR #1723).
 

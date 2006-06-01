@@ -84,7 +84,6 @@ case $1 in
 	;;	
 	reload)
 		echo -n $"Reloading $prog: "
-		config
 		killproc $DAEMON -HUP
 		RETVAL=$?
 		echo
