@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -293,20 +293,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%dir %attr(0755,root,nobody) /etc/cups
+%dir %attr(0755,root,lp) /etc/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
-%config(noreplace) %attr(0640,root,nobody) /etc/cups/cupsd.conf
-%attr(0640,root,nobody) /etc/cups/cupsd.conf.default
-%config(noreplace) %attr(0644,root,nobody) /etc/cups/client.conf
-%config(noreplace) %attr(0600,root,nobody) /etc/cups/printers.conf
-%config(noreplace) %attr(0644,root,nobody) /etc/cups/pdftops.conf
-%config(noreplace) %attr(0644,root,nobody) /etc/cups/snmp.conf
+%config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
+%attr(0640,root,lp) /etc/cups/cupsd.conf.default
+%config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
+%config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
+%config(noreplace) %attr(0644,root,lp) /etc/cups/pdftops.conf
+%config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
-%dir %attr(0755,root,nobody) /etc/cups/ppd
-%dir %attr(0700,root,nobody) /etc/cups/ssl
+%dir %attr(0755,root,lp) /etc/cups/ppd
+%dir %attr(0700,root,lp) /etc/cups/ssl
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %dir %{_docdir}/cups-%{version}
@@ -354,8 +354,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/model
 %{_datadir}/cups/templates
 %{_datadir}/locale/*/*
-%dir %attr(1770,root,nobody) /var/spool/cups/tmp
-%dir %attr(0710,root,nobody) /var/spool/cups
+%dir %attr(1770,root,lp) /var/spool/cups/tmp
+%dir %attr(0710,root,lp) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
@@ -381,8 +381,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-5
+- Fixed group ownerships again (bug #192880).
+
 * Thu Jun  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-4
-- Fix 'service cups reload' not to give an error message.
+- Fixed 'service cups reload' not to give an error message.
 
 * Thu May 25 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-3
 - Fix 'localhost' fallback in httpAddrGetList() (bug #192628, STR #1723).
