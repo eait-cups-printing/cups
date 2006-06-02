@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 5
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -29,6 +29,7 @@ Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch8: cups-str1705.patch
 Patch9: cups-localhost.patch
+Patch10: cups-str1740.patch
 Patch12: cups-locale.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
@@ -118,6 +119,7 @@ lpd emulation.
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .str1705
 %patch9 -p1 -b .localhost
+%patch10 -p1 -b .str1740
 %patch12 -p1 -b .locale
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
@@ -381,6 +383,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jun  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-6
+- Applied upstream patch to fix STR #1740 (bug #192809).
+
 * Thu Jun  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-5
 - Fixed group ownerships again (bug #192880).
 
