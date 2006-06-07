@@ -109,8 +109,8 @@
 +			 filter->filter);
 +	      }
 +	  }
-+      }
 +#endif /* __x86_64__ */
++      }
      else
        strlcpy(command, filter->filter, sizeof(command));
  
