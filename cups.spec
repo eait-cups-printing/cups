@@ -30,6 +30,7 @@ Patch7: cups-banners.patch
 Patch8: cups-str1705.patch
 Patch9: cups-localhost.patch
 Patch10: cups-str1740.patch
+Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
@@ -120,6 +121,7 @@ lpd emulation.
 %patch8 -p1 -b .str1705
 %patch9 -p1 -b .localhost
 %patch10 -p1 -b .str1740
+%patch11 -p1 -b .serverbin-compat
 %patch12 -p1 -b .locale
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
@@ -383,6 +385,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jun  7 2006 Tim Waugh <twaugh@redhat.com>
+- ServerBin compatibility patch (bug #194005).
+
 * Fri Jun  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-6
 - Applied upstream patch to fix STR #1740 (bug #192809).
 
