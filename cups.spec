@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 8
+Release: 9
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -33,6 +33,7 @@ Patch10: cups-str1740.patch
 Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
 Patch13: cups-str1758.patch
+Patch14: cups-str1736.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
@@ -125,6 +126,7 @@ lpd emulation.
 %patch11 -p1 -b .serverbin-compat
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .str1758
+%patch14 -p1 -b .str1736
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
@@ -387,6 +389,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jun  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-9
+- Prevent 'too many open files' error (STR #1736, bug #194368).
+
 * Wed Jun  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-8
 - Fix 'Allow from @IF(...)' (STR #1758, bug #187703).
 
