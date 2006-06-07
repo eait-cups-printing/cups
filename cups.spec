@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -385,7 +385,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Jun  7 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Jun  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-7
 - ServerBin compatibility patch (bug #194005).
 
 * Fri Jun  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-6
