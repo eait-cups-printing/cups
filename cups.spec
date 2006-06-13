@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 10
+Release: 11
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -245,6 +245,9 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
+# Remove old-style certs directory; new-style is /var/run
+# (see bug #194581 for why this is necessary).
+/bin/rm -rf /etc/cups/certs
 %if %use_alternatives
 /usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
 	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
@@ -285,9 +288,6 @@ exit 0
 %postun
 if [ "$1" -ge "1" ]; then
 	/sbin/service cups condrestart > /dev/null 2>&1
-	# Remove old-style certs directory; new-style is /var/run
-	# (see bug #194581 for why this is necessary).
-	rm -rf /etc/cups/certs
 fi
 exit 0
 
@@ -392,6 +392,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun 13 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-11
+- Remove certs directory in %%post, not %%postun.
+
 * Tue Jun 13 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-10
 - Remove old-style certs directory after upgrade (bug #194581).
 
