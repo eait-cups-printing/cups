@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 11
+Release: 12
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -392,6 +392,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jun 14 2006 Tomas Mraz <tmraz@redhat.com> - 1:1.2.1-12
+- rebuilt with new gnutls
+
 * Tue Jun 13 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-11
 - Remove certs directory in %%post, not %%postun.
 
