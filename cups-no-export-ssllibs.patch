@@ -1,0 +1,22 @@
+--- cups-1.2.1/config-scripts/cups-ssl.m4.no-export-ssllibs	2006-06-15 13:12:59.000000000 +0100
++++ cups-1.2.1/config-scripts/cups-ssl.m4	2006-06-15 13:13:09.000000000 +0100
+@@ -109,7 +109,7 @@
+ AC_SUBST(SSLLIBS)
+ AC_SUBST(ENCRYPTION_REQUIRED)
+ 
+-EXPORT_SSLLIBS="$SSLLIBS"
++EXPORT_SSLLIBS=""
+ AC_SUBST(EXPORT_SSLLIBS)
+ 
+ 
+--- cups-1.2.1/configure.no-export-ssllibs	2006-06-15 13:13:42.000000000 +0100
++++ cups-1.2.1/configure	2006-06-15 13:13:48.000000000 +0100
+@@ -12343,7 +12343,7 @@
+ 
+ 
+ 
+-EXPORT_SSLLIBS="$SSLLIBS"
++EXPORT_SSLLIBS=""
+ 
+ 
+ 

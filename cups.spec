@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 13
+Release: 14
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -35,6 +35,7 @@ Patch12: cups-locale.patch
 Patch13: cups-str1758.patch
 Patch14: cups-str1736.patch
 Patch15: cups-str1776.patch
+Patch16: cups-no-export-ssllibs.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
@@ -129,6 +130,7 @@ lpd emulation.
 %patch13 -p1 -b .str1758
 %patch14 -p1 -b .str1736
 %patch15 -p1 -b .str1776
+%patch16 -p1 -b .no-export-ssllibs
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
@@ -394,6 +396,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-14
+- Don't export in SSLLIBS to cups-config.
+
 * Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-13
 - Fixed cupsd network default printer crash (STR #1776).
 
