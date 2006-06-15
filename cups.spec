@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 12
+Release: 13
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -394,7 +394,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com>
+* Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-13
 - Fixed cupsd network default printer crash (STR #1776).
 
 * Wed Jun 14 2006 Tomas Mraz <tmraz@redhat.com> - 1:1.2.1-12
