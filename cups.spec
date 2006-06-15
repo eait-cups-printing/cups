@@ -34,6 +34,7 @@ Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
 Patch13: cups-str1758.patch
 Patch14: cups-str1736.patch
+Patch15: cups-str1776.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
@@ -127,6 +128,7 @@ lpd emulation.
 %patch12 -p1 -b .locale
 %patch13 -p1 -b .str1758
 %patch14 -p1 -b .str1736
+%patch15 -p1 -b .str1776
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
@@ -392,6 +394,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed cupsd network default printer crash (STR #1776).
+
 * Wed Jun 14 2006 Tomas Mraz <tmraz@redhat.com> - 1:1.2.1-12
 - rebuilt with new gnutls
 
