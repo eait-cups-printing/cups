@@ -76,7 +76,7 @@ BuildPrereq: dbus-devel >= 0.60
 Requires: dbus >= 0.60
 
 # The paps package uses pango to render UTF-8 text to PostScript.
-Requires: paps >= 0.6.6-8.fc6
+Requires: paps >= 0.6.6-9
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -401,6 +401,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun 29 2006 Tim Waugh <twaugh@redhat.com>
+- Bumped paps requirement.
+- Don't use texttopaps for application/* MIME types (bug #197214).
+
 * Thu Jun 29 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-15
 - Require paps and use it for printing text (bug #197214).
 
