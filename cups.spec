@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 14
+Release: 15
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -36,6 +36,7 @@ Patch13: cups-str1758.patch
 Patch14: cups-str1736.patch
 Patch15: cups-str1776.patch
 Patch16: cups-no-export-ssllibs.patch
+Patch17: cups-paps.patch
 Patch18: cups-language.patch
 Patch20: cups-direct-usb.patch
 Patch22: cups-dest-cache-v2.patch
@@ -73,6 +74,9 @@ BuildRequires: gcc >= 4.0.1
 
 BuildPrereq: dbus-devel >= 0.60
 Requires: dbus >= 0.60
+
+# The paps package uses pango to render UTF-8 text to PostScript.
+Requires: paps >= 0.6.6-8.fc6
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -131,6 +135,7 @@ lpd emulation.
 %patch14 -p1 -b .str1736
 %patch15 -p1 -b .str1776
 %patch16 -p1 -b .no-export-ssllibs
+%patch17 -p1 -b .paps
 %patch18 -p1 -b .language
 %patch20 -p1 -b .direct-usb
 %patch22 -p1 -b .dest-cache-v2
@@ -396,6 +401,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jun 29 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-15
+- Require paps and use it for printing text (bug #197214).
+
 * Thu Jun 15 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-14
 - Don't export in SSLLIBS to cups-config.
 
