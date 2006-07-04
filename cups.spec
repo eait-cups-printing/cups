@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 16
+Release: 17
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -20,6 +20,7 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
+Patch0: cups-svn5706.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -28,13 +29,8 @@ Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch8: cups-str1705.patch
-Patch9: cups-localhost.patch
-Patch10: cups-str1740.patch
 Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
-Patch13: cups-str1758.patch
-Patch14: cups-str1736.patch
-Patch15: cups-str1776.patch
 Patch16: cups-no-export-ssllibs.patch
 Patch17: cups-paps.patch
 Patch18: cups-language.patch
@@ -119,6 +115,7 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1 -b .svn5706
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -127,13 +124,8 @@ lpd emulation.
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .str1705
-%patch9 -p1 -b .localhost
-%patch10 -p1 -b .str1740
 %patch11 -p1 -b .serverbin-compat
 %patch12 -p1 -b .locale
-%patch13 -p1 -b .str1758
-%patch14 -p1 -b .str1736
-%patch15 -p1 -b .str1776
 %patch16 -p1 -b .no-export-ssllibs
 %patch17 -p1 -b .paps
 %patch18 -p1 -b .language
@@ -401,6 +393,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jul  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-17
+- Sync with svn5706.
+- No longer need localhost, str1740, str1758, str1736, str1776 patches.
+
 * Thu Jun 29 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-16
 - Bumped paps requirement.
 - Don't use texttopaps for application/* MIME types (bug #197214).

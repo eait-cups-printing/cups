@@ -1,11 +1,16 @@
---- cups-1.2rc1/backend/usb-unix.c.direct-usb	2006-04-04 15:57:47.000000000 +0100
-+++ cups-1.2rc1/backend/usb-unix.c	2006-04-04 15:58:26.000000000 +0100
-@@ -431,7 +431,7 @@
- 
+--- cups-1.2.1/backend/usb-unix.c.direct-usb	2006-07-04 17:50:28.000000000 +0100
++++ cups-1.2.1/backend/usb-unix.c	2006-07-04 17:51:56.000000000 +0100
+@@ -327,12 +327,7 @@
    if (!strncmp(uri, "usb:/dev/", 9))
  #ifdef __linux
--    return (-1); /* Do not allow direct devices anymore */
+   {
+-   /*
+-    * Do not allow direct devices anymore...
+-    */
+-
+-    errno = ENODEV;
+-    return (-1);
 +    return (open(uri + 4, O_RDWR | O_EXCL));
+   }
    else if (!strncmp(uri, "usb://", 6))
    {
-    /*
