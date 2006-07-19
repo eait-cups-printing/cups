@@ -28,6 +28,7 @@ Patch4: cups-multilib.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
+Patch8: cups-compile.patch
 Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
 Patch16: cups-no-export-ssllibs.patch
@@ -122,6 +123,7 @@ lpd emulation.
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
+%patch8 -p1 -b .compile
 %patch11 -p1 -b .serverbin-compat
 %patch12 -p1 -b .locale
 %patch16 -p1 -b .no-export-ssllibs
