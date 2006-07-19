@@ -5,7 +5,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.1
-Release: 20 
+Release: 21 
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -20,7 +20,7 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
-Patch0: cups-svn5737.patch
+Patch0: cups-svn5754.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -114,7 +114,7 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1 -b .svn5737
+%patch0 -p1 -b .svn5754
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -390,11 +390,14 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 1.2.1-20
+* Wed Jul 19 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-21
+- Sync with svn5754.  Fixes bug #198987, bug #195532, bug #130118.
+
+* Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 1:1.2.1-20
 - Require a new version of D-Bus and rebuild
 
 * Fri Jul 14 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-19
-- Sync with svn5737.
+- Sync with svn5737.  Fixes bug #192015.
 
 * Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 1:1.2.1-18.1
 - rebuild
