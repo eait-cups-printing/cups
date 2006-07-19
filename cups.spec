@@ -323,10 +323,11 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_docdir}/cups-%{version}
 %{_docdir}/cups-%{version}/favicon.ico
 %{_docdir}/cups-%{version}/images
-%{_docdir}/cups-%{version}/ja
+%{_docdir}/cups-%{version}/de
 %{_docdir}/cups-%{version}/es
-%{_docdir}/cups-%{version}/sv
+%{_docdir}/cups-%{version}/ja
 %{_docdir}/cups-%{version}/pl
+%{_docdir}/cups-%{version}/sv
 %{_docdir}/cups-%{version}/*.css
 %{_docdir}/cups-%{version}/admin
 %{_docdir}/cups-%{version}/classes
