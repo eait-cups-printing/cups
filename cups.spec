@@ -4,8 +4,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.1
-Release: 21 
+Version: 1.2.2
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -20,7 +20,6 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
-Patch0: cups-svn5754.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -28,7 +27,6 @@ Patch4: cups-multilib.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
-Patch8: cups-compile.patch
 Patch11: cups-serverbin-compat.patch
 Patch12: cups-locale.patch
 Patch16: cups-no-export-ssllibs.patch
@@ -115,7 +113,6 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1 -b .svn5754
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -123,7 +120,6 @@ lpd emulation.
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
-%patch8 -p1 -b .compile
 %patch11 -p1 -b .serverbin-compat
 %patch12 -p1 -b .locale
 %patch16 -p1 -b .no-export-ssllibs
@@ -393,6 +389,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jul 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-2
+- 1.2.2.
+
 * Wed Jul 19 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.1-21
 - Sync with svn5754.  Fixes bug #198987, bug #195532, bug #130118.
 
