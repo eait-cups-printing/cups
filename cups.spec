@@ -1,11 +1,12 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
+%define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -37,6 +38,7 @@ Patch14: cups-dest-cache-v2.patch
 Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
+Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -62,6 +64,13 @@ BuildRequires: php-devel, aspell-devel, pcre-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
+
+%if %lspp
+BuildPrereq: libselinux-devel >= 1.23
+BuildPrereq: audit-libs-devel >= 1.1
+Requires: audit-libs-devel >= 1.1
+Requires: libselinux >= 1.23
+%endif
 
 # -fstack-protector-all requires GCC 4.0.1
 BuildRequires: gcc >= 4.0.1
@@ -130,6 +139,11 @@ lpd emulation.
 %patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
+
+%if %lspp
+%patch100 -p1 -b .lspp
+%endif
+
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -144,6 +158,9 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 export CFLAGS="-DLDAP_DEPRECATED=1"
 %configure --with-docdir=%{_docdir}/cups-%{version} \
 	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
+%if %lspp
+	--enable-lspp \
+%endif
 	--with-log-file-perm=0700 --enable-pie
 
 # If we got this far, all prerequisite libraries must be here.
@@ -341,6 +358,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/backend
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
+%if %lspp
+%{cups_serverbin}/daemon/access
+%endif
 %{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
 %{cups_serverbin}/daemon/cups-driverd
@@ -389,7 +409,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Fri Jul 21 2006 Tim Waugh <twaugh@redhat.com>
+* Fri Jul 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-3
+- Apply Matt Anderson's LSPP patch.
 - Renumbered patches.
 
 * Thu Jul 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-2
