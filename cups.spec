@@ -27,16 +27,16 @@ Patch4: cups-multilib.patch
 Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
-Patch11: cups-serverbin-compat.patch
-Patch12: cups-locale.patch
-Patch16: cups-no-export-ssllibs.patch
-Patch17: cups-paps.patch
-Patch18: cups-language.patch
-Patch20: cups-direct-usb.patch
-Patch22: cups-dest-cache-v2.patch
-Patch24: cups-maxlogsize.patch
-Patch32: cups-pid.patch
-Patch41: cups-relro.patch
+Patch8: cups-serverbin-compat.patch
+Patch9: cups-locale.patch
+Patch10: cups-no-export-ssllibs.patch
+Patch11: cups-paps.patch
+Patch12: cups-language.patch
+Patch13: cups-direct-usb.patch
+Patch14: cups-dest-cache-v2.patch
+Patch15: cups-maxlogsize.patch
+Patch16: cups-pid.patch
+Patch17: cups-relro.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-root
@@ -120,16 +120,16 @@ lpd emulation.
 %patch5 -p1 -b .ext
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
-%patch11 -p1 -b .serverbin-compat
-%patch12 -p1 -b .locale
-%patch16 -p1 -b .no-export-ssllibs
-%patch17 -p1 -b .paps
-%patch18 -p1 -b .language
-%patch20 -p1 -b .direct-usb
-%patch22 -p1 -b .dest-cache-v2
-%patch24 -p1 -b .maxlogsize
-%patch32 -p1 -b .pid
-%patch41 -p1 -b .relro
+%patch8 -p1 -b .serverbin-compat
+%patch9 -p1 -b .locale
+%patch10 -p1 -b .no-export-ssllibs
+%patch11 -p1 -b .paps
+%patch12 -p1 -b .language
+%patch13 -p1 -b .direct-usb
+%patch14 -p1 -b .dest-cache-v2
+%patch15 -p1 -b .maxlogsize
+%patch16 -p1 -b .pid
+%patch17 -p1 -b .relro
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -389,6 +389,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 21 2006 Tim Waugh <twaugh@redhat.com>
+- Renumbered patches.
+
 * Thu Jul 20 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-2
 - 1.2.2.
 
