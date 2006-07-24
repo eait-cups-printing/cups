@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -68,8 +68,6 @@ BuildRequires: libtiff-devel
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
 BuildPrereq: audit-libs-devel >= 1.1
-Requires: audit-libs-devel >= 1.1
-Requires: libselinux >= 1.23
 %endif
 
 # -fstack-protector-all requires GCC 4.0.1
@@ -409,6 +407,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Jul 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-4
+- Fixed package requirements (bug #199903).
+
 * Fri Jul 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-3
 - Apply Matt Anderson's LSPP patch.
 - Renumbered patches.
