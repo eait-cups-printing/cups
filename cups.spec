@@ -1,17 +1,18 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define lspp 0
+%define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 5
+Release: 6
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
+Source3: snmp-str1737.c
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
@@ -142,6 +143,7 @@ lpd emulation.
 %patch100 -p1 -b .lspp
 %endif
 
+cp %{SOURCE3} backend/snmp.c
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -407,6 +409,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-6
+- Use replacement snmp.c from STR #1737 (bug #193093).
+- Re-enable LSPP; doesn't harm browsing after all.
+
 * Fri Jul 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-5
 - Disable LSPP for now, since it seems to break browsing somehow.
 
