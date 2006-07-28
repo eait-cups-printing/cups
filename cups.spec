@@ -1,12 +1,12 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define lspp 1
+%define lspp 0
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -407,6 +407,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-5
+- Disable LSPP for now, since it seems to break browsing somehow.
+
 * Mon Jul 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-4
 - Fixed package requirements (bug #199903).
 
