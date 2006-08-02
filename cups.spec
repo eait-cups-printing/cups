@@ -204,6 +204,11 @@ install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 
+# Ship pstopdf for LSPP systems to deal with malicious postscript
+%if %lspp
+install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
+%endif
+
 # Deal with users trying to access the admin tool at
 # /usr/share/doc/cups-%{version}/index.html rather than the
 # correct http://localhost:631/
@@ -239,11 +244,6 @@ EOF
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
-
-# Ship pstopdf for LSPP systems to deal with malicious postscript
-%if %lspp
-install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter
-%endif
 
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
