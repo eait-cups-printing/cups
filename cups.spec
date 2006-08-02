@@ -13,6 +13,7 @@ Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: snmp-str1737.c
+Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
@@ -239,6 +240,11 @@ EOF
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
+# Ship pstopdf for LSPP systems to deal with malicious postscript
+%if %lspp
+install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter
+%endif
+
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 
@@ -411,6 +417,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Aug  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-7
 - Updated LSPP patch from Matt Anderson.
+- Ship pstopdf filter for LSPP.
 
 * Fri Jul 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-6
 - Use replacement snmp.c from STR #1737 (bug #193093).
