@@ -365,7 +365,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
 %if %lspp
-%{cups_serverbin}/daemon/access
+%{cups_serverbin}/daemon/lspp-access
 %endif
 %{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
