@@ -1,920 +1,6 @@
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/config-scripts/cups-lspp.m4	2006-07-21 12:42:40.000000000 +0100
-@@ -0,0 +1,36 @@
-+dnl
-+dnl   LSPP code for the Common UNIX Printing System (CUPS).
-+dnl
-+dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
-+dnl
-+dnl   This program is free software; you can redistribute it and/or modify
-+dnl   it under the terms of the GNU General Public License as published by
-+dnl   the Free Software Foundation; version 2.
-+dnl
-+dnl   This program is distributed in the hope that it will be useful, but
-+dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
-+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+dnl   General Public License for more details.
-+dnl
-+dnl   You should have received a copy of the GNU General Public License
-+dnl   along with this program; if not, write to the Free Software Foundation,
-+dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
-+dnl
-+
-+dnl Are we trying to meet LSPP requirements
-+AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
-+
-+if test x"$enable_lspp" != xno; then
-+    case "$uname" in
-+        Linux)
-+            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
-+            AC_CHECK_HEADER(libaudit.h)
-+            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
-+            AC_CHECK_HEADER(selinux/selinux.h)
-+            AC_DEFINE(WITH_LSPP)
-+            ;;
-+        *)
-+            # All others
-+            ;;
-+    esac
-+fi
---- cups-1.2.2/configure.in.lspp	2006-05-30 21:31:10.000000000 +0100
-+++ cups-1.2.2/configure.in	2006-07-21 12:42:40.000000000 +0100
-@@ -47,6 +47,8 @@
- sinclude(config-scripts/cups-pdf.m4)
- sinclude(config-scripts/cups-scripting.m4)
- 
-+sinclude(config-scripts/cups-lspp.m4)
-+
- INSTALL_LANGUAGES=""
- UNINSTALL_LANGUAGES=""
- LANGFILES=""
---- cups-1.2.2/Makedefs.in.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/Makedefs.in	2006-07-21 12:42:40.000000000 +0100
-@@ -135,7 +135,7 @@
- 			@LDFLAGS@ @RELROFLAG@ @PIEFLAGS@ $(OPTIM)
- LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
- LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
--LIBS		=	$(LINKCUPS) $(COMMONLIBS)
-+LIBS		=	$(LINKCUPS) $(COMMONLIBS) @LIBAUDIT@ @LIBSELINUX@
- OPTIM		=	@OPTIM@
- OPTIONS		=
- PAMLIBS		=	@PAMLIBS@
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/data/mls	2006-07-21 12:42:40.000000000 +0100
-@@ -0,0 +1,277 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/data/selinux	2006-07-21 12:42:40.000000000 +0100
-@@ -0,0 +1,277 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/data/te	2006-07-21 12:42:40.000000000 +0100
-@@ -0,0 +1,277 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
---- cups-1.2.2/data/Makefile.lspp	2006-03-19 03:23:34.000000000 +0000
-+++ cups-1.2.2/data/Makefile	2006-07-21 12:42:40.000000000 +0100
-@@ -34,7 +34,10 @@
- 		secret \
- 		standard \
- 		topsecret \
--		unclassified
-+		unclassified \
-+		selinux \
-+		mls \
-+		te
- 
- CHARMAPS =	\
- 		euc-cn.txt \
---- cups-1.2.2/config.h.in.lspp	2006-06-05 19:42:53.000000000 +0100
-+++ cups-1.2.2/config.h.in	2006-07-21 12:42:40.000000000 +0100
+diff -burN cups-1.2.2-vanilla/config.h.in cups-1.2.2/config.h.in
+--- cups-1.2.2-vanilla/config.h.in	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/config.h.in	2006-08-01 07:08:37.000000000 -0400
 @@ -443,6 +443,13 @@
  #undef HAVE_APPLETALK_AT_PROTO_H
  
@@ -929,56 +15,921 @@
  #endif /* !_CUPS_CONFIG_H_ */
  
  /*
---- cups-1.2.2/scheduler/printers.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/printers.c	2006-07-21 12:42:40.000000000 +0100
-@@ -57,6 +57,8 @@
-  *                                 printing desktop tools.
-  */
+diff -burN cups-1.2.2-vanilla/configure.in cups-1.2.2/configure.in
+--- cups-1.2.2-vanilla/configure.in	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/configure.in	2006-08-01 07:08:37.000000000 -0400
+@@ -47,6 +47,8 @@
+ sinclude(config-scripts/cups-pdf.m4)
+ sinclude(config-scripts/cups-scripting.m4)
  
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++sinclude(config-scripts/cups-lspp.m4)
 +
- /*
-  * Include necessary headers...
+ INSTALL_LANGUAGES=""
+ UNINSTALL_LANGUAGES=""
+ LANGFILES=""
+diff -burN cups-1.2.2-vanilla/cups/cups.h cups-1.2.2/cups/cups.h
+--- cups-1.2.2-vanilla/cups/cups.h	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/cups/cups.h	2006-08-01 07:08:37.000000000 -0400
+@@ -24,6 +24,8 @@
+  *   This file is subject to the Apple OS-Developed Software exception.
   */
-@@ -79,6 +81,9 @@
- static void	write_irix_state(cupsd_printer_t *p);
- #endif /* __sgi */
  
-+#ifdef WITH_LSPP
-+#  include <libaudit.h>
-+#endif /* WITH_LSPP */
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++
+ #ifndef _CUPS_CUPS_H_
+ #  define _CUPS_CUPS_H_
  
+@@ -68,6 +70,12 @@
+ #  define CUPS_DATE_ANY		-1
+ 
+ 
++# ifdef WITH_LSPP
++# define MLS_CONFIG "mls"
++# define TE_CONFIG "te"
++# define SELINUX_CONFIG "SELinux"
++# define UNKNOWN_SL "UNKNOWN SL"
++# endif /* WITH_LSPP */
  /*
-  * 'cupsdAddPrinter()' - Add a printer to the system.
-@@ -1472,6 +1477,9 @@
- 		  "two-sided-long-edge",
- 		  "two-sided-short-edge"
- 		};
-+#ifdef WITH_LSPP
-+  char		*audit_message;		/* Audit message string */
-+#endif /* WITH_LSPP */
+  * Types and structures...
+  */
+diff -burN cups-1.2.2-vanilla/data/Makefile cups-1.2.2/data/Makefile
+--- cups-1.2.2-vanilla/data/Makefile	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/data/Makefile	2006-08-01 07:08:37.000000000 -0400
+@@ -34,7 +34,10 @@
+ 		secret \
+ 		standard \
+ 		topsecret \
+-		unclassified
++		unclassified \
++		selinux \
++		mls \
++		te
  
- 
-   DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -1578,6 +1586,14 @@
-       attr->values[1].string.text = _cupsStrAlloc(Classification ?
- 	                                   Classification : p->job_sheets[1]);
-     }
-+#ifdef WITH_LSPP
-+    audit_message = NULL;
-+    cupsdSetStringf(&audit_message, "[Config] printer=%s uri=%s banners set to %s %s",
-+                    p->name, p->device_uri, p->job_sheets[0], p->job_sheets[1]);
-+    audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
-+                           ServerName, NULL, NULL, 1);
-+    free(audit_message);
-+#endif /* WITH_LSPP */
-   }
- 
-   printer_type = p->type;
---- cups-1.2.2/scheduler/job.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/job.c	2006-07-21 12:42:40.000000000 +0100
-@@ -68,6 +68,9 @@
-  *   unload_job()               - Unload a job from memory.
+ CHARMAPS =	\
+ 		euc-cn.txt \
+diff -burN cups-1.2.2-vanilla/data/mls cups-1.2.2/data/mls
+--- cups-1.2.2-vanilla/data/mls	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/mls	2006-08-01 07:08:37.000000000 -0400
+@@ -0,0 +1,277 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Draw the label at the top and bottom...
++  0 setgray				% Color
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 72 mul			% Top of page
++  pageWidth -7 mul add			% - 2 lines
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 6 mul			% Bottom of page
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -burN cups-1.2.2-vanilla/data/selinux cups-1.2.2/data/selinux
+--- cups-1.2.2-vanilla/data/selinux	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/selinux	2006-08-01 07:08:37.000000000 -0400
+@@ -0,0 +1,277 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Draw the label at the top and bottom...
++  0 setgray				% Color
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 72 mul			% Top of page
++  pageWidth -7 mul add			% - 2 lines
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 6 mul			% Bottom of page
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -burN cups-1.2.2-vanilla/data/te cups-1.2.2/data/te
+--- cups-1.2.2-vanilla/data/te	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/te	2006-08-01 07:08:37.000000000 -0400
+@@ -0,0 +1,277 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Draw the label at the top and bottom...
++  0 setgray				% Color
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 72 mul			% Top of page
++  pageWidth -7 mul add			% - 2 lines
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  pageWidth 36 mul			% Center of page
++  pageHeight 6 mul			% Bottom of page
++  moveto				% Position text
++  bigFont setfont			% Font
++  ({mls-label}) CENTER		% Show text centered
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -burN cups-1.2.2-vanilla/Makedefs.in cups-1.2.2/Makedefs.in
+--- cups-1.2.2-vanilla/Makedefs.in	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/Makedefs.in	2006-08-01 07:08:43.000000000 -0400
+@@ -135,7 +135,7 @@
+ 			@LDFLAGS@ @RELROFLAG@ @PIEFLAGS@ $(OPTIM)
+ LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
+ LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
+-LIBS		=	$(LINKCUPS) $(COMMONLIBS)
++LIBS		=	$(LINKCUPS) $(COMMONLIBS) @LIBAUDIT@ @LIBSELINUX@
+ OPTIM		=	@OPTIM@
+ OPTIONS		=
+ PAMLIBS		=	@PAMLIBS@
+diff -burN cups-1.2.2-vanilla/scheduler/client.c cups-1.2.2/scheduler/client.c
+--- cups-1.2.2-vanilla/scheduler/client.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/client.c	2006-08-01 07:08:37.000000000 -0400
+@@ -43,12 +43,17 @@
+  *   make_certificate()      - Make a self-signed SSL/TLS certificate.
+  *   pipe_command()          - Pipe the output of a command to the remote client.
+  *   write_file()            - Send a file via HTTP.
++ *   client_pid_to_auid()    - Get the audit login uid of the client.
   */
  
 +/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
@@ -987,181 +938,138 @@
  /*
   * Include necessary headers...
   */
-@@ -77,6 +80,11 @@
- #include <cups/backend.h>
- #include <cups/dir.h>
+ 
++#define _GNU_SOURCE
+ #include <cups/http-private.h>
+ #include "cupsd.h"
+ 
+@@ -64,6 +69,11 @@
+ #  include <gnutls/x509.h>
+ #endif /* HAVE_GNUTLS */
  
 +#ifdef WITH_LSPP
 +#include <selinux/selinux.h>
-+#include <selinux/context.h>
-+#include <libaudit.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * Local globals...
-@@ -985,6 +993,23 @@
-     cupsdSetString(&job->dest, dest);
-   }
- 
-+#ifdef WITH_LSPP
-+  if ((attr = ippFindAttribute(job->attrs, "security-context", IPP_TAG_NAME)) != NULL)
-+    cupsdSetString(&job->scon, attr->values[0].string.text);
-+  else if (is_lspp_config())
-+  {
-+   /*
-+    * There was no security context so delete the job
-+    */
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "LoadAllJobs: Missing or bad security-context attribute in control file \"%s\"!",
-+                    jobfile);
-+    ippDelete(job->attrs);
-+    job->attrs = NULL;
-+    unlink(jobfile);
-+    return;
-+  }
++#include <fcntl.h>
 +#endif /* WITH_LSPP */
 +
-   job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
-                                      IPP_TAG_INTEGER);
-   job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
-@@ -2428,6 +2453,17 @@
-   int			remote_job;	/* Remote print job? */
-   static char		*options = NULL;/* Full list of options */
-   static int		optlength = 0;	/* Length of option buffer */
-+#ifdef WITH_LSPP
-+  int			acstatus = 0;	/* return value of the access check */
-+  pid_t			acpid = -1;	/* pid for the access check */
-+  const char		*mls_label = NULL;	/* SL to put in classification env var */
-+  char			*audit_message = NULL;	/* Audit message string */
-+  char			*printerfile = NULL;	/* Device file pointed to by the printer */
-+  char			*acargv[3];	/* Command line args */
-+  char			buffer[1024] = {0};	/* argv[0] buffer */
-+  char			*acenvp[MAX_ENV];	/* Environment */
-+  context_t		job_context;	/* SELinux context of the job */
-+#endif /* WITH_LSPP */
  
- 
-   cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job: id = %d, file = %d/%d",
-@@ -2709,6 +2745,76 @@
- 
-   cupsdLogMessage(CUPSD_LOG_DEBUG, "banner_page = %d", banner_page);
+ /*
+  * Local functions...
+@@ -380,6 +390,53 @@
+                   "cupsdAcceptClient: %d connected to server on %s:%d",
+                   con->http.fd, con->servername, con->serverport);
  
 +#ifdef WITH_LSPP
 +  if (is_lspp_config())
 +  {
++    struct ucred cr;
++    unsigned int cl=sizeof(cr);
++
++    if (getsockopt(con->http.fd, SOL_SOCKET, SO_PEERCRED, &cr, &cl) == 0)
++    {
++     /*
++      * client_pid_to_auid() can be racey
++      * In this case the pid is based on a socket connected to the client
++      */
++      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
++      {
++        close(con->http.fd);
++        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: unable to determine client auid");
++        return (cupsdCloseClient(con));
++      }
++      cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: peer's pid=%d, uid=%d, gid=%d, auid=%d",
++                      cr.pid, cr.uid, cr.gid, con->auid);
++    }
++    else
++    {
++      close(con->http.fd);
++      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getsockopt() failed");
++      return (cupsdCloseClient(con));
++    }
++
 +   /*
-+    * Perform an access check before printing, but only if the printer starts with /dev/
++    * get the context of the peer connection
 +    */
-+    printerfile = strdup(printer->device_uri);
-+    if ((printerfile = strrchr(printer->device_uri, '=')) == NULL)
++    if (getpeercon(con->http.fd, &con->scon))
 +    {
-+      if ((printerfile = strrchr(printer->device_uri, ':')) == NULL)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to determine printer device file");
-+        cupsdCancelJob(job, 0);
-+        return;
-+      }
++      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
++      cupsdSetString(&con->scon, UNKNOWN_SL);
 +    }
 +
-+    printerfile++;
-+    if (strncmp(printerfile, "/dev/", 5) == 0)
-+    {
-+      if (setexeccon(job->scon) != 0)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to setexeccon to %s", job->scon);
-+        cupsdCancelJob(job, 0);
-+        return;
-+      }
++    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
 +
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: Attempting to check access on printer device %s",
-+                      printerfile);
-+
-+      snprintf(buffer, sizeof(buffer), "%s/daemon/access", ServerBin);
-+      acargv[0] = "access";
-+      acargv[1] = printerfile;
-+      acargv[2] = NULL;
-+
-+      cupsdLoadEnv(acenvp, (int)(sizeof(acenvp) / sizeof(acenvp[0])));
-+
-+      if (!cupsdStartProcess(buffer, acargv, acenvp, -1, -1, -1, -1, 0, &acpid))
-+      {
-+        waitpid(acpid, &acstatus, 0);
-+        if (WIFEXITED(acstatus))
-+        {
-+          if (WEXITSTATUS(acstatus) != 0) 
-+          {
-+           /*
-+            * The access check failed, so cancel the job and send an audit message
-+            */
-+            audit_message = NULL;
-+            cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s cancelled,"
-+                                            " unable to access printer=%s",
-+                            job->id, job->auid, job->username, job->scon, printer->name);
-+            audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                   ServerName, NULL, NULL, 0);
-+            free(audit_message);
-+
-+            cupsdCancelJob(job, 0);
-+
-+            return;
-+          }
-+          else
-+          {
-+            cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: access check succeeded (returned %d)",
-+                            WEXITSTATUS(acstatus));
-+          }
-+        }
-+      }
-+    }
++  }
++  else
++  {
++    cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
 +
   /*
-   * Building the options string is harder than it needs to be, but
-   * for the moment we need to pass strings for command-line args and
-@@ -3026,6 +3132,41 @@
-     envp[envc ++] = final_content_type;
-   }
+   * Using TCP_NODELAY improves responsiveness, especially on systems
+   * with a slow loopback interface...  Since we write large buffers
+@@ -3465,7 +3522,6 @@
+   time_t		curtime;	/* Current time */
+   int			result;		/* Result of GNU TLS calls */
+ 
+-
+  /*
+   * Create the encryption key...
+   */
+@@ -3664,6 +3720,49 @@
+ #endif /* HAVE_SSL */
+ 
  
 +#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+    if (job->scon == NULL)
-+    {
-+      audit_message = NULL;
-+      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s",
-+                      job->id, job->auid, job->username, printer->name);
-+      audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
-+                             ServerName, NULL, NULL, 1);
-+      free(audit_message);
-+    }
-+    else 
-+    {
-+      job_context = context_new(job->scon);
-+      if (strcasecmp(Classification, MLS_CONFIG) == 0)
-+        mls_label = context_range_get(job_context);
-+      else if (strcasecmp(Classification, TE_CONFIG) == 0)
-+        mls_label = context_type_get(job_context);
-+      else  // default is SELinux which means print the whole context
-+        mls_label = context_str(job_context);
-+      snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
-+               mls_label);
-+      envp[envc ++] = classification;
-+      audit_message = NULL;
-+      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s obj=%s",
-+                      job->id, job->auid, job->username, printer->name, job->scon);
-+      audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                             ServerName, NULL, NULL, 1);
-+      context_free(job_context);
-+      free(audit_message);
-+    }
-+  }
-+  else 
++/*
++ * 'client_pid_to_auid()' - Using the client's pid, read /proc and determine the loginuid.
++ */
++
++uid_t client_pid_to_auid(pid_t clipid)
++{
++  uid_t uid;
++  int len, in;
++  char buf[16] = {0};
++  char fname[32] = {0};
++
++
++ /*
++  * Hopefully this pid is still the one we are interested in.
++  */
++  snprintf(fname, 32, "/proc/%d/loginuid", clipid);
++  in = open(fname, O_NOFOLLOW|O_RDONLY);
++
++  if (in < 0)
++    return -1;
++
++  errno = 0;
++
++  do {
++    len = read(in, buf, sizeof(buf));
++  } while (len < 0 && errno == EINTR);
++
++  close(in);
++
++  if (len < 0 || len >= sizeof(buf))
++    return -1;
++
++  buf[len] = 0;
++  uid = strtol(buf, 0, 10);
++
++  if (errno != 0)
++    return -1;
++  else
++    return uid;
++}
 +#endif /* WITH_LSPP */
-   if (Classification && !banner_page)
-   {
-     if ((attr = ippFindAttribute(job->attrs, "job-sheets",
---- cups-1.2.2/scheduler/client.h.lspp	2006-03-18 03:05:12.000000000 +0000
-+++ cups-1.2.2/scheduler/client.h	2006-07-21 12:42:40.000000000 +0100
++
+ /*
+  * 'pipe_command()' - Pipe the output of a command to the remote client.
+  */
+diff -burN cups-1.2.2-vanilla/scheduler/client.h cups-1.2.2/scheduler/client.h
+--- cups-1.2.2-vanilla/scheduler/client.h	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/client.h	2006-08-01 07:08:37.000000000 -0400
 @@ -22,6 +22,13 @@
   *         WWW: http://www.cups.org
   */
@@ -1197,85 +1105,143 @@
  
  
  /*
---- cups-1.2.2/scheduler/main.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/main.c	2006-07-21 12:42:40.000000000 +0100
-@@ -47,6 +47,8 @@
-  *   usage()                   - Show scheduler usage.
+diff -burN cups-1.2.2-vanilla/scheduler/conf.c cups-1.2.2/scheduler/conf.c
+--- cups-1.2.2-vanilla/scheduler/conf.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/conf.c	2006-08-01 07:08:37.000000000 -0400
+@@ -35,6 +35,7 @@
+  *   read_configuration()     - Read a configuration file.
+  *   read_location()          - Read a <Location path> definition.
+  *   read_policy()            - Read a <Policy name> definition.
++ *   is_lspp_config()         - Is the system configured for LSPP
   */
  
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
  /*
-  * Include necessary headers...
-  */
-@@ -69,6 +71,9 @@
- #  include <notify.h>
- #endif /* HAVE_NOTIFY_H */
+@@ -60,6 +61,9 @@
+ #  define INADDR_NONE	0xffffffff
+ #endif /* !INADDR_NONE */
  
 +#ifdef WITH_LSPP
 +#  include <libaudit.h>
 +#endif /* WITH_LSPP */
  
  /*
-  * Local functions...
-@@ -351,6 +356,17 @@
- #endif /* DEBUG */
+  * Configuration variable structure...
+@@ -161,6 +165,9 @@
+   { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_STRING },
+ #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
+ #endif /* HAVE_SSL */
++#ifdef WITH_LSPP
++  { "AuditLog",			&AuditLog,		CUPSD_VARTYPE_INTEGER },
++#endif /* WITH_LSPP */
+ #ifdef HAVE_LAUNCHD
+   { "LaunchdTimeout",		&LaunchdTimeout,	CUPSD_VARTYPE_INTEGER },
+   { "LaunchdConf",		&LaunchdConf,		CUPSD_VARTYPE_STRING },
+@@ -223,6 +230,9 @@
+ 		*old_requestroot;	/* Old RequestRoot */
+   const char	*tmpdir;		/* TMPDIR environment variable */
+   struct stat	tmpinfo;		/* Temporary directory info */
++#ifdef WITH_LSPP
++  char		*audit_message;		/* Audit message string */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -377,6 +387,16 @@
+     }
    }
  
 +#ifdef WITH_LSPP
-+  if ((AuditLog = audit_open()) < 0 )
-+  {
-+    if (is_lspp_config())
-+    {
-+      fprintf(stderr, "cupsd: unable to start auditing");
-+      return -1;
-+    }
-+  }
++  /*
++   * ClassifyOverride is set during read_configuration, if its on, report it now
++   */
++  if (ClassifyOverride)
++    audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
++              "[Config] ClassifyOverride=enabled Users can override print banners",
++              ServerName, NULL, NULL, 1);
 +#endif /* WITH_LSPP */
 +
   /*
-   * Set the timezone info...
+   * Numeric options...
    */
-@@ -1115,6 +1131,10 @@
-   free(input);
-   free(output);
+@@ -779,7 +799,16 @@
+     cupsdClearString(&Classification);
  
+   if (Classification)
++  {
+     cupsdLogMessage(CUPSD_LOG_INFO, "Security set to \"%s\"", Classification);
 +#ifdef WITH_LSPP
-+  audit_close(AuditLog);
++    audit_message = NULL;
++    cupsdSetStringf(&audit_message, "[Config] Security level=%s", Classification);
++    audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
++                           ServerName, NULL, NULL, 1);
++    free(audit_message);
 +#endif /* WITH_LSPP */
-+
-   return (!stop_scheduler);
++  }
+ 
+  /*
+   * Update the MaxClientsPerHost value, as needed...
+@@ -2233,7 +2262,6 @@
+ 
+       cupsd_dirsvc_addr_t	*dira;	/* New browse address array */
+ 
+-
+       if (NumBrowsers == 0)
+         dira = malloc(sizeof(cupsd_dirsvc_addr_t));
+       else
+@@ -3286,6 +3314,18 @@
+   return (0);
  }
  
---- cups-1.2.2/scheduler/job.h.lspp	2006-04-14 19:17:18.000000000 +0100
-+++ cups-1.2.2/scheduler/job.h	2006-07-21 12:42:40.000000000 +0100
-@@ -22,6 +22,13 @@
-  *         WWW: http://www.cups.org
-  */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
 +#ifdef WITH_LSPP
-+#include <selinux/selinux.h>
++int is_lspp_config()
++{
++  if (Classification != NULL)
++    return ((strcasecmp(Classification, MLS_CONFIG) == 0) 
++            || (strcasecmp(Classification, TE_CONFIG) == 0)
++            || (strcasecmp(Classification, SELINUX_CONFIG) == 0));
++  else
++    return 0;
++}
 +#endif /* WITH_LSPP */
 +
+ 
  /*
-  * Job request structure...
-  */
-@@ -55,6 +62,10 @@
-   int			status;		/* Status code from filters */
-   cupsd_printer_t	*printer;	/* Printer this job is assigned to */
-   int			tries;		/* Number of tries for this job */
+  * End of "$Id: conf.c 5736 2006-07-13 19:59:36Z mike $".
+diff -burN cups-1.2.2-vanilla/scheduler/conf.h cups-1.2.2/scheduler/conf.h
+--- cups-1.2.2-vanilla/scheduler/conf.h	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/conf.h	2006-08-01 07:08:37.000000000 -0400
+@@ -182,7 +182,6 @@
+ 					/* Number of MIME types */
+ VAR const char		**MimeTypes		VALUE(NULL);
+ 					/* Array of MIME types */
+-
+ #ifdef HAVE_SSL
+ VAR char		*ServerCertificate	VALUE(NULL);
+ 					/* Server certificate file */
+@@ -191,6 +190,10 @@
+ 					/* Server key file */
+ #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
+ #endif /* HAVE_SSL */
 +#ifdef WITH_LSPP
-+  security_context_t	scon;		/* Security context of job */
-+  uid_t			auid;		/* Audit loginuid for this job */
++VAR int			AuditLog		VALUE(-1);
++					/* File descriptor for audit */
 +#endif /* WITH_LSPP */
- } cupsd_job_t;
  
+ #ifdef HAVE_LAUNCHD
+ VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
+@@ -213,6 +216,9 @@
+ ;
+ extern int	cupsdLogPage(cupsd_job_t *job, const char *page);
  
---- cups-1.2.2/scheduler/ipp.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/ipp.c	2006-07-21 12:42:40.000000000 +0100
++#ifdef WITH_LSPP
++extern int	is_lspp_config(void);
++#endif /* WITH_LSPP */
+ 
+ /*
+  * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
+diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
+--- cups-1.2.2-vanilla/scheduler/ipp.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/ipp.c	2006-08-01 07:08:37.000000000 -0400
 @@ -96,6 +96,9 @@
   *   validate_user()             - Validate the user for the request.
   */
@@ -1374,7 +1340,7 @@
 +        return (NULL);
 +      }
 +
-+      snprintf(buffer, sizeof(buffer), "%s/daemon/access", ServerBin);
++      snprintf(buffer, sizeof(buffer), "%s/daemon/lspp-access", ServerBin);
 +      argv[0] = "access";
 +      argv[1] = printerfile;
 +      argv[2] = NULL;
@@ -1572,109 +1538,400 @@
       /*
        * Yes...
        */
---- cups-1.2.2/scheduler/conf.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/conf.c	2006-07-21 12:42:40.000000000 +0100
-@@ -35,6 +35,7 @@
-  *   read_configuration()     - Read a configuration file.
-  *   read_location()          - Read a <Location path> definition.
-  *   read_policy()            - Read a <Policy name> definition.
-+ *   is_lspp_config()         - Is the system configured for LSPP
+diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
+--- cups-1.2.2-vanilla/scheduler/job.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/job.c	2006-08-01 07:08:37.000000000 -0400
+@@ -68,6 +68,9 @@
+  *   unload_job()               - Unload a job from memory.
   */
  
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
  /*
-@@ -60,6 +61,9 @@
- #  define INADDR_NONE	0xffffffff
- #endif /* !INADDR_NONE */
+  * Include necessary headers...
+  */
+@@ -77,6 +80,11 @@
+ #include <cups/backend.h>
+ #include <cups/dir.h>
+ 
++#ifdef WITH_LSPP
++#include <selinux/selinux.h>
++#include <selinux/context.h>
++#include <libaudit.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Local globals...
+@@ -985,6 +993,23 @@
+     cupsdSetString(&job->dest, dest);
+   }
+ 
++#ifdef WITH_LSPP
++  if ((attr = ippFindAttribute(job->attrs, "security-context", IPP_TAG_NAME)) != NULL)
++    cupsdSetString(&job->scon, attr->values[0].string.text);
++  else if (is_lspp_config())
++  {
++   /*
++    * There was no security context so delete the job
++    */
++    cupsdLogMessage(CUPSD_LOG_ERROR, "LoadAllJobs: Missing or bad security-context attribute in control file \"%s\"!",
++                    jobfile);
++    ippDelete(job->attrs);
++    job->attrs = NULL;
++    unlink(jobfile);
++    return;
++  }
++#endif /* WITH_LSPP */
++
+   job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
+                                      IPP_TAG_INTEGER);
+   job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
+@@ -2428,6 +2453,17 @@
+   int			remote_job;	/* Remote print job? */
+   static char		*options = NULL;/* Full list of options */
+   static int		optlength = 0;	/* Length of option buffer */
++#ifdef WITH_LSPP
++  int			acstatus = 0;	/* return value of the access check */
++  pid_t			acpid = -1;	/* pid for the access check */
++  const char		*mls_label = NULL;	/* SL to put in classification env var */
++  char			*audit_message = NULL;	/* Audit message string */
++  char			*printerfile = NULL;	/* Device file pointed to by the printer */
++  char			*acargv[3];	/* Command line args */
++  char			buffer[1024] = {0};	/* argv[0] buffer */
++  char			*acenvp[MAX_ENV];	/* Environment */
++  context_t		job_context;	/* SELinux context of the job */
++#endif /* WITH_LSPP */
+ 
+ 
+   cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job: id = %d, file = %d/%d",
+@@ -2709,6 +2745,76 @@
+ 
+   cupsdLogMessage(CUPSD_LOG_DEBUG, "banner_page = %d", banner_page);
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++   /*
++    * Perform an access check before printing, but only if the printer starts with /dev/
++    */
++    printerfile = strdup(printer->device_uri);
++    if ((printerfile = strrchr(printer->device_uri, '=')) == NULL)
++    {
++      if ((printerfile = strrchr(printer->device_uri, ':')) == NULL)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to determine printer device file");
++        cupsdCancelJob(job, 0);
++        return;
++      }
++    }
++
++    printerfile++;
++    if (strncmp(printerfile, "/dev/", 5) == 0)
++    {
++      if (setexeccon(job->scon) != 0)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to setexeccon to %s", job->scon);
++        cupsdCancelJob(job, 0);
++        return;
++      }
++
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: Attempting to check access on printer device %s",
++                      printerfile);
++
++      snprintf(buffer, sizeof(buffer), "%s/daemon/lspp-access", ServerBin);
++      acargv[0] = "access";
++      acargv[1] = printerfile;
++      acargv[2] = NULL;
++
++      cupsdLoadEnv(acenvp, (int)(sizeof(acenvp) / sizeof(acenvp[0])));
++
++      if (!cupsdStartProcess(buffer, acargv, acenvp, -1, -1, -1, -1, 0, &acpid))
++      {
++        waitpid(acpid, &acstatus, 0);
++        if (WIFEXITED(acstatus))
++        {
++          if (WEXITSTATUS(acstatus) != 0) 
++          {
++           /*
++            * The access check failed, so cancel the job and send an audit message
++            */
++            audit_message = NULL;
++            cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s cancelled,"
++                                            " unable to access printer=%s",
++                            job->id, job->auid, job->username, job->scon, printer->name);
++            audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                   ServerName, NULL, NULL, 0);
++            free(audit_message);
++
++            cupsdCancelJob(job, 0);
++
++            return;
++          }
++          else
++          {
++            cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: access check succeeded (returned %d)",
++                            WEXITSTATUS(acstatus));
++          }
++        }
++      }
++    }
++  }
++#endif /* WITH_LSPP */
++
+  /*
+   * Building the options string is harder than it needs to be, but
+   * for the moment we need to pass strings for command-line args and
+@@ -3026,6 +3132,41 @@
+     envp[envc ++] = final_content_type;
+   }
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++    if (job->scon == NULL)
++    {
++      audit_message = NULL;
++      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s",
++                      job->id, job->auid, job->username, printer->name);
++      audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
++                             ServerName, NULL, NULL, 1);
++      free(audit_message);
++    }
++    else 
++    {
++      job_context = context_new(job->scon);
++      if (strcasecmp(Classification, MLS_CONFIG) == 0)
++        mls_label = context_range_get(job_context);
++      else if (strcasecmp(Classification, TE_CONFIG) == 0)
++        mls_label = context_type_get(job_context);
++      else  // default is SELinux which means print the whole context
++        mls_label = context_str(job_context);
++      snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
++               mls_label);
++      envp[envc ++] = classification;
++      audit_message = NULL;
++      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s obj=%s",
++                      job->id, job->auid, job->username, printer->name, job->scon);
++      audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                             ServerName, NULL, NULL, 1);
++      context_free(job_context);
++      free(audit_message);
++    }
++  }
++  else 
++#endif /* WITH_LSPP */
+   if (Classification && !banner_page)
+   {
+     if ((attr = ippFindAttribute(job->attrs, "job-sheets",
+diff -burN cups-1.2.2-vanilla/scheduler/job.h cups-1.2.2/scheduler/job.h
+--- cups-1.2.2-vanilla/scheduler/job.h	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/job.h	2006-08-01 07:08:37.000000000 -0400
+@@ -22,6 +22,13 @@
+  *         WWW: http://www.cups.org
+  */
+ 
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
++#ifdef WITH_LSPP
++#include <selinux/selinux.h>
++#endif /* WITH_LSPP */
++
+ /*
+  * Job request structure...
+  */
+@@ -55,6 +62,10 @@
+   int			status;		/* Status code from filters */
+   cupsd_printer_t	*printer;	/* Printer this job is assigned to */
+   int			tries;		/* Number of tries for this job */
++#ifdef WITH_LSPP
++  security_context_t	scon;		/* Security context of job */
++  uid_t			auid;		/* Audit loginuid for this job */
++#endif /* WITH_LSPP */
+ } cupsd_job_t;
+ 
+ 
+diff -burN cups-1.2.2-vanilla/scheduler/main.c cups-1.2.2/scheduler/main.c
+--- cups-1.2.2-vanilla/scheduler/main.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/main.c	2006-08-01 07:08:37.000000000 -0400
+@@ -47,6 +47,8 @@
+  *   usage()                   - Show scheduler usage.
+  */
+ 
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -69,6 +71,9 @@
+ #  include <notify.h>
+ #endif /* HAVE_NOTIFY_H */
  
 +#ifdef WITH_LSPP
 +#  include <libaudit.h>
 +#endif /* WITH_LSPP */
  
  /*
-  * Configuration variable structure...
-@@ -161,6 +165,9 @@
-   { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_STRING },
- #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
- #endif /* HAVE_SSL */
+  * Local functions...
+@@ -351,6 +359,17 @@
+ #endif /* DEBUG */
+   }
+ 
 +#ifdef WITH_LSPP
-+  { "AuditLog",			&AuditLog,		CUPSD_VARTYPE_INTEGER },
++  if ((AuditLog = audit_open()) < 0 )
++  {
++    if (is_lspp_config())
++    {
++      fprintf(stderr, "cupsd: unable to start auditing");
++      return -1;
++    }
++  }
 +#endif /* WITH_LSPP */
- #ifdef HAVE_LAUNCHD
-   { "LaunchdTimeout",		&LaunchdTimeout,	CUPSD_VARTYPE_INTEGER },
-   { "LaunchdConf",		&LaunchdConf,		CUPSD_VARTYPE_STRING },
-@@ -223,6 +230,9 @@
- 		*old_requestroot;	/* Old RequestRoot */
-   const char	*tmpdir;		/* TMPDIR environment variable */
-   struct stat	tmpinfo;		/* Temporary directory info */
++
+  /*
+   * Set the timezone info...
+   */
+@@ -1115,6 +1142,10 @@
+   free(input);
+   free(output);
+ 
++#ifdef WITH_LSPP
++  audit_close(AuditLog);
++#endif /* WITH_LSPP */
++
+   return (!stop_scheduler);
+ }
+ 
+diff -burN cups-1.2.2-vanilla/scheduler/Makefile cups-1.2.2/scheduler/Makefile
+--- cups-1.2.2-vanilla/scheduler/Makefile	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/Makefile	2006-08-01 07:08:37.000000000 -0400
+@@ -54,6 +54,7 @@
+ OBJS	=	\
+ 		$(CUPSDOBJS) \
+ 		$(MIMEOBJS) \
++		lspp-access.o \
+ 		cups-deviced.o \
+ 		cups-driverd.o \
+ 		cups-lpd.o \
+@@ -63,6 +64,7 @@
+ 		testspeed.o \
+ 		util.o
+ TARGETS	=	\
++		lspp-access \
+ 		cupsd \
+ 		cups-deviced \
+ 		cups-driverd \
+@@ -111,11 +113,12 @@
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)
+ 	echo Creating $(SERVERBIN)/daemon...
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/daemon
+-	echo Installing cups-deviced, cups-driverd, cups-lpd, and cups-polld in $(SERVERBIN)/daemon...
++	echo Installing cups-deviced, cups-driverd, cups-lpd, cups-polld, and lspp-access in $(SERVERBIN)/daemon...
+ 	$(INSTALL_BIN) cups-deviced $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-driverd $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-lpd $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-polld $(SERVERBIN)/daemon
++	$(INSTALL_BIN) lspp-access $(SERVERBIN)/daemon
+ 	echo Creating $(SERVERBIN)/driver...
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/driver
+ 	echo Creating $(SERVERROOT)...
+@@ -161,6 +164,7 @@
+ 	$(RM) $(SERVERBIN)/daemon/cups-driverd
+ 	$(RM) $(SERVERBIN)/daemon/cups-lpd
+ 	$(RM) $(SERVERBIN)/daemon/cups-polld
++	$(RM) $(SERVERBIN)/daemon/lspp-access
+ 	-$(RMDIR) $(STATEDIR)/certs
+ 	-$(RMDIR) $(STATEDIR)
+ 	-$(RMDIR) $(SERVERROOT)/ppd
+diff -burN cups-1.2.2-vanilla/scheduler/printers.c cups-1.2.2/scheduler/printers.c
+--- cups-1.2.2-vanilla/scheduler/printers.c	2006-08-01 07:07:28.000000000 -0400
++++ cups-1.2.2/scheduler/printers.c	2006-08-01 07:08:37.000000000 -0400
+@@ -57,6 +57,8 @@
+  *                                 printing desktop tools.
+  */
+ 
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -79,6 +81,9 @@
+ static void	write_irix_state(cupsd_printer_t *p);
+ #endif /* __sgi */
+ 
++#ifdef WITH_LSPP
++#  include <libaudit.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * 'cupsdAddPrinter()' - Add a printer to the system.
+@@ -1472,6 +1477,9 @@
+ 		  "two-sided-long-edge",
+ 		  "two-sided-short-edge"
+ 		};
 +#ifdef WITH_LSPP
 +  char		*audit_message;		/* Audit message string */
 +#endif /* WITH_LSPP */
  
  
-  /*
-@@ -377,6 +387,16 @@
+   DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
+@@ -1578,6 +1586,14 @@
+       attr->values[1].string.text = _cupsStrAlloc(Classification ?
+ 	                                   Classification : p->job_sheets[1]);
      }
-   }
- 
-+#ifdef WITH_LSPP
-+  /*
-+   * ClassifyOverride is set during read_configuration, if its on, report it now
-+   */
-+  if (ClassifyOverride)
-+    audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
-+              "[Config] ClassifyOverride=enabled Users can override print banners",
-+              ServerName, NULL, NULL, 1);
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Numeric options...
-   */
-@@ -779,7 +799,16 @@
-     cupsdClearString(&Classification);
- 
-   if (Classification)
-+  {
-     cupsdLogMessage(CUPSD_LOG_INFO, "Security set to \"%s\"", Classification);
 +#ifdef WITH_LSPP
 +    audit_message = NULL;
-+    cupsdSetStringf(&audit_message, "[Config] Security level=%s", Classification);
++    cupsdSetStringf(&audit_message, "[Config] printer=%s uri=%s banners set to %s %s",
++                    p->name, p->device_uri, p->job_sheets[0], p->job_sheets[1]);
 +    audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
 +                           ServerName, NULL, NULL, 1);
 +    free(audit_message);
 +#endif /* WITH_LSPP */
-+  }
+   }
  
-  /*
-   * Update the MaxClientsPerHost value, as needed...
-@@ -2233,7 +2262,6 @@
- 
-       cupsd_dirsvc_addr_t	*dira;	/* New browse address array */
- 
--
-       if (NumBrowsers == 0)
-         dira = malloc(sizeof(cupsd_dirsvc_addr_t));
-       else
-@@ -3286,6 +3314,18 @@
-   return (0);
- }
- 
-+#ifdef WITH_LSPP
-+int is_lspp_config()
-+{
-+  if (Classification != NULL)
-+    return ((strcasecmp(Classification, MLS_CONFIG) == 0) 
-+            || (strcasecmp(Classification, TE_CONFIG) == 0)
-+            || (strcasecmp(Classification, SELINUX_CONFIG) == 0));
-+  else
-+    return 0;
-+}
-+#endif /* WITH_LSPP */
-+
- 
- /*
-  * End of "$Id: conf.c 5736 2006-07-13 19:59:36Z mike $".
+   printer_type = p->type;
 --- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/scheduler/access.c	2006-07-21 12:42:40.000000000 +0100
++++ cups-1.2.2/config-scripts/cups-lspp.m4	2006-07-21 12:42:40.000000000 +0100
+@@ -0,0 +1,36 @@
++dnl
++dnl   LSPP code for the Common UNIX Printing System (CUPS).
++dnl
++dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
++dnl
++dnl   This program is free software; you can redistribute it and/or modify
++dnl   it under the terms of the GNU General Public License as published by
++dnl   the Free Software Foundation; version 2.
++dnl
++dnl   This program is distributed in the hope that it will be useful, but
++dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
++dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++dnl   General Public License for more details.
++dnl
++dnl   You should have received a copy of the GNU General Public License
++dnl   along with this program; if not, write to the Free Software Foundation,
++dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
++dnl
++
++dnl Are we trying to meet LSPP requirements
++AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
++
++if test x"$enable_lspp" != xno; then
++    case "$uname" in
++        Linux)
++            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
++            AC_CHECK_HEADER(libaudit.h)
++            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
++            AC_CHECK_HEADER(selinux/selinux.h)
++            AC_DEFINE(WITH_LSPP)
++            ;;
++        *)
++            # All others
++            ;;
++    esac
++fi
+--- /dev/null	2006-07-21 09:48:40.571484750 +0100
++++ cups-1.2.2/scheduler/lspp-access.c	2006-07-21 12:42:40.000000000 +0100
 @@ -0,0 +1,56 @@
 +/*
 + *   Copyright (C) Hewlett-Packard Development Company, L.P., 2006
@@ -1732,230 +1989,5 @@
 +  
 +  return status;
 +}
---- cups-1.2.2/scheduler/Makefile.lspp	2006-07-13 20:59:36.000000000 +0100
-+++ cups-1.2.2/scheduler/Makefile	2006-07-21 12:42:40.000000000 +0100
-@@ -54,6 +54,7 @@
- OBJS	=	\
- 		$(CUPSDOBJS) \
- 		$(MIMEOBJS) \
-+		access.o \
- 		cups-deviced.o \
- 		cups-driverd.o \
- 		cups-lpd.o \
-@@ -63,6 +64,7 @@
- 		testspeed.o \
- 		util.o
- TARGETS	=	\
-+		access \
- 		cupsd \
- 		cups-deviced \
- 		cups-driverd \
-@@ -111,7 +113,8 @@
- 	$(INSTALL_DIR) -m 755 $(SERVERBIN)
- 	echo Creating $(SERVERBIN)/daemon...
- 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/daemon
--	echo Installing cups-deviced, cups-driverd, cups-lpd, and cups-polld in $(SERVERBIN)/daemon...
-+	echo Installing access cups-deviced, cups-driverd, cups-lpd, and cups-polld in $(SERVERBIN)/daemon...
-+	$(INSTALL_BIN) access $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-deviced $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-driverd $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-lpd $(SERVERBIN)/daemon
-@@ -157,6 +160,7 @@
- 
- uninstall:	all
- 	$(RM) $(SBINDIR)/cupsd
-+	$(RM) $(SERVERBIN)/daemon/access
- 	$(RM) $(SERVERBIN)/daemon/cups-deviced
- 	$(RM) $(SERVERBIN)/daemon/cups-driverd
- 	$(RM) $(SERVERBIN)/daemon/cups-lpd
---- cups-1.2.2/scheduler/conf.h.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/conf.h	2006-07-21 12:42:40.000000000 +0100
-@@ -182,7 +182,6 @@
- 					/* Number of MIME types */
- VAR const char		**MimeTypes		VALUE(NULL);
- 					/* Array of MIME types */
--
- #ifdef HAVE_SSL
- VAR char		*ServerCertificate	VALUE(NULL);
- 					/* Server certificate file */
-@@ -191,6 +190,10 @@
- 					/* Server key file */
- #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
- #endif /* HAVE_SSL */
-+#ifdef WITH_LSPP
-+VAR int			AuditLog		VALUE(-1);
-+					/* File descriptor for audit */
-+#endif /* WITH_LSPP */
- 
- #ifdef HAVE_LAUNCHD
- VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
-@@ -213,6 +216,9 @@
- ;
- extern int	cupsdLogPage(cupsd_job_t *job, const char *page);
- 
-+#ifdef WITH_LSPP
-+extern int	is_lspp_config(void);
-+#endif /* WITH_LSPP */
- 
- /*
-  * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
---- cups-1.2.2/scheduler/client.c.lspp	2006-07-21 12:42:35.000000000 +0100
-+++ cups-1.2.2/scheduler/client.c	2006-07-21 12:43:29.000000000 +0100
-@@ -43,12 +43,17 @@
-  *   make_certificate()      - Make a self-signed SSL/TLS certificate.
-  *   pipe_command()          - Pipe the output of a command to the remote client.
-  *   write_file()            - Send a file via HTTP.
-+ *   client_pid_to_auid()    - Get the audit login uid of the client.
-  */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
- 
-+#define _GNU_SOURCE
- #include <cups/http-private.h>
- #include "cupsd.h"
- 
-@@ -64,6 +69,11 @@
- #  include <gnutls/x509.h>
- #endif /* HAVE_GNUTLS */
- 
-+#ifdef WITH_LSPP
-+#include <selinux/selinux.h>
-+#include <fcntl.h>
-+#endif /* WITH_LSPP */
-+
- 
- /*
-  * Local functions...
-@@ -380,6 +390,45 @@
-                   "cupsdAcceptClient: %d connected to server on %s:%d",
-                   con->http.fd, con->servername, con->serverport);
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+    struct ucred cr;
-+    unsigned int cl=sizeof(cr);
-+
-+    if (getsockopt(con->http.fd, SOL_SOCKET, SO_PEERCRED, &cr, &cl)==0) {
-+     /*
-+      * client_pid_to_auid() can be racey
-+      * In this case the pid is based on a socket connected to the client
-+      */
-+      con->auid = client_pid_to_auid(cr.pid);
-+      cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: peer's pid=%d, uid=%d, gid=%d, auid=%d",
-+                      cr.pid, cr.uid, cr.gid, con->auid);
-+    } else {
-+      close(con->http.fd);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getsockopt() failed");
-+      return (cupsdCloseClient(con));
-+    }
-+
-+   /*
-+    * get the context of the peer connection
-+    */
-+    if (getpeercon(con->http.fd, &con->scon))
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
-+      cupsdSetString(&con->scon, UNKNOWN_SL);
-+    }
-+
-+    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
-+
-+  }
-+  else
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: skipping getpeercon()");
-+    cupsdSetString(&con->scon, UNKNOWN_SL);
-+  }
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Using TCP_NODELAY improves responsiveness, especially on systems
-   * with a slow loopback interface...  Since we write large buffers
-@@ -3465,7 +3514,6 @@
-   time_t		curtime;	/* Current time */
-   int			result;		/* Result of GNU TLS calls */
- 
--
-  /*
-   * Create the encryption key...
-   */
-@@ -3664,6 +3712,49 @@
- #endif /* HAVE_SSL */
- 
- 
-+#ifdef WITH_LSPP
-+/*
-+ * 'client_pid_to_auid()' - Using the client's pid, read /proc and determine the loginuid.
-+ */
-+
-+uid_t client_pid_to_auid(pid_t clipid)
-+{
-+  uid_t uid;
-+  int len, in;
-+  char buf[16] = {0};
-+  char fname[32] = {0};
-+
-+
-+ /*
-+  * Hopefully this pid is still the one we are interested in.
-+  */
-+  snprintf(fname, 32, "/proc/%d/loginuid", clipid);
-+  in = open(fname, O_NOFOLLOW|O_RDONLY);
-+
-+  if (in < 0)
-+    return -1;
-+
-+  errno = 0;
-+
-+  do {
-+    len = read(in, buf, sizeof(buf));
-+  } while (len < 0 && errno == EINTR);
-+
-+  close(in);
-+
-+  if (len < 0 || len >= sizeof(buf))
-+    return -1;
-+
-+  buf[len] = 0;
-+  uid = strtol(buf, 0, 10);
-+
-+  if (errno != 0)
-+    return -1;
-+  else
-+    return uid;
-+}
-+#endif /* WITH_LSPP */
-+
- /*
-  * 'pipe_command()' - Pipe the output of a command to the remote client.
-  */
---- cups-1.2.2/cups/cups.h.lspp	2006-03-06 03:39:28.000000000 +0000
-+++ cups-1.2.2/cups/cups.h	2006-07-21 12:42:40.000000000 +0100
-@@ -24,6 +24,8 @@
-  *   This file is subject to the Apple OS-Developed Software exception.
-  */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+
- #ifndef _CUPS_CUPS_H_
- #  define _CUPS_CUPS_H_
- 
-@@ -68,6 +70,12 @@
- #  define CUPS_DATE_ANY		-1
- 
- 
-+# ifdef WITH_LSPP
-+# define MLS_CONFIG "mls"
-+# define TE_CONFIG "te"
-+# define SELINUX_CONFIG "SELinux"
-+# define UNKNOWN_SL "UNKNOWN SL"
-+# endif /* WITH_LSPP */
- /*
-  * Types and structures...
-  */
+
+

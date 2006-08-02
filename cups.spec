@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -409,6 +409,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Aug  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-7
+- Updated LSPP patch from Matt Anderson.
+
 * Fri Jul 28 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-6
 - Use replacement snmp.c from STR #1737 (bug #193093).
 - Re-enable LSPP; doesn't harm browsing after all.
