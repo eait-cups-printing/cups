@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 7
+Release: 8
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -40,6 +40,7 @@ Patch14: cups-dest-cache-v2.patch
 Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
+Patch18: cups-str1881.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -139,6 +140,7 @@ lpd emulation.
 %patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
+%patch18 -p1 -b .str1881
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -415,6 +417,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sun Aug  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-8
+- Apply patch from STR #1881 for remote IPP printing (bug #201167).
+
 * Wed Aug  2 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-7
 - Updated LSPP patch from Matt Anderson.
 - Ship pstopdf filter for LSPP.
