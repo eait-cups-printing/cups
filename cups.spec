@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 8
+Release: 9
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -417,6 +417,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Aug 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-9
+- Try different fix for STR #1795/STR #1881 (bug #201167).
+
 * Sun Aug  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-8
 - Apply patch from STR #1881 for remote IPP printing (bug #201167).
 
