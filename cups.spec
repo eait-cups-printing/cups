@@ -41,6 +41,7 @@ Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-str1881.patch
+Patch19: cups-str1893.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -141,6 +142,7 @@ lpd emulation.
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .str1881
+%patch19 -p1 -b .str1893
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -417,6 +419,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Aug 11 2006 Tim Waugh <twaugh@redhat.com>
+- Applied patch to fix STR #1893 (bug #201800).
+
 * Thu Aug 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-9
 - Try different fix for STR #1795/STR #1881 (bug #201167).
 
