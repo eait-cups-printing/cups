@@ -55,7 +55,7 @@ Prereq: /usr/sbin/alternatives
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
 Obsoletes: lpd lpr LPRng <= 3.8.15-3
-Provides: lpd lpr LPRng = 3.8.15-3
+Provides: lpd lpr
 
 # kdelibs conflict for bug #192585.
 Conflicts: kdelibs < 6:3.5.2-6
@@ -420,6 +420,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Aug 11 2006 Tim Waugh <twaugh@redhat.com>
+- Remove 'Provides: LPRng = 3.8.15-3' (bug #148757).
 - Applied patch to fix STR #1893 (bug #201800).
 
 * Thu Aug 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-9
