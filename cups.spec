@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 10
+Release: 11
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -419,6 +419,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Aug 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-11
+- Use upstream patch to fix STR #1881.
+
 * Fri Aug 11 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-10
 - Remove 'Provides: LPRng = 3.8.15-3' (bug #148757).
 - Applied patch to fix STR #1893 (bug #201800).
