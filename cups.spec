@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 11
+Release: 12
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -42,6 +42,7 @@ Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-str1881.patch
 Patch19: cups-str1893.patch
+Patch20: cups-str1880.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -143,6 +144,7 @@ lpd emulation.
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .str1881
 %patch19 -p1 -b .str1893
+%patch20 -p1 -b .str1880
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -419,6 +421,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Aug 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-12
+- Apply patch to fix STR #1880 (bug #200205).
+
 * Wed Aug 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-11
 - Use upstream patch to fix STR #1881.
 
