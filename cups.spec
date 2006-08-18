@@ -376,8 +376,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
 %{cups_serverbin}/daemon/cups-driverd
-%{cups_serverbin}/notifier/mailto
-%{cups_serverbin}/notifier/testnotify
+%{cups_serverbin}/notifier
 %{cups_serverbin}/filter
 %{cups_serverbin}/monitor
 %{cups_serverbin}/driver
@@ -421,6 +420,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Aug 18 2006 Tim Waugh <twaugh@redhat.com>
+- Own notifier directory (bug #203085).
+
 * Thu Aug 17 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-12
 - Apply patch to fix STR #1880 (bug #200205).
 
