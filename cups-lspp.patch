@@ -1,6 +1,5 @@
-diff -burN cups-1.2.2-vanilla/config.h.in cups-1.2.2/config.h.in
---- cups-1.2.2-vanilla/config.h.in	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/config.h.in	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/config.h.in	2006-08-10 11:42:42.000000000 -0400
++++ cups-1.2.2/config.h.in	2006-08-07 06:19:33.000000000 -0400
 @@ -443,6 +443,13 @@
  #undef HAVE_APPLETALK_AT_PROTO_H
  
@@ -15,9 +14,8 @@ diff -burN cups-1.2.2-vanilla/config.h.in cups-1.2.2/config.h.in
  #endif /* !_CUPS_CONFIG_H_ */
  
  /*
-diff -burN cups-1.2.2-vanilla/configure.in cups-1.2.2/configure.in
---- cups-1.2.2-vanilla/configure.in	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/configure.in	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/configure.in	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/configure.in	2006-08-07 06:19:33.000000000 -0400
 @@ -47,6 +47,8 @@
  sinclude(config-scripts/cups-pdf.m4)
  sinclude(config-scripts/cups-scripting.m4)
@@ -27,9 +25,47 @@ diff -burN cups-1.2.2-vanilla/configure.in cups-1.2.2/configure.in
  INSTALL_LANGUAGES=""
  UNINSTALL_LANGUAGES=""
  LANGFILES=""
-diff -burN cups-1.2.2-vanilla/cups/cups.h cups-1.2.2/cups/cups.h
---- cups-1.2.2-vanilla/cups/cups.h	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/cups/cups.h	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/config-scripts/cups-lspp.m4	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/config-scripts/cups-lspp.m4	2006-08-07 06:19:33.000000000 -0400
+@@ -0,0 +1,36 @@
++dnl
++dnl   LSPP code for the Common UNIX Printing System (CUPS).
++dnl
++dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
++dnl
++dnl   This program is free software; you can redistribute it and/or modify
++dnl   it under the terms of the GNU General Public License as published by
++dnl   the Free Software Foundation; version 2.
++dnl
++dnl   This program is distributed in the hope that it will be useful, but
++dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
++dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++dnl   General Public License for more details.
++dnl
++dnl   You should have received a copy of the GNU General Public License
++dnl   along with this program; if not, write to the Free Software Foundation,
++dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
++dnl
++
++dnl Are we trying to meet LSPP requirements
++AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
++
++if test x"$enable_lspp" != xno; then
++    case "$uname" in
++        Linux)
++            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
++            AC_CHECK_HEADER(libaudit.h)
++            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
++            AC_CHECK_HEADER(selinux/selinux.h)
++            AC_DEFINE(WITH_LSPP)
++            ;;
++        *)
++            # All others
++            ;;
++    esac
++fi
+--- cups-1.2.2-8/cups/cups.h	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/cups/cups.h	2006-08-07 06:19:33.000000000 -0400
 @@ -24,6 +24,8 @@
   *   This file is subject to the Apple OS-Developed Software exception.
   */
@@ -52,9 +88,8 @@ diff -burN cups-1.2.2-vanilla/cups/cups.h cups-1.2.2/cups/cups.h
  /*
   * Types and structures...
   */
-diff -burN cups-1.2.2-vanilla/data/Makefile cups-1.2.2/data/Makefile
---- cups-1.2.2-vanilla/data/Makefile	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/data/Makefile	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/data/Makefile	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/data/Makefile	2006-08-07 06:19:33.000000000 -0400
 @@ -34,7 +34,10 @@
  		secret \
  		standard \
@@ -67,9 +102,8 @@ diff -burN cups-1.2.2-vanilla/data/Makefile cups-1.2.2/data/Makefile
  
  CHARMAPS =	\
  		euc-cn.txt \
-diff -burN cups-1.2.2-vanilla/data/mls cups-1.2.2/data/mls
---- cups-1.2.2-vanilla/data/mls	1969-12-31 19:00:00.000000000 -0500
-+++ cups-1.2.2/data/mls	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/data/mls	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/mls	2006-08-07 06:19:33.000000000 -0400
 @@ -0,0 +1,277 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -348,9 +382,8 @@ diff -burN cups-1.2.2-vanilla/data/mls cups-1.2.2/data/mls
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -burN cups-1.2.2-vanilla/data/selinux cups-1.2.2/data/selinux
---- cups-1.2.2-vanilla/data/selinux	1969-12-31 19:00:00.000000000 -0500
-+++ cups-1.2.2/data/selinux	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/data/selinux	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/selinux	2006-08-07 06:19:33.000000000 -0400
 @@ -0,0 +1,277 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -629,9 +662,8 @@ diff -burN cups-1.2.2-vanilla/data/selinux cups-1.2.2/data/selinux
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -burN cups-1.2.2-vanilla/data/te cups-1.2.2/data/te
---- cups-1.2.2-vanilla/data/te	1969-12-31 19:00:00.000000000 -0500
-+++ cups-1.2.2/data/te	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/data/te	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/data/te	2006-08-07 06:19:33.000000000 -0400
 @@ -0,0 +1,277 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -910,9 +942,8 @@ diff -burN cups-1.2.2-vanilla/data/te cups-1.2.2/data/te
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -burN cups-1.2.2-vanilla/Makedefs.in cups-1.2.2/Makedefs.in
---- cups-1.2.2-vanilla/Makedefs.in	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/Makedefs.in	2006-08-01 07:08:43.000000000 -0400
+--- cups-1.2.2-8/Makedefs.in	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/Makedefs.in	2006-08-07 06:19:33.000000000 -0400
 @@ -135,7 +135,7 @@
  			@LDFLAGS@ @RELROFLAG@ @PIEFLAGS@ $(OPTIM)
  LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
@@ -922,9 +953,8 @@ diff -burN cups-1.2.2-vanilla/Makedefs.in cups-1.2.2/Makedefs.in
  OPTIM		=	@OPTIM@
  OPTIONS		=
  PAMLIBS		=	@PAMLIBS@
-diff -burN cups-1.2.2-vanilla/scheduler/client.c cups-1.2.2/scheduler/client.c
---- cups-1.2.2-vanilla/scheduler/client.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/client.c	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/client.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/client.c	2006-08-07 06:19:33.000000000 -0400
 @@ -43,12 +43,17 @@
   *   make_certificate()      - Make a self-signed SSL/TLS certificate.
   *   pipe_command()          - Pipe the output of a command to the remote client.
@@ -1067,9 +1097,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/client.c cups-1.2.2/scheduler/client.c
  /*
   * 'pipe_command()' - Pipe the output of a command to the remote client.
   */
-diff -burN cups-1.2.2-vanilla/scheduler/client.h cups-1.2.2/scheduler/client.h
---- cups-1.2.2-vanilla/scheduler/client.h	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/client.h	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/client.h	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/client.h	2006-08-07 06:19:33.000000000 -0400
 @@ -22,6 +22,13 @@
   *         WWW: http://www.cups.org
   */
@@ -1105,9 +1134,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/client.h cups-1.2.2/scheduler/client.h
  
  
  /*
-diff -burN cups-1.2.2-vanilla/scheduler/conf.c cups-1.2.2/scheduler/conf.c
---- cups-1.2.2-vanilla/scheduler/conf.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/conf.c	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/conf.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/conf.c	2006-08-14 06:09:33.000000000 -0400
 @@ -35,6 +35,7 @@
   *   read_configuration()     - Read a configuration file.
   *   read_location()          - Read a <Location path> definition.
@@ -1146,41 +1174,52 @@ diff -burN cups-1.2.2-vanilla/scheduler/conf.c cups-1.2.2/scheduler/conf.c
  
  
   /*
-@@ -377,6 +387,16 @@
+@@ -377,6 +387,7 @@
      }
    }
+ 
++
+  /*
+   * Numeric options...
+   */
+@@ -470,6 +481,16 @@
+ 
+   RunUser = getuid();
  
 +#ifdef WITH_LSPP
 +  /*
 +   * ClassifyOverride is set during read_configuration, if its on, report it now
 +   */
-+  if (ClassifyOverride)
++  if (ClassifyOverride && AuditLog != -1)
 +    audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
 +              "[Config] ClassifyOverride=enabled Users can override print banners",
 +              ServerName, NULL, NULL, 1);
 +#endif /* WITH_LSPP */
 +
   /*
-   * Numeric options...
+   * See if the ServerName is an IP address...
    */
-@@ -779,7 +799,16 @@
+@@ -779,7 +800,19 @@
      cupsdClearString(&Classification);
  
    if (Classification)
 +  {
      cupsdLogMessage(CUPSD_LOG_INFO, "Security set to \"%s\"", Classification);
 +#ifdef WITH_LSPP
-+    audit_message = NULL;
-+    cupsdSetStringf(&audit_message, "[Config] Security level=%s", Classification);
-+    audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
-+                           ServerName, NULL, NULL, 1);
-+    free(audit_message);
++    if (AuditLog != -1)
++    {
++      audit_message = NULL;
++      cupsdSetStringf(&audit_message, "[Config] Security level=%s", Classification);
++      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
++                             ServerName, NULL, NULL, 1);
++      free(audit_message);
++    }
 +#endif /* WITH_LSPP */
 +  }
  
   /*
    * Update the MaxClientsPerHost value, as needed...
-@@ -2233,7 +2262,6 @@
+@@ -2233,7 +2266,6 @@
  
        cupsd_dirsvc_addr_t	*dira;	/* New browse address array */
  
@@ -1188,7 +1227,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/conf.c cups-1.2.2/scheduler/conf.c
        if (NumBrowsers == 0)
          dira = malloc(sizeof(cupsd_dirsvc_addr_t));
        else
-@@ -3286,6 +3314,18 @@
+@@ -3286,6 +3318,18 @@
    return (0);
  }
  
@@ -1207,9 +1246,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/conf.c cups-1.2.2/scheduler/conf.c
  
  /*
   * End of "$Id: conf.c 5736 2006-07-13 19:59:36Z mike $".
-diff -burN cups-1.2.2-vanilla/scheduler/conf.h cups-1.2.2/scheduler/conf.h
---- cups-1.2.2-vanilla/scheduler/conf.h	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/conf.h	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/conf.h	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/conf.h	2006-08-07 06:19:33.000000000 -0400
 @@ -182,7 +182,6 @@
  					/* Number of MIME types */
  VAR const char		**MimeTypes		VALUE(NULL);
@@ -1239,9 +1277,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/conf.h cups-1.2.2/scheduler/conf.h
  
  /*
   * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
-diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
---- cups-1.2.2-vanilla/scheduler/ipp.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/ipp.c	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/ipp.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/ipp.c	2006-08-21 06:57:47.000000000 -0400
 @@ -96,6 +96,9 @@
   *   validate_user()             - Validate the user for the request.
   */
@@ -1267,7 +1304,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
  
  /*
   * PPD default choice structure...
-@@ -1166,6 +1177,15 @@
+@@ -1166,6 +1177,18 @@
    int		kbytes;			/* Size of print file */
    int		i;			/* Looping var */
    int		lowerpagerange;		/* Page range bound */
@@ -1279,11 +1316,14 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
 +  int		acstatus;		/* return value of the access check */
 +  pid_t		acpid;			/* pid for the access check */
 +  char		*printerfile;		/* device file pointed to by the printer */
++  char		*userheader = NULL;	/* User supplied job-sheets[0] */
++  char		*userfooter = NULL;	/* User supplied job-sheets[1] */
++  int		override = 0;		/* Was a banner overrode on a job */
 +#endif /* WITH_LSPP */
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %s)", con,
-@@ -1342,6 +1362,97 @@
+@@ -1342,6 +1365,90 @@
      return (NULL);
    }
  
@@ -1316,19 +1356,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
 +    * Perform an access check so that if the user gets feedback at enqueue time
 +    */
 +
-+    printerfile = strdup(printer->device_uri);
-+    if ((printerfile = strrchr(printer->device_uri, '=')) == NULL)
-+    {
-+      if ((printerfile = strrchr(printer->device_uri, ':')) == NULL)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "add_job: Unable to determine printer device file");
-+        send_ipp_status(con, IPP_INTERNAL_ERROR, _("Unable to perform printer access check"));
-+        return (NULL); 
-+      }
-+    }
-+
-+    printerfile++;
-+    if (strncmp(printerfile, "/dev/", 5) == 0)
++    printerfile = strstr(printer->device_uri, "/dev/");
++    if (printerfile != NULL)
 +    {
 +      cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: Attempting an access check on printer device %s",
 +                      printerfile);
@@ -1341,7 +1370,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
 +      }
 +
 +      snprintf(buffer, sizeof(buffer), "%s/daemon/lspp-access", ServerBin);
-+      argv[0] = "access";
++      argv[0] = "lspp-access";
 +      argv[1] = printerfile;
 +      argv[2] = NULL;
 +
@@ -1357,12 +1386,16 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
 +           /*
 +            * The access check failed, so cancel the job and send an audit message
 +            */
-+            audit_message = NULL;
-+            cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s refused, unable to access printer=%s",
-+                            job->id, con->auid, con->username, con->scon, printer->name);
-+            audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                   ServerName, NULL, NULL, 0);
-+            free(audit_message);
++            if (AuditLog != -1)
++            {
++              audit_message = NULL;
++              cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s refused,"
++                              "unable to access printer=%s", job->id, con->auid,
++                              con->username, con->scon, printer->name);
++              audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                     ServerName, NULL, NULL, 0);
++              free(audit_message);
++            }
 +
 +            send_ipp_status(con, IPP_NOT_AUTHORIZED, _("SELinux prohibits access to the printer"));
 +            return (NULL);
@@ -1381,27 +1414,120 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
    job->dtype   = dtype;
    job->attrs   = con->request;
    con->request = NULL;
-@@ -1553,6 +1664,19 @@
- 
-       if (ClassifyOverride)
-       {
+@@ -1537,6 +1644,29 @@
+       attr->values[0].string.text = _cupsStrAlloc(printer->job_sheets[0]);
+       attr->values[1].string.text = _cupsStrAlloc(printer->job_sheets[1]);
+     }
 +#ifdef WITH_LSPP
++    else
++    {
++     /*
++      * The option was present, so capture the user supplied strings
++      */
++      userheader = strdup(attr->values[0].string.text);
++
++      if (attr->num_values > 1)
++        userfooter = strdup(attr->values[1].string.text);
++  
++      if ((strcmp(userheader, Classification) == 0)
++          && (strcmp(userfooter, Classification) == 0))
++      {
 +       /*
-+        * The configuration allows for user's to Override the banner, so let them
++        * Since both values are Classification, the user is not trying to Override
 +        */
-+        audit_message = NULL;
-+        cupsdSetStringf(&audit_message, "job=%d user supplied classification \"%s\" \"%s\"",
-+                        job->id,
-+                        (attr->values[0].string.text)?attr->values[0].string.text:"none",
-+                        (attr->values[1].string.text)?attr->values[1].string.text:"none");
-+        audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
-+                               ServerName, NULL, NULL, 1);
-+        free(audit_message);
++        free(userheader);
++        free(userfooter);
++        userheader = userfooter = NULL;
++      }
++    }
 +#endif /* WITH_LSPP */
-         if (!strcmp(attr->values[0].string.text, "none") &&
- 	    (attr->num_values == 1 ||
- 	     !strcmp(attr->values[1].string.text, "none")))
-@@ -3501,6 +3625,11 @@
+ 
+     job->job_sheets = attr;
+ 
+@@ -1567,6 +1697,9 @@
+ 	                		    "job-sheets=\"%s,none\", "
+ 					    "job-originating-user-name=\"%s\"",
+ 	        	 job->id, Classification, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+ 	}
+ 	else if (attr->num_values == 2 &&
+ 	         strcmp(attr->values[0].string.text,
+@@ -1585,6 +1718,9 @@
+ 					    "job-originating-user-name=\"%s\"",
+ 	        	 job->id, attr->values[0].string.text,
+ 			 attr->values[1].string.text, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+ 	}
+ 	else if (strcmp(attr->values[0].string.text, Classification) &&
+ 	         strcmp(attr->values[0].string.text, "none") &&
+@@ -1605,6 +1741,9 @@
+ 			    "job-originating-user-name=\"%s\"",
+ 	        	    job->id, attr->values[0].string.text,
+ 			    attr->values[1].string.text, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+         }
+       }
+       else if (strcmp(attr->values[0].string.text, Classification) &&
+@@ -1645,9 +1784,52 @@
+ 	                  "job-sheets=\"%s\", "
+ 			  "job-originating-user-name=\"%s\"",
+ 	        	 job->id, Classification, job->username);
++#ifdef WITH_LSPP
++        override = 1;
++#endif /* WITH_LSPP */
++      }
++#ifdef WITH_LSPP
++      if (is_lspp_config() && AuditLog != -1)
++      {
++        audit_message = NULL;
++
++        if (userheader || userfooter)
++        {
++          if (!override)
++          {
++           /*
++            * The user overrode the banner, so audit it
++            */
++            cupsdSetStringf(&audit_message, "job=%d user supplied classification \"%s\" \"%s\""
++                            " using \"%s\" \"%s\"", job->id, userheader,
++                            userfooter, attr->values[0].string.text,
++                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
++            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
++                                   ServerName, NULL, NULL, 1);
++          }
++          else
++          {
++           /*
++            * The user tried to override the banner, audit the failure
++            */
++            cupsdSetStringf(&audit_message, "job=%d user supplied classification \"%s\" \"%s\""
++                            ", ignored using \"%s\" \"%s\"", job->id, userheader,
++                            userfooter, attr->values[0].string.text,
++                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
++            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
++                                   ServerName, NULL, NULL, 0);
++          }
++          free(audit_message);
+       }
+     }
+ 
++      if (userheader)
++        free(userheader);
++      if (userfooter)
++        free(userfooter);
++#endif /* WITH_LSPP */
++    }
++
+    /*
+     * See if we need to add the starting sheet...
+     */
+@@ -3501,6 +3683,11 @@
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
@@ -1413,7 +1539,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner(%p[%d], %p[%d], %s)",
-@@ -3628,6 +3757,24 @@
+@@ -3628,6 +3815,24 @@
        else
          s = attrname;
  
@@ -1438,7 +1564,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -5353,6 +5500,15 @@
+@@ -5353,6 +5558,15 @@
    cupsd_printer_t *printer;		/* Printer */
    cups_array_t	*list;			/* Which job list... */
    cups_array_t	*ra;			/* Requested attributes array */
@@ -1454,7 +1580,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs(%p[%d], %s)", con, con->http.fd,
-@@ -5470,6 +5626,40 @@
+@@ -5470,6 +5684,40 @@
  
    ra = create_requested_array(con->request);
  
@@ -1495,7 +1621,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
   /*
    * OK, build a list of jobs for this printer...
    */
-@@ -5507,6 +5697,19 @@
+@@ -5507,6 +5755,19 @@
      if (count > 0)
        ippAddSeparator(con->response);
  
@@ -1515,7 +1641,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
      count ++;
  
      cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
-@@ -7935,12 +8138,22 @@
+@@ -7935,12 +8196,22 @@
      * See if we need to add the ending sheet...
      */
  
@@ -1538,9 +1664,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/ipp.c cups-1.2.2/scheduler/ipp.c
       /*
        * Yes...
        */
-diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
---- cups-1.2.2-vanilla/scheduler/job.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/job.c	2006-08-01 07:08:37.000000000 -0400
+--- cups-1.2.2-8/scheduler/job.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/job.c	2006-08-17 10:38:41.000000000 -0400
 @@ -68,6 +68,9 @@
   *   unload_job()               - Unload a job from memory.
   */
@@ -1587,7 +1712,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
    job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
                                       IPP_TAG_INTEGER);
    job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
-@@ -2428,6 +2453,17 @@
+@@ -2428,6 +2453,18 @@
    int			remote_job;	/* Remote print job? */
    static char		*options = NULL;/* Full list of options */
    static int		optlength = 0;	/* Length of option buffer */
@@ -1595,6 +1720,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
 +  int			acstatus = 0;	/* return value of the access check */
 +  pid_t			acpid = -1;	/* pid for the access check */
 +  const char		*mls_label = NULL;	/* SL to put in classification env var */
++  char			*label_template = NULL;	/* SL to put in classification env var */
 +  char			*audit_message = NULL;	/* Audit message string */
 +  char			*printerfile = NULL;	/* Device file pointed to by the printer */
 +  char			*acargv[3];	/* Command line args */
@@ -1605,7 +1731,7 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job: id = %d, file = %d/%d",
-@@ -2709,6 +2745,76 @@
+@@ -2709,6 +2746,69 @@
  
    cupsdLogMessage(CUPSD_LOG_DEBUG, "banner_page = %d", banner_page);
  
@@ -1615,20 +1741,13 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
 +   /*
 +    * Perform an access check before printing, but only if the printer starts with /dev/
 +    */
-+    printerfile = strdup(printer->device_uri);
-+    if ((printerfile = strrchr(printer->device_uri, '=')) == NULL)
-+    {
-+      if ((printerfile = strrchr(printer->device_uri, ':')) == NULL)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to determine printer device file");
-+        cupsdCancelJob(job, 0);
-+        return;
-+      }
-+    }
++    printerfile = strstr(printer->device_uri, "/dev/");
 +
-+    printerfile++;
-+    if (strncmp(printerfile, "/dev/", 5) == 0)
++    if (printerfile != NULL)
 +    {
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: Attempting to check access on printer device %s",
++                      printerfile);
++
 +      if (setexeccon(job->scon) != 0)
 +      {
 +        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to setexeccon to %s", job->scon);
@@ -1636,11 +1755,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
 +        return;
 +      }
 +
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: Attempting to check access on printer device %s",
-+                      printerfile);
-+
 +      snprintf(buffer, sizeof(buffer), "%s/daemon/lspp-access", ServerBin);
-+      acargv[0] = "access";
++      acargv[0] = "lspp-access";
 +      acargv[1] = printerfile;
 +      acargv[2] = NULL;
 +
@@ -1656,13 +1772,16 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
 +           /*
 +            * The access check failed, so cancel the job and send an audit message
 +            */
-+            audit_message = NULL;
-+            cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s cancelled,"
-+                                            " unable to access printer=%s",
-+                            job->id, job->auid, job->username, job->scon, printer->name);
-+            audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                   ServerName, NULL, NULL, 0);
-+            free(audit_message);
++            if (AuditLog != -1)
++            {
++              audit_message = NULL;
++              cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s cancelled,"
++                                              " unable to access printer=%s",
++                              job->id, job->auid, job->username, job->scon, printer->name);
++              audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                     ServerName, NULL, NULL, 0);
++              free(audit_message);
++            }
 +
 +            cupsdCancelJob(job, 0);
 +
@@ -1682,51 +1801,70 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.c cups-1.2.2/scheduler/job.c
   /*
    * Building the options string is harder than it needs to be, but
    * for the moment we need to pass strings for command-line args and
-@@ -3026,6 +3132,41 @@
-     envp[envc ++] = final_content_type;
-   }
+@@ -3041,6 +3141,61 @@
+       snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
+                attr->values[0].string.text);
  
 +#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+    if (job->scon == NULL)
++    if (is_lspp_config())
 +    {
-+      audit_message = NULL;
-+      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s",
-+                      job->id, job->auid, job->username, printer->name);
-+      audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
-+                             ServerName, NULL, NULL, 1);
-+      free(audit_message);
++      if (job->scon == NULL)
++      {
++        if (AuditLog != -1)
++        {
++          audit_message = NULL;
++          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s",
++                          job->id, job->auid, job->username, printer->name, title);
++          audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
++                                 ServerName, NULL, NULL, 1);
++          free(audit_message);
++        }
++      }
++      else 
++      {
++        job_context = context_new(job->scon);
++  
++        if ((attr = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME)) == NULL)
++          label_template = strdup(Classification);
++        else if (attr->num_values > 1 &&
++                 strcmp(attr->values[1].string.text, "none") != 0)
++          label_template = strdup(attr->values[1].string.text);
++        else
++          label_template = strdup(attr->values[0].string.text);
++  
++        if (strcasecmp(label_template, MLS_CONFIG) == 0)
++          mls_label = context_range_get(job_context);
++        else if (strcasecmp(label_template, TE_CONFIG) == 0)
++          mls_label = context_type_get(job_context);
++        else if (strcasecmp(label_template, SELINUX_CONFIG) == 0)
++          mls_label = context_str(job_context);
++
++        if (!mls_label)
++          mls_label = label_template;
++
++        snprintf(classification, sizeof(classification), "CLASSIFICATION=%s", mls_label);
++  
++        if (AuditLog != -1)
++        {
++          audit_message = NULL;
++          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s"
++                          " obj=%s label=%s", job->id, job->auid, job->username,
++                          printer->name, title, job->scon, mls_label);
++          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                 ServerName, NULL, NULL, 1);
++          free(audit_message);
++        }
++        context_free(job_context);
++        free(label_template);
++      }
 +    }
-+    else 
-+    {
-+      job_context = context_new(job->scon);
-+      if (strcasecmp(Classification, MLS_CONFIG) == 0)
-+        mls_label = context_range_get(job_context);
-+      else if (strcasecmp(Classification, TE_CONFIG) == 0)
-+        mls_label = context_type_get(job_context);
-+      else  // default is SELinux which means print the whole context
-+        mls_label = context_str(job_context);
-+      snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
-+               mls_label);
-+      envp[envc ++] = classification;
-+      audit_message = NULL;
-+      cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s obj=%s",
-+                      job->id, job->auid, job->username, printer->name, job->scon);
-+      audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                             ServerName, NULL, NULL, 1);
-+      context_free(job_context);
-+      free(audit_message);
-+    }
-+  }
-+  else 
 +#endif /* WITH_LSPP */
-   if (Classification && !banner_page)
-   {
-     if ((attr = ippFindAttribute(job->attrs, "job-sheets",
-diff -burN cups-1.2.2-vanilla/scheduler/job.h cups-1.2.2/scheduler/job.h
---- cups-1.2.2-vanilla/scheduler/job.h	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/job.h	2006-08-01 07:08:37.000000000 -0400
++
+     envp[envc ++] = classification;
+   }
+ 
+--- cups-1.2.2-8/scheduler/job.h	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/job.h	2006-08-07 06:19:33.000000000 -0400
 @@ -22,6 +22,13 @@
   *         WWW: http://www.cups.org
   */
@@ -1752,186 +1890,8 @@ diff -burN cups-1.2.2-vanilla/scheduler/job.h cups-1.2.2/scheduler/job.h
  } cupsd_job_t;
  
  
-diff -burN cups-1.2.2-vanilla/scheduler/main.c cups-1.2.2/scheduler/main.c
---- cups-1.2.2-vanilla/scheduler/main.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/main.c	2006-08-01 07:08:37.000000000 -0400
-@@ -47,6 +47,8 @@
-  *   usage()                   - Show scheduler usage.
-  */
- 
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
-@@ -69,6 +71,9 @@
- #  include <notify.h>
- #endif /* HAVE_NOTIFY_H */
- 
-+#ifdef WITH_LSPP
-+#  include <libaudit.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * Local functions...
-@@ -351,6 +359,17 @@
- #endif /* DEBUG */
-   }
- 
-+#ifdef WITH_LSPP
-+  if ((AuditLog = audit_open()) < 0 )
-+  {
-+    if (is_lspp_config())
-+    {
-+      fprintf(stderr, "cupsd: unable to start auditing");
-+      return -1;
-+    }
-+  }
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Set the timezone info...
-   */
-@@ -1115,6 +1142,10 @@
-   free(input);
-   free(output);
- 
-+#ifdef WITH_LSPP
-+  audit_close(AuditLog);
-+#endif /* WITH_LSPP */
-+
-   return (!stop_scheduler);
- }
- 
-diff -burN cups-1.2.2-vanilla/scheduler/Makefile cups-1.2.2/scheduler/Makefile
---- cups-1.2.2-vanilla/scheduler/Makefile	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/Makefile	2006-08-01 07:08:37.000000000 -0400
-@@ -54,6 +54,7 @@
- OBJS	=	\
- 		$(CUPSDOBJS) \
- 		$(MIMEOBJS) \
-+		lspp-access.o \
- 		cups-deviced.o \
- 		cups-driverd.o \
- 		cups-lpd.o \
-@@ -63,6 +64,7 @@
- 		testspeed.o \
- 		util.o
- TARGETS	=	\
-+		lspp-access \
- 		cupsd \
- 		cups-deviced \
- 		cups-driverd \
-@@ -111,11 +113,12 @@
- 	$(INSTALL_DIR) -m 755 $(SERVERBIN)
- 	echo Creating $(SERVERBIN)/daemon...
- 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/daemon
--	echo Installing cups-deviced, cups-driverd, cups-lpd, and cups-polld in $(SERVERBIN)/daemon...
-+	echo Installing cups-deviced, cups-driverd, cups-lpd, cups-polld, and lspp-access in $(SERVERBIN)/daemon...
- 	$(INSTALL_BIN) cups-deviced $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-driverd $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-lpd $(SERVERBIN)/daemon
- 	$(INSTALL_BIN) cups-polld $(SERVERBIN)/daemon
-+	$(INSTALL_BIN) lspp-access $(SERVERBIN)/daemon
- 	echo Creating $(SERVERBIN)/driver...
- 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/driver
- 	echo Creating $(SERVERROOT)...
-@@ -161,6 +164,7 @@
- 	$(RM) $(SERVERBIN)/daemon/cups-driverd
- 	$(RM) $(SERVERBIN)/daemon/cups-lpd
- 	$(RM) $(SERVERBIN)/daemon/cups-polld
-+	$(RM) $(SERVERBIN)/daemon/lspp-access
- 	-$(RMDIR) $(STATEDIR)/certs
- 	-$(RMDIR) $(STATEDIR)
- 	-$(RMDIR) $(SERVERROOT)/ppd
-diff -burN cups-1.2.2-vanilla/scheduler/printers.c cups-1.2.2/scheduler/printers.c
---- cups-1.2.2-vanilla/scheduler/printers.c	2006-08-01 07:07:28.000000000 -0400
-+++ cups-1.2.2/scheduler/printers.c	2006-08-01 07:08:37.000000000 -0400
-@@ -57,6 +57,8 @@
-  *                                 printing desktop tools.
-  */
- 
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
-@@ -79,6 +81,9 @@
- static void	write_irix_state(cupsd_printer_t *p);
- #endif /* __sgi */
- 
-+#ifdef WITH_LSPP
-+#  include <libaudit.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * 'cupsdAddPrinter()' - Add a printer to the system.
-@@ -1472,6 +1477,9 @@
- 		  "two-sided-long-edge",
- 		  "two-sided-short-edge"
- 		};
-+#ifdef WITH_LSPP
-+  char		*audit_message;		/* Audit message string */
-+#endif /* WITH_LSPP */
- 
- 
-   DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -1578,6 +1586,14 @@
-       attr->values[1].string.text = _cupsStrAlloc(Classification ?
- 	                                   Classification : p->job_sheets[1]);
-     }
-+#ifdef WITH_LSPP
-+    audit_message = NULL;
-+    cupsdSetStringf(&audit_message, "[Config] printer=%s uri=%s banners set to %s %s",
-+                    p->name, p->device_uri, p->job_sheets[0], p->job_sheets[1]);
-+    audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
-+                           ServerName, NULL, NULL, 1);
-+    free(audit_message);
-+#endif /* WITH_LSPP */
-   }
- 
-   printer_type = p->type;
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/config-scripts/cups-lspp.m4	2006-07-21 12:42:40.000000000 +0100
-@@ -0,0 +1,36 @@
-+dnl
-+dnl   LSPP code for the Common UNIX Printing System (CUPS).
-+dnl
-+dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
-+dnl
-+dnl   This program is free software; you can redistribute it and/or modify
-+dnl   it under the terms of the GNU General Public License as published by
-+dnl   the Free Software Foundation; version 2.
-+dnl
-+dnl   This program is distributed in the hope that it will be useful, but
-+dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
-+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+dnl   General Public License for more details.
-+dnl
-+dnl   You should have received a copy of the GNU General Public License
-+dnl   along with this program; if not, write to the Free Software Foundation,
-+dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
-+dnl
-+
-+dnl Are we trying to meet LSPP requirements
-+AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
-+
-+if test x"$enable_lspp" != xno; then
-+    case "$uname" in
-+        Linux)
-+            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
-+            AC_CHECK_HEADER(libaudit.h)
-+            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
-+            AC_CHECK_HEADER(selinux/selinux.h)
-+            AC_DEFINE(WITH_LSPP)
-+            ;;
-+        *)
-+            # All others
-+            ;;
-+    esac
-+fi
---- /dev/null	2006-07-21 09:48:40.571484750 +0100
-+++ cups-1.2.2/scheduler/lspp-access.c	2006-07-21 12:42:40.000000000 +0100
+--- cups-1.2.2-8/scheduler/lspp-access.c	1969-12-31 19:00:00.000000000 -0500
++++ cups-1.2.2/scheduler/lspp-access.c	2006-08-07 06:19:33.000000000 -0400
 @@ -0,0 +1,56 @@
 +/*
 + *   Copyright (C) Hewlett-Packard Development Company, L.P., 2006
@@ -1989,5 +1949,187 @@ diff -burN cups-1.2.2-vanilla/scheduler/printers.c cups-1.2.2/scheduler/printers
 +  
 +  return status;
 +}
-
-
+--- cups-1.2.2-8/scheduler/main.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/main.c	2006-08-15 09:15:28.000000000 -0400
+@@ -47,6 +47,8 @@
+  *   usage()                   - Show scheduler usage.
+  */
+ 
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -69,6 +71,9 @@
+ #  include <notify.h>
+ #endif /* HAVE_NOTIFY_H */
+ 
++#ifdef WITH_LSPP
++#  include <libaudit.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Local functions...
+@@ -141,6 +146,9 @@
+   int			launchd_idle_exit;
+ 					/* Idle exit on select timeout? */
+ #endif	/* HAVE_LAUNCHD */
++#if WITH_LSPP
++  auditfail_t           failmode;       /* Action for audit_open failure */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -351,6 +359,25 @@
+ #endif /* DEBUG */
+   }
+ 
++#ifdef WITH_LSPP
++  if ((AuditLog = audit_open()) < 0 )
++  {
++    if (get_auditfail_action(&failmode) == 0)
++    {
++      if (failmode == FAIL_LOG)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to connect to audit subsystem.");
++        AuditLog = -1;
++      }
++      else if (failmode == FAIL_TERMINATE)
++      {
++        fprintf(stderr, "cupsd: unable to start auditing, terminating");
++        return -1;
++      }
++    }
++  }
++#endif /* WITH_LSPP */
++
+  /*
+   * Set the timezone info...
+   */
+@@ -1115,6 +1142,11 @@
+   free(input);
+   free(output);
+ 
++#ifdef WITH_LSPP
++  if (AuditLog != -1)
++    audit_close(AuditLog);
++#endif /* WITH_LSPP */
++
+   return (!stop_scheduler);
+ }
+ 
+--- cups-1.2.2-8/scheduler/Makefile	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/Makefile	2006-08-07 06:19:33.000000000 -0400
+@@ -54,6 +54,7 @@
+ OBJS	=	\
+ 		$(CUPSDOBJS) \
+ 		$(MIMEOBJS) \
++		lspp-access.o \
+ 		cups-deviced.o \
+ 		cups-driverd.o \
+ 		cups-lpd.o \
+@@ -63,6 +64,7 @@
+ 		testspeed.o \
+ 		util.o
+ TARGETS	=	\
++		lspp-access \
+ 		cupsd \
+ 		cups-deviced \
+ 		cups-driverd \
+@@ -111,11 +113,12 @@
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)
+ 	echo Creating $(SERVERBIN)/daemon...
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/daemon
+-	echo Installing cups-deviced, cups-driverd, cups-lpd, and cups-polld in $(SERVERBIN)/daemon...
++	echo Installing cups-deviced, cups-driverd, cups-lpd, cups-polld, and lspp-access in $(SERVERBIN)/daemon...
+ 	$(INSTALL_BIN) cups-deviced $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-driverd $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-lpd $(SERVERBIN)/daemon
+ 	$(INSTALL_BIN) cups-polld $(SERVERBIN)/daemon
++	$(INSTALL_BIN) lspp-access $(SERVERBIN)/daemon
+ 	echo Creating $(SERVERBIN)/driver...
+ 	$(INSTALL_DIR) -m 755 $(SERVERBIN)/driver
+ 	echo Creating $(SERVERROOT)...
+@@ -161,6 +164,7 @@
+ 	$(RM) $(SERVERBIN)/daemon/cups-driverd
+ 	$(RM) $(SERVERBIN)/daemon/cups-lpd
+ 	$(RM) $(SERVERBIN)/daemon/cups-polld
++	$(RM) $(SERVERBIN)/daemon/lspp-access
+ 	-$(RMDIR) $(STATEDIR)/certs
+ 	-$(RMDIR) $(STATEDIR)
+ 	-$(RMDIR) $(SERVERROOT)/ppd
+--- cups-1.2.2-8/scheduler/printers.c	2006-08-10 11:43:02.000000000 -0400
++++ cups-1.2.2/scheduler/printers.c	2006-08-14 06:09:33.000000000 -0400
+@@ -57,6 +57,8 @@
+  *                                 printing desktop tools.
+  */
+ 
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -79,6 +81,10 @@
+ static void	write_irix_state(cupsd_printer_t *p);
+ #endif /* __sgi */
+ 
++#ifdef WITH_LSPP
++#  include <libaudit.h>
++#  include <selinux/context.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * 'cupsdAddPrinter()' - Add a printer to the system.
+@@ -1472,6 +1478,13 @@
+ 		  "two-sided-long-edge",
+ 		  "two-sided-short-edge"
+ 		};
++#ifdef WITH_LSPP
++  char		*audit_message;		/* Audit message string */
++  char		*printerfile;		/* Path to a local printer dev */
++  char		*rangestr;		/* Printer's range if its available */
++  security_context_t	devcon;		/* Printer SELinux context */
++  context_t	printercon;		/* context_t for the printer */
++#endif /* WITH_LSPP */
+ 
+ 
+   DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
+@@ -1578,6 +1591,38 @@
+       attr->values[1].string.text = _cupsStrAlloc(Classification ?
+ 	                                   Classification : p->job_sheets[1]);
+     }
++#ifdef WITH_LSPP
++    if (AuditLog != -1)
++    {
++      audit_message = NULL;
++      rangestr = NULL;
++      printercon = 0;
++      printerfile = strstr(p->device_uri, "/dev/");
++
++      if (printerfile != NULL)
++      {
++        if (getfilecon(printerfile, &devcon) == -1)
++            cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdSetPrinterAttrs: Unable to get printer context");
++        else
++          printercon = context_new(devcon);
++
++        if (context_range_get(printercon))
++          rangestr = strdup(context_range_get(printercon));
++      }
++
++      if (rangestr == NULL)
++        rangestr = strdup("unknown");
++
++      cupsdSetStringf(&audit_message, "[Config] printer=%s uri=%s banners set to %s %s has range %s",
++                      p->name, p->device_uri, p->job_sheets[0], p->job_sheets[1], rangestr);
++      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
++                             ServerName, NULL, NULL, 1);
++      if (printercon)
++        context_free(printercon);
++      free(rangestr);
++      free(audit_message);
++    }
++#endif /* WITH_LSPP */
+   }
+ 
+   printer_type = p->type;

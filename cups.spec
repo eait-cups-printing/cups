@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 13
+Release: 14
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -420,6 +420,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Aug 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-14
+- Updated LSPP patch (bug #203376).
+
 * Fri Aug 18 2006 Jesse Keating <jkeating@redhat.com> - 1:1.2.2-13
 - rebuilt with latest binutils to pick up 64K -z commonpagesize on ppc*
   (#203001)
