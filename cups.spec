@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.2
-Release: 15
+Release: 16
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -420,6 +420,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-16
+- Fixed another LSPP patch problem noted by Erwin Rol.
+
 * Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-15
 - Fixed LSPP patch passing NULL to strcmp (bug #203784).
 

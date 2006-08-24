@@ -2058,8 +2058,8 @@
  	-$(RMDIR) $(STATEDIR)/certs
  	-$(RMDIR) $(STATEDIR)
  	-$(RMDIR) $(SERVERROOT)/ppd
---- cups-1.2.2-8/scheduler/printers.c	2006-08-10 11:43:02.000000000 -0400
-+++ cups-1.2.2/scheduler/printers.c	2006-08-14 06:09:33.000000000 -0400
+--- cups-1.2.2/scheduler/printers.c.lspp	2006-08-24 12:28:38.000000000 +0100
++++ cups-1.2.2/scheduler/printers.c	2006-08-24 12:30:49.000000000 +0100
 @@ -57,6 +57,8 @@
   *                                 printing desktop tools.
   */
@@ -2094,7 +2094,7 @@
  
  
    DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -1578,6 +1591,38 @@
+@@ -1579,6 +1592,37 @@
        attr->values[1].string.text = _cupsStrAlloc(Classification ?
  	                                   Classification : p->job_sheets[1]);
      }
@@ -2112,12 +2112,11 @@
 +            cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdSetPrinterAttrs: Unable to get printer context");
 +        else
 +          printercon = context_new(devcon);
-+
-+        if (context_range_get(printercon))
-+          rangestr = strdup(context_range_get(printercon));
 +      }
 +
-+      if (rangestr == NULL)
++      if (printercon && context_range_get(printercon))
++	rangestr = strdup(context_range_get(printercon));
++      else
 +        rangestr = strdup("unknown");
 +
 +      cupsdSetStringf(&audit_message, "[Config] printer=%s uri=%s banners set to %s %s has range %s",
