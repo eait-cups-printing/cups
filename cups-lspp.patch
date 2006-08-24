@@ -1430,13 +1430,13 @@
 +        userfooter = strdup(attr->values[1].string.text);
 +  
 +      if ((strcmp(userheader, Classification) == 0)
-+          && (strcmp(userfooter, Classification) == 0))
++          && userfooter &&(strcmp(userfooter, Classification) == 0))
 +      {
 +       /*
 +        * Since both values are Classification, the user is not trying to Override
 +        */
 +        free(userheader);
-+        free(userfooter);
++        if (userfooter) free(userfooter);
 +        userheader = userfooter = NULL;
 +      }
 +    }
