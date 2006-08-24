@@ -420,6 +420,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed another LSPP patch problem (bug #203784).
+- Updated fix for STR #1881 from upstream.
+
 * Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-16
 - Fixed another LSPP patch problem noted by Erwin Rol.
 
