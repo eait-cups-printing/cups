@@ -36,7 +36,6 @@ Patch10: cups-no-export-ssllibs.patch
 Patch11: cups-paps.patch
 Patch12: cups-language.patch
 Patch13: cups-direct-usb.patch
-Patch14: cups-dest-cache-v2.patch
 Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
@@ -138,7 +137,6 @@ lpd emulation.
 %patch11 -p1 -b .paps
 %patch12 -p1 -b .language
 %patch13 -p1 -b .direct-usb
-%patch14 -p1 -b .dest-cache-v2
 %patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
@@ -420,6 +418,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Aug 29 2006 Tim Waugh <twaugh@redhat.com>
+- Removed dest-cache patch.
+
 * Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-17
 - Fixed another LSPP patch problem (bug #203784).
 - Updated fix for STR #1881 from upstream.
