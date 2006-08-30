@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.2
-Release: 17
+Version: 1.2.3
+Release: 2
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -39,9 +39,7 @@ Patch13: cups-direct-usb.patch
 Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
-Patch18: cups-str1881.patch
 Patch19: cups-str1893.patch
-Patch20: cups-str1880.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -140,9 +138,7 @@ lpd emulation.
 %patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
-%patch18 -p1 -b .str1881
 %patch19 -p1 -b .str1893
-%patch20 -p1 -b .str1880
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -418,7 +414,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Thu Aug 29 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Aug 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.3-2
+- 1.2.3.  No longer need str1880 or str1881 patches.
+
+* Tue Aug 29 2006 Tim Waugh <twaugh@redhat.com>
 - Removed dest-cache patch.
 
 * Thu Aug 24 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.2-17

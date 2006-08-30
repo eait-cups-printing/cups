@@ -1,6 +1,6 @@
---- cups-1.2.0/Makefile.noinit	2006-05-20 17:21:22.000000000 +0100
-+++ cups-1.2.0/Makefile	2006-05-20 17:27:01.000000000 +0100
-@@ -99,35 +99,6 @@
+--- cups-1.2.3/Makefile.noinit	2006-08-29 16:51:19.000000000 +0100
++++ cups-1.2.3/Makefile	2006-08-30 15:46:36.000000000 +0100
+@@ -99,36 +99,6 @@
  	echo Installing cups-config script...
  	$(INSTALL_DIR) -m 755 $(BINDIR)
  	$(INSTALL_SCRIPT) cups-config $(BINDIR)/cups-config
@@ -26,8 +26,9 @@
 -			$(INSTALL_DIR) -m 755 $(BUILDROOT)$(INITDDIR)/Resources/English.lproj; \
 -			$(INSTALL_DATA) init/Localizable.strings $(BUILDROOT)$(INITDDIR)/Resources/English.lproj/Localizable.strings; \
 -		elif test "$(INITDDIR)" = "/System/Library/LaunchDaemons"; then \
--			echo Installing LaunchDaemons configuration file...; \
+-			echo Installing LaunchDaemons configuration files...; \
 -			$(INSTALL_DATA) init/org.cups.cupsd.plist $(BUILDROOT)$(DEFAULT_LAUNCHD_CONF); \
+-			$(INSTALL_DATA) init/org.cups.cups-lpd.plist $(BUILDROOT)/System/Library/LaunchDaemons; \
 -		else \
 -			echo Installing RC script...; \
 -			$(INSTALL_SCRIPT) init/cups.sh $(BUILDROOT)$(INITDDIR)/cups; \
