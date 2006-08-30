@@ -6,13 +6,12 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.3
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
-Source3: snmp-str1737.c
 Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
@@ -142,7 +141,6 @@ lpd emulation.
 %patch100 -p1 -b .lspp
 %endif
 
-cp %{SOURCE3} backend/snmp.c
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
 aclocal -I config-scripts
 autoconf
@@ -412,7 +410,8 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Aug 30 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Aug 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.3-3
+- Don't overwrite snmp.c.
 - No longer need str1893 patch.
 
 * Wed Aug 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.3-2
