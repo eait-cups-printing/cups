@@ -250,6 +250,9 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/classes.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
 
+# This is %%ghost'ed, but needs to be created in %%install anyway.
+touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
+
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
@@ -331,6 +334,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
+%ghost %config(noreplace) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
 /etc/cups/pstoraster.convs
@@ -410,6 +414,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Sep  7 2006 Tim Waugh <twaugh@redhat.com>
+- %%ghost %%config(noreplace) /etc/cups/lpoptions (bug #59022).
+
 * Wed Aug 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.3-3
 - Don't overwrite snmp.c.
 - No longer need str1893 patch.
