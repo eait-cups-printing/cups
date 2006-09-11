@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.3
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -35,6 +35,7 @@ Patch10: cups-no-export-ssllibs.patch
 Patch11: cups-paps.patch
 Patch12: cups-language.patch
 Patch13: cups-direct-usb.patch
+Patch14: cups-str1968.patch
 Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
@@ -133,6 +134,7 @@ lpd emulation.
 %patch11 -p1 -b .paps
 %patch12 -p1 -b .language
 %patch13 -p1 -b .direct-usb
+%patch14 -p1 -b .str1968
 %patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
@@ -414,6 +416,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Sep 11 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.3-4
+- Applied upstream patch to fix STR #1968 (bug #205619).
+
 * Thu Sep  7 2006 Tim Waugh <twaugh@redhat.com>
 - %%ghost %%config(noreplace) /etc/cups/lpoptions (bug #59022).
 
