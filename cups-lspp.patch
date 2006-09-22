@@ -1751,7 +1751,7 @@
 +      if (setexeccon(job->scon) != 0)
 +      {
 +        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to setexeccon to %s", job->scon);
-+        cupsdCancelJob(job, 0);
++        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
 +        return;
 +      }
 +
@@ -1783,7 +1783,7 @@
 +              free(audit_message);
 +            }
 +
-+            cupsdCancelJob(job, 0);
++            cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
 +
 +            return;
 +          }
