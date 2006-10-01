@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.4
-Release: 3
+Release: 4
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -416,6 +416,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sun Oct 01 2006 Jesse Keating <jkeating@redhat.com> - 1:1.2.4-4
+- rebuilt for unwind info generation, broken in gcc-4.1.1-21
+
 * Wed Sep 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-3
 - Add '--help' option to lpr command (bug #206380, STR #1989).
 
