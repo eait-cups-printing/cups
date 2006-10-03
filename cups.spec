@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.4
-Release: 4
+Release: 5
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -366,9 +366,6 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/backend
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
-%if %lspp
-%{cups_serverbin}/daemon/lspp-access
-%endif
 %{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
 %{cups_serverbin}/daemon/cups-driverd
@@ -416,6 +413,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Oct  3 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-5
+- Updated LSPP patch from Matt Anderson (bug #208676).
+
 * Sun Oct 01 2006 Jesse Keating <jkeating@redhat.com> - 1:1.2.4-4
 - rebuilt for unwind info generation, broken in gcc-4.1.1-21
 
