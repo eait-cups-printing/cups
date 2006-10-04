@@ -955,7 +955,7 @@
  OPTIONS		=
  PAMLIBS		=	@PAMLIBS@
 --- cups-1.2.4-orig/scheduler/client.c	2006-09-19 16:44:07.000000000 -0400
-+++ cups-1.2.4/scheduler/client.c	2006-10-02 12:44:13.000000000 -0400
++++ cups-1.2.4/scheduler/client.c	2006-10-03 12:04:45.000000000 -0400
 @@ -44,12 +44,17 @@
   *   make_certificate()      - Make a self-signed SSL/TLS certificate.
   *   pipe_command()          - Pipe the output of a command to the remote client.
@@ -1033,7 +1033,7 @@
 +  }
 +  else
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: skipping getpeercon()");
 +    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
@@ -1053,43 +1053,46 @@
  
  
    status = HTTP_CONTINUE;
-@@ -1797,6 +1860,35 @@
+@@ -1797,6 +1860,38 @@
  	  fchmod(con->file, 0640);
  	  fchown(con->file, RunUser, Group);
            fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
 +#ifdef WITH_LSPP
-+          if (getfilecon(con->filename, &spoolcon) == -1)
++          if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +          {
-+            cupsdSendError(con, HTTP_SERVER_ERROR);
++            if (getfilecon(con->filename, &spoolcon) == -1)
++            {
++              cupsdSendError(con, HTTP_SERVER_ERROR);
++              freecon(spoolcon);
++              return (cupsdCloseClient(con));
++            }
++            clicon = context_new(con->scon);
++            tmpcon = context_new(spoolcon);
 +            freecon(spoolcon);
-+            return (cupsdCloseClient(con));
-+          }
-+          clicon = context_new(con->scon);
-+          tmpcon = context_new(spoolcon);
-+          freecon(spoolcon);
-+          if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
-+          {
-+            cupsdSendError(con, HTTP_SERVER_ERROR);
++            if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
++            {
++              cupsdSendError(con, HTTP_SERVER_ERROR);
++              context_free(tmpcon);
++              context_free(clicon);
++              return (cupsdCloseClient(con));
++            }
++            if (setfilecon(con->filename, context_str(tmpcon)) == -1)
++            {
++              cupsdSendError(con, HTTP_SERVER_ERROR);
++              context_free(tmpcon);
++              context_free(clicon);
++              return (cupsdCloseClient(con));
++            }
++            cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdReadClient: %s set to %s", 
++                            con->filename, context_str(tmpcon));
 +            context_free(tmpcon);
 +            context_free(clicon);
-+            return (cupsdCloseClient(con));
 +          }
-+          if (setfilecon(con->filename, context_str(tmpcon)) == -1)
-+          {
-+            cupsdSendError(con, HTTP_SERVER_ERROR);
-+            context_free(tmpcon);
-+            context_free(clicon);
-+            return (cupsdCloseClient(con));
-+          }
-+          cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdReadClient: %s set to %s", 
-+                          con->filename, context_str(tmpcon));
-+          context_free(tmpcon);
-+          context_free(clicon);
 +#endif /* WITH_LSPP */
  	}
  
  	if (con->http.state != HTTP_POST_SEND)
-@@ -3810,6 +3902,49 @@
+@@ -3810,6 +3905,49 @@
  #endif /* HAVE_SSL */
  
  
@@ -1301,7 +1304,7 @@
  /*
   * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
 --- cups-1.2.4-orig/scheduler/ipp.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/ipp.c	2006-10-02 12:44:13.000000000 -0400
++++ cups-1.2.4/scheduler/ipp.c	2006-10-03 13:15:06.000000000 -0400
 @@ -96,6 +96,9 @@
   *   validate_user()             - Validate the user for the request.
   */
@@ -1349,14 +1352,14 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %s)", con,
-@@ -1349,6 +1375,93 @@
+@@ -1349,6 +1375,101 @@
      return (NULL);
    }
  
 +#ifdef WITH_LSPP
 +  if (is_lspp_config())
 +  {
-+    if (!con->scon || strlen(con->scon) == 0)
++    if (!con->scon || strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
 +    {
 +      cupsdLogMessage(CUPSD_LOG_ERROR, "add_job: missing classification for connection \'%s\'!", dest);
 +      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Missing required secuirty attributes."));
@@ -1367,8 +1370,8 @@
 +     /*
 +      * duplicate the security context and auid of the connection into the job structure
 +      */
-+      job->scon    = strdup(con->scon);
-+      job->auid    = con->auid;
++      job->scon = strdup(con->scon);
++      job->auid = con->auid;
 +
 +     /* 
 +      * add the security context to the request so that on a restart the security
@@ -1438,12 +1441,20 @@
 +      }
 +    }
 +  }
++  else
++  {
++   /*
++    * Fill in the security context of the job as unlabeled
++    */
++    cupsdLogMessage(CUPSD_LOG_INFO, "add_job: setting context of job to %s", UNKNOWN_SL);
++    cupsdSetString(&job->scon, UNKNOWN_SL);
++  }
 +#endif /* WITH_LSPP */
 +
    job->dtype   = dtype;
    job->attrs   = con->request;
    con->request = NULL;
-@@ -1544,6 +1657,29 @@
+@@ -1544,6 +1665,29 @@
        attr->values[0].string.text = _cupsStrAlloc(printer->job_sheets[0]);
        attr->values[1].string.text = _cupsStrAlloc(printer->job_sheets[1]);
      }
@@ -1473,7 +1484,7 @@
  
      job->job_sheets = attr;
  
-@@ -1574,6 +1710,9 @@
+@@ -1574,6 +1718,9 @@
  	                		    "job-sheets=\"%s,none\", "
  					    "job-originating-user-name=\"%s\"",
  	        	 job->id, Classification, job->username);
@@ -1483,7 +1494,7 @@
  	}
  	else if (attr->num_values == 2 &&
  	         strcmp(attr->values[0].string.text,
-@@ -1592,6 +1731,9 @@
+@@ -1592,6 +1739,9 @@
  					    "job-originating-user-name=\"%s\"",
  	        	 job->id, attr->values[0].string.text,
  			 attr->values[1].string.text, job->username);
@@ -1493,7 +1504,7 @@
  	}
  	else if (strcmp(attr->values[0].string.text, Classification) &&
  	         strcmp(attr->values[0].string.text, "none") &&
-@@ -1612,6 +1754,9 @@
+@@ -1612,6 +1762,9 @@
  			    "job-originating-user-name=\"%s\"",
  	        	    job->id, attr->values[0].string.text,
  			    attr->values[1].string.text, job->username);
@@ -1503,7 +1514,7 @@
          }
        }
        else if (strcmp(attr->values[0].string.text, Classification) &&
-@@ -1652,9 +1797,52 @@
+@@ -1652,9 +1805,52 @@
  	                  "job-sheets=\"%s\", "
  			  "job-originating-user-name=\"%s\"",
  	        	 job->id, Classification, job->username);
@@ -1556,7 +1567,7 @@
     /*
      * See if we need to add the starting sheet...
      */
-@@ -3504,6 +3692,13 @@
+@@ -3504,6 +3700,13 @@
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
@@ -1570,58 +1581,61 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner(%p[%d], %p[%d], %s)",
-@@ -3537,6 +3732,43 @@
+@@ -3537,6 +3740,46 @@
  
    fchmod(cupsFileNumber(out), 0640);
    fchown(cupsFileNumber(out), RunUser, Group);
 +#ifdef WITH_LSPP
-+  if (getfilecon(filename, &spoolcon) == -1)
++  if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "copy_banner: Unable to get the context of the banner file %s - %s",
-+                    filename, strerror(errno));
-+    job->num_files --;
-+    return (0);
-+  }
-+  tmpcon = context_new(spoolcon);
-+  jobcon = context_new(con->scon);
-+  freecon(spoolcon);
-+  if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "copy_banner: Unable to set the level of the context for file %s - %s",
-+                    filename, strerror(errno));
++    if (getfilecon(filename, &spoolcon) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to get the context of the banner file %s - %s",
++                      filename, strerror(errno));
++      job->num_files --;
++      return (0);
++    }
++    tmpcon = context_new(spoolcon);
++    jobcon = context_new(con->scon);
++    freecon(spoolcon);
++    if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to set the level of the context for file %s - %s",
++                      filename, strerror(errno));
++      context_free(jobcon);
++      context_free(tmpcon);
++      job->num_files --;
++      return (0);
++    }
++    if (setfilecon(filename, context_str(tmpcon)) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to set the context of the banner file %s - %s",
++                      filename, strerror(errno));
++      context_free(jobcon);
++      context_free(tmpcon);
++      job->num_files --;
++      return (0);
++    }
++    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
++                    filename, context_str(tmpcon));
 +    context_free(jobcon);
 +    context_free(tmpcon);
-+    job->num_files --;
-+    return (0);
 +  }
-+  if (setfilecon(filename, context_str(tmpcon)) == -1)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "copy_banner: Unable to set the context of the banner file %s - %s",
-+                    filename, strerror(errno));
-+    context_free(jobcon);
-+    context_free(tmpcon);
-+    job->num_files --;
-+    return (0);
-+  }
-+  cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
-+                  filename, context_str(tmpcon));
-+  context_free(jobcon);
-+  context_free(tmpcon);
 +#endif /* WITH_LSPP */
  
   /*
    * Try the localized banner file under the subdirectory...
-@@ -3631,6 +3863,24 @@
+@@ -3631,6 +3874,24 @@
        else
          s = attrname;
  
 +#ifdef WITH_LSPP
 +      if (strcmp(s, "mls-label") == 0)
 +      {
-+        if (con->scon != NULL && strcmp(con->scon, UNKNOWN_SL) != 0)
++        if (con->scon != NULL && strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +        {
 +          jobcon = context_new(con->scon);
 +          if (strcasecmp(name, MLS_CONFIG) == 0)
@@ -1639,7 +1653,7 @@
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -5352,6 +5602,18 @@
+@@ -5352,6 +5613,18 @@
    cupsd_printer_t *printer;		/* Printer */
    cups_array_t	*list;			/* Which job list... */
    cups_array_t	*ra;			/* Requested attributes array */
@@ -1658,7 +1672,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs(%p[%d], %s)", con, con->http.fd,
-@@ -5469,6 +5731,40 @@
+@@ -5469,6 +5742,45 @@
  
    ra = create_requested_array(con->request);
  
@@ -1676,22 +1690,27 @@
 +      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Internal SELinux error (getenforce)."));
 +      return;
 +    }
-+    if (avc_init("cups", NULL, NULL, NULL, NULL) < 0)
++    if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
++      selinuxcheck = 0;
++    else
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "get_jobs: unable avc_init");
-+      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Internal SELinux error (avc_init)."));
-+      return;
-+    } 
-+    if (avc_context_to_sid(con->scon, &clisid) != 0)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "get_jobs: unable to convert %s to SELinux sid", con->scon);
-+      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Internal SELinux error (avc_context_to_sid)."));
-+      return;
-+    }
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "get_jobs: client context %s", con->scon);
++      if (avc_init("cups", NULL, NULL, NULL, NULL) < 0)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "get_jobs: unable avc_init");
++        send_ipp_status(con, IPP_INTERNAL_ERROR, _("Internal SELinux error (avc_init)."));
++        return;
++      } 
++      if (avc_context_to_sid(con->scon, &clisid) != 0)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "get_jobs: unable to convert %s to SELinux sid", con->scon);
++        send_ipp_status(con, IPP_INTERNAL_ERROR, _("Internal SELinux error (avc_context_to_sid)."));
++        return;
++      }
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "get_jobs: client context %s", con->scon);
 +
-+    avr = FILE__READ;
-+    tclass = SECCLASS_FILE;
++      avr = FILE__READ;
++      tclass = SECCLASS_FILE;
++    }
 +  }
 +#endif /* WITH_LSPP */
 +
@@ -1699,12 +1718,12 @@
   /*
    * OK, build a list of jobs for this printer...
    */
-@@ -5506,6 +5802,42 @@
+@@ -5506,6 +5818,42 @@
      if (count > 0)
        ippAddSeparator(con->response);
  
 +#ifdef WITH_LSPP
-+    if (selinuxcheck)
++    if (selinuxcheck && (strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0))
 +    {
 +      cupsdLogMessage(CUPSD_LOG_DEBUG, "get_jobs: job context %s", job->scon);
 +
@@ -1742,7 +1761,7 @@
      count ++;
  
      cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
-@@ -7944,12 +8276,22 @@
+@@ -7944,12 +8292,22 @@
      * See if we need to add the ending sheet...
      */
  
@@ -1765,7 +1784,7 @@
       /*
        * Yes...
        */
-@@ -9201,6 +9543,17 @@
+@@ -9201,6 +9559,17 @@
  	      int            userlen)	/* I - Length of username */
  {
    cupsd_printer_t	*printer;	/* Printer for job */
@@ -1783,7 +1802,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2,
-@@ -9222,6 +9575,59 @@
+@@ -9222,6 +9591,59 @@
  
    strlcpy(username, get_username(con), userlen);
  
@@ -1844,7 +1863,7 @@
    * Check the username against the owner...
    */
 --- cups-1.2.4-orig/scheduler/job.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/job.c	2006-10-02 12:44:13.000000000 -0400
++++ cups-1.2.4/scheduler/job.c	2006-10-03 12:04:45.000000000 -0400
 @@ -68,6 +68,9 @@
   *   unload_job()               - Unload a job from memory.
   */
@@ -1906,49 +1925,52 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p(%d)): job->attrs=%p",
-@@ -1359,6 +1392,41 @@
+@@ -1359,6 +1392,44 @@
    fchmod(cupsFileNumber(fp), 0600);
    fchown(cupsFileNumber(fp), RunUser, Group);
  
 +#ifdef WITH_LSPP
-+  if (getfilecon(filename, &spoolcon) == -1)
++  if (strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "Unable to get context of job control file \"%s\" - %s.",
-+                    filename, strerror(errno));
-+    return;
-+  }
-+  jobcon = context_new(job->scon);
-+  tmpcon = context_new(spoolcon);
-+  freecon(spoolcon);
-+  if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "Unable to set the range for job control file \"%s\" - %s.",
-+                    filename, strerror(errno));
++    if (getfilecon(filename, &spoolcon) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to get context of job control file \"%s\" - %s.",
++                      filename, strerror(errno));
++      return;
++    }
++    jobcon = context_new(job->scon);
++    tmpcon = context_new(spoolcon);
++    freecon(spoolcon);
++    if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to set the range for job control file \"%s\" - %s.",
++                      filename, strerror(errno));
++      context_free(tmpcon);
++      context_free(jobcon);
++      return;
++    }
++    if (setfilecon(filename, context_str(tmpcon)) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to set context of job control file \"%s\" - %s.",
++                      filename, strerror(errno));
++      context_free(tmpcon);
++      context_free(jobcon);
++      return;
++    }
++    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p): new spool file context=%s",
++                    job, context_str(tmpcon));
 +    context_free(tmpcon);
 +    context_free(jobcon);
-+    return;
 +  }
-+  if (setfilecon(filename, context_str(tmpcon)) == -1)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR,
-+                    "Unable to set context of job control file \"%s\" - %s.",
-+                    filename, strerror(errno));
-+    context_free(tmpcon);
-+    context_free(jobcon);
-+    return;
-+  }
-+  cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p): new spool file context=%s",
-+                  job, context_str(tmpcon));
-+  context_free(tmpcon);
-+  context_free(jobcon);
 +#endif /* WITH_LSPP */
 +
    job->attrs->state = IPP_IDLE;
  
    if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
-@@ -2487,6 +2555,21 @@
+@@ -2487,6 +2558,21 @@
  					/* RIP_MAX_CACHE env variable */
    static char		*options = NULL;/* Full list of options */
    static int		optlength = 0;	/* Length of option buffer */
@@ -1970,7 +1992,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job: id = %d, file = %d/%d",
-@@ -2740,6 +2823,77 @@
+@@ -2740,6 +2826,77 @@
  
    cupsdLogMessage(CUPSD_LOG_DEBUG, "banner_page = %d", banner_page);
  
@@ -2048,7 +2070,7 @@
   /*
    * Building the options string is harder than it needs to be, but
    * for the moment we need to pass strings for command-line args and
-@@ -3069,7 +3223,66 @@
+@@ -3069,7 +3226,66 @@
        snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
                 attr->values[0].string.text);
  
