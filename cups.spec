@@ -1,12 +1,12 @@
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
-%define lspp 1
+%define lspp 0
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.4
-Release: 6
+Release: 7
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -413,6 +413,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Oct  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-7
+- LSPP patch disabled, since it still causes cupsd to crash.
+
 * Wed Oct  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-6
 - Updated LSPP patch from Matt Anderson (bug #208676).
 
