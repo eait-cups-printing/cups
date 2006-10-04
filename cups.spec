@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.4
-Release: 7
+Release: 8
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -413,7 +413,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Oct  4 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Oct  4 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-8
 - LSPP patch didn't get updated properly in 1:1.2.4-6.  Use the right
   patch this time (bug #208676).  LSPP re-enabled.
 
