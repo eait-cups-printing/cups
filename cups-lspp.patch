@@ -955,7 +955,7 @@
  OPTIONS		=
  PAMLIBS		=	@PAMLIBS@
 --- cups-1.2.4-orig/scheduler/client.c	2006-09-19 16:44:07.000000000 -0400
-+++ cups-1.2.4/scheduler/client.c	2006-10-04 11:53:10.000000000 -0400
++++ cups-1.2.4/scheduler/client.c	2006-10-11 17:44:43.000000000 -0400
 @@ -44,12 +44,17 @@
   *   make_certificate()      - Make a self-signed SSL/TLS certificate.
   *   pipe_command()          - Pipe the output of a command to the remote client.
@@ -987,9 +987,9 @@
  
  /*
   * Local functions...
-@@ -381,6 +392,55 @@
-                   "cupsdAcceptClient: %d connected to server on %s:%d",
-                   con->http.fd, con->servername, con->serverport);
+@@ -323,6 +334,57 @@
+     }
+   }
  
 +#ifdef WITH_LSPP
 +  if (is_lspp_config())
@@ -1006,7 +1006,8 @@
 +      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
 +      {
 +        close(con->http.fd);
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: unable to determine client auid");
++        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: "
++                        "unable to determine client auid for client pid=%d", cr.pid);
 +        free(con);
 +        return;
 +      }
@@ -1026,24 +1027,25 @@
 +    */
 +    if (getpeercon(con->http.fd, &con->scon))
 +    {
++      close(con->http.fd);
 +      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
-+      cupsdSetString(&con->scon, UNKNOWN_SL);
++      free(con);
++      return; 
 +    }
 +
 +    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
-+
 +  }
 +  else
 +  {
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: skipping getpeercon()");
 +    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
 +
-  /*
-   * Using TCP_NODELAY improves responsiveness, especially on systems
-   * with a slow loopback interface...  Since we write large buffers
-@@ -711,6 +771,11 @@
+ #ifdef AF_INET6
+   if (con->http.hostaddr->addr.sa_family == AF_INET6)
+     cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: %d from %s:%d (IPv6)",
+@@ -711,6 +773,13 @@
    mime_type_t		*type;		/* MIME type of file */
    cupsd_printer_t	*p;		/* Printer */
    static unsigned	request_id = 0;	/* Request ID for temp files */
@@ -1051,11 +1053,13 @@
 +  security_context_t	spoolcon;	/* context of the job file */
 +  context_t		clicon;		/* contex_t container for con->scon */
 +  context_t		tmpcon;		/* temp context to swap the level */
++  char			*clirange;	/* SELinux sensitivity range */
++  char			*cliclearance;	/* SELinux low end clearance */
 +#endif /* WITH_LSPP */
  
  
    status = HTTP_CONTINUE;
-@@ -1797,6 +1862,47 @@
+@@ -1797,6 +1866,63 @@
  	  fchmod(con->file, 0640);
  	  fchown(con->file, RunUser, Group);
            fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
@@ -1065,7 +1069,6 @@
 +            if (getfilecon(con->filename, &spoolcon) == -1)
 +            {
 +              cupsdSendError(con, HTTP_SERVER_ERROR);
-+              freecon(spoolcon);
 +              return (cupsdCloseClient(con));
 +            }
 +            clicon = context_new(con->scon);
@@ -1080,13 +1083,30 @@
 +                context_free(tmpcon);
 +              return (cupsdCloseClient(con));
 +            }
-+            if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
++            clirange = strdup(context_range_get(clicon));
++            if ((cliclearance = strtok(clirange, "-")) != NULL)
 +            {
-+              cupsdSendError(con, HTTP_SERVER_ERROR);
-+              context_free(tmpcon);
-+              context_free(clicon);
-+              return (cupsdCloseClient(con));
++              if (context_range_set(tmpcon, cliclearance) == -1)
++              {
++                cupsdSendError(con, HTTP_SERVER_ERROR);
++                free(clirange);
++                context_free(tmpcon);
++                context_free(clicon);
++                return (cupsdCloseClient(con));
++              }
 +            }
++            else
++            {
++              if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
++              {
++                cupsdSendError(con, HTTP_SERVER_ERROR);
++                free(clirange);
++                context_free(tmpcon);
++                context_free(clicon);
++                return (cupsdCloseClient(con));
++              }
++            }
++            free(clirange);
 +            if (setfilecon(con->filename, context_str(tmpcon)) == -1)
 +            {
 +              cupsdSendError(con, HTTP_SERVER_ERROR);
@@ -1103,7 +1123,7 @@
  	}
  
  	if (con->http.state != HTTP_POST_SEND)
-@@ -3810,6 +3916,49 @@
+@@ -3810,6 +3936,50 @@
  #endif /* HAVE_SSL */
  
  
@@ -1140,6 +1160,7 @@
 +  if (len < 0 || len >= sizeof(buf))
 +    return -1;
 +
++  errno = 0;
 +  buf[len] = 0;
 +  uid = strtol(buf, 0, 10);
 +
@@ -1315,7 +1336,7 @@
  /*
   * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
 --- cups-1.2.4-orig/scheduler/ipp.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/ipp.c	2006-10-04 11:53:10.000000000 -0400
++++ cups-1.2.4/scheduler/ipp.c	2006-10-09 12:16:35.000000000 -0400
 @@ -96,6 +96,9 @@
   *   validate_user()             - Validate the user for the request.
   */
@@ -1341,7 +1362,7 @@
  
  /*
   * PPD default choice structure...
-@@ -1173,6 +1184,21 @@
+@@ -1173,6 +1184,20 @@
    int		kbytes;			/* Size of print file */
    int		i;			/* Looping var */
    int		lowerpagerange;		/* Page range bound */
@@ -1355,7 +1376,6 @@
 +  security_id_t	psid;			/* SELinux SID for the printer */
 +  context_t	printercon;		/* Printer's context string */
 +  security_context_t	devcon;		/* Printer's SELinux context */
-+  struct av_decision	avd;		/* Pointer to the access decision */
 +  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
 +  security_class_t	tclass;		/* Object class for the SELinux check */
 +  access_vector_t	avr;		/* Access method being requested */
@@ -1363,7 +1383,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %s)", con,
-@@ -1349,6 +1375,101 @@
+@@ -1349,6 +1374,101 @@
      return (NULL);
    }
  
@@ -1431,7 +1451,7 @@
 +        return (NULL);
 +      }
 +      freecon(devcon);
-+      if (avc_has_perm_noaudit(clisid, psid, tclass, avr, &avcref, &avd) != 0)
++      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
 +      {
 +       /*
 +        * The access check failed, so cancel the job and send an audit message
@@ -1457,7 +1477,7 @@
 +   /*
 +    * Fill in the security context of the job as unlabeled
 +    */
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: setting context of job to %s", UNKNOWN_SL);
++    cupsdLogMessage(CUPSD_LOG_INFO, "add_job: setting context of job to %s", UNKNOWN_SL);
 +    cupsdSetString(&job->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
@@ -1465,7 +1485,7 @@
    job->dtype   = dtype;
    job->attrs   = con->request;
    con->request = NULL;
-@@ -1544,6 +1665,29 @@
+@@ -1544,6 +1664,29 @@
        attr->values[0].string.text = _cupsStrAlloc(printer->job_sheets[0]);
        attr->values[1].string.text = _cupsStrAlloc(printer->job_sheets[1]);
      }
@@ -1495,7 +1515,7 @@
  
      job->job_sheets = attr;
  
-@@ -1574,6 +1718,9 @@
+@@ -1574,6 +1717,9 @@
  	                		    "job-sheets=\"%s,none\", "
  					    "job-originating-user-name=\"%s\"",
  	        	 job->id, Classification, job->username);
@@ -1505,7 +1525,7 @@
  	}
  	else if (attr->num_values == 2 &&
  	         strcmp(attr->values[0].string.text,
-@@ -1592,6 +1739,9 @@
+@@ -1592,6 +1738,9 @@
  					    "job-originating-user-name=\"%s\"",
  	        	 job->id, attr->values[0].string.text,
  			 attr->values[1].string.text, job->username);
@@ -1515,7 +1535,7 @@
  	}
  	else if (strcmp(attr->values[0].string.text, Classification) &&
  	         strcmp(attr->values[0].string.text, "none") &&
-@@ -1612,6 +1762,9 @@
+@@ -1612,6 +1761,9 @@
  			    "job-originating-user-name=\"%s\"",
  	        	    job->id, attr->values[0].string.text,
  			    attr->values[1].string.text, job->username);
@@ -1525,14 +1545,14 @@
          }
        }
        else if (strcmp(attr->values[0].string.text, Classification) &&
-@@ -1652,7 +1805,50 @@
+@@ -1652,7 +1804,50 @@
  	                  "job-sheets=\"%s\", "
  			  "job-originating-user-name=\"%s\"",
  	        	 job->id, Classification, job->username);
 +#ifdef WITH_LSPP
 +        override = 1;
 +#endif /* WITH_LSPP */
-       }
++      }
 +#ifdef WITH_LSPP
 +      if (is_lspp_config() && AuditLog != -1)
 +      {
@@ -1563,7 +1583,7 @@
 +                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
 +            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
 +                                   ServerName, NULL, NULL, 0);
-+          }
+       }
 +          free(audit_message);
 +      }
 +    }
@@ -1576,12 +1596,14 @@
      }
  
     /*
-@@ -3504,6 +3700,13 @@
+@@ -3504,6 +3699,15 @@
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
 +#ifdef WITH_LSPP
-+  const char	*mls_label = NULL;	/* SL of print job */
++  const char	*mls_label;		/* SL of print job */
++  char		*jobrange;		/* SELinux sensitivity range */
++  char		*jobclearance;		/* SELinux low end clearance */
 +  context_t	jobcon;			/* SELinux context of the job */
 +  context_t	tmpcon;			/* Temp context to set the level */
 +  security_context_t	spoolcon;	/* Context of the file in the spool */
@@ -1590,7 +1612,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner(%p[%d], %p[%d], %s)",
-@@ -3537,6 +3740,57 @@
+@@ -3537,6 +3741,77 @@
  
    fchmod(cupsFileNumber(out), 0640);
    fchown(cupsFileNumber(out), RunUser, Group);
@@ -1619,16 +1641,36 @@
 +      job->num_files --;
 +      return (0);
 +    }
-+    if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++    jobrange = strdup(context_range_get(jobcon));
++    if ((jobclearance = strtok(jobrange, "-")) != NULL)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to set the level of the context for file %s - %s",
-+                      filename, strerror(errno));
-+      context_free(jobcon);
-+      context_free(tmpcon);
-+      job->num_files --;
-+      return (0);
++      if (context_range_set(tmpcon, jobclearance) == -1)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "copy_banner: Unable to set the level of the context for file %s - %s",
++                        filename, strerror(errno));
++        free(jobrange);
++        context_free(jobcon);
++        context_free(tmpcon);
++        job->num_files --;
++        return (0);
++      }
 +    }
++    else
++    {
++      if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "copy_banner: Unable to set the level of the context for file %s - %s",
++                        filename, strerror(errno));
++        free(jobrange);
++        context_free(jobcon);
++        context_free(tmpcon);
++        job->num_files --;
++        return (0);
++      }
++    }
++    free(jobrange);
 +    if (setfilecon(filename, context_str(tmpcon)) == -1)
 +    {
 +      cupsdLogMessage(CUPSD_LOG_ERROR,
@@ -1648,7 +1690,7 @@
  
   /*
    * Try the localized banner file under the subdirectory...
-@@ -3631,6 +3885,24 @@
+@@ -3631,6 +3906,24 @@
        else
          s = attrname;
  
@@ -1673,7 +1715,7 @@
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -5352,6 +5624,18 @@
+@@ -5352,6 +5645,17 @@
    cupsd_printer_t *printer;		/* Printer */
    cups_array_t	*list;			/* Which job list... */
    cups_array_t	*ra;			/* Requested attributes array */
@@ -1683,7 +1725,6 @@
 +  security_id_t		clisid;		/* SELinux SID of the client */
 +  security_id_t		jobsid;		/* SELinux SID of the job */
 +  security_id_t		filesid;	/* SELinux SID of the spool file */
-+  struct av_decision	avd;		/* SELinux decision stuct */
 +  struct avc_entry_ref	avcref;		/* AVC entry cache pointer */
 +  security_class_t	tclass;		/* SELinux security class */
 +  access_vector_t	avr;		/* SELinux access being queried */
@@ -1692,7 +1733,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs(%p[%d], %s)", con, con->http.fd,
-@@ -5469,6 +5753,45 @@
+@@ -5469,6 +5773,45 @@
  
    ra = create_requested_array(con->request);
  
@@ -1738,7 +1779,7 @@
   /*
    * OK, build a list of jobs for this printer...
    */
-@@ -5506,6 +5829,42 @@
+@@ -5506,6 +5849,42 @@
      if (count > 0)
        ippAddSeparator(con->response);
  
@@ -1750,7 +1791,7 @@
 +      avc_context_to_sid(job->scon, &jobsid);
 +      avc_entry_ref_init(&avcref);
 +      
-+      if (avc_has_perm_noaudit(clisid, jobsid, tclass, avr, &avcref, &avd) != 0)
++      if (avc_has_perm(clisid, jobsid, tclass, avr, &avcref, NULL) != 0)
 +      {
 +        cupsdLogMessage(CUPSD_LOG_INFO, "get_jobs: SELinux denied access based on the client context");
 +        snprintf(filename, sizeof(filename), "%s/c%05d", RequestRoot, job->id);
@@ -1766,7 +1807,7 @@
 +          continue;
 +        }
 +        freecon(spoolfilecon);
-+        if (avc_has_perm_noaudit(clisid, filesid, tclass, avr, &avcref, &avd) != 0)
++        if (avc_has_perm(clisid, filesid, tclass, avr, &avcref, NULL) != 0)
 +        {
 +          cupsdLogMessage(CUPSD_LOG_INFO, "get_jobs: SELinux denied access to the spool file");
 +          continue;
@@ -1781,7 +1822,7 @@
      count ++;
  
      cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
-@@ -7944,12 +8303,22 @@
+@@ -7944,12 +8323,22 @@
      * See if we need to add the ending sheet...
      */
  
@@ -1804,13 +1845,12 @@
       /*
        * Yes...
        */
-@@ -9201,6 +9570,17 @@
+@@ -9201,6 +9590,16 @@
  	      int            userlen)	/* I - Length of username */
  {
    cupsd_printer_t	*printer;	/* Printer for job */
 +#ifdef WITH_LSPP
 +  char			filename[1024];	/* Job filename */
-+  struct av_decision    avd;            /* Pointer to the access decision */
 +  struct avc_entry_ref  avcref;         /* Pointer to the access vector cache */
 +  security_class_t      tclass;         /* Object class for the SELinux check */
 +  access_vector_t       avr;            /* Access method being requested */
@@ -1822,7 +1862,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2,
-@@ -9222,6 +9602,59 @@
+@@ -9222,6 +9621,59 @@
  
    strlcpy(username, get_username(con), userlen);
  
@@ -1847,7 +1887,7 @@
 +      return 0;
 +    }
 +
-+    if (avc_has_perm_noaudit(consid, jobsid, tclass, avr, &avcref, &avd) != 0)
++    if (avc_has_perm(consid, jobsid, tclass, avr, &avcref, NULL) != 0)
 +    {
 +      cupsdLogMessage(CUPSD_LOG_INFO, "validate_user: SELinux denied access for the user");
 +     /*
@@ -1866,7 +1906,7 @@
 +        return 0;
 +      }
 +      freecon(spoolfilecon);
-+      if (avc_has_perm_noaudit(consid, filesid, tclass, avr, &avcref, &avd) != 0)
++      if (avc_has_perm(consid, filesid, tclass, avr, &avcref, NULL) != 0)
 +      {
 +        cupsdLogMessage(CUPSD_LOG_INFO, "validate_user: SELinux denied access on the spool file");
 +        return 0;
@@ -1883,7 +1923,7 @@
    * Check the username against the owner...
    */
 --- cups-1.2.4-orig/scheduler/job.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/job.c	2006-10-04 11:53:10.000000000 -0400
++++ cups-1.2.4/scheduler/job.c	2006-10-09 12:16:35.000000000 -0400
 @@ -68,6 +68,9 @@
   *   unload_job()               - Unload a job from memory.
   */
@@ -1933,19 +1973,21 @@
    job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
                                       IPP_TAG_INTEGER);
    job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
-@@ -1341,6 +1369,11 @@
+@@ -1341,6 +1369,13 @@
  {
    char		filename[1024];		/* Job control filename */
    cups_file_t	*fp;			/* Job file */
 +#ifdef WITH_LSPP
 +  security_context_t	spoolcon;	/* context of the job control file */
 +  context_t		jobcon;		/* contex_t container for job->scon */
-+  context_t		tmpcon;		/* temp context to swap the level */
++  context_t		tmpcon;		/* Temp context to swap the level */
++  char		*jobclearance;		/* SELinux low end clearance */
++  char		*jobrange;		/* SELinux sensitivity range */
 +#endif /* WITH_LSPP */
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p(%d)): job->attrs=%p",
-@@ -1359,6 +1392,53 @@
+@@ -1359,6 +1394,72 @@
    fchmod(cupsFileNumber(fp), 0600);
    fchown(cupsFileNumber(fp), RunUser, Group);
  
@@ -1971,15 +2013,34 @@
 +      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to get SELinux contexts");
 +      return;
 +    }
-+    if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++    jobrange = strdup(context_range_get(jobcon));
++    if ((jobclearance = strtok(jobrange, "-")) != NULL)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "Unable to set the range for job control file \"%s\" - %s.",
-+                      filename, strerror(errno));
-+      context_free(tmpcon);
-+      context_free(jobcon);
-+      return;
++      if (context_range_set(tmpcon, jobclearance) == -1)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "Unable to set the range for job control file \"%s\" - %s.",
++                        filename, strerror(errno));
++        free(jobrange);
++        context_free(tmpcon);
++        context_free(jobcon);
++        return;
++      }
 +    }
++    else
++    {
++      if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "Unable to set the range for job control file \"%s\" - %s.",
++                        filename, strerror(errno));
++        free(jobrange);
++        context_free(tmpcon);
++        context_free(jobcon);
++        return;
++      }
++    }
++    free(jobrange);
 +    if (setfilecon(filename, context_str(tmpcon)) == -1)
 +    {
 +      cupsdLogMessage(CUPSD_LOG_ERROR,
@@ -1999,7 +2060,7 @@
    job->attrs->state = IPP_IDLE;
  
    if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
-@@ -2487,6 +2567,21 @@
+@@ -2487,6 +2588,20 @@
  					/* RIP_MAX_CACHE env variable */
    static char		*options = NULL;/* Full list of options */
    static int		optlength = 0;	/* Length of option buffer */
@@ -2013,7 +2074,6 @@
 +  security_id_t		psid;		/* SELinux SID for the printer */
 +  context_t		printercon;	/* Printer's context string */
 +  security_context_t	devcon;		/* Printer's SELinux context */
-+  struct av_decision	avd;		/* Pointer to the access decision */
 +  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
 +  security_class_t	tclass;		/* Object class for the SELinux check */
 +  access_vector_t	avr;		/* Access method being requested */
@@ -2021,7 +2081,7 @@
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job: id = %d, file = %d/%d",
-@@ -2740,6 +2835,77 @@
+@@ -2740,6 +2855,77 @@
  
    cupsdLogMessage(CUPSD_LOG_DEBUG, "banner_page = %d", banner_page);
  
@@ -2072,7 +2132,7 @@
 +      }
 +      freecon(devcon);
 +
-+      if (avc_has_perm_noaudit(clisid, psid, tclass, avr, &avcref, &avd) != 0)
++      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
 +      {
 +       /*
 +        * The access check failed, so cancel the job and send an audit message
@@ -2099,7 +2159,7 @@
   /*
    * Building the options string is harder than it needs to be, but
    * for the moment we need to pass strings for command-line args and
-@@ -3069,7 +3235,66 @@
+@@ -3069,7 +3255,66 @@
        snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
                 attr->values[0].string.text);
  
