@@ -1035,7 +1035,7 @@
 +  }
 +  else
 +  {
-+    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
 +    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
