@@ -1457,7 +1457,7 @@
 +   /*
 +    * Fill in the security context of the job as unlabeled
 +    */
-+    cupsdLogMessage(CUPSD_LOG_INFO, "add_job: setting context of job to %s", UNKNOWN_SL);
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: setting context of job to %s", UNKNOWN_SL);
 +    cupsdSetString(&job->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
