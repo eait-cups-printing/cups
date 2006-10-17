@@ -955,7 +955,7 @@
  OPTIONS		=
  PAMLIBS		=	@PAMLIBS@
 --- cups-1.2.4-orig/scheduler/client.c	2006-09-19 16:44:07.000000000 -0400
-+++ cups-1.2.4/scheduler/client.c	2006-10-11 17:44:43.000000000 -0400
++++ cups-1.2.4/scheduler/client.c	2006-10-16 15:30:02.000000000 -0400
 @@ -44,12 +44,17 @@
   *   make_certificate()      - Make a self-signed SSL/TLS certificate.
   *   pipe_command()          - Pipe the output of a command to the remote client.
@@ -1037,7 +1037,7 @@
 +  }
 +  else
 +  {
-+    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
 +    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
@@ -1336,7 +1336,7 @@
  /*
   * End of "$Id: conf.h 5696 2006-06-26 18:34:20Z mike $".
 --- cups-1.2.4-orig/scheduler/ipp.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/ipp.c	2006-10-09 12:16:35.000000000 -0400
++++ cups-1.2.4/scheduler/ipp.c	2006-10-16 15:30:02.000000000 -0400
 @@ -96,6 +96,9 @@
   *   validate_user()             - Validate the user for the request.
   */
@@ -1426,7 +1426,7 @@
 +                      printerfile);
 +
 +      tclass = SECCLASS_FILE;
-+      avr = FILE__WRITE;
++      avr = CHR_FILE__WRITE;
 +      avc_init("cupsd_enqueue_", NULL, NULL, NULL, NULL);
 +      avc_entry_ref_init(&avcref);
 +      if (avc_context_to_sid(con->scon, &clisid) != 0)
@@ -1477,7 +1477,7 @@
 +   /*
 +    * Fill in the security context of the job as unlabeled
 +    */
-+    cupsdLogMessage(CUPSD_LOG_INFO, "add_job: setting context of job to %s", UNKNOWN_SL);
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: setting context of job to %s", UNKNOWN_SL);
 +    cupsdSetString(&job->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
@@ -1923,7 +1923,7 @@
    * Check the username against the owner...
    */
 --- cups-1.2.4-orig/scheduler/job.c	2006-09-28 11:38:08.000000000 -0400
-+++ cups-1.2.4/scheduler/job.c	2006-10-09 12:16:35.000000000 -0400
++++ cups-1.2.4/scheduler/job.c	2006-10-16 15:30:02.000000000 -0400
 @@ -68,6 +68,9 @@
   *   unload_job()               - Unload a job from memory.
   */
@@ -2100,7 +2100,7 @@
 +      cupsdLogMessage(CUPSD_LOG_DEBUG,
 +                      "StartJob: Attempting to check access on printer device %s", printerfile);
 +      tclass = SECCLASS_FILE;
-+      avr = FILE__WRITE;
++      avr = CHR_FILE__WRITE;
 +      avc_init("cupsd_dequeue_", NULL, NULL, NULL, NULL);
 +      avc_entry_ref_init(&avcref);
 +      if (avc_context_to_sid(job->scon, &clisid) != 0)

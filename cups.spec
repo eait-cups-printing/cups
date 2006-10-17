@@ -415,7 +415,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Fri Oct 13 2006 Tim Waugh <twaugh@redhat.com>
+* Tue Oct 17 2006 Tim Waugh <twaugh@redhat.com>
 - Feature-complete LSPP patch from Matt Anderson (bug #210542).
 
 * Thu Oct  5 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.4-9
