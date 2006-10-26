@@ -338,7 +338,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
-%ghost %config(noreplace) /etc/cups/lpoptions
+%config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
 /etc/cups/pstoraster.convs
@@ -416,6 +416,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Oct 26 2006 Tim Waugh <twaugh@redhat.com>
+- Ship a real lpoptions file to make sure it is world-readable (bug #203510).
+
 * Mon Oct 23 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-3
 - 1.2.5.
 
