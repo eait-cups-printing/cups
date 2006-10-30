@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -420,7 +420,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon Oct 30 2006 Tim Waugh <twaugh@redhat.com>
+* Mon Oct 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-4
 - Fixed support for /dev/ttyUSB devices (bug #212577, STR #2061).
 - Fixed parallel backend (bug #213021, STR #2056).
 
