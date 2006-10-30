@@ -40,6 +40,7 @@ Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
+Patch19: cups-str2056.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -140,6 +141,7 @@ lpd emulation.
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
+%patch19 -p1 -b .str2056
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -416,6 +418,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Oct 30 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed parallel backend (bug #213021, STR #2056).
+
 * Tue Oct 26 2006 Tim Waugh <twaugh@redhat.com>
 - Ship a real lpoptions file to make sure it is world-readable (bug #203510).
 
