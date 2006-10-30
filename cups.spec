@@ -41,6 +41,7 @@ Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
 Patch19: cups-str2056.patch
+Patch20: cups-str2061.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -142,6 +143,7 @@ lpd emulation.
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
 %patch19 -p1 -b .str2056
+%patch20 -p1 -b .str2061
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -419,6 +421,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Oct 30 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed support for /dev/ttyUSB devices (bug #212577, STR #2061).
 - Fixed parallel backend (bug #213021, STR #2056).
 
 * Tue Oct 26 2006 Tim Waugh <twaugh@redhat.com>
