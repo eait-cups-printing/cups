@@ -1,0 +1,50 @@
+#!/bin/bash
+## Copyright (C) 2003-2006 Red Hat, Inc.
+## Copyright (C) 2003-2006 Tim Waugh <twaugh@redhat.com>
+
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+if [ $# == 0 ]; then
+  echo >&2 "ERROR: $0 job-id user title copies options [file]"
+  exit 1
+fi
+
+# Extract the papersize
+SENDFF=`grep '^\*DefaultSendFF' "$PPD" | cut -d\  -f2`
+COPIES=1
+if [ $# -ge 4 ]; then
+  COPIES="$4"
+fi
+
+if [ "$COPIES" -gt 1 ] && [ $# -lt 6 ]; then
+  unset TMPFILE
+  trap -- 'rm -f "$TMPFILE"' EXIT
+  TMPFILE=$(mktemp ${TMPDIR:-/tmp}/textonly.XXXXXX)
+  cat > "$TMPFILE"
+else
+  TMPFILE="$6"
+fi
+
+while [ "$COPIES" -gt 0 ]; do
+  # Just translate LF->CRLF at the moment, until the PPD has options added.
+  sed -e 's/$/'`echo -ne '\r'`'/g' "$TMPFILE"
+
+  if [ "$SENDFF" == "True" ]
+    then
+    echo -ne \\14
+  fi
+
+  COPIES=$(($COPIES - 1))
+done

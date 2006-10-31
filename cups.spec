@@ -22,6 +22,8 @@ Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
+Source14: textonly.filter
+Source15: textonly.ppd
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -206,6 +208,8 @@ install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
+install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
+install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 
 # Ship pstopdf for LSPP systems to deal with malicious postscript
@@ -420,6 +424,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Oct 31 2006 Tim Waugh <twaugh@redhat.com>
+- Added filter and PPD for text-only printer (bug #213030).
+
 * Mon Oct 30 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-4
 - Fixed support for /dev/ttyUSB devices (bug #212577, STR #2061).
 - Fixed parallel backend (bug #213021, STR #2056).
