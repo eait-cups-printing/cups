@@ -1,0 +1,11 @@
+--- cups-1.2.5/scheduler/subscriptions.c.eggcups	2006-09-29 03:26:29.000000000 +0100
++++ cups-1.2.5/scheduler/subscriptions.c	2006-11-01 17:32:33.000000000 +0000
+@@ -1321,7 +1321,7 @@
+     what = "PrinterAdded";
+   else if (event & CUPSD_EVENT_PRINTER_DELETED)
+     what = "PrinterRemoved";
+-  else if (event & CUPSD_EVENT_PRINTER_CHANGED)
++  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED))
+     what = "QueueChanged";
+   else if (event & CUPSD_EVENT_JOB_CREATED)
+     what = "JobQueuedLocal";

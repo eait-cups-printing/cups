@@ -44,6 +44,7 @@ Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
 Patch19: cups-str2056.patch
 Patch20: cups-str2061.patch
+Patch21: cups-eggcups.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -146,6 +147,7 @@ lpd emulation.
 %patch18 -p1 -b .directed-broadcast
 %patch19 -p1 -b .str2056
 %patch20 -p1 -b .str2061
+%patch21 -p1 -b .eggcups
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -424,6 +426,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Nov  1 2006 Tim Waugh <twaugh@redhat.com>
+- Send QueueChanged D-Bus signal on all job state changes.
+
 * Tue Oct 31 2006 Tim Waugh <twaugh@redhat.com>
 - Added filter and PPD for text-only printer (bug #213030).
 
