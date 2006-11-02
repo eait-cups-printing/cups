@@ -1992,7 +1992,7 @@
    fchown(cupsFileNumber(fp), RunUser, Group);
  
 +#ifdef WITH_LSPP
-+  if (strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
++  if (job->scon && strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +  {
 +    if (getfilecon(filename, &spoolcon) == -1)
 +    {

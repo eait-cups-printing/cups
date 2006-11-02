@@ -426,6 +426,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Nov  2 2006 Tim Waugh <twaugh@redhat.com>
+- LSPP patch fix (bug #213498).
+
 * Wed Nov  1 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-5
 - Send QueueChanged D-Bus signal on all job state changes.
 
