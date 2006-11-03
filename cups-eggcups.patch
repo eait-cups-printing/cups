@@ -1,11 +1,167 @@
+--- cups-1.2.5/config-scripts/cups-common.m4.eggcups	2006-10-20 16:11:40.000000000 +0100
++++ cups-1.2.5/config-scripts/cups-common.m4	2006-11-03 09:55:31.000000000 +0000
+@@ -191,6 +191,7 @@
+ dnl Extra platform-specific libraries...
+ BACKLIBS=""
+ CUPSDLIBS=""
++DBUSLIBS=""
+ DBUSDIR=""
+ 
+ AC_ARG_ENABLE(dbus, [  --enable-dbus           enable DBUS support, default=auto])
+@@ -234,7 +235,8 @@
+ 					AC_MSG_RESULT(yes)
+ 					AC_DEFINE(HAVE_DBUS)
+ 					CFLAGS="$CFLAGS `$PKGCONFIG --cflags dbus-1` -DDBUS_API_SUBJECT_TO_CHANGE"
+-					CUPSDLIBS="`$PKGCONFIG --libs dbus-1`"
++					DBUSLIBS="`$PKGCONFIG --libs dbus-1`"
++					CUPSDLIBS="$DBUSLIBS"
+ 					DBUSDIR="/etc/dbus-1/system.d"
+ 					AC_CHECK_LIB(dbus-1,
+ 					    dbus_message_iter_init_append,
+@@ -256,6 +258,7 @@
+ 
+ AC_SUBST(BACKLIBS)
+ AC_SUBST(CUPSDLIBS)
++AC_SUBST(DBUSLIBS)
+ AC_SUBST(DBUSDIR)
+ 
+ dnl New default port definition for IPP...
 --- cups-1.2.5/scheduler/subscriptions.c.eggcups	2006-09-29 03:26:29.000000000 +0100
-+++ cups-1.2.5/scheduler/subscriptions.c	2006-11-01 17:32:33.000000000 +0000
-@@ -1321,7 +1321,7 @@
++++ cups-1.2.5/scheduler/subscriptions.c	2006-11-03 09:59:16.000000000 +0000
+@@ -1321,13 +1321,14 @@
      what = "PrinterAdded";
    else if (event & CUPSD_EVENT_PRINTER_DELETED)
      what = "PrinterRemoved";
 -  else if (event & CUPSD_EVENT_PRINTER_CHANGED)
-+  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED))
-     what = "QueueChanged";
+-    what = "QueueChanged";
    else if (event & CUPSD_EVENT_JOB_CREATED)
      what = "JobQueuedLocal";
+   else if ((event & CUPSD_EVENT_JOB_STATE) && job &&
+-           job->state_value == IPP_JOB_PROCESSING)
++           job->state_value == IPP_JOB_PROCESSING &&
++	   dest && !strncmp (dest->device_uri, "ipp:", 4))
+     what = "JobStartedLocal";
++  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED))
++    what = "QueueChanged";
+   else
+     return;
+ 
+@@ -1363,7 +1364,7 @@
+   dbus_message_append_iter_init(message, &iter);
+   if (dest)
+     dbus_message_iter_append_string(&iter, &(dest->name));
+-  if (job)
++  if (job && strcmp (what, "QueueChanged") != 0)
+   {
+     dbus_message_iter_append_uint32(&iter, &(job->id));
+     dbus_message_iter_append_string(&iter, &(job->username));
+--- cups-1.2.5/backend/ipp.c.eggcups	2006-09-13 19:22:34.000000000 +0100
++++ cups-1.2.5/backend/ipp.c	2006-11-03 10:02:04.000000000 +0000
+@@ -54,6 +54,70 @@
+ #include <signal.h>
+ #include <sys/wait.h>
+ 
++#if HAVE_DBUS
++#include <dbus/dbus.h>
++
++static DBusConnection *dbus_connection = NULL;
++
++static int
++init_dbus (void)
++{
++  DBusConnection *connection;
++  DBusError error;
++
++  if (dbus_connection &&
++      !dbus_connection_get_is_connected (dbus_connection)) {
++    dbus_connection_unref (dbus_connection);
++    dbus_connection = NULL;
++  }
++  
++  dbus_error_init (&error);
++  connection = dbus_bus_get (getuid () ? DBUS_BUS_SESSION : DBUS_BUS_SYSTEM, &error);
++  if (connection == NULL) {
++    dbus_error_free (&error);
++    return -1;
++  }
++
++  dbus_connection = connection;
++  return 0;
++}
++
++int
++dbus_broadcast_queued_remote (const char *printer_uri,
++			      ipp_status_t status,
++			      unsigned int local_job_id,
++			      unsigned int remote_job_id,
++			      const char *username,
++			      const char *printer_name)
++{
++  DBusMessage *message;
++  DBusMessageIter iter;
++  const char *errstr;
++
++  if (!dbus_connection || !dbus_connection_get_is_connected (dbus_connection)) {
++    if (init_dbus () || !dbus_connection)
++      return -1;
++  }
++
++  errstr = ippErrorString (status);
++  message = dbus_message_new_signal ("/com/redhat/PrinterSpooler",
++				     "com.redhat.PrinterSpooler",
++				     "JobQueuedRemote");
++  dbus_message_iter_init_append (message, &iter);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &printer_uri);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &errstr);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_UINT32, &local_job_id);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_UINT32, &remote_job_id);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &username);
++  dbus_message_iter_append_basic (&iter, DBUS_TYPE_STRING, &printer_name);
++
++  dbus_connection_send (dbus_connection, message, NULL);
++  dbus_connection_flush (dbus_connection);
++  dbus_message_unref (message);
++  
++  return 0;
++}
++#endif /* HAVE_DBUS */
+ 
+ /*
+  * Globals...
+@@ -936,6 +1000,15 @@
+       fprintf(stderr, "NOTICE: Print file accepted - job ID %d.\n", job_id);
+     }
+ 
++#if HAVE_DBUS
++    dbus_broadcast_queued_remote (argv[0],
++				  ipp_status,
++				  atoi (argv[1]),
++				  job_id,
++				  argv[2],
++				  getenv ("PRINTER"));
++#endif /* HAVE_DBUS */
++
+     ippDelete(response);
+ 
+     if (job_cancelled)
+--- cups-1.2.5/backend/Makefile.eggcups	2006-05-26 20:51:59.000000000 +0100
++++ cups-1.2.5/backend/Makefile	2006-11-03 09:55:31.000000000 +0000
+@@ -134,7 +134,7 @@
+ 
+ ipp:	ipp.o ../cups/$(LIBCUPS)
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS)
++	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS) $(DBUSLIBS)
+ 	$(RM) http
+ 	$(LN) ipp http
+ 
+--- cups-1.2.5/Makedefs.in.eggcups	2006-11-03 09:55:31.000000000 +0000
++++ cups-1.2.5/Makedefs.in	2006-11-03 09:55:31.000000000 +0000
+@@ -124,6 +124,7 @@
+ 			@LARGEFILE@ @PTHREAD_FLAGS@ $(OPTIONS)
+ COMMONLIBS	=	@LIBS@
+ CUPSDLIBS	=	@CUPSDLIBS@
++DBUSLIBS	=	@DBUSLIBS@
+ CXXFLAGS	=	-I.. $(SSLFLAGS) @CPPFLAGS@ @CXXFLAGS@ \
+ 			@LARGEFILE@ @PTHREAD_FLAGS@ $(OPTIONS)
+ CXXLIBS		=	@CXXLIBS@
