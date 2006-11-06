@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.5
-Release: 7%{?dist}
+Version: 1.2.6
+Release: 3%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -42,8 +42,6 @@ Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
-Patch19: cups-str2056.patch
-Patch20: cups-str2061.patch
 Patch21: cups-eggcups.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -145,8 +143,6 @@ lpd emulation.
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
-%patch19 -p1 -b .str2056
-%patch20 -p1 -b .str2061
 %patch21 -p1 -b .eggcups
 
 %if %lspp
@@ -426,6 +422,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Nov  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.6-3
+- 1.2.6.
+
 * Mon Nov  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-7
 - One more D-Bus signal fix (bug #212763).
 
