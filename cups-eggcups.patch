@@ -28,7 +28,7 @@
  dnl New default port definition for IPP...
 --- cups-1.2.5/scheduler/subscriptions.c.eggcups	2006-09-29 03:26:29.000000000 +0100
 +++ cups-1.2.5/scheduler/subscriptions.c	2006-11-03 09:59:16.000000000 +0000
-@@ -1321,13 +1321,14 @@
+@@ -1321,13 +1321,13 @@
      what = "PrinterAdded";
    else if (event & CUPSD_EVENT_PRINTER_DELETED)
      what = "PrinterRemoved";
@@ -37,16 +37,14 @@
    else if (event & CUPSD_EVENT_JOB_CREATED)
      what = "JobQueuedLocal";
    else if ((event & CUPSD_EVENT_JOB_STATE) && job &&
--           job->state_value == IPP_JOB_PROCESSING)
-+           job->state_value == IPP_JOB_PROCESSING &&
-+	   dest && !strncmp (dest->device_uri, "ipp:", 4))
+            job->state_value == IPP_JOB_PROCESSING)
      what = "JobStartedLocal";
 +  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED))
 +    what = "QueueChanged";
    else
      return;
  
-@@ -1363,7 +1364,7 @@
+@@ -1363,7 +1363,7 @@
    dbus_message_append_iter_init(message, &iter);
    if (dest)
      dbus_message_iter_append_string(&iter, &(dest->name));

@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.5
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -426,6 +426,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Nov  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-7
+- One more D-Bus signal fix (bug #212763).
+
 * Fri Nov  3 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-6
 - Restore missed JobQueuedRemote D-Bus signal in ipp backend (part of
   bug #212763).
