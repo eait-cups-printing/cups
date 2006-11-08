@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -422,6 +422,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Nov  8 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.6-4
+- Fixed pdftops.conf (bug #214611).
+
 * Mon Nov  6 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.6-3
 - 1.2.6.
 
