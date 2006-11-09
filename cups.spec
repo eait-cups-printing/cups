@@ -42,7 +42,7 @@ Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
-Patch21: cups-eggcups.patch
+Patch19: cups-eggcups.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -143,7 +143,7 @@ lpd emulation.
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
-%patch21 -p1 -b .eggcups
+%patch19 -p1 -b .eggcups
 
 %if %lspp
 %patch100 -p1 -b .lspp
