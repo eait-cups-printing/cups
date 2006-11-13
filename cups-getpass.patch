@@ -1,0 +1,35 @@
+--- cups-1.2.6/cups/usersys.c.getpass	2006-08-29 16:51:19.000000000 +0100
++++ cups-1.2.6/cups/usersys.c	2006-11-13 15:57:18.000000000 +0000
+@@ -46,6 +46,7 @@
+ #include "globals.h"
+ #include <stdlib.h>
+ #include <sys/stat.h>
++#include <termios.h>
+ #ifdef WIN32
+ #  include <windows.h>
+ #endif /* WIN32 */
+@@ -455,7 +456,23 @@
+ const char *				/* O - Password */
+ _cupsGetPassword(const char *prompt)	/* I - Prompt string */
+ {
+-  return (getpass(prompt));
++  static char password[100];
++  struct termios old, new;
++  int nread;
++  tcgetattr (STDIN_FILENO, &old);
++  new = old;
++  new.c_lflag &= ~ECHO;
++  tcsetattr (STDIN_FILENO, TCSAFLUSH, &new);
++  fputs (prompt, stdout);
++  fflush (stdout);
++  nread = read (STDIN_FILENO, password, sizeof (password));
++  tcsetattr (STDIN_FILENO, TCSAFLUSH, &old);
++  fputc ('\n', stdout);
++  if (nread > 0)
++    password[nread - 1] = '\0';
++  else
++    password[0] ='\0';
++  return password;
+ }
+ #endif /* WIN32 */
+ 

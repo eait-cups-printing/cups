@@ -43,6 +43,7 @@ Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
+Patch20: cups-getpass.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -144,6 +145,7 @@ lpd emulation.
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
 %patch19 -p1 -b .eggcups
+%patch20 -p1 -b .getpass
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -422,6 +424,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Nov 13 2006 Tim Waugh <twaugh@redhat.com>
+- Don't use getpass() (bug #125133).
+
 * Fri Nov 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.6-5
 - Reload, don't restart, when logrotating (bug #215023).
 
