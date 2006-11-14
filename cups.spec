@@ -168,7 +168,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	--with-log-file-perm=0700 --enable-pie
+	--with-log-file-perm=0600 --enable-pie
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -424,6 +424,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Nov 14 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed LogFilePerm.
+
 * Mon Nov 13 2006 Tim Waugh <twaugh@redhat.com>
 - Don't use getpass() (bug #125133).
 
