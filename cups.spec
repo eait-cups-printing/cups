@@ -432,7 +432,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fixed LogFilePerm.
 
 * Mon Nov 13 2006 Tim Waugh <twaugh@redhat.com>
-- Don't use getpass() (bug #125133).
+- Don't use getpass() (bug #215133).
 
 * Fri Nov 10 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.6-5
 - Reload, don't restart, when logrotating (bug #215023).
