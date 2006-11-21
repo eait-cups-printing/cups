@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -178,6 +178,9 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{initdir}
 
 make BUILDROOT=$RPM_BUILD_ROOT install 
+
+# Serial backend needs to run as root (bug #212577).
+chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 
 install -m 755 $RPM_SOURCE_DIR/cups.init $RPM_BUILD_ROOT%{initdir}/cups
 
@@ -425,6 +428,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Nov 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-3
+- Run the serial backend as root (bug #212577).
+
 * Thu Nov 16 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-2
 - 1.2.7.
 
