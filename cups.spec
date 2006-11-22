@@ -44,6 +44,7 @@ Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
+Patch21: cups-driverd-timeout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -146,6 +147,7 @@ lpd emulation.
 %patch18 -p1 -b .directed-broadcast
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
+%patch21 -p1 -b .driverd-timeout
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -428,6 +430,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Nov 22 2006 Tim Waugh <twaugh@redhat.com>
+- Increased PPD timeout in copy_model() (bug #216065).
+
 * Tue Nov 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-3
 - Run the serial backend as root (bug #212577).
 
