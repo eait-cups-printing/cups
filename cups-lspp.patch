@@ -1600,7 +1600,7 @@
 +	tclass = SECCLASS_FILE;
 +	avr = FILE__WRITE;
 +      }
-+      else if (avr != FILE_WRITE || avr != CHR_FILE__WRITE)
++      else if (avr != FILE__WRITE || avr != CHR_FILE__WRITE)
 +      {
 +	send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Printer is not a character device or regular file"));
 +	return (NULL);
