@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -430,7 +430,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Nov 22 2006 Tim Waugh <twaugh@redhat.com>
+* Wed Nov 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-4
 - Increased PPD timeout in copy_model() (bug #216065).
 
 * Tue Nov 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-3
