@@ -938,8 +938,8 @@
  #endif /* !_CUPS_CONFIG_H_ */
  
  /*
---- cups-1.2.7/scheduler/printers.c.lspp	2006-11-22 11:40:41.000000000 +0000
-+++ cups-1.2.7/scheduler/printers.c	2006-11-22 11:40:42.000000000 +0000
+--- cups-1.2.7/scheduler/printers.c	2006-11-22 11:40:42.000000000 +0000
++++ cups-1.2.7/scheduler/printers.c	2006-11-22 11:23:38.000000000 +0000
 @@ -57,6 +57,8 @@
   *                                 printing desktop tools.
   */
@@ -974,13 +974,14 @@
  
  
    DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -1579,6 +1592,42 @@
+@@ -1579,6 +1592,44 @@
        attr->values[1].string.text = _cupsStrAlloc(Classification ?
  	                                   Classification : p->job_sheets[1]);
      }
 +#ifdef WITH_LSPP
 +    if (AuditLog != -1)
 +    {
++      char uri[HTTP_MAX_URI];
 +      audit_message = NULL;
 +      rangestr = NULL;
 +      printercon = 0;
@@ -1004,8 +1005,9 @@
 +      else
 +        rangestr = strdup("unknown");
 +
++      cupsdSanitizeURI(p->device_uri, uri, sizeof(uri));
 +      cupsdSetStringf(&audit_message, "printer=%s uri=%s banners=%s,%s range=%s",
-+                      p->name, p->device_uri, p->job_sheets[0], p->job_sheets[1], rangestr);
++                      p->name, uri, p->job_sheets[0], p->job_sheets[1], rangestr);
 +      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
 +                             ServerName, NULL, NULL, 1);
 +      if (printercon)
