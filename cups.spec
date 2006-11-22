@@ -431,6 +431,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Nov 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-4
+- Fixed LSPP SELinux check (bug #216855).
 - Increased PPD timeout in copy_model() (bug #216065).
 
 * Tue Nov 21 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-3
