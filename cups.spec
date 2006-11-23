@@ -45,6 +45,7 @@ Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
+Patch22: cups-translate-prompt.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -148,6 +149,7 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
+%patch22 -p1 -b .translate-prompt
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -430,6 +432,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Nov 23 2006 Tim Waugh <twaugh@redhat.com>
+- Use translated string for password prompt (STR #2121).
+
 * Wed Nov 22 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-4
 - Another LSPP fix (bug #216669).
 - Fixed LSPP SELinux check (bug #216855).
