@@ -432,6 +432,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Nov 27 2006 Tim Waugh <twaugh@redhat.com>
+- Better LSPP fix for bug #216855.
+
 * Thu Nov 23 2006 Tim Waugh <twaugh@redhat.com>
 - Use translated string for password prompt (STR #2121).
 

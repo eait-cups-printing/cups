@@ -1174,7 +1174,7 @@
 +  security_context_t	devcon;		/* Printer's SELinux context */
 +  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
 +  security_class_t	tclass;		/* Object class for the SELinux check */
-+  access_vector_t	avr = 0;	/* Access method being requested */
++  access_vector_t	avr;		/* Access method being requested */
 +#endif /* WITH_LSPP */
  
  
@@ -1221,7 +1221,7 @@
 +	tclass = SECCLASS_FILE;
 +	avr = FILE__WRITE;
 +      }
-+      else if (avr != FILE__WRITE || avr != CHR_FILE__WRITE)
++      else
 +      {
 +	cupsdLogMessage(CUPSD_LOG_ERROR,
 +			"StartJob: Printer is not a character device or regular file");
@@ -1530,7 +1530,7 @@
 +  security_context_t	devcon;		/* Printer's SELinux context */
 +  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
 +  security_class_t	tclass;		/* Object class for the SELinux check */
-+  access_vector_t	avr = 0;	/* Access method being requested */
++  access_vector_t	avr;		/* Access method being requested */
 +#endif /* WITH_LSPP */
  
  
@@ -1600,7 +1600,7 @@
 +	tclass = SECCLASS_FILE;
 +	avr = FILE__WRITE;
 +      }
-+      else if (avr != FILE__WRITE || avr != CHR_FILE__WRITE)
++      else
 +      {
 +	send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Printer is not a character device or regular file"));
 +	return (NULL);
