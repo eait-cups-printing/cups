@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -432,7 +432,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon Nov 27 2006 Tim Waugh <twaugh@redhat.com>
+* Mon Nov 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-5
 - Better LSPP fix for bug #216855.
 
 * Thu Nov 23 2006 Tim Waugh <twaugh@redhat.com>
