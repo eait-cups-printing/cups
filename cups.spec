@@ -46,7 +46,6 @@ Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-translate-prompt.patch
-Patch23: cups-not-modified.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -151,7 +150,6 @@ lpd emulation.
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .translate-prompt
-%patch23 -p1 -b .not-modified
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -434,9 +432,6 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Nov 29 2006 Tim Waugh <twaugh@redhat.com>
-- Fixed If-Modified-Since handling (bug #217556).
-
 * Mon Nov 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-5
 - Better LSPP fix for bug #216855.
 
