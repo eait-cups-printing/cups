@@ -47,6 +47,7 @@ Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-str2121.patch
 Patch23: cups-str2111.patch
+Patch24: cups-str2133.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -152,6 +153,7 @@ lpd emulation.
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .str2121
 %patch23 -p1 -b .str2111
+%patch24 -p1 -b .str2133
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -435,6 +437,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Dec  7 2006 Tim Waugh <twaugh@redhat.com>
+- Fixed If-Modified-Since: handling in libcups (bug #217556, STR #2133).
 - Fixed extra EOF in pstops output (bug #216154, STR #2111).
 - Use upstream patch for STR #2121.
 
