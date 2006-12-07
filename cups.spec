@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -436,7 +436,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Thu Dec  7 2006 Tim Waugh <twaugh@redhat.com>
+* Thu Dec  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-6
 - Fixed If-Modified-Since: handling in libcups (bug #217556, STR #2133).
 - Fixed extra EOF in pstops output (bug #216154, STR #2111).
 - Use upstream patch for STR #2121.
