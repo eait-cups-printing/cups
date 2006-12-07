@@ -45,7 +45,7 @@ Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
-Patch22: cups-translate-prompt.patch
+Patch22: cups-str2121.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -149,7 +149,7 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
-%patch22 -p1 -b .translate-prompt
+%patch22 -p1 -b .str2121
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -432,6 +432,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Dec  7 2006 Tim Waugh <twaugh@redhat.com>
+- Use upstream patch for STR #2121.
+
 * Mon Nov 27 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-5
 - Better LSPP fix for bug #216855.
 
