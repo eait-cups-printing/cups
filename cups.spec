@@ -89,6 +89,9 @@ Requires: dbus >= 0.90
 # The paps package uses pango to render UTF-8 text to PostScript.
 Requires: paps >= 0.6.6-9
 
+# Requires tmpwatch for the cron.daily script (bug #218901).
+Requires: tmpwatch
+
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
@@ -436,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Dec  8 2006 Tim Waugh <twaugh@redhat.com>
+- Requires tmpwatch for the cron.daily script (bug #218901).
+
 * Thu Dec  7 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.7-6
 - Fixed If-Modified-Since: handling in libcups (bug #217556, STR #2133).
 - Fixed extra EOF in pstops output (bug #216154, STR #2111).
