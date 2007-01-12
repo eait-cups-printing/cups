@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -439,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jan 12 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.7-7
+- Don't even reload CUPS when rotating logs (bug #215024).
+
 * Fri Dec  8 2006 Tim Waugh <twaugh@redhat.com>
 - Requires tmpwatch for the cron.daily script (bug #218901).
 
