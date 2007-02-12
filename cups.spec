@@ -17,7 +17,6 @@ Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
 Source8: postscript.ppd.gz
-Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
@@ -38,7 +37,6 @@ Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
-Patch15: cups-maxlogsize.patch
 Patch16: cups-pid.patch
 Patch17: cups-relro.patch
 Patch18: cups-directed-broadcast.patch
@@ -147,7 +145,6 @@ lpd emulation.
 %patch12 -p1 -b .wbuffer
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
-%patch15 -p1 -b .maxlogsize
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .relro
 %patch18 -p1 -b .directed-broadcast
@@ -215,10 +212,9 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
-install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
@@ -415,7 +411,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
 %dir %attr(0710,root,lp) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
-%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
 %{_sysconfdir}/dbus-1/system.d/cups.conf
@@ -439,6 +434,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Feb 12 2007 Tim Waugh <twaugh@redhat.com>
+- Removed logrotate config file and maxlogsize patch (bug #227369).  Now
+  CUPS is in charge of rotating its own logs, and defaults to doing so once
+  they get to 1Mb in size.
+
 * Fri Jan 12 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.7-7
 - Don't even reload CUPS when rotating logs (bug #215024).
 
