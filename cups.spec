@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.7
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -275,6 +275,10 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
 # This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 
+# LSB 3.2 printer driver directories
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
+ln -s ../../ppd $RPM_BUILD_ROOT%{_datadir}/cups/model/3-distribution
+
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
@@ -434,7 +438,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon Feb 12 2007 Tim Waugh <twaugh@redhat.com>
+* Tue Feb 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.7-8
 - Removed logrotate config file and maxlogsize patch (bug #227369).  Now
   CUPS is in charge of rotating its own logs, and defaults to doing so once
   they get to 1Mb in size.
