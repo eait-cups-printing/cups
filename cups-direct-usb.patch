@@ -1,15 +1,15 @@
---- cups-1.2.7/backend/usb-unix.c.direct-usb	2006-11-15 20:28:39.000000000 +0000
-+++ cups-1.2.7/backend/usb-unix.c	2006-11-16 16:23:51.000000000 +0000
-@@ -85,6 +85,8 @@
-     */
- 
-     use_bc = strcasecmp(hostname, "Canon") && !strstr(hostname, "Minolta");
+--- cups-1.2.8/backend/usb-unix.c.direct-usb	2007-02-05 20:25:50.000000000 +0000
++++ cups-1.2.8/backend/usb-unix.c	2007-02-14 17:44:40.000000000 +0000
+@@ -87,6 +87,8 @@
+     use_bc = strcasecmp(hostname, "Canon") &&
+              strcasecmp(hostname, "Konica Minolta") &&
+              strcasecmp(hostname, "Minolta");
 +    if (use_bc && !strncmp(uri, "usb:/dev/", 9))
 +      use_bc = 0;
  
      if ((device_fd = open_device(uri, &use_bc)) == -1)
      {
-@@ -302,12 +304,7 @@
+@@ -304,12 +306,7 @@
    if (!strncmp(uri, "usb:/dev/", 9))
  #ifdef __linux
    {

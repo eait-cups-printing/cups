@@ -1,6 +1,6 @@
---- cups-1.2.4/conf/cupsd.conf.in.directed-broadcast	2006-10-05 12:33:08.000000000 +0100
-+++ cups-1.2.4/conf/cupsd.conf.in	2006-10-05 12:33:04.000000000 +0100
-@@ -21,6 +21,7 @@
+--- cups-1.2.8/conf/cupsd.conf.in.directed-broadcast	2006-04-23 22:46:38.000000000 +0100
++++ cups-1.2.8/conf/cupsd.conf.in	2007-02-14 17:44:51.000000000 +0000
+@@ -20,6 +20,7 @@
  # Show shared printers on the local network.
  Browsing On
  BrowseOrder allow,deny
@@ -8,17 +8,17 @@
  BrowseAllow @LOCAL
  
  # Default authentication type, when authentication is required...
---- cups-1.2.4/cups/adminutil.c.directed-broadcast	2006-10-05 12:16:48.000000000 +0100
-+++ cups-1.2.4/cups/adminutil.c	2006-10-05 12:19:29.000000000 +0100
-@@ -1155,7 +1155,11 @@
+--- cups-1.2.8/cups/adminutil.c.directed-broadcast	2007-02-11 16:59:33.000000000 +0000
++++ cups-1.2.8/cups/adminutil.c	2007-02-14 17:47:04.000000000 +0000
+@@ -1278,7 +1278,11 @@
  	  cupsFilePuts(temp, "BrowseOrder allow,deny\n");
  
- 	  if (remote_printers)
+ 	  if (remote_printers > 0)
 +	  {
 +	    cupsFilePuts(temp, "# (Change '@LOCAL' to 'ALL' if using "
 +	                       "directed broadcasts from another subnet.)\n");
  	    cupsFilePuts(temp, "BrowseAllow @LOCAL\n");
 +	  }
  
- 	  if (share_printers)
+ 	  if (share_printers > 0)
  	    cupsFilePuts(temp, "BrowseAddress @LOCAL\n");

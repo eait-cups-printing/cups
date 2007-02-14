@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.7
-Release: 8%{?dist}
+Version: 1.2.8
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -43,9 +43,6 @@ Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
-Patch22: cups-str2121.patch
-Patch23: cups-str2111.patch
-Patch24: cups-str2133.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -151,9 +148,6 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
-%patch22 -p1 -b .str2121
-%patch23 -p1 -b .str2111
-%patch24 -p1 -b .str2133
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -371,6 +365,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/cups-%{version}/de
 %{_docdir}/cups-%{version}/es
 %{_docdir}/cups-%{version}/et
+%{_docdir}/cups-%{version}/fr
 %{_docdir}/cups-%{version}/it
 %{_docdir}/cups-%{version}/ja
 %{_docdir}/cups-%{version}/pl
@@ -438,6 +433,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Feb 14 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-1
+- 1.2.8.
+
 * Tue Feb 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.7-8
 - Removed logrotate config file and maxlogsize patch (bug #227369).  Now
   CUPS is in charge of rotating its own logs, and defaults to doing so once
