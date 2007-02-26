@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -43,6 +43,7 @@ Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
+Patch22: cups-options.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -148,6 +149,7 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
+%patch22 -p1 -b .options
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -433,6 +435,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Feb 26 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-2
+- Applied fix for STR #2264 (bug #230116).
+
 * Wed Feb 14 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-1
 - 1.2.8.
 
