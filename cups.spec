@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -437,6 +437,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Mar  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-5
+- Better UNIX domain sockets authentication patch after feedback from
+  Uli (bug #230613).
+
 * Thu Mar  8 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-4
 - Implemented SCM_CREDENTIALS authentication for UNIX domain sockets
   (bug #230613).
