@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.8
-Release: 5%{?dist}
+Version: 1.2.9
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -43,7 +43,6 @@ Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
-Patch22: cups-options.patch
 Patch23: cups-scm_credentials.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -150,7 +149,6 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
-%patch22 -p1 -b .options
 %patch23 -p1 -b .scm_credentials
 
 %if %lspp
@@ -437,6 +435,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Mar 16 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.9-1
+- 1.2.9.
+
 * Fri Mar  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.8-5
 - Better UNIX domain sockets authentication patch after feedback from
   Uli (bug #230613).
