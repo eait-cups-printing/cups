@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -409,6 +409,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/model
 %{_datadir}/cups/templates
 %{_datadir}/locale/*/*
+%{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
 %dir %attr(0710,root,lp) /var/spool/cups
 %dir %attr(0755,lp,sys) /var/log/cups
@@ -435,6 +436,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Mar 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.9-2
+- Added %%{_datadir}/ppd for LSB (bug #232893).
+
 * Fri Mar 16 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.9-1
 - 1.2.9.
 
