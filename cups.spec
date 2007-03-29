@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -436,6 +436,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Mar 29 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-2
+- LSPP: Updated patch for line-wrapped labels (bug #228107).
+
 * Tue Mar 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-1
 - 1.2.10.
 

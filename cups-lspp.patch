@@ -57,9 +57,9 @@
 +            ;;
 +    esac
 +fi
---- /dev/null	2007-03-02 08:56:41.811642143 +0000
-+++ cups-1.2.8/data/mls	2007-03-02 14:06:43.000000000 +0000
-@@ -0,0 +1,277 @@
+--- cups-1.2.8/data/mls	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/data/mls	2007-03-07 10:33:09.000000000 -0500
+@@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
 +%%Pages: 1
@@ -242,22 +242,6 @@
 +  pageLeft 72 mul
 +  pageBottom 72 mul
 +  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
 +
 +  % Job information box...
 +  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
@@ -337,9 +321,9 @@
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
---- /dev/null	2007-03-02 08:56:41.811642143 +0000
-+++ cups-1.2.8/data/selinux	2007-03-02 14:06:43.000000000 +0000
-@@ -0,0 +1,277 @@
+--- cups-1.2.8/data/selinux	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/data/selinux	2007-03-07 10:33:09.000000000 -0500
+@@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
 +%%Pages: 1
@@ -522,22 +506,6 @@
 +  pageLeft 72 mul
 +  pageBottom 72 mul
 +  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
 +
 +  % Job information box...
 +  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
@@ -631,9 +599,9 @@
  
  CHARMAPS =	\
  		euc-cn.txt \
---- /dev/null	2007-03-02 08:56:41.811642143 +0000
-+++ cups-1.2.8/data/te	2007-03-02 14:06:43.000000000 +0000
-@@ -0,0 +1,277 @@
+--- cups-1.2.8/data/te	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/data/te	2007-03-07 10:33:09.000000000 -0500
+@@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
 +%%Pages: 1
@@ -816,22 +784,6 @@
 +  pageLeft 72 mul
 +  pageBottom 72 mul
 +  translate
-+
-+  % Draw the label at the top and bottom...
-+  0 setgray				% Color
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 72 mul			% Top of page
-+  pageWidth -7 mul add			% - 2 lines
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
-+
-+  pageWidth 36 mul			% Center of page
-+  pageHeight 6 mul			% Bottom of page
-+  moveto				% Position text
-+  bigFont setfont			% Font
-+  ({mls-label}) CENTER		% Show text centered
 +
 +  % Job information box...
 +  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
@@ -1000,8 +952,8 @@
  
  
  /*
---- cups-1.2.8/scheduler/conf.c.lspp	2007-03-02 14:06:43.000000000 +0000
-+++ cups-1.2.8/scheduler/conf.c	2007-03-02 14:06:43.000000000 +0000
+--- cups-1.2.8/scheduler/conf.c	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/scheduler/conf.c	2007-03-07 11:22:58.000000000 -0500
 @@ -35,6 +35,7 @@
   *   read_configuration()     - Read a configuration file.
   *   read_location()          - Read a <Location path> definition.
@@ -1020,17 +972,18 @@
  
  /*
   * Configuration variable structure...
-@@ -161,6 +165,9 @@
+@@ -161,6 +165,10 @@
    { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_STRING },
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
  #endif /* HAVE_SSL */
 +#ifdef WITH_LSPP
 +  { "AuditLog",			&AuditLog,		CUPSD_VARTYPE_INTEGER },
++  { "PerPageLabels",		&PerPageLabels,		CUPSD_VARTYPE_BOOLEAN },
 +#endif /* WITH_LSPP */
  #ifdef HAVE_LAUNCHD
    { "LaunchdTimeout",		&LaunchdTimeout,	CUPSD_VARTYPE_INTEGER },
    { "LaunchdConf",		&LaunchdConf,		CUPSD_VARTYPE_STRING },
-@@ -223,6 +230,9 @@
+@@ -223,6 +231,9 @@
  		*old_requestroot;	/* Old RequestRoot */
    const char	*tmpdir;		/* TMPDIR environment variable */
    struct stat	tmpinfo;		/* Temporary directory info */
@@ -1040,24 +993,33 @@
  
  
   /*
-@@ -470,6 +480,16 @@
+@@ -470,6 +481,25 @@
  
    RunUser = getuid();
  
 +#ifdef WITH_LSPP
-+  /*
-+   * ClassifyOverride is set during read_configuration, if its on, report it now
-+   */
-+  if (ClassifyOverride && AuditLog != -1)
-+    audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
-+              "[Config] ClassifyOverride=enabled Users can override print banners",
-+              ServerName, NULL, NULL, 1);
++  if (AuditLog != -1)
++  {
++   /*
++    * ClassifyOverride is set during read_configuration, if its ON, report it now
++    */
++    if (ClassifyOverride)
++      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
++                "[Config] ClassifyOverride=enabled Users can override print banners",
++                ServerName, NULL, NULL, 1);
++   /*
++    * PerPageLabel is set during read_configuration, if its OFF, report it now
++    */
++    if (!PerPageLabels)
++      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
++                "[Config] PerPageLabels=disabled", ServerName, NULL, NULL, 1);
++  }
 +#endif /* WITH_LSPP */
 +
   /*
    * See if the ServerName is an IP address...
    */
-@@ -777,11 +797,23 @@
+@@ -777,11 +807,23 @@
    if (MaxActiveJobs > (MaxFDs / 3))
      MaxActiveJobs = MaxFDs / 3;
  
@@ -1082,7 +1044,7 @@
  
   /*
    * Update the MaxClientsPerHost value, as needed...
-@@ -3295,6 +3327,18 @@
+@@ -3295,6 +3337,18 @@
    return (0);
  }
  
@@ -1390,20 +1352,22 @@
    return (!stop_scheduler);
  }
  
---- cups-1.2.8/scheduler/conf.h.lspp	2007-03-02 14:06:43.000000000 +0000
-+++ cups-1.2.8/scheduler/conf.h	2007-03-02 14:06:43.000000000 +0000
-@@ -191,6 +191,10 @@
+--- cups-1.2.8/scheduler/conf.h	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/scheduler/conf.h	2007-03-07 11:22:58.000000000 -0500
+@@ -191,6 +191,12 @@
  					/* Server key file */
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
  #endif /* HAVE_SSL */
 +#ifdef WITH_LSPP
-+VAR int			AuditLog		VALUE(-1);
++VAR int			AuditLog		VALUE(-1),
 +					/* File descriptor for audit */
++			PerPageLabels		VALUE(TRUE);
++					/* Put the label on each page */
 +#endif /* WITH_LSPP */
  
  #ifdef HAVE_LAUNCHD
  VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
-@@ -213,6 +217,9 @@
+@@ -213,6 +219,9 @@
  ;
  extern int	cupsdLogPage(cupsd_job_t *job, const char *page);
  
@@ -2014,8 +1978,8 @@
   /*
    * Check the username against the owner...
    */
---- cups-1.2.8/scheduler/job.c.lspp	2007-03-02 14:06:43.000000000 +0000
-+++ cups-1.2.8/scheduler/job.c	2007-03-02 14:06:43.000000000 +0000
+--- cups-1.2.8/scheduler/job.c	2007-03-02 14:06:43.000000000 +0000
++++ cups-1.2.4-secheck/scheduler/job.c	2007-03-07 11:22:58.000000000 -0500
 @@ -68,6 +68,9 @@
   *   unload_job()               - Unload a job from memory.
   */
@@ -2281,73 +2245,93 @@
   /*
    * Building the options string is harder than it needs to be, but
    * for the moment we need to pass strings for command-line args and
-@@ -3074,7 +3290,66 @@
-       snprintf(classification, sizeof(classification), "CLASSIFICATION=%s",
-                attr->values[0].string.text);
+@@ -2840,6 +3056,18 @@
+          banner_page)
+         continue;
  
 +#ifdef WITH_LSPP
-+    if (is_lspp_config())
-+    {
-+      if (!job->scon || strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
++     /*
++      * In LSPP mode refuse to honor the page-label
++      */
++      if (is_lspp_config() &&
++          !strcmp(attr->name, "page-label"))
 +      {
-+        if (AuditLog != -1)
-+        {
-+          audit_message = NULL;
-+          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s",
-+                          job->id, job->auid, job->username, printer->name, title);
-+          audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
-+                                 ServerName, NULL, NULL, 1);
-+          free(audit_message);
-+        }
++        cupsdLogMessage(CUPSD_LOG_DEBUG, "Ignoring page-label option due to LSPP mode");
++        continue;
 +      }
-+      else 
-+      {
-+        jobcon = context_new(job->scon);
-+  
-+        if ((attr = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME)) == NULL)
-+          label_template = strdup(Classification);
-+        else if (attr->num_values > 1 &&
-+                 strcmp(attr->values[1].string.text, "none") != 0)
-+          label_template = strdup(attr->values[1].string.text);
-+        else
-+          label_template = strdup(attr->values[0].string.text);
-+  
-+        if (strcasecmp(label_template, MLS_CONFIG) == 0)
-+          mls_label = context_range_get(jobcon);
-+        else if (strcasecmp(label_template, TE_CONFIG) == 0)
-+          mls_label = context_type_get(jobcon);
-+        else if (strcasecmp(label_template, SELINUX_CONFIG) == 0)
-+          mls_label = context_str(jobcon);
-+        else
-+          mls_label = label_template;
-+
-+        if (mls_label)
-+          snprintf(classification, sizeof(classification), "CLASSIFICATION=%s", mls_label);
-+        else
-+          bzero(classification, sizeof(classification));
-+  
-+        if (AuditLog != -1)
-+        {
-+          audit_message = NULL;
-+          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s"
-+                          " obj=%s label=%s", job->id, job->auid, job->username,
-+                          printer->name, title, job->scon, mls_label?mls_label:"none");
-+          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                 ServerName, NULL, NULL, 1);
-+          free(audit_message);
-+        }
-+        context_free(jobcon);
-+        free(label_template);
-+      }
-+    }
-+    if (classification)
-+      envp[envc ++] = classification;
-+#else /* !WITH_LSPP */
-     envp[envc ++] = classification;
 +#endif /* WITH_LSPP */
++
+      /*
+       * Otherwise add them to the list...
+       */
+@@ -3055,6 +3283,67 @@
+     envp[envc ++] = final_content_type;
    }
  
-   if (job->dtype & (CUPS_PRINTER_CLASS | CUPS_PRINTER_IMPLICIT))
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++    if (!job->scon || strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
++    {
++      if (AuditLog != -1)
++      {
++        audit_message = NULL;
++        cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s",
++                        job->id, job->auid, job->username, printer->name, title);
++        audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
++                               ServerName, NULL, NULL, 1);
++        free(audit_message);
++      }
++    }
++    else 
++    {
++      jobcon = context_new(job->scon);
++
++      if ((attr = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME)) == NULL)
++        label_template = strdup(Classification);
++      else if (attr->num_values > 1 &&
++               strcmp(attr->values[1].string.text, "none") != 0)
++        label_template = strdup(attr->values[1].string.text);
++      else
++        label_template = strdup(attr->values[0].string.text);
++
++      if (strcasecmp(label_template, MLS_CONFIG) == 0)
++        mls_label = context_range_get(jobcon);
++      else if (strcasecmp(label_template, TE_CONFIG) == 0)
++        mls_label = context_type_get(jobcon);
++      else if (strcasecmp(label_template, SELINUX_CONFIG) == 0)
++        mls_label = context_str(jobcon);
++      else
++        mls_label = label_template;
++
++      if (mls_label && (PerPageLabels || banner_page))
++      {
++        snprintf(classification, sizeof(classification), "CLASSIFICATION=LSPP:%s", mls_label);
++        envp[envc ++] = classification;
++      }
++
++      if ((AuditLog != -1) && !banner_page)
++      {
++        audit_message = NULL;
++        cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s"
++                        " obj=%s label=%s", job->id, job->auid, job->username,
++                        printer->name, title, job->scon, mls_label?mls_label:"none");
++        audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                               ServerName, NULL, NULL, 1);
++        free(audit_message);
++      }
++      context_free(jobcon);
++      free(label_template);
++    }
++  }
++  else
++   /*
++    * Fall through to the non-LSPP behavior
++    */
++#endif /* WITH_LSPP */
+   if (Classification && !banner_page)
+   {
+     if ((attr = ippFindAttribute(job->attrs, "job-sheets",
 --- cups-1.2.8/scheduler/printers.c.lspp	2007-03-02 14:06:43.000000000 +0000
 +++ cups-1.2.8/scheduler/printers.c	2007-03-02 14:06:43.000000000 +0000
 @@ -57,6 +57,8 @@
@@ -2456,3 +2440,173 @@
  } cupsd_job_t;
  
  
+--- cups-1.2.4-base/filter/common.c	2007-03-12 16:55:55.000000000 -0400
++++ cups-1.2.4/filter/common.c	2007-03-12 16:53:14.000000000 -0400
+@@ -38,6 +38,12 @@
+  * Include necessary headers...
+  */
+ 
++#include "config.h"
++#ifdef WITH_LSPP
++#define _GNU_SOURCE
++#include <string.h>
++#endif /* WITH_LSPP */
++
+ #include "common.h"
+ #include <locale.h>
+ 
+@@ -319,6 +325,18 @@
+ {
+   const char	*classification;	/* CLASSIFICATION environment variable */
+   const char	*ptr;			/* Temporary string pointer */
++#ifdef WITH_LSPP
++  int           i,                      /* counter */
++                n,                      /* counter */
++                lines,                  /* number of lines needed */
++                line_len,               /* index into tmp_label */
++                label_len,              /* length of the label in characters */
++                label_index,            /* index into the label */
++                longest,                /* length of the longest line */
++                longest_line,           /* index to the longest line */
++                max_width;              /* maximum width in characters */
++  char          **wrapped_label;        /* label with line breaks */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -341,6 +359,124 @@
+     return;
+   }
+ 
++#ifdef WITH_LSPP
++  if (strncmp(classification, "LSPP:", 5) == 0 && label == NULL)
++  {
++   /*
++    * Based on the 12pt fixed width font below determine the max_width
++    */
++    max_width = width / 8;
++    longest_line = 0;
++    longest = 0;
++    classification += 5; // Skip the "LSPP:"
++    label_len = strlen(classification);
++
++    if (label_len > max_width)
++    {
++      lines = 1 + (int)(label_len / max_width);
++      line_len = (int)(label_len / lines);
++      wrapped_label = malloc(sizeof(wrapped_label) * lines);
++      label_index = i = n = 0;
++      while (classification[label_index])
++      {
++        if ((label_index + line_len) > label_len)
++          break;
++        switch (classification[label_index + line_len + i])
++        {
++          case ':':
++          case ',':
++          case '-':
++            i++;
++            wrapped_label[n++] = strndup(&classification[label_index], (line_len + i));
++            label_index += line_len + i;
++            i = 0;
++            break;
++          default:
++            i++;
++            break;
++        }
++        if ((i + line_len) == max_width)
++        {
++          wrapped_label[n++] = strndup(&(classification[label_index]), (line_len + i));
++          label_index = label_index + line_len + i;
++          i = 0;
++        }
++      }
++      wrapped_label[n] = strndup(&classification[label_index], label_len - label_index);
++    }
++    else
++    {
++      lines = 1;
++      wrapped_label = malloc(sizeof(wrapped_label));
++      wrapped_label[0] = (char*)classification;
++    }
++
++    for (n = 0; n < lines; n++ )
++    {
++      printf("userdict/ESPp%c(", ('a' + n));
++      for (ptr = wrapped_label[n], i = 0; *ptr; ptr ++, i++)
++        if (*ptr < 32 || *ptr > 126)
++          printf("\\%03o", *ptr);
++        else
++        {
++          if (*ptr == '(' || *ptr == ')' || *ptr == '\\')
++            putchar('\\');
++
++          printf("%c", *ptr);
++        }
++      if (i > longest)
++      {
++        longest = i;
++        longest_line = n;
++      }
++      printf(")put\n");
++    }
++
++   /*
++    * For LSPP use a fixed width font so that line wrapping can be calculated
++    */
++
++    puts("userdict/ESPlf /Nimbus-Mono findfont 12 scalefont put");
++
++   /*
++    * Finally, the procedure to write the labels on the page...
++    */
++
++    printf("userdict/ESPwl{\n"
++           "  ESPlf setfont\n");
++    printf("  ESPp%c stringwidth pop dup 12 add exch -0.5 mul %.0f add\n ",
++           'a' + longest_line, width * 0.5f);
++    for (n = 1; n < lines; n++)
++      printf(" dup");
++    printf("\n  1 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    printf("  0 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    for (n = 0; n < lines; n ++)
++    {
++      printf("  dup %.0f moveto ESPp%c show\n",
++             bottom + 6.0 + ((lines - (n+1)) * 16.0), 'a' + n);
++      printf("  %.0f moveto ESPp%c show\n", top + 2.0 - ((n + 1) * 16.0), 'a' + n);
++    }
++    printf("  pop\n"
++           "}bind put\n");
++
++   /*
++    * Do some clean up at the end of the LSPP special case
++    */
++    free(wrapped_label);
++
++  }
++  else
++  {
++#endif /* !WITH_LSPP */
++  
+  /*
+   * Set the classification + page label string...
+   */
+@@ -421,7 +557,10 @@
+   printf("  %.0f moveto ESPpl show\n", top - 14.0);
+   puts("pop");
+   puts("}bind put");
++  }
++#ifdef WITH_LSPP
+ }
++#endif /* WITH_LSPP */
+ 
+ 
+ /*
