@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -45,6 +45,7 @@ Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-af_unix-auth.patch
 Patch23: cups-str2323.patch
+Patch24: cups-str2109.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -152,6 +153,7 @@ lpd emulation.
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .af_unix-auth
 %patch23 -p1 -b .str2323
+%patch24 -p1 -b .str2109
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -438,6 +440,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr  3 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-4
+- Relay printer-state-message values in the IPP backend (STR #2109).
+
 * Mon Apr  2 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-3
 - Don't clear printer-state-reasons after job completion (STR #2323).
 
