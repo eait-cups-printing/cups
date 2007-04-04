@@ -39,7 +39,7 @@
    else if ((event & CUPSD_EVENT_JOB_STATE) && job &&
             job->state_value == IPP_JOB_PROCESSING)
      what = "JobStartedLocal";
-+  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED))
++  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED|CUPS_EVENT_PRINTER_STATE_CHANGED))
 +    what = "QueueChanged";
    else
      return;

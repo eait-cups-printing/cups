@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -440,6 +440,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Apr  4 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-5
+- Send D-BUS QueueChanged signal on printer state changes.
+
 * Tue Apr  3 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-4
 - Relay printer-state-message values in the IPP backend (STR #2109).
 
