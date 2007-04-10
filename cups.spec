@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -205,8 +205,6 @@ cd $RPM_BUILD_ROOT%{_mandir}/man1
 for i in lp lpq lpr lprm lpstat; do
 	mv $i.1 $i-cups.1
 done
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/cancel.1
-ln -s lp-cups.1 $RPM_BUILD_ROOT%{_mandir}/man1/cancel-cups.1
 cd $RPM_BUILD_ROOT%{_mandir}/man8
 mv lpc.8 lpc-cups.8
 popd
@@ -271,6 +269,7 @@ install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/classes.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
+touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/subscriptions.conf
 
 # This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
@@ -357,6 +356,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/pdftops.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
+%config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
 /etc/cups/interfaces
 %config(noreplace) /etc/cups/mime.types
 %config(noreplace) /etc/cups/mime.convs
@@ -440,6 +440,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Apr 10 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-6
+- Fixed 'cancel' man page (bug #234088).
+- Added empty subscriptions.conf file to make sure it gets the right
+  SELinux file context.
+
 * Wed Apr  4 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-5
 - Send D-BUS QueueChanged signal on printer state changes.
 
