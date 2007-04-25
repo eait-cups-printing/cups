@@ -1,0 +1,119 @@
+--- cups-1.2.10/backend/runloop.c.usb-paperout	2006-12-06 20:10:16.000000000 +0000
++++ cups-1.2.10/backend/runloop.c	2007-04-25 18:00:59.000000000 +0100
+@@ -40,6 +40,14 @@
+ #endif /* __hpux */
+ 
+ 
++#ifdef __linux
++#include <sys/ioctl.h>
++#include <linux/lp.h>
++#include <time.h>
++int linux_usb_paperout_hack = 0;
++#endif /* __linux */
++
++
+ /*
+  * 'backendRunLoop()' - Read and write print and back-channel data.
+  */
+@@ -64,6 +72,9 @@
+ #if defined(HAVE_SIGACTION) && !defined(HAVE_SIGSET)
+   struct sigaction action;		/* Actions for POSIX signals */
+ #endif /* HAVE_SIGACTION && !HAVE_SIGSET */
++#ifdef __linux
++  time_t	last_write = 0;		/* Last time write() succeeded */
++#endif /* __linux */
+ 
+ 
+   fprintf(stderr, "DEBUG: backendRunLoop(print_fd=%d, device_fd=%d, use_bc=%d)\n",
+@@ -227,6 +238,9 @@
+       }
+       else
+       {
++#ifdef __linux
++	last_write = time (NULL);
++#endif /* __linux */
+         if (paperout)
+ 	{
+ 	  fputs("STATE: -media-empty-error\n", stderr);
+@@ -247,7 +261,42 @@
+ 	total_bytes += bytes;
+       }
+     }
++
++#ifdef __linux
++    if (linux_usb_paperout_hack)
++    {
++      time_t now;
++      if (!paperout &&
++	  ((now = time(NULL)) - last_write) > 5)
++      {
++	unsigned int status;
++	if (ioctl (device_fd, LPGETSTATUS, &status) == 0 &&
++	    (status & LP_POUTPA))
++	{
++	  fputs("ERROR: Out of paper!\n", stderr);
++	  fputs("STATE: +media-empty-error\n", stderr);
++	  paperout = 1;
++	}
++
++	/* Don't check status for another 5s. */
++	last_write = now;
++      }
++    }
++#endif /* __linux */
++  }
++
++#ifdef __linux
++  if (linux_usb_paperout_hack)
++  {
++    /* Wait for the last write() to finish. */
++    do
++    {
++      FD_ZERO(&output);
++      FD_SET(device_fd, &output);
++    } while (select(device_fd + 1, NULL, &output, NULL, NULL) < 0 &&
++	     errno == EINTR);
+   }
++#endif /* __linux */
+ 
+  /*
+   * Return with success...
+--- cups-1.2.10/backend/usb-unix.c.usb-paperout	2007-04-25 17:50:06.000000000 +0100
++++ cups-1.2.10/backend/usb-unix.c	2007-04-25 17:50:06.000000000 +0100
+@@ -39,6 +39,11 @@
+ #include "ieee1284.c"
+ #include <sys/select.h>
+ 
++#ifdef __linux
++#include <unistd.h>
++#include <fcntl.h>
++extern int linux_usb_paperout_hack;
++#endif /* __linux */
+ 
+ /*
+  * Local functions...
+@@ -70,6 +75,11 @@
+   (void)argc;
+   (void)argv;
+ 
++#ifdef __linux
++  /* Get the runloop to check for USB paper-out condition. */
++  linux_usb_paperout_hack = 1;
++#endif /* __linux */
++
+  /*
+   * Open the USB port device...
+   */
+@@ -150,6 +160,12 @@
+ 
+   tcsetattr(device_fd, TCSANOW, &opts);
+ 
++#ifdef __linux
++  /* Put the file descriptor into non-blocking mode so that we
++   * get a chance to detect paper-out. */
++  fcntl (device_fd, F_SETFL, fcntl (device_fd, F_GETFL) | O_NONBLOCK);
++#endif /* __linux */
++
+  /*
+   * Finally, send the print file...
+   */

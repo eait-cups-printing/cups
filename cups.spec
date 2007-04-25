@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -46,6 +46,7 @@ Patch21: cups-driverd-timeout.patch
 Patch22: cups-af_unix-auth.patch
 Patch23: cups-str2323.patch
 Patch24: cups-str2109.patch
+Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -154,6 +155,7 @@ lpd emulation.
 %patch22 -p1 -b .af_unix-auth
 %patch23 -p1 -b .str2323
 %patch24 -p1 -b .str2109
+%patch25 -p1 -b .usb-paperout
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -440,6 +442,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Apr 25 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-7
+- Until bug #236736 is fixed, work around the kernel usblp driver's
+  quirks so that we can detect paper-out conditions.
+
 * Tue Apr 10 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-6
 - Fixed 'cancel' man page (bug #234088).
 - Added empty subscriptions.conf file to make sure it gets the right
