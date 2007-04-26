@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -442,6 +442,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Apr 26 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-8
+- Initscript fixes (bug #237955).
+
 * Wed Apr 25 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-7
 - Until bug #236736 is fixed, work around the kernel usblp driver's
   quirks so that we can detect paper-out conditions.
