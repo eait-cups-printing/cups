@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.10
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -156,7 +156,7 @@ lpd emulation.
 %patch22 -p1 -b .af_unix-auth
 %patch23 -p1 -b .str2323
 %patch24 -p1 -b .str2109
-%patch25 -p1 -b .usb-paperout
+#%patch25 -p1 -b .usb-paperout
 %patch26 -p1 -b .str2348
 
 %if %lspp
@@ -444,6 +444,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed May  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-10
+* Revert paper-out detection for the moment.
+
 * Wed May  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-9
 - Applied fix for rotated PDFs (bug #236753, STR #2348).
 
