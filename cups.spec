@@ -445,6 +445,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jun 12 2007 Tim Waugh <twaugh@redhat.com>
+- Make the initscript use start priority 56 (bug #213828).
 - Better paper-out detection patch (bug #241589).
 
 * Wed May  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-10
