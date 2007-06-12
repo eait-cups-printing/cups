@@ -156,7 +156,7 @@ lpd emulation.
 %patch22 -p1 -b .af_unix-auth
 %patch23 -p1 -b .str2323
 %patch24 -p1 -b .str2109
-#%patch25 -p1 -b .usb-paperout
+%patch25 -p1 -b .usb-paperout
 %patch26 -p1 -b .str2348
 
 %if %lspp
@@ -444,6 +444,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun 12 2007 Tim Waugh <twaugh@redhat.com>
+- Better paper-out detection patch (bug #241589).
+
 * Wed May  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.10-10
 * Revert paper-out detection for the moment.
 

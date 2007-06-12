@@ -1,5 +1,5 @@
 --- cups-1.2.10/backend/runloop.c.usb-paperout	2006-12-06 20:10:16.000000000 +0000
-+++ cups-1.2.10/backend/runloop.c	2007-04-25 18:00:59.000000000 +0100
++++ cups-1.2.10/backend/runloop.c	2007-05-29 19:21:32.000000000 +0100
 @@ -40,6 +40,14 @@
  #endif /* __hpux */
  
@@ -25,7 +25,52 @@
  
  
    fprintf(stderr, "DEBUG: backendRunLoop(print_fd=%d, device_fd=%d, use_bc=%d)\n",
-@@ -227,6 +238,9 @@
+@@ -110,12 +121,9 @@
+     FD_ZERO(&input);
+     if (!print_bytes)
+       FD_SET(print_fd, &input);
+-    if (use_bc)
+-      FD_SET(device_fd, &input);
+ 
+     FD_ZERO(&output);
+-    if (print_bytes || !use_bc)
+-      FD_SET(device_fd, &output);
++    FD_SET(device_fd, &output);
+ 
+     if (use_bc)
+     {
+@@ -141,14 +149,24 @@
+     * Check if we have back-channel data ready...
+     */
+ 
+-    if (FD_ISSET(device_fd, &input))
++    if (use_bc && FD_ISSET(device_fd, &output)) /* finished writing */
+     {
+-      if ((bc_bytes = read(device_fd, bc_buffer, sizeof(bc_buffer))) > 0)
++      struct timeval nowait;
++      fd_set readback;
++      FD_ZERO (&readback);
++      nowait.tv_sec = 0;
++      nowait.tv_usec = 0;
++      FD_SET(device_fd, &readback);
++      if (select (device_fd + 1, &readback, NULL, NULL, &nowait) &&
++	  FD_ISSET(device_fd, &readback))
+       {
+-	fprintf(stderr,
+-	        "DEBUG: Received " CUPS_LLFMT " bytes of back-channel data!\n",
+-	        CUPS_LLCAST bc_bytes);
+-        cupsBackChannelWrite(bc_buffer, bc_bytes, 1.0);
++	if ((bc_bytes = read(device_fd, bc_buffer, sizeof(bc_buffer))) > 0)
++	{
++	  fprintf(stderr,
++		  "DEBUG: Received " CUPS_LLFMT " bytes of back-channel data!\n",
++		  CUPS_LLCAST bc_bytes);
++	  cupsBackChannelWrite(bc_buffer, bc_bytes, 1.0);
++	}
+       }
+     }
+ 
+@@ -227,6 +245,9 @@
        }
        else
        {
@@ -35,7 +80,7 @@
          if (paperout)
  	{
  	  fputs("STATE: -media-empty-error\n", stderr);
-@@ -247,7 +261,42 @@
+@@ -247,7 +268,42 @@
  	total_bytes += bytes;
        }
      }
@@ -78,8 +123,8 @@
  
   /*
    * Return with success...
---- cups-1.2.10/backend/usb-unix.c.usb-paperout	2007-04-25 17:50:06.000000000 +0100
-+++ cups-1.2.10/backend/usb-unix.c	2007-04-25 17:50:06.000000000 +0100
+--- cups-1.2.10/backend/usb-unix.c.usb-paperout	2007-05-29 19:10:08.000000000 +0100
++++ cups-1.2.10/backend/usb-unix.c	2007-05-29 19:10:08.000000000 +0100
 @@ -39,6 +39,11 @@
  #include "ieee1284.c"
  #include <sys/select.h>
