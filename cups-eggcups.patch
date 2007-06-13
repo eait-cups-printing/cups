@@ -1,60 +1,5 @@
---- cups-1.2.5/config-scripts/cups-common.m4.eggcups	2006-10-20 16:11:40.000000000 +0100
-+++ cups-1.2.5/config-scripts/cups-common.m4	2006-11-03 09:55:31.000000000 +0000
-@@ -191,6 +191,7 @@
- dnl Extra platform-specific libraries...
- BACKLIBS=""
- CUPSDLIBS=""
-+DBUSLIBS=""
- DBUSDIR=""
- 
- AC_ARG_ENABLE(dbus, [  --enable-dbus           enable DBUS support, default=auto])
-@@ -234,7 +235,8 @@
- 					AC_MSG_RESULT(yes)
- 					AC_DEFINE(HAVE_DBUS)
- 					CFLAGS="$CFLAGS `$PKGCONFIG --cflags dbus-1` -DDBUS_API_SUBJECT_TO_CHANGE"
--					CUPSDLIBS="`$PKGCONFIG --libs dbus-1`"
-+					DBUSLIBS="`$PKGCONFIG --libs dbus-1`"
-+					CUPSDLIBS="$DBUSLIBS"
- 					DBUSDIR="/etc/dbus-1/system.d"
- 					AC_CHECK_LIB(dbus-1,
- 					    dbus_message_iter_init_append,
-@@ -256,6 +258,7 @@
- 
- AC_SUBST(BACKLIBS)
- AC_SUBST(CUPSDLIBS)
-+AC_SUBST(DBUSLIBS)
- AC_SUBST(DBUSDIR)
- 
- dnl New default port definition for IPP...
---- cups-1.2.5/scheduler/subscriptions.c.eggcups	2006-09-29 03:26:29.000000000 +0100
-+++ cups-1.2.5/scheduler/subscriptions.c	2006-11-03 09:59:16.000000000 +0000
-@@ -1321,13 +1321,13 @@
-     what = "PrinterAdded";
-   else if (event & CUPSD_EVENT_PRINTER_DELETED)
-     what = "PrinterRemoved";
--  else if (event & CUPSD_EVENT_PRINTER_CHANGED)
--    what = "QueueChanged";
-   else if (event & CUPSD_EVENT_JOB_CREATED)
-     what = "JobQueuedLocal";
-   else if ((event & CUPSD_EVENT_JOB_STATE) && job &&
-            job->state_value == IPP_JOB_PROCESSING)
-     what = "JobStartedLocal";
-+  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED|CUPSD_EVENT_PRINTER_STATE_CHANGED))
-+    what = "QueueChanged";
-   else
-     return;
- 
-@@ -1363,7 +1363,7 @@
-   dbus_message_append_iter_init(message, &iter);
-   if (dest)
-     dbus_message_iter_append_string(&iter, &(dest->name));
--  if (job)
-+  if (job && strcmp (what, "QueueChanged") != 0)
-   {
-     dbus_message_iter_append_uint32(&iter, &(job->id));
-     dbus_message_iter_append_string(&iter, &(job->username));
---- cups-1.2.5/backend/ipp.c.eggcups	2006-09-13 19:22:34.000000000 +0100
-+++ cups-1.2.5/backend/ipp.c	2006-11-03 10:02:04.000000000 +0000
+--- cups-1.2.11/backend/ipp.c.eggcups	2007-04-30 18:18:21.000000000 +0100
++++ cups-1.2.11/backend/ipp.c	2007-06-13 16:47:06.000000000 +0100
 @@ -54,6 +54,70 @@
  #include <signal.h>
  #include <sys/wait.h>
@@ -126,7 +71,7 @@
  
  /*
   * Globals...
-@@ -936,6 +1000,15 @@
+@@ -955,6 +1019,15 @@
        fprintf(stderr, "NOTICE: Print file accepted - job ID %d.\n", job_id);
      }
  
@@ -142,8 +87,8 @@
      ippDelete(response);
  
      if (job_cancelled)
---- cups-1.2.5/backend/Makefile.eggcups	2006-05-26 20:51:59.000000000 +0100
-+++ cups-1.2.5/backend/Makefile	2006-11-03 09:55:31.000000000 +0000
+--- cups-1.2.11/backend/Makefile.eggcups	2006-10-23 01:26:52.000000000 +0100
++++ cups-1.2.11/backend/Makefile	2007-06-13 16:47:06.000000000 +0100
 @@ -134,7 +134,7 @@
  
  ipp:	ipp.o ../cups/$(LIBCUPS)
@@ -153,8 +98,63 @@
  	$(RM) http
  	$(LN) ipp http
  
---- cups-1.2.5/Makedefs.in.eggcups	2006-11-03 09:55:31.000000000 +0000
-+++ cups-1.2.5/Makedefs.in	2006-11-03 09:55:31.000000000 +0000
+--- cups-1.2.11/config-scripts/cups-common.m4.eggcups	2007-05-08 22:11:23.000000000 +0100
++++ cups-1.2.11/config-scripts/cups-common.m4	2007-06-13 16:47:06.000000000 +0100
+@@ -188,6 +188,7 @@
+ dnl Extra platform-specific libraries...
+ BACKLIBS=""
+ CUPSDLIBS=""
++DBUSLIBS=""
+ DBUSDIR=""
+ 
+ AC_ARG_ENABLE(dbus, [  --enable-dbus           enable DBUS support, default=auto])
+@@ -231,7 +232,8 @@
+ 					AC_MSG_RESULT(yes)
+ 					AC_DEFINE(HAVE_DBUS)
+ 					CFLAGS="$CFLAGS `$PKGCONFIG --cflags dbus-1` -DDBUS_API_SUBJECT_TO_CHANGE"
+-					CUPSDLIBS="`$PKGCONFIG --libs dbus-1`"
++					DBUSLIBS="`$PKGCONFIG --libs dbus-1`"
++					CUPSDLIBS="$DBUSLIBS"
+ 					DBUSDIR="/etc/dbus-1/system.d"
+ 					AC_CHECK_LIB(dbus-1,
+ 					    dbus_message_iter_init_append,
+@@ -253,6 +255,7 @@
+ 
+ AC_SUBST(BACKLIBS)
+ AC_SUBST(CUPSDLIBS)
++AC_SUBST(DBUSLIBS)
+ AC_SUBST(DBUSDIR)
+ 
+ dnl New default port definition for IPP...
+--- cups-1.2.11/scheduler/subscriptions.c.eggcups	2007-04-10 19:24:19.000000000 +0100
++++ cups-1.2.11/scheduler/subscriptions.c	2007-06-13 16:48:10.000000000 +0100
+@@ -1321,13 +1321,13 @@
+     what = "PrinterAdded";
+   else if (event & CUPSD_EVENT_PRINTER_DELETED)
+     what = "PrinterRemoved";
+-  else if (event & CUPSD_EVENT_PRINTER_CHANGED)
+-    what = "QueueChanged";
+   else if (event & CUPSD_EVENT_JOB_CREATED)
+     what = "JobQueuedLocal";
+   else if ((event & CUPSD_EVENT_JOB_STATE) && job &&
+            job->state_value == IPP_JOB_PROCESSING)
+     what = "JobStartedLocal";
++  else if (event & (CUPSD_EVENT_PRINTER_CHANGED|CUPSD_EVENT_JOB_STATE_CHANGED|CUPSD_EVENT_PRINTER_STATE_CHANGED))
++    what = "QueueChanged";
+   else
+     return;
+ 
+@@ -1363,7 +1363,7 @@
+   dbus_message_append_iter_init(message, &iter);
+   if (dest)
+     dbus_message_iter_append_string(&iter, dest->name);
+-  if (job)
++  if (job && strcmp (what, "QueueChanged") != 0)
+   {
+     dbus_message_iter_append_uint32(&iter, job->id);
+     dbus_message_iter_append_string(&iter, job->username);
+--- cups-1.2.11/Makedefs.in.eggcups	2007-06-13 16:47:06.000000000 +0100
++++ cups-1.2.11/Makedefs.in	2007-06-13 16:47:06.000000000 +0100
 @@ -124,6 +124,7 @@
  			@LARGEFILE@ @PTHREAD_FLAGS@ $(OPTIONS)
  COMMONLIBS	=	@LIBS@
