@@ -352,7 +352,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
 %attr(0640,root,lp) /etc/cups/cupsd.conf.default
 %config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
-%config(noreplace) %attr(0644,root,lp) /etc/cups/classes.conf
+%config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
 %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/pdftops.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
@@ -441,6 +441,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Jun 25 2007 Tim Waugh <twaugh@redhat.com>
+- Fixed permissions on classes.conf in the file manifest.
+
 * Wed Jun 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-1
 - 1.2.11.
 
