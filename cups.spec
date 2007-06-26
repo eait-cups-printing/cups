@@ -442,7 +442,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jun 25 2007 Tim Waugh <twaugh@redhat.com>
-- Fixed permissions on classes.conf in the file manifest.
+- Fixed permissions on classes.conf in the file manifest (bug #245748).
 
 * Wed Jun 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-1
 - 1.2.11.
