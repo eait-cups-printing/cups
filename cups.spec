@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -46,6 +46,7 @@ Patch21: cups-driverd-timeout.patch
 Patch22: cups-af_unix-auth.patch
 Patch24: cups-str2109.patch
 Patch25: cups-usb-paperout.patch
+Patch26: cups-adminutil.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -154,6 +155,7 @@ lpd emulation.
 %patch22 -p1 -b .af_unix-auth
 %patch24 -p1 -b .str2109
 %patch25 -p1 -b .usb-paperout
+%patch26 -p1 -b .adminutil
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -441,6 +443,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jun 27 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-2
+- Fixed _cupsAdminSetServerSettings() sharing/shared handling (bug #238057).
+
 * Mon Jun 25 2007 Tim Waugh <twaugh@redhat.com>
 - Fixed permissions on classes.conf in the file manifest (bug #245748).
 
