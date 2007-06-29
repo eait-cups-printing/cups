@@ -1,0 +1,51 @@
+--- cups-1.2.11/cups/ppd.c.str2408	2007-04-05 00:43:50.000000000 +0100
++++ cups-1.2.11/cups/ppd.c	2007-06-29 09:36:12.000000000 +0100
+@@ -1013,11 +1013,15 @@
+ 
+       if ((option = ppdFindOption(ppd, keyword + 6)) == NULL)
+       {
++        int		groupidx;	/* Index for current group */
+ 	ppd_group_t	*gtemp;		/* Temporary group */
+ 
+ 
+         DEBUG_printf(("%s option not found for %s...\n", keyword + 6, keyword));
+ 
++        if (group)
++          groupidx = group - ppd->groups; /* Save index for current group */
++
+ 	if ((gtemp = ppd_get_group(ppd, "General", _("General"), cg,
+ 	                           encoding)) == NULL)
+ 	{
+@@ -1026,6 +1030,9 @@
+ 	  goto error;
+ 	}
+ 
++        if (group)
++          group = ppd->groups + groupidx; /* Restore group pointer */
++
+ 	if ((option = ppd_get_option(gtemp, keyword + 6)) == NULL)
+ 	{
+ 	  DEBUG_printf(("Unable to get %s option!\n", keyword + 6));
+@@ -1079,8 +1086,12 @@
+ 
+ 	if ((option = ppdFindOption(ppd, "PageRegion")) == NULL)
+ 	{
++	  int		groupidx;	/* Index to current group */
+ 	  ppd_group_t	*gtemp;		/* Temporary group */
+ 
++          if (group)
++            groupidx = group - ppd->groups; /* Save index for current group */
++
+ 	  if ((gtemp = ppd_get_group(ppd, "General", _("General"), cg,
+ 				     encoding)) == NULL)
+ 	  {
+@@ -1089,6 +1100,9 @@
+ 	    goto error;
+ 	  }
+ 
++          if (group)
++            group = ppd->groups + groupidx; /* Restore group pointer */
++
+ 	  option = ppd_get_option(gtemp, "PageRegion");
+         }
+ 
