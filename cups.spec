@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.2.11
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -445,6 +445,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jul  4 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-4
+- Better paper-out detection patch still (bug #246222).
+
 * Fri Jun 29 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-3
 - Applied patch to fix group handling in PPDs (bug #186231, STR #2408).
 
