@@ -445,6 +445,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Jul  9 2007 Tim Waugh <twaugh@redhat.com>
+- Another small improvement for the textonly filter (bug #244979).
+
 * Thu Jul  5 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.11-5
 - Support for page-ranges and accounting in the textonly filter (bug #244979).
 
