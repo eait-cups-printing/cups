@@ -1,13 +1,11 @@
---- cups-1.2.1/conf/mime.convs.paps	2006-04-14 20:21:03.000000000 +0100
-+++ cups-1.2.1/conf/mime.convs	2006-06-29 15:12:57.000000000 +0100
-@@ -50,8 +50,8 @@
+--- cups-1.3b1/conf/mime.convs.in.paps	2007-07-18 11:31:28.000000000 +0100
++++ cups-1.3b1/conf/mime.convs.in	2007-07-18 11:31:47.000000000 +0100
+@@ -45,7 +45,7 @@
  application/x-csource	application/postscript	33	texttops
  application/x-perl	application/postscript	33	texttops
  application/x-shell	application/postscript	33	texttops
 -text/plain		application/postscript	33	texttops
--text/html		application/postscript	33	texttops
 +text/plain		application/postscript	33	texttopaps
-+text/html		application/postscript	33	texttopaps
+ text/html		application/postscript	33	texttops
  image/gif		application/vnd.cups-postscript	66	imagetops
  image/png		application/vnd.cups-postscript	66	imagetops
- image/jpeg		application/vnd.cups-postscript	66	imagetops

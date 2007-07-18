@@ -6,7 +6,7 @@
  
 +#ifdef __x86_64__
 +       snprintf(srcfile, sizeof(srcfile), "%s/backend/%s", ServerBin_compat,
-+		 method);
++		 scheme);
 +	if (access(srcfile, X_OK))
 +	  {
 +#endif /* __x86_64__ */

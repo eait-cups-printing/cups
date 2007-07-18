@@ -2,14 +2,15 @@
 %define use_alternatives 1
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
+%define cups_beta b1
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.2.12
-Release: 1%{?dist}
+Version: 1.3
+Release: 0.%{cups_beta}.1%{?dist}
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source4: pstopdf
@@ -38,13 +39,9 @@ Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
 Patch16: cups-pid.patch
-Patch17: cups-relro.patch
-Patch18: cups-directed-broadcast.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
-Patch22: cups-af_unix-auth.patch
-Patch24: cups-str2109.patch
 Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -130,7 +127,7 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}%{cups_beta}
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -146,13 +143,9 @@ lpd emulation.
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
 %patch16 -p1 -b .pid
-%patch17 -p1 -b .relro
-%patch18 -p1 -b .directed-broadcast
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
-%patch22 -p1 -b .af_unix-auth
-%patch24 -p1 -b .str2109
 %patch25 -p1 -b .usb-paperout
 
 %if %lspp
@@ -176,7 +169,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	--with-log-file-perm=0600 --enable-pie
+	--with-log-file-perm=0600 --enable-pie --enable-relro
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -372,6 +365,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/cups-%{version}/es
 %{_docdir}/cups-%{version}/et
 %{_docdir}/cups-%{version}/fr
+%{_docdir}/cups-%{version}/he
 %{_docdir}/cups-%{version}/it
 %{_docdir}/cups-%{version}/ja
 %{_docdir}/cups-%{version}/pl
@@ -441,6 +435,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jul 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.1
+- 1.3b1.  No longer need relro, directed-broadcast, af_unix-auth, or
+  str2109 patches.
+
 * Fri Jul 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.2.12-1
 - 1.2.12.  No longer need adminutil or str2408 patches.
 
