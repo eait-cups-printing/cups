@@ -69,6 +69,7 @@ BuildRequires: php-devel, aspell-devel, pcre-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
+BuildRequires: krb5-devel
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -435,6 +436,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Jul 18 2007 Tim Waugh <twaugh@redhat.com>
+- Build requires krb5-devel.
+
 * Wed Jul 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.1
 - 1.3b1.  No longer need relro, directed-broadcast, af_unix-auth, or
   str2109 patches.
