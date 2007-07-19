@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3
-Release: 0.%{cups_beta}.1%{?dist}
+Release: 0.%{cups_beta}.2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
@@ -38,6 +38,7 @@ Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
+Patch15: cups-avahi.patch
 Patch16: cups-pid.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
@@ -70,6 +71,7 @@ BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
+BuildRequires: avahi-compat-libdns_sd-devel
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -143,6 +145,7 @@ lpd emulation.
 %patch12 -p1 -b .wbuffer
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
+%patch15 -p1 -b .avahi
 %patch16 -p1 -b .pid
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
@@ -436,7 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Wed Jul 18 2007 Tim Waugh <twaugh@redhat.com>
+* Thu Jul 19 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.2
+- Build requires avahi-compat-libdns_sd-devel.  Applied patch to fix
+  build against avahi (bug #245824).
 - Build requires krb5-devel.
 
 * Wed Jul 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.1
