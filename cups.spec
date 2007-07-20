@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3
-Release: 0.%{cups_beta}.2%{?dist}
+Release: 0.%{cups_beta}.3%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
@@ -95,6 +95,7 @@ Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 Requires: %{name}-libs = %{epoch}:%{version}
 Requires: gnutls-devel
+Requires: krb5-devel
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -439,6 +440,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.3
+- The devel sub-package requires krb5-devel.
+
 * Thu Jul 19 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.2
 - Build requires avahi-compat-libdns_sd-devel.  Applied patch to fix
   build against avahi (bug #245824).
