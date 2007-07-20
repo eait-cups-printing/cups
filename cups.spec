@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3
-Release: 0.%{cups_beta}.3%{?dist}
+Release: 0.%{cups_beta}.4%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
@@ -440,6 +440,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.4
+- Better error checking in the LSPP patch (bug #231522).
+
 * Fri Jul 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.3
 - Change initscript start level to 98, to start after avahi but before
   haldaemon.
