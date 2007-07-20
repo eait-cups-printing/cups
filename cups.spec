@@ -441,6 +441,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Jul 20 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.3
+- Change initscript start level to 98, to start after avahi but before
+  haldaemon.
 - The devel sub-package requires krb5-devel.
 
 * Thu Jul 19 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.2

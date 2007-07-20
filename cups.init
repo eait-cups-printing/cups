@@ -6,7 +6,7 @@
 #
 #   Linux chkconfig stuff:
 #
-#   chkconfig: 2345 56 10
+#   chkconfig: 2345 98 10
 #   description: Startup/shutdown script for the Common UNIX \
 #                Printing System (CUPS).
 #
