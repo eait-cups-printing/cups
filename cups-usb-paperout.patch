@@ -1,182 +1,51 @@
---- cups-1.3b1/backend/runloop.c.usb-paperout	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3b1/backend/runloop.c	2007-07-18 11:40:45.000000000 +0100
-@@ -135,6 +135,14 @@
- }
- 
- 
-+#ifdef __linux
-+#include <sys/ioctl.h>
-+#include <linux/lp.h>
-+#include <time.h>
-+int linux_usb_paperout_hack = 0;
-+#endif /* __linux */
-+
-+
- /*
-  * 'backendRunLoop()' - Read and write print and back-channel data.
-  */
-@@ -161,6 +169,9 @@
- #if defined(HAVE_SIGACTION) && !defined(HAVE_SIGSET)
-   struct sigaction action;		/* Actions for POSIX signals */
- #endif /* HAVE_SIGACTION && !HAVE_SIGSET */
-+#ifdef __linux
-+  time_t	last_write = 0;		/* Last time write() succeeded */
-+#endif /* __linux */
- 
- 
-   fprintf(stderr,
-@@ -210,8 +221,6 @@
-     FD_ZERO(&input);
-     if (!print_bytes)
-       FD_SET(print_fd, &input);
--    if (use_bc)
--      FD_SET(device_fd, &input);
-     if (side_cb)
-       FD_SET(CUPS_SC_FD, &input);
- 
-@@ -221,7 +230,10 @@
- 
-     if (use_bc || side_cb)
-     {
--      if (select(nfds, &input, &output, NULL, NULL) < 0)
-+      struct timeval fives;
-+      fives.tv_sec = 5;
-+      fives.tv_usec = 0;
-+      if (select(nfds, &input, &output, NULL, &fives) < 0)
-       {
-        /*
- 	* Pause printing to clear any pending errors...
-@@ -256,14 +268,24 @@
-     * Check if we have back-channel data ready...
-     */
- 
--    if (FD_ISSET(device_fd, &input))
-+    if (use_bc && FD_ISSET(device_fd, &output)) /* finished writing */
-     {
--      if ((bc_bytes = read(device_fd, bc_buffer, sizeof(bc_buffer))) > 0)
-+      struct timeval nowait;
-+      fd_set readback;
-+      FD_ZERO (&readback);
-+      nowait.tv_sec = 0;
-+      nowait.tv_usec = 0;
-+      FD_SET(device_fd, &readback);
-+      if (select (device_fd + 1, &readback, NULL, NULL, &nowait) &&
-+	  FD_ISSET(device_fd, &readback))
-       {
--	fprintf(stderr,
--	        "DEBUG: Received " CUPS_LLFMT " bytes of back-channel data!\n",
--	        CUPS_LLCAST bc_bytes);
--        cupsBackChannelWrite(bc_buffer, bc_bytes, 1.0);
-+	if ((bc_bytes = read(device_fd, bc_buffer, sizeof(bc_buffer))) > 0)
-+	{
-+	  fprintf(stderr,
-+		  "DEBUG: Received " CUPS_LLFMT " bytes of back-channel data!\n",
-+		  CUPS_LLCAST bc_bytes);
-+	  cupsBackChannelWrite(bc_buffer, bc_bytes, 1.0);
-+	}
-       }
-     }
- 
-@@ -334,6 +356,10 @@
- 	    offline = 1;
- 	  }
- 	}
-+	else if (linux_usb_paperout_hack && errno == EAGAIN)
-+	{
-+	  sleep (1);
-+	}
- 	else if (errno != EAGAIN && errno != EINTR && errno != ENOTTY)
- 	{
- 	  fprintf(stderr, _("ERROR: Unable to write print data: %s\n"),
-@@ -343,6 +369,9 @@
-       }
-       else
-       {
-+#ifdef __linux
-+	last_write = time (NULL);
-+#endif /* __linux */
-         if (paperout)
- 	{
- 	  fputs("STATE: -media-empty-error\n", stderr);
-@@ -363,7 +392,42 @@
- 	total_bytes += bytes;
-       }
-     }
-+
-+#ifdef __linux
-+    if (linux_usb_paperout_hack)
-+    {
-+      time_t now;
-+      if (!paperout &&
-+	  ((now = time(NULL)) - last_write) >= 5)
-+      {
-+	unsigned int status;
-+	if (ioctl (device_fd, LPGETSTATUS, &status) == 0 &&
-+	    (status & LP_POUTPA))
-+	{
-+	  fputs("ERROR: Out of paper!\n", stderr);
-+	  fputs("STATE: +media-empty-error\n", stderr);
-+	  paperout = 1;
-+	}
-+
-+	/* Don't check status for another 5s. */
-+	last_write = now;
-+      }
-+    }
-+#endif /* __linux */
-+  }
-+
-+#ifdef __linux
-+  if (linux_usb_paperout_hack)
-+  {
-+    /* Wait for the last write() to finish. */
-+    do
-+    {
-+      FD_ZERO(&output);
-+      FD_SET(device_fd, &output);
-+    } while (select(device_fd + 1, NULL, &output, NULL, NULL) < 0 &&
-+	     errno == EINTR);
-   }
-+#endif /* __linux */
- 
-  /*
-   * Return with success...
---- cups-1.3b1/backend/usb-unix.c.usb-paperout	2007-07-18 11:39:32.000000000 +0100
-+++ cups-1.3b1/backend/usb-unix.c	2007-07-18 11:39:32.000000000 +0100
-@@ -31,6 +31,11 @@
+--- cups-1.2.10/backend/usb-unix.c.usb-paperout	2007-06-26 15:11:14.000000000 +0100
++++ cups-1.2.10/backend/usb-unix.c	2007-06-26 15:16:23.000000000 +0100
+@@ -39,6 +39,11 @@
  #include "ieee1284.c"
  #include <sys/select.h>
  
 +#ifdef __linux
-+#include <unistd.h>
-+#include <fcntl.h>
-+extern int linux_usb_paperout_hack;
++#include <sys/ioctl.h>
++#include <linux/lp.h>
 +#endif /* __linux */
++
  
  /*
   * Local functions...
-@@ -63,6 +68,11 @@
-   (void)argc;
-   (void)argv;
- 
-+#ifdef __linux
-+  /* Get the runloop to check for USB paper-out condition. */
-+  linux_usb_paperout_hack = 1;
-+#endif /* __linux */
+@@ -308,7 +313,19 @@
+   if (!strncmp(uri, "usb:/dev/", 9))
+ #ifdef __linux
+   {
+-    return (open(uri + 4, O_RDWR | O_EXCL));
++    fd = open(uri + 4, O_RDWR | O_EXCL);
 +
-  /*
-   * Open the USB port device...
-   */
-@@ -156,6 +166,12 @@
- 
-   tcsetattr(device_fd, TCSANOW, &opts);
- 
-+#ifdef __linux
-+  /* Put the file descriptor into non-blocking mode so that we
-+   * get a chance to detect paper-out. */
-+  fcntl (device_fd, F_SETFL, fcntl (device_fd, F_GETFL) | O_NONBLOCK);
-+#endif /* __linux */
++    if (fd != -1)
++    {
++     /*
++      * Tell the driver to return from write() with errno==ENOSPACE
++      * on paper-out.
++      */
++      unsigned int t = 1;
++      ioctl (fd, LPABORT, &t);
++    }
 +
-  /*
-   * Finally, send the print file...
-   */
++    return fd;
+   }
+   else if (!strncmp(uri, "usb://", 6))
+   {
+@@ -374,7 +391,14 @@
+         if (!strcmp(uri, device_uri))
+ 	{
+ 	 /*
+-	  * Yes, return this file descriptor...
++	  * Yes, tell the driver to return from write() with
++	  * errno==ENOSPACE on paper-out.
++	  */
++	  unsigned int t = 1;
++	  ioctl (fd, LPABORT, &t);
++
++	 /*
++	  * Return this file descriptor...
+ 	  */
+ 
+ 	  fprintf(stderr, "DEBUG: Printer using device file \"%s\"...\n", device);
