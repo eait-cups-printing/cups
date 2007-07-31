@@ -197,7 +197,7 @@ done
 cd $RPM_BUILD_ROOT%{_sbindir}
 mv lpc lpc.cups
 cd $RPM_BUILD_ROOT%{_mandir}/man1
-for i in lp lpq lpr lprm lpstat; do
+for i in cancel lp lpq lpr lprm lpstat; do
 	mv $i.1 $i-cups.1
 done
 cd $RPM_BUILD_ROOT%{_mandir}/man8
@@ -438,6 +438,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com>
+- Make cancel man page work properly with alternatives system (bug #249768).
 - Don't call aclocal even when we modify m4 files -- CUPS does not use
   automake (bug #250251).
 
