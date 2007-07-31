@@ -156,7 +156,6 @@ lpd emulation.
 %endif
 
 perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
-aclocal -I config-scripts
 autoconf
 
 cp %{SOURCE5} cups-lpd.real
@@ -438,6 +437,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com>
+- Don't call aclocal even when we modify m4 files -- CUPS does not use
+  automake (bug #250251).
+
 * Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.rc2.1
 - Better buildroot tag.
 - Moved LSPP access check in add_job() to before allocation of the job
