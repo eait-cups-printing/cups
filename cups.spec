@@ -2,12 +2,12 @@
 %define use_alternatives 1
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
-%define cups_beta b1
+%define cups_beta rc2
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3
-Release: 0.%{cups_beta}.5%{?dist}
+Release: 0.%{cups_beta}.1%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
@@ -38,7 +38,6 @@ Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
-Patch15: cups-avahi.patch
 Patch16: cups-pid.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
@@ -47,7 +46,7 @@ Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
-BuildRoot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 PreReq: /sbin/chkconfig /sbin/service
 Requires: %{name}-libs = %{epoch}:%{version}
 %if %use_alternatives
@@ -146,7 +145,6 @@ lpd emulation.
 %patch12 -p1 -b .wbuffer
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
-%patch15 -p1 -b .avahi
 %patch16 -p1 -b .pid
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
@@ -440,6 +438,12 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.rc2.1
+- Better buildroot tag.
+- Moved LSPP access check in add_job() to before allocation of the job
+  structure (bug #231522).
+- 1.3rc2.  No longer need avahi patch.
+
 * Mon Jul 23 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.b1.5
 - Use kernel support for USB paper-out detection, when available
   (bug #249213).
