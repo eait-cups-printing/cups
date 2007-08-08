@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3
-Release: 0.%{cups_beta}.1%{?dist}
+Release: 0.%{cups_beta}.2%{?dist}
 License: GPL
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
@@ -437,7 +437,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com>
+* Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.rc2.2
 - Make cancel man page work properly with alternatives system (bug #249768).
 - Don't call aclocal even when we modify m4 files -- CUPS does not use
   automake (bug #250251).
