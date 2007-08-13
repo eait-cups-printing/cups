@@ -2,15 +2,14 @@
 %define use_alternatives 1
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
-%define cups_beta rc2
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3
-Release: 0.%{cups_beta}.2%{?dist}
+Version: 1.3.0
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{cups_beta}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source4: pstopdf
@@ -130,7 +129,7 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q -n %{name}-%{version}%{cups_beta}
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -437,6 +436,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Aug 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.0-1
+- 1.3.0.
+
 * Tue Jul 31 2007 Tim Waugh <twaugh@redhat.com> 1:1.3-0.rc2.2
 - Make cancel man page work properly with alternatives system (bug #249768).
 - Don't call aclocal even when we modify m4 files -- CUPS does not use
