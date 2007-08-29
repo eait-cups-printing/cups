@@ -6,8 +6,8 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.0
-Release: 1%{?dist}
-License: GPL
+Release: 2%{?dist}
+License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
 Source1: cups.init
@@ -91,6 +91,7 @@ Requires: tmpwatch
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
+License: LGPLv2
 Requires: %{name}-libs = %{epoch}:%{version}
 Requires: gnutls-devel
 Requires: krb5-devel
@@ -98,6 +99,7 @@ Requires: krb5-devel
 %package libs
 Summary: Common Unix Printing System - libraries
 Group: System Environment/Libraries
+License: LGPLv2
 
 %package lpd
 Summary: Common Unix Printing System - lpd emulation
@@ -436,6 +438,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Aug 29 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.0-2
+- More specific license tag.
+
 * Mon Aug 13 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.0-1
 - 1.3.0.
 
