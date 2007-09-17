@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.0
-Release: 2%{?dist}
+Version: 1.3.1
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -172,7 +172,8 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	--with-log-file-perm=0600 --enable-pie --enable-relro
+	--with-log-file-perm=0600 --enable-pie --enable-relro \
+	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
 make
@@ -362,7 +363,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %dir %{_docdir}/cups-%{version}
-%{_docdir}/cups-%{version}/favicon.ico
+%{_docdir}/cups-%{version}/favicon.*
 %{_docdir}/cups-%{version}/images
 %{_docdir}/cups-%{version}/de
 %{_docdir}/cups-%{version}/es
@@ -438,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Sep 17 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.1-1
+- 1.3.1.
+
 * Wed Aug 29 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.0-2
 - More specific license tag.
 
