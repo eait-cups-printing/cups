@@ -452,7 +452,7 @@ rm -rf $RPM_BUILD_ROOT
 - Write printcap when a remote queue is deleted (bug #290831).
 
 * Tue Sep 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.1-2
-- Avoid write printcap unnecessarily (bug #290831).
+- Avoid writing printcap unnecessarily (bug #290831).
 
 * Mon Sep 17 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.1-1
 - 1.3.1.
