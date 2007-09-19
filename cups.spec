@@ -12,6 +12,7 @@ Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
+Source3: http://www.openprinting.org/download/printing/dnssd
 Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
@@ -183,6 +184,9 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{initdir}
 
 make BUILDROOT=$RPM_BUILD_ROOT install 
+
+# Include Till Kamppeter's dnssd backend.
+install -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{cups_serverbin}/backend/dnssd
 
 # Serial backend needs to run as root (bug #212577).
 chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
@@ -440,6 +444,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Sep 19 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.2-1
+- Include Till Kamppeter's dnssd backend.
 - 1.3.2.
 - No longer need str2512 patches.
 
