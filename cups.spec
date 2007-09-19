@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.1
-Release: 3%{?dist}
+Version: 1.3.2
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -37,9 +37,7 @@ Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
-Patch15: cups-str2512.patch
 Patch16: cups-pid.patch
-Patch17: cups-str2512-printcap.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
@@ -148,9 +146,7 @@ lpd emulation.
 %patch12 -p1 -b .wbuffer
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
-%patch15 -p1 -b .str2512
 %patch16 -p1 -b .pid
-%patch17 -p1 -b .str2512-printcap
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
@@ -443,6 +439,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Sep 19 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.2-1
+- 1.3.2.
+- No longer need str2512 patches.
+
 * Tue Sep 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.1-3
 - Write printcap when a remote queue is deleted (bug #290831).
 
