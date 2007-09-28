@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.2
-Release: 3%{?dist}
+Version: 1.3.3
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -447,6 +447,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Sep 28 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.3-1
+- 1.3.3.
+
 * Tue Sep 25 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.2-3
 - Don't strip foomatic recommended strings from make/model names.
 
