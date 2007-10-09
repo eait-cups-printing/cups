@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -41,6 +41,7 @@ Patch14: cups-lpr-help.patch
 Patch15: cups-str2512.patch
 Patch16: cups-pid.patch
 Patch17: cups-foomatic-recommended.patch
+Patch18: cups-libieee1284.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
@@ -51,6 +52,7 @@ Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 PreReq: /sbin/chkconfig /sbin/service
 Requires: %{name}-libs = %{epoch}:%{version}
+Requires: libieee1284
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -73,6 +75,7 @@ BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-compat-libdns_sd-devel
+BuildRequires: libieee1284-devel
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -152,6 +155,7 @@ lpd emulation.
 %patch15 -p1 -b .str2512
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .foomatic-recommended
+%patch18 -p1 -b .libieee1284
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
@@ -447,6 +451,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Oct  9 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.3-2
+- Use libieee1284 for parallel port Device ID retrieval (bug #311671).
+
 * Fri Sep 28 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.3-1
 - 1.3.3.
 

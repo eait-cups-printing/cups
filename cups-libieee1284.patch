@@ -1,0 +1,180 @@
+diff -up cups-1.3.3/backend/ieee1284.c.libieee1284 cups-1.3.3/backend/ieee1284.c
+--- cups-1.3.3/backend/ieee1284.c.libieee1284	2007-07-11 22:46:42.000000000 +0100
++++ cups-1.3.3/backend/ieee1284.c	2007-10-09 17:00:54.000000000 +0100
+@@ -32,6 +32,8 @@
+ #  include <linux/lp.h>
+ #  define IOCNR_GET_DEVICE_ID		1
+ #  define LPIOC_GET_DEVICE_ID(len)	_IOC(_IOC_READ, 'P', IOCNR_GET_DEVICE_ID, len)
++#  include <ieee1284.h>
++#  include <dlfcn.h>
+ #endif /* __linux */
+ 
+ #ifdef __sun
+@@ -93,11 +95,10 @@ backendGetDeviceID(
+   if (make_model)
+     *make_model = '\0';
+ 
+-  if (uri)
+-    *uri = '\0';
+-
+   if (fd >= 0)
+   {
++    int got_id = 0;
++
+    /*
+     * Get the device ID string...
+     */
+@@ -105,7 +106,66 @@ backendGetDeviceID(
+     *device_id = '\0';
+ 
+ #ifdef __linux
+-    if (!ioctl(fd, LPIOC_GET_DEVICE_ID(device_id_size), device_id))
++    if (ioctl(fd, LPIOC_GET_DEVICE_ID(device_id_size), device_id))
++    {
++#  ifdef DEBUG
++      printf("backendGetDeviceID: ioctl failed - %s\n", strerror(errno));
++#  endif /* DEBUG */
++
++      if (!strcmp (scheme, "parallel"))
++      {
++	struct parport_list ports;
++	int i;
++	const char *n;
++	int (*find_ports) (struct parport_list *, int);
++	void (*free_ports) (struct parport_list *);
++	ssize_t (*get_deviceid) (struct parport *, int, int,
++				 char *, size_t);
++	void *libieee1284;
++
++	libieee1284 = dlopen ("libieee1284.so", RTLD_LAZY);
++	if (libieee1284)
++	{
++	  dlerror ();
++	  find_ports = dlsym (libieee1284, "ieee1284_find_ports");
++	  free_ports = dlsym (libieee1284, "ieee1284_free_ports");
++	  get_deviceid = dlsym (libieee1284, "ieee1284_get_deviceid");
++	  if (dlerror () != NULL)
++	  {
++	    dlclose (libieee1284);
++	    libieee1284 = NULL;
++	  }
++	}
++
++	if (libieee1284)
++	{
++	  n = uri + strcspn (uri, "0123456789");
++	  if (n && *n && (*find_ports) (&ports, 0) == E1284_OK)
++	  {
++	    for (i = 0; i < ports.portc; i++)
++	    {
++	      const char *filename = ports.portv[i]->filename;
++	      if (!strncmp (filename, "/dev/parport", 12) &&
++		  !strcmp (filename + 12, n))
++	      {
++		device_id_size = (*get_deviceid) (ports.portv[i], -1,
++						  F1284_FRESH, device_id,
++						  device_id_size);
++		got_id = 1;
++		break;
++	      }
++	    }
++
++	    (*free_ports) (&ports);
++	    dlclose (libieee1284);
++	  }
++	}
++      }
++    }
++    else
++      got_id = 1;
++
++    if (got_id)
+     {
+      /*
+       * Extract the length of the device ID string from the first two
+@@ -136,10 +196,6 @@ backendGetDeviceID(
+       memmove(device_id, device_id + 2, length);
+       device_id[length] = '\0';
+     }
+-#  ifdef DEBUG
+-    else
+-      printf("backendGetDeviceID: ioctl failed - %s\n", strerror(errno));
+-#  endif /* DEBUG */
+ #endif /* __linux */
+ 
+ #if defined(__sun) && defined(ECPPIOC_GETDEVID)
+@@ -168,6 +224,9 @@ backendGetDeviceID(
+ 
+   DEBUG_printf(("backendGetDeviceID: device_id=\"%s\"\n", device_id));
+ 
++  if (uri)
++    *uri = '\0';
++
+   if (!*device_id)
+     return (-1);
+ 
+diff -up cups-1.3.3/backend/Makefile.libieee1284 cups-1.3.3/backend/Makefile
+--- cups-1.3.3/backend/Makefile.libieee1284	2007-08-08 20:27:51.000000000 +0100
++++ cups-1.3.3/backend/Makefile	2007-10-09 17:07:00.000000000 +0100
+@@ -99,7 +99,7 @@ betest:	betest.o ../cups/$(LIBCUPS)
+ test1284:	test1284.o ../cups/libcups.a
+ 	echo Linking $@...
+ 	$(CC) $(LDFLAGS) -o test1284 test1284.o ../cups/libcups.a \
+-		$(SSLLIBS) $(COMMONLIBS) $(LIBZ)
++		$(SSLLIBS) $(COMMONLIBS) $(LIBZ) -ldl
+ 
+ 
+ #
+@@ -131,7 +131,7 @@ ieee1394-linux.o:	ieee1394.h
+ 
+ ipp:	ipp.o ../cups/$(LIBCUPS)
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS)
++	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS) $(CUPSDLIBS)
+ 	$(RM) http
+ 	$(LN) ipp http
+ 
+@@ -160,7 +160,7 @@ pap:	pap.o ../cups/$(LIBCUPS)
+ 
+ parallel:	parallel.o ../cups/$(LIBCUPS) libbackend.a
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o parallel parallel.o libbackend.a $(LIBS)
++	$(CC) $(LDFLAGS) -o parallel parallel.o libbackend.a -ldl $(LIBS)
+ 
+ 
+ #
+@@ -189,7 +189,7 @@ serial:	serial.o ../cups/$(LIBCUPS) libb
+ 
+ snmp:	snmp.o ../cups/$(LIBCUPS) libbackend.a
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o snmp snmp.o libbackend.a $(LIBS)
++	$(CC) $(LDFLAGS) -o snmp snmp.o libbackend.a $(LIBS) -ldl
+ 
+ 
+ #
+@@ -207,7 +207,7 @@ socket:	socket.o ../cups/$(LIBCUPS) libb
+ 
+ usb:	usb.o ../cups/$(LIBCUPS) libbackend.a
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o usb usb.o libbackend.a $(BACKLIBS) $(LIBS)
++	$(CC) $(LDFLAGS) -o usb usb.o libbackend.a $(BACKLIBS) $(LIBS) -ldl
+ usb.o:	usb.c usb-darwin.c usb-unix.c
+ 
+ 
+diff -up cups-1.3.3/backend/parallel.c.libieee1284 cups-1.3.3/backend/parallel.c
+--- cups-1.3.3/backend/parallel.c.libieee1284	2007-08-22 19:34:34.000000000 +0100
++++ cups-1.3.3/backend/parallel.c	2007-10-09 16:49:50.000000000 +0100
+@@ -350,9 +350,12 @@ list_devices(void)
+       * Now grab the IEEE 1284 device ID string...
+       */
+ 
++      char device_uri[255 + 9];
++      strcpy (device_uri, "parallel:");
++      strcpy (device_uri + 9, device);
+       if (!backendGetDeviceID(fd, device_id, sizeof(device_id),
+                               make_model, sizeof(make_model),
+-			      NULL, NULL, 0))
++			      "parallel", device_uri, sizeof (device_uri)))
+ 	printf("direct parallel:%s \"%s\" \"%s LPT #%d\" \"%s\"\n", device,
+ 	       make_model, make_model, i + 1, device_id);
+       else
