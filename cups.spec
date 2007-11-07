@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -44,6 +44,8 @@ Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch25: cups-usb-paperout.patch
+Patch26: cups-CVE-2007-4352,5392,5393.patch
+Patch27: cups-CVE-2007-4045.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -154,6 +156,8 @@ lpd emulation.
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch25 -p1 -b .usb-paperout
+%patch26 -p1 -b .CVE-2007-4352,5392,5393
+%patch27 -p1 -b .CVE-2007-4045
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -445,6 +449,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Nov  7 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.4-2
+- Applied patch to fix CVE-2007-4045 (bug #250161).
+- Applied patch to fix CVE-2007-4352, CVE-2007-5392 and
+  CVE-2007-5393 (bug #345101).
+
 * Thu Nov  1 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.4-1
 - 1.3.4 (bug #361681).
 
