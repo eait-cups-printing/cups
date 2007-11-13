@@ -450,6 +450,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Nov 13 2007 Tim Waugh <twaugh@redhat.com>
+- Fixed CVE-2007-4045 patch; has no effect with shipped packages since they
+  are linked with gnutls.
 - LSPP cupsdSetString/ClearString fixes (bug #378451).
 
 * Wed Nov  7 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.4-2
