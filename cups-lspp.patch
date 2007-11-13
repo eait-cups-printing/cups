@@ -1160,7 +1160,7 @@
 +      cupsdSetStringf(&audit_message, "[Config] Classification=%s", Classification);
 +      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
 +                             ServerName, NULL, NULL, 1);
-+      free(audit_message);
++      cupsdClearString(&audit_message);
 +    }
 +#endif /* WITH_LSPP */
 +  }
@@ -1660,7 +1660,7 @@
 +                          con->username, con->scon, printer->name);
 +          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
 +                                 ServerName, NULL, NULL, 0);
-+          free(audit_message);
++          cupsdClearString(&audit_message);
 +        }
 +
 +        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("SELinux prohibits access to the printer"));
@@ -1805,7 +1805,7 @@
 +            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
 +                                   ServerName, NULL, NULL, 0);
 +      }
-+          free(audit_message);
++          cupsdClearString(&audit_message);
        }
      }
  
@@ -2350,7 +2350,7 @@
 +                          job->auid, (job->username)?job->username:"?", job->scon, printer->name);
 +          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
 +                                 ServerName, NULL, NULL, 0);
-+          free(audit_message);
++          cupsdClearString(&audit_message);
 +        }
 +
 +        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
@@ -2399,7 +2399,7 @@
 +                        job->id, job->auid, job->username, printer->name, title);
 +        audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
 +                               ServerName, NULL, NULL, 1);
-+        free(audit_message);
++        cupsdClearString(&audit_message);
 +      }
 +    }
 +    else 
@@ -2437,7 +2437,7 @@
 +                        printer->name, title, job->scon, mls_label?mls_label:"none");
 +        audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
 +                               ServerName, NULL, NULL, 1);
-+        free(audit_message);
++        cupsdClearString(&audit_message);
 +      }
 +      context_free(jobcon);
 +      free(label_template);
@@ -2526,7 +2526,7 @@
 +      if (printercon)
 +        context_free(printercon);
 +      free(rangestr);
-+      free(audit_message);
++      cupsdClearString(&audit_message);
 +    }
 +#endif /* WITH_LSPP */
    }

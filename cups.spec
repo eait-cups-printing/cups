@@ -449,6 +449,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Nov 13 2007 Tim Waugh <twaugh@redhat.com>
+- LSPP cupsdSetString/ClearString fixes (bug #378451).
+
 * Wed Nov  7 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.4-2
 - Applied patch to fix CVE-2007-4045 (bug #250161).
 - Applied patch to fix CVE-2007-4352, CVE-2007-5392 and
