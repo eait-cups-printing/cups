@@ -449,6 +449,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Nov 27 2007 Tim Waugh <twaugh@redhat.com>
+- Updated to improved dnssd backend from Till Kamppeter.
+
 * Tue Nov 13 2007 Tim Waugh <twaugh@redhat.com>
 - Fixed CVE-2007-4045 patch; has no effect with shipped packages since they
   are linked with gnutls.
