@@ -45,7 +45,6 @@ Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch25: cups-usb-paperout.patch
 Patch26: cups-CVE-2007-4352,5392,5393.patch
-Patch27: cups-CVE-2007-4045.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -157,7 +156,6 @@ lpd emulation.
 %patch21 -p1 -b .driverd-timeout
 %patch25 -p1 -b .usb-paperout
 %patch26 -p1 -b .CVE-2007-4352,5392,5393
-%patch27 -p1 -b .CVE-2007-4045
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -449,6 +447,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Nov 30 2007 Tim Waugh <twaugh@redhat.com>
+- CVE-2007-4045 patch is not necessarily because cupsd_client_t objects are
+  not moved in array operations, only pointers to them.
+
 * Tue Nov 27 2007 Tim Waugh <twaugh@redhat.com>
 - Updated to improved dnssd backend from Till Kamppeter.
 
