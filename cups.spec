@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -447,6 +447,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Dec 4 2007 Warren Togami <wtogami@redhat.com> 1:1.3.4-3
+- rebuild
+
 * Fri Nov 30 2007 Tim Waugh <twaugh@redhat.com>
 - CVE-2007-4045 patch is not necessarily because cupsd_client_t objects are
   not moved in array operations, only pointers to them.
