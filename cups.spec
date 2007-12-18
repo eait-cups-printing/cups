@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.4
-Release: 5%{?dist}
+Version: 1.3.5
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -44,7 +44,6 @@ Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch25: cups-usb-paperout.patch
-Patch26: cups-CVE-2007-4352,5392,5393.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -155,7 +154,6 @@ lpd emulation.
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch25 -p1 -b .usb-paperout
-%patch26 -p1 -b .CVE-2007-4352,5392,5393
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -447,6 +445,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Dec 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.5-1
+- 1.3.5.
+
 * Mon Dec 10 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.4-5
 - Rebuilt with higher release number.
 
