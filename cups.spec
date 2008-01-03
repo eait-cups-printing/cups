@@ -445,6 +445,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jan  3 2008 Tim Waugh <twaugh@redhat.com>
+- Efficiency fix for pstoraster (bug #416871).
+
 * Tue Dec 18 2007 Tim Waugh <twaugh@redhat.com> 1:1.3.5-1
 - 1.3.5.
 
