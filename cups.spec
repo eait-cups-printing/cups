@@ -44,6 +44,7 @@ Patch18: cups-str2650.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
+Patch22: cups-strict-ppd-line-length.patch
 Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -155,6 +156,7 @@ lpd emulation.
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
+%patch22 -p1 -b .strict-ppd-line-length
 %patch25 -p1 -b .usb-paperout
 
 %if %lspp
@@ -448,6 +450,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Jan  9 2008 Tim Waugh <twaugh@redhat.com>
+- Apply patch to prevent overlong PPD lines from causing failures except
+  in strict mode (bug #405061).  Needed for compatibility with older
+  versions of foomatic (e.g. Red Hat Enterprise Linux 3/4).
 - Applied upstream patch to fix cupsctl --remote-any (bug #421411, STR #2650).
 
 * Thu Jan  3 2008 Tim Waugh <twaugh@redhat.com>
