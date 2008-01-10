@@ -1,0 +1,12 @@
+diff -up cups-1.3.5/backend/runloop.c~ cups-1.3.5/backend/runloop.c
+--- cups-1.3.5/backend/runloop.c~	2007-08-22 19:34:34.000000000 +0100
++++ cups-1.3.5/backend/runloop.c	2008-01-09 15:37:44.000000000 +0000
+@@ -216,7 +216,7 @@ backendRunLoop(
+       FD_SET(CUPS_SC_FD, &input);
+ 
+     FD_ZERO(&output);
+-    if (print_bytes || !use_bc)
++    if (print_bytes || (!use_bc && !side_cb))
+       FD_SET(device_fd, &output);
+ 
+     if (use_bc || side_cb)
