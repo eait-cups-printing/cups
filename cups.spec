@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -451,7 +451,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Mon Jan 21 2008 Tim Waugh <twaugh@redhat.com>
+* Mon Jan 21 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-2
 - Main package requires libs sub-package of the same release.
 
 * Thu Jan 10 2008 Tim Waugh <twaugh@redhat.com>
