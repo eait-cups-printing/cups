@@ -52,7 +52,7 @@ Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 PreReq: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{epoch}:%{version}
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
@@ -451,6 +451,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Jan 21 2008 Tim Waugh <twaugh@redhat.com>
+- Main package requires libs sub-package of the same release.
+
 * Thu Jan 10 2008 Tim Waugh <twaugh@redhat.com>
 - Apply patch to fix busy looping in the backends (bug #426653, STR #2664).
 
