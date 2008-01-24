@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -75,6 +75,7 @@ BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-compat-libdns_sd-devel
+BuildRequires: autoconf
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -451,6 +452,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Jan 24 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-3
+- Build requires autoconf.
+
 * Mon Jan 21 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-2
 - Main package requires libs sub-package of the same release.
 
