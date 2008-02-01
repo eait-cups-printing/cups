@@ -46,7 +46,7 @@ start () {
         RETVAL=$?
 	echo
 	[ $RETVAL = 0 ] && touch /var/lock/subsys/cups
-	return $RETVAL
+	return 0
 }
 
 stop () {
@@ -56,6 +56,7 @@ stop () {
 	RETVAL=$?
 	echo
 	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/cups
+	return 0
 }
 
 restart() {
@@ -73,13 +74,20 @@ case $1 in
 	restart)
 		restart
 	;;
-	condrestart)
+	condrestart|try-restart)
 		[ -f /var/lock/subsys/cups ] && restart || :
 	;;	
 	reload)
 		echo -n $"Reloading $prog: "
 		killproc $DAEMON -HUP
 		RETVAL=$?
+		echo
+	;;
+	force-reload)
+		echo -n $"Reloading $prog: "
+		if ! killproc $DAEMON -HUP; then
+			restart
+		fi
 		echo
 	;;
 	status)

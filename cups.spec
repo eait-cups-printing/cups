@@ -452,6 +452,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Feb  1 2008 Tim Waugh <twaugh@redhat.com>
+- Updated initscript for LSB exit codes and actions (bug #246897).
+
 * Thu Jan 24 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-3
 - Build requires autoconf.
 
