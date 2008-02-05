@@ -39,6 +39,7 @@ Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
 Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
+Patch15: cups-peercred.patch
 Patch16: cups-pid.patch
 Patch17: cups-foomatic-recommended.patch
 Patch19: cups-eggcups.patch
@@ -152,6 +153,7 @@ lpd emulation.
 %patch12 -p1 -b .wbuffer
 %patch13 -p1 -b .direct-usb
 %patch14 -p1 -b .lpr-help
+%patch15 -p1 -b .peercred
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .foomatic-recommended
 %patch19 -p1 -b .eggcups
@@ -451,6 +453,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Feb  5 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-4
+- Fix compilation of SO_PEERCRED support.
 - Include fixes from svn up to revision 7287.  No longer need str2650 or
   str2664 patches.
 
