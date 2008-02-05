@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -24,6 +24,7 @@ Source12: cups.cron
 Source13: pdftops.conf
 Source14: textonly.filter
 Source15: textonly.ppd
+Patch0: cups-1.3.x.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -40,12 +41,10 @@ Patch13: cups-direct-usb.patch
 Patch14: cups-lpr-help.patch
 Patch16: cups-pid.patch
 Patch17: cups-foomatic-recommended.patch
-Patch18: cups-str2650.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
-Patch23: cups-str2664.patch
 Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -138,6 +137,7 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1 -b .1.3.x
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -154,12 +154,10 @@ lpd emulation.
 %patch14 -p1 -b .lpr-help
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .foomatic-recommended
-%patch18 -p1 -b .str2650
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .strict-ppd-line-length
-%patch23 -p1 -b .str2664
 %patch25 -p1 -b .usb-paperout
 
 %if %lspp
@@ -452,6 +450,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Feb  5 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-4
+- Include fixes from svn up to revision 7287.  No longer need str2650 or
+  str2664 patches.
+
 * Fri Feb  1 2008 Tim Waugh <twaugh@redhat.com>
 - Updated initscript for LSB exit codes and actions (bug #246897).
 

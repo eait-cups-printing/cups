@@ -1297,7 +1297,7 @@
 +	    {
 +	      if (getfilecon(con->filename, &spoolcon) == -1)
 +	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, AUTH_NONE);
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		return (cupsdCloseClient(con));
 +	      }
 +	      clicon = context_new(con->scon);
@@ -1305,7 +1305,7 @@
 +	      freecon(spoolcon);
 +	      if (!clicon || !tmpcon)
 +	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, AUTH_NONE);
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		if (clicon)
 +		  context_free(clicon);
 +		if (tmpcon)
@@ -1320,7 +1320,7 @@
 +		{
 +		  if (context_range_set(tmpcon, cliclearance) == -1)
 +		  {
-+		    cupsdSendError(con, HTTP_SERVER_ERROR, AUTH_NONE);
++		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		    free(clirange);
 +		    context_free(tmpcon);
 +		    context_free(clicon);
@@ -1331,7 +1331,7 @@
 +		{
 +		  if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
 +		  {
-+		    cupsdSendError(con, HTTP_SERVER_ERROR, AUTH_NONE);
++		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		    free(clirange);
 +		    context_free(tmpcon);
 +		    context_free(clicon);
@@ -1342,7 +1342,7 @@
 +	      }
 +	      if (setfilecon(con->filename, context_str(tmpcon)) == -1)
 +	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, AUTH_NONE);
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		context_free(tmpcon);
 +		context_free(clicon);
 +		return (cupsdCloseClient(con));
