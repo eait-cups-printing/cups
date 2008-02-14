@@ -1,6 +1,6 @@
 diff -up cups-1.3.5/cgi-bin/template.c.1.3.x cups-1.3.5/cgi-bin/template.c
 --- cups-1.3.5/cgi-bin/template.c.1.3.x	2007-08-15 20:33:36.000000000 +0100
-+++ cups-1.3.5/cgi-bin/template.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/template.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   CGI template function.
@@ -26,7 +26,7 @@ diff -up cups-1.3.5/cgi-bin/template.c.1.3.x cups-1.3.5/cgi-bin/template.c
  
 diff -up cups-1.3.5/cgi-bin/admin.c.1.3.x cups-1.3.5/cgi-bin/admin.c
 --- cups-1.3.5/cgi-bin/admin.c.1.3.x	2007-11-30 07:00:59.000000000 +0000
-+++ cups-1.3.5/cgi-bin/admin.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/admin.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Administration CGI for the Common UNIX Printing System (CUPS).
@@ -36,7 +36,45 @@ diff -up cups-1.3.5/cgi-bin/admin.c.1.3.x cups-1.3.5/cgi-bin/admin.c
   *   Copyright 1997-2007 by Easy Software Products.
   *
   *   These coded instructions, statements, and computer programs are the
-@@ -1647,14 +1647,15 @@ do_config_server(http_t *http)		/* I - H
+@@ -1333,12 +1333,12 @@ do_config_server(http_t *http)		/* I - H
+ 			*remote_printers,
+ 					/* REMOTE_PRINTERS value */
+ 			*share_printers,/* SHARE_PRINTERS value */
++			*user_cancel_any;
++					/* USER_CANCEL_ANY value */
+ #ifdef HAVE_GSSAPI
+-			*default_auth_type,
++    char		default_auth_type[255];
+ 					/* DefaultAuthType value */
+ #endif /* HAVE_GSSAPI */
+-			*user_cancel_any;
+-					/* USER_CANCEL_ANY value */
+ 
+ 
+    /*
+@@ -1373,13 +1373,16 @@ do_config_server(http_t *http)		/* I - H
+     */
+ 
+     if (cgiGetVariable("KERBEROS"))
+-      default_auth_type = "Negotiate";
++      strlcpy(default_auth_type, "Negotiate", sizeof(default_auth_type));
+     else
+     {
+-      default_auth_type = cupsGetOption("DefaultAuthType", num_settings,
+-                                        settings);
+-      if (!strcasecmp(default_auth_type, "Negotiate"))
+-        default_auth_type = "Basic";
++      const char *val = cupsGetOption("DefaultAuthType", num_settings,
++                                      settings);
++
++      if (val && !strcasecmp(val, "Negotiate"))
++        strlcpy(default_auth_type, "Basic", sizeof(default_auth_type));
++      else
++        strlcpy(default_auth_type, val, sizeof(default_auth_type));
+     }
+ 
+     fprintf(stderr, "DEBUG: DefaultAuthType %s\n", default_auth_type);
+@@ -1647,14 +1650,15 @@ do_config_server(http_t *http)		/* I - H
      * Allocate memory and load the file into a string buffer...
      */
  
@@ -57,7 +95,7 @@ diff -up cups-1.3.5/cgi-bin/admin.c.1.3.x cups-1.3.5/cgi-bin/admin.c
     /*
      * Then get the default cupsd.conf file and put that into a string as
      * well...
-@@ -1665,37 +1666,39 @@ do_config_server(http_t *http)		/* I - H
+@@ -1665,37 +1669,39 @@ do_config_server(http_t *http)		/* I - H
      if (!stat(filename, &info) && info.st_size < (1024 * 1024) &&
          (cupsd = cupsFileOpen(filename, "r")) != NULL)
      {
@@ -122,7 +160,7 @@ diff -up cups-1.3.5/cgi-bin/admin.c.1.3.x cups-1.3.5/cgi-bin/admin.c
      }
  
     /*
-@@ -3084,7 +3087,7 @@ do_set_options(http_t *http,		/* I - HTT
+@@ -3084,7 +3090,7 @@ do_set_options(http_t *http,		/* I - HTT
      * Binary protocol support...
      */
  
@@ -133,7 +171,7 @@ diff -up cups-1.3.5/cgi-bin/admin.c.1.3.x cups-1.3.5/cgi-bin/admin.c
  
 diff -up cups-1.3.5/cgi-bin/search.c.1.3.x cups-1.3.5/cgi-bin/search.c
 --- cups-1.3.5/cgi-bin/search.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cgi-bin/search.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/search.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Search routines for the Common UNIX Printing System (CUPS).
@@ -183,7 +221,7 @@ diff -up cups-1.3.5/cgi-bin/search.c.1.3.x cups-1.3.5/cgi-bin/search.c
  	sptr += 5;
 diff -up cups-1.3.5/cgi-bin/ipp-var.c.1.3.x cups-1.3.5/cgi-bin/ipp-var.c
 --- cups-1.3.5/cgi-bin/ipp-var.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cgi-bin/ipp-var.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/ipp-var.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   CGI <-> IPP variable routines for the Common UNIX Printing System (CUPS).
@@ -238,7 +276,7 @@ diff -up cups-1.3.5/cgi-bin/ipp-var.c.1.3.x cups-1.3.5/cgi-bin/ipp-var.c
  
 diff -up cups-1.3.5/cgi-bin/jobs.c.1.3.x cups-1.3.5/cgi-bin/jobs.c
 --- cups-1.3.5/cgi-bin/jobs.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cgi-bin/jobs.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/jobs.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Job status CGI for the Common UNIX Printing System (CUPS).
@@ -262,7 +300,7 @@ diff -up cups-1.3.5/cgi-bin/jobs.c.1.3.x cups-1.3.5/cgi-bin/jobs.c
  
 diff -up cups-1.3.5/cgi-bin/var.c.1.3.x cups-1.3.5/cgi-bin/var.c
 --- cups-1.3.5/cgi-bin/var.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cgi-bin/var.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/var.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   CGI form variable and array functions.
@@ -369,7 +407,7 @@ diff -up cups-1.3.5/cgi-bin/var.c.1.3.x cups-1.3.5/cgi-bin/var.c
  
 diff -up cups-1.3.5/cgi-bin/printers.c.1.3.x cups-1.3.5/cgi-bin/printers.c
 --- cups-1.3.5/cgi-bin/printers.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cgi-bin/printers.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cgi-bin/printers.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Printer status CGI for the Common UNIX Printing System (CUPS).
@@ -393,7 +431,7 @@ diff -up cups-1.3.5/cgi-bin/printers.c.1.3.x cups-1.3.5/cgi-bin/printers.c
  
 diff -up cups-1.3.5/locale/checkpo.c.1.3.x cups-1.3.5/locale/checkpo.c
 --- cups-1.3.5/locale/checkpo.c.1.3.x	2007-09-06 15:34:31.000000000 +0100
-+++ cups-1.3.5/locale/checkpo.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/locale/checkpo.c	2008-02-14 13:03:30.000000000 +0000
 @@ -50,8 +50,7 @@ main(int  argc,				/* I - Number of comm
  			*strfmts;	/* Format strings in msgstr */
    char			*idfmt,		/* Current msgid format string */
@@ -415,7 +453,7 @@ diff -up cups-1.3.5/locale/checkpo.c.1.3.x cups-1.3.5/locale/checkpo.c
          if (cupsArrayCount(strfmts) != cupsArrayCount(idfmts) || strfmt)
 diff -up cups-1.3.5/backend/usb-unix.c.1.3.x cups-1.3.5/backend/usb-unix.c
 --- cups-1.3.5/backend/usb-unix.c.1.3.x	2007-11-30 07:00:59.000000000 +0000
-+++ cups-1.3.5/backend/usb-unix.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/backend/usb-unix.c	2008-02-14 13:03:30.000000000 +0000
 @@ -516,7 +516,7 @@ open_device(const char *uri,		/* I - Dev
    }
  #else
@@ -427,7 +465,7 @@ diff -up cups-1.3.5/backend/usb-unix.c.1.3.x cups-1.3.5/backend/usb-unix.c
        fd = -1;
 diff -up cups-1.3.5/backend/snmp.c.1.3.x cups-1.3.5/backend/snmp.c
 --- cups-1.3.5/backend/snmp.c.1.3.x	2007-12-17 22:12:45.000000000 +0000
-+++ cups-1.3.5/backend/snmp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/backend/snmp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -1090,7 +1090,7 @@ asn1_get_string(
      * String is larger than the buffer...
      */
@@ -439,7 +477,7 @@ diff -up cups-1.3.5/backend/snmp.c.1.3.x cups-1.3.5/backend/snmp.c
  
 diff -up cups-1.3.5/backend/pap.c.1.3.x cups-1.3.5/backend/pap.c
 --- cups-1.3.5/backend/pap.c.1.3.x	2007-10-10 22:25:29.000000000 +0100
-+++ cups-1.3.5/backend/pap.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/backend/pap.c	2008-02-14 13:03:30.000000000 +0000
 @@ -1,7 +1,7 @@
  /*
  * "$Id: pap.c 7013 2007-10-10 21:25:29Z mike $"
@@ -491,7 +529,7 @@ diff -up cups-1.3.5/backend/pap.c.1.3.x cups-1.3.5/backend/pap.c
  #ifdef HAVE_APPLETALK_AT_PROTO_H
 diff -up cups-1.3.5/backend/runloop.c.1.3.x cups-1.3.5/backend/runloop.c
 --- cups-1.3.5/backend/runloop.c.1.3.x	2007-08-22 19:34:34.000000000 +0100
-+++ cups-1.3.5/backend/runloop.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/backend/runloop.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Common run loop APIs for the Common UNIX Printing System (CUPS).
@@ -512,7 +550,7 @@ diff -up cups-1.3.5/backend/runloop.c.1.3.x cups-1.3.5/backend/runloop.c
      if (use_bc || side_cb)
 diff -up cups-1.3.5/backend/ipp.c.1.3.x cups-1.3.5/backend/ipp.c
 --- cups-1.3.5/backend/ipp.c.1.3.x	2007-11-09 19:54:09.000000000 +0000
-+++ cups-1.3.5/backend/ipp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/backend/ipp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   IPP backend for the Common UNIX Printing System (CUPS).
@@ -618,7 +656,7 @@ diff -up cups-1.3.5/backend/ipp.c.1.3.x cups-1.3.5/backend/ipp.c
  
 diff -up cups-1.3.5/cups/adminutil.c.1.3.x cups-1.3.5/cups/adminutil.c
 --- cups-1.3.5/cups/adminutil.c.1.3.x	2007-11-30 07:00:59.000000000 +0000
-+++ cups-1.3.5/cups/adminutil.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/adminutil.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Administration utility API definitions for the Common UNIX Printing
   *   System (CUPS).
@@ -706,7 +744,7 @@ diff -up cups-1.3.5/cups/adminutil.c.1.3.x cups-1.3.5/cups/adminutil.c
    }
 diff -up cups-1.3.5/cups/transcode.c.1.3.x cups-1.3.5/cups/transcode.c
 --- cups-1.3.5/cups/transcode.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/transcode.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/transcode.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Transcoding support for the Common UNIX Printing System (CUPS).
@@ -775,7 +813,7 @@ diff -up cups-1.3.5/cups/transcode.c.1.3.x cups-1.3.5/cups/transcode.c
  
 diff -up cups-1.3.5/cups/testcups.c.1.3.x cups-1.3.5/cups/testcups.c
 --- cups-1.3.5/cups/testcups.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/testcups.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/testcups.c	2008-02-14 13:03:30.000000000 +0000
 @@ -106,6 +106,7 @@ main(int  argc,				/* I - Number of comm
    {
      status = 1;
@@ -786,7 +824,7 @@ diff -up cups-1.3.5/cups/testcups.c.1.3.x cups-1.3.5/cups/testcups.c
      puts("PASS");
 diff -up cups-1.3.5/cups/http.c.1.3.x cups-1.3.5/cups/http.c
 --- cups-1.3.5/cups/http.c.1.3.x	2007-07-25 21:39:33.000000000 +0100
-+++ cups-1.3.5/cups/http.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/http.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   HTTP routines for the Common UNIX Printing System (CUPS).
@@ -829,7 +867,7 @@ diff -up cups-1.3.5/cups/http.c.1.3.x cups-1.3.5/cups/http.c
        snprintf(http->authstring, len, "%s %s", scheme, data);
 diff -up cups-1.3.5/cups/libcups.exp.1.3.x cups-1.3.5/cups/libcups.exp
 --- cups-1.3.5/cups/libcups.exp.1.3.x	2007-07-25 18:19:09.000000000 +0100
-+++ cups-1.3.5/cups/libcups.exp	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/libcups.exp	2008-02-14 13:03:30.000000000 +0000
 @@ -1,6 +1,7 @@
  __cups_strcpy
  __cupsAdminGetServerSettings
@@ -838,9 +876,20 @@ diff -up cups-1.3.5/cups/libcups.exp.1.3.x cups-1.3.5/cups/libcups.exp
  __cupsCharmapFlush
  __cupsCharmapFree
  __cupsCharmapGet
+diff -up cups-1.3.5/cups/request.c.1.3.x cups-1.3.5/cups/request.c
+--- cups-1.3.5/cups/request.c.1.3.x	2007-07-24 01:13:05.000000000 +0100
++++ cups-1.3.5/cups/request.c	2008-02-14 13:03:30.000000000 +0000
+@@ -17,6 +17,7 @@
+  * Contents:
+  *
+  *   cupsDoFileRequest() - Do an IPP request with a file.
++ *   cupsDoIORequest()   - Do an IPP request with file descriptors.
+  *   cupsDoRequest()     - Do an IPP request.
+  *   _cupsSetError()     - Set the last IPP status code and status-message.
+  *   _cupsSetHTTPError() - Set the last error using the HTTP status.
 diff -up cups-1.3.5/cups/auth.c.1.3.x cups-1.3.5/cups/auth.c
 --- cups-1.3.5/cups/auth.c.1.3.x	2007-10-31 18:35:56.000000000 +0000
-+++ cups-1.3.5/cups/auth.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/auth.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Authentication functions for the Common UNIX Printing System (CUPS).
@@ -926,7 +975,7 @@ diff -up cups-1.3.5/cups/auth.c.1.3.x cups-1.3.5/cups/auth.c
      httpGetSubField(http, HTTP_FIELD_WWW_AUTHENTICATE, "realm", realm);
 diff -up cups-1.3.5/cups/options.c.1.3.x cups-1.3.5/cups/options.c
 --- cups-1.3.5/cups/options.c.1.3.x	2007-07-20 22:28:10.000000000 +0100
-+++ cups-1.3.5/cups/options.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/options.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Option routines for the Common UNIX Printing System (CUPS).
@@ -1057,7 +1106,7 @@ diff -up cups-1.3.5/cups/options.c.1.3.x cups-1.3.5/cups/options.c
          ptr ++;
 diff -up cups-1.3.5/cups/i18n.h.1.3.x cups-1.3.5/cups/i18n.h
 --- cups-1.3.5/cups/i18n.h.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/i18n.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/i18n.h	2008-02-14 13:03:30.000000000 +0000
 @@ -82,6 +82,10 @@ typedef struct _cups_vmap_s		/**** VBCS 
   * Prototypes...
   */
@@ -1071,7 +1120,7 @@ diff -up cups-1.3.5/cups/i18n.h.1.3.x cups-1.3.5/cups/i18n.h
  extern void		*_cupsCharmapGet(const cups_encoding_t encoding);
 diff -up cups-1.3.5/cups/util.c.1.3.x cups-1.3.5/cups/util.c
 --- cups-1.3.5/cups/util.c.1.3.x	2007-10-10 23:00:43.000000000 +0100
-+++ cups-1.3.5/cups/util.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/util.c	2008-02-14 13:03:30.000000000 +0000
 @@ -846,9 +846,6 @@ cupsGetPPD2(http_t     *http,		/* I - HT
  
    close(fd);
@@ -1094,7 +1143,7 @@ diff -up cups-1.3.5/cups/util.c.1.3.x cups-1.3.5/cups/util.c
    */
 diff -up cups-1.3.5/cups/language.c.1.3.x cups-1.3.5/cups/language.c
 --- cups-1.3.5/cups/language.c.1.3.x	2007-10-31 18:51:08.000000000 +0000
-+++ cups-1.3.5/cups/language.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/language.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   I18N/language support for the Common UNIX Printing System (CUPS).
@@ -1512,7 +1561,7 @@ diff -up cups-1.3.5/cups/language.c.1.3.x cups-1.3.5/cups/language.c
  
 diff -up cups-1.3.5/cups/emit.c.1.3.x cups-1.3.5/cups/emit.c
 --- cups-1.3.5/cups/emit.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/emit.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/emit.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   PPD code emission routines for the Common UNIX Printing System (CUPS).
@@ -1552,7 +1601,7 @@ diff -up cups-1.3.5/cups/emit.c.1.3.x cups-1.3.5/cups/emit.c
    * Loop through all options and add choices as needed...
 diff -up cups-1.3.5/cups/ipp-private.h.1.3.x cups-1.3.5/cups/ipp-private.h
 --- cups-1.3.5/cups/ipp-private.h.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/ipp-private.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/ipp-private.h	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Private IPP definitions for the Common UNIX Printing System (CUPS).
@@ -1572,7 +1621,7 @@ diff -up cups-1.3.5/cups/ipp-private.h.1.3.x cups-1.3.5/cups/ipp-private.h
    ipp_tag_t	group_tag;		/* Group tag for this attribute */
 diff -up cups-1.3.5/cups/http-addrlist.c.1.3.x cups-1.3.5/cups/http-addrlist.c
 --- cups-1.3.5/cups/http-addrlist.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/cups/http-addrlist.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/http-addrlist.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   HTTP address list routines for the Common UNIX Printing System (CUPS).
@@ -1599,7 +1648,7 @@ diff -up cups-1.3.5/cups/http-addrlist.c.1.3.x cups-1.3.5/cups/http-addrlist.c
  #endif /* AF_LOCAL */
 diff -up cups-1.3.5/cups/http-private.h.1.3.x cups-1.3.5/cups/http-private.h
 --- cups-1.3.5/cups/http-private.h.1.3.x	2007-09-10 17:46:20.000000000 +0100
-+++ cups-1.3.5/cups/http-private.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/http-private.h	2008-02-14 13:03:30.000000000 +0000
 @@ -26,12 +26,6 @@
  #  include <config.h>
  
@@ -1615,7 +1664,7 @@ diff -up cups-1.3.5/cups/http-private.h.1.3.x cups-1.3.5/cups/http-private.h
  
 diff -up cups-1.3.5/cups/ppd.c.1.3.x cups-1.3.5/cups/ppd.c
 --- cups-1.3.5/cups/ppd.c.1.3.x	2007-11-30 19:29:50.000000000 +0000
-+++ cups-1.3.5/cups/ppd.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/ppd.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   PPD file routines for the Common UNIX Printing System (CUPS).
@@ -1669,7 +1718,7 @@ diff -up cups-1.3.5/cups/ppd.c.1.3.x cups-1.3.5/cups/ppd.c
          cupsCharsetToUTF8((cups_utf8_t *)choice->text, text,
 diff -up cups-1.3.5/cups/cups.h.1.3.x cups-1.3.5/cups/cups.h
 --- cups-1.3.5/cups/cups.h.1.3.x	2007-11-01 23:29:14.000000000 +0000
-+++ cups-1.3.5/cups/cups.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/cups.h	2008-02-14 13:03:30.000000000 +0000
 @@ -59,10 +59,10 @@ extern "C" {
   * Constants...
   */
@@ -1685,7 +1734,7 @@ diff -up cups-1.3.5/cups/cups.h.1.3.x cups-1.3.5/cups/cups.h
  
 diff -up cups-1.3.5/cups/ipp.c.1.3.x cups-1.3.5/cups/ipp.c
 --- cups-1.3.5/cups/ipp.c.1.3.x	2007-10-31 18:35:56.000000000 +0000
-+++ cups-1.3.5/cups/ipp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/ipp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Internet Printing Protocol support functions for the Common UNIX
   *   Printing System (CUPS).
@@ -1858,7 +1907,7 @@ diff -up cups-1.3.5/cups/ipp.c.1.3.x cups-1.3.5/cups/ipp.c
        case IPP_TAG_CHARSET :
 diff -up cups-1.3.5/cups/encode.c.1.3.x cups-1.3.5/cups/encode.c
 --- cups-1.3.5/cups/encode.c.1.3.x	2007-11-02 19:15:27.000000000 +0000
-+++ cups-1.3.5/cups/encode.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/cups/encode.c	2008-02-14 13:03:30.000000000 +0000
 @@ -43,98 +43,98 @@
  
  static const _ipp_option_t ipp_options[] =
@@ -2220,7 +2269,7 @@ diff -up cups-1.3.5/cups/encode.c.1.3.x cups-1.3.5/cups/encode.c
  	                  attr->values[j].unknown.data));
 diff -up cups-1.3.5/notifier/Makefile.1.3.x cups-1.3.5/notifier/Makefile
 --- cups-1.3.5/notifier/Makefile.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/notifier/Makefile	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/notifier/Makefile	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
  #
  #   Notifier makefile for the Common UNIX Printing System (CUPS).
@@ -2241,7 +2290,7 @@ diff -up cups-1.3.5/notifier/Makefile.1.3.x cups-1.3.5/notifier/Makefile
  		$(INSTALL_DIR) $(SYMROOT); \
 diff -up cups-1.3.5/pdftops/pdftops.cxx.1.3.x cups-1.3.5/pdftops/pdftops.cxx
 --- cups-1.3.5/pdftops/pdftops.cxx.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/pdftops/pdftops.cxx	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/pdftops/pdftops.cxx	2008-02-14 13:03:30.000000000 +0000
 @@ -308,8 +308,7 @@ main(int  argc,				// I - Number of comm
      // write PostScript file
      psOut = new PSOutputDev(psFileName->getCString(), doc->getXRef(),
@@ -2254,7 +2303,7 @@ diff -up cups-1.3.5/pdftops/pdftops.cxx.1.3.x cups-1.3.5/pdftops/pdftops.cxx
                          gTrue, gFalse, gFalse);
 diff -up cups-1.3.5/scheduler/testspeed.c.1.3.x cups-1.3.5/scheduler/testspeed.c
 --- cups-1.3.5/scheduler/testspeed.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/testspeed.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/testspeed.c	2008-02-14 13:03:30.000000000 +0000
 @@ -166,7 +166,7 @@ main(int  argc,				/* I - Number of comm
    * Exit with no errors...
    */
@@ -2266,7 +2315,7 @@ diff -up cups-1.3.5/scheduler/testspeed.c.1.3.x cups-1.3.5/scheduler/testspeed.c
  
 diff -up cups-1.3.5/scheduler/banners.c.1.3.x cups-1.3.5/scheduler/banners.c
 --- cups-1.3.5/scheduler/banners.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/banners.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/banners.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Banner routines for the Common UNIX Printing System (CUPS).
@@ -2319,7 +2368,7 @@ diff -up cups-1.3.5/scheduler/banners.c.1.3.x cups-1.3.5/scheduler/banners.c
    cupsArrayAdd(Banners, temp);
 diff -up cups-1.3.5/scheduler/printers.h.1.3.x cups-1.3.5/scheduler/printers.h
 --- cups-1.3.5/scheduler/printers.h.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/printers.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/printers.h	2008-02-14 13:03:30.000000000 +0000
 @@ -86,6 +86,7 @@ typedef struct cupsd_printer_s
    const char	*auth_info_required[4];	/* Required authentication fields */
    char		*alert,			/* PSX printer-alert value */
@@ -2339,7 +2388,7 @@ diff -up cups-1.3.5/scheduler/printers.h.1.3.x cups-1.3.5/scheduler/printers.h
  			                       const char *s);
 diff -up cups-1.3.5/scheduler/cupsfilter.c.1.3.x cups-1.3.5/scheduler/cupsfilter.c
 --- cups-1.3.5/scheduler/cupsfilter.c.1.3.x	2007-08-20 21:16:00.000000000 +0100
-+++ cups-1.3.5/scheduler/cupsfilter.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cupsfilter.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   CUPS filtering program for the Common UNIX Printing System (CUPS).
@@ -2378,7 +2427,7 @@ diff -up cups-1.3.5/scheduler/cupsfilter.c.1.3.x cups-1.3.5/scheduler/cupsfilter
  
 diff -up cups-1.3.5/scheduler/main.c.1.3.x cups-1.3.5/scheduler/main.c
 --- cups-1.3.5/scheduler/main.c.1.3.x	2007-11-09 19:54:09.000000000 +0000
-+++ cups-1.3.5/scheduler/main.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/main.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Scheduler main loop for the Common UNIX Printing System (CUPS).
@@ -2547,9 +2596,22 @@ diff -up cups-1.3.5/scheduler/main.c.1.3.x cups-1.3.5/scheduler/main.c
      }
    }
  
+@@ -1622,8 +1663,11 @@ process_children(void)
+ 	    else
+  	      job->status = -status;	/* Backend failed */
+ 
+-            if (job->printer && !(job->printer->type & CUPS_PRINTER_FAX))
++            if (job->printer && !(job->printer->type & CUPS_PRINTER_FAX) &&
++	        job->status_level > CUPSD_LOG_ERROR)
+ 	    {
++	      job->status_level = CUPSD_LOG_ERROR;
++
+               snprintf(job->printer->state_message,
+ 	               sizeof(job->printer->state_message), "%s failed", name);
+               cupsdAddPrinterHistory(job->printer);
 diff -up cups-1.3.5/scheduler/conf.c.1.3.x cups-1.3.5/scheduler/conf.c
 --- cups-1.3.5/scheduler/conf.c.1.3.x	2007-11-09 19:54:09.000000000 +0000
-+++ cups-1.3.5/scheduler/conf.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/conf.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Configuration routines for the Common UNIX Printing System (CUPS).
@@ -2900,7 +2962,7 @@ diff -up cups-1.3.5/scheduler/conf.c.1.3.x cups-1.3.5/scheduler/conf.c
  	else
  	  cupsdLogMessage(CUPSD_LOG_WARN, "Unknown request type %s on line %d!",
  	                  value, linenum);
-@@ -3178,7 +3194,7 @@ read_location(cups_file_t *fp,		/* I - C
+@@ -3178,11 +3194,12 @@ read_location(cups_file_t *fp,		/* I - C
        }
  
        if (!strcasecmp(line, "<LimitExcept"))
@@ -2909,9 +2971,15 @@ diff -up cups-1.3.5/scheduler/conf.c.1.3.x cups-1.3.5/scheduler/conf.c
  
        parent->limit &= ~loc->limit;
      }
+-    else if (!strcasecmp(line, "</Limit>"))
++    else if (!strcasecmp(line, "</Limit>") ||
++             !strcasecmp(line, "</LimitExcept>"))
+       loc = parent;
+     else if (!parse_aaa(loc, line, value, linenum))
+     {
 diff -up cups-1.3.5/scheduler/auth.c.1.3.x cups-1.3.5/scheduler/auth.c
 --- cups-1.3.5/scheduler/auth.c.1.3.x	2007-10-22 21:27:22.000000000 +0100
-+++ cups-1.3.5/scheduler/auth.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/auth.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Authorization routines for the Common UNIX Printing System (CUPS).
@@ -3358,7 +3426,7 @@ diff -up cups-1.3.5/scheduler/auth.c.1.3.x cups-1.3.5/scheduler/auth.c
      * If there are no names associated with this location, then
 diff -up cups-1.3.5/scheduler/cert.c.1.3.x cups-1.3.5/scheduler/cert.c
 --- cups-1.3.5/scheduler/cert.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/cert.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cert.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Authentication certificate routines for the Common UNIX
   *   Printing System (CUPS).
@@ -3422,7 +3490,7 @@ diff -up cups-1.3.5/scheduler/cert.c.1.3.x cups-1.3.5/scheduler/cert.c
  
 diff -up cups-1.3.5/scheduler/log.c.1.3.x cups-1.3.5/scheduler/log.c
 --- cups-1.3.5/scheduler/log.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/log.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/log.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Log file routines for the Common UNIX Printing System (CUPS).
@@ -3465,9 +3533,18 @@ diff -up cups-1.3.5/scheduler/log.c.1.3.x cups-1.3.5/scheduler/log.c
      }
  
      va_start(ap, message);
+@@ -355,7 +352,7 @@ cupsdLogPage(cupsd_job_t *job,		/* I - J
+  /*
+   * Print a page log entry of the form:
+   *
+-  *    printer job-id user [DD/MON/YYYY:HH:MM:SS +TTTT] page num-copies \
++  *    printer user job-id [DD/MON/YYYY:HH:MM:SS +TTTT] page num-copies \
+   *        billing hostname
+   */
+ 
 diff -up cups-1.3.5/scheduler/cups-deviced.c.1.3.x cups-1.3.5/scheduler/cups-deviced.c
 --- cups-1.3.5/scheduler/cups-deviced.c.1.3.x	2007-10-10 22:25:29.000000000 +0100
-+++ cups-1.3.5/scheduler/cups-deviced.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cups-deviced.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Device scanning mini-daemon for the Common UNIX Printing System (CUPS).
@@ -3488,7 +3565,7 @@ diff -up cups-1.3.5/scheduler/cups-deviced.c.1.3.x cups-1.3.5/scheduler/cups-dev
  
 diff -up cups-1.3.5/scheduler/cups-driverd.c.1.3.x cups-1.3.5/scheduler/cups-driverd.c
 --- cups-1.3.5/scheduler/cups-driverd.c.1.3.x	2007-08-02 19:05:03.000000000 +0100
-+++ cups-1.3.5/scheduler/cups-driverd.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cups-driverd.c	2008-02-14 13:03:30.000000000 +0000
 @@ -7,7 +7,7 @@
   *   in CUPS_DATADIR/model and dynamically generated PPD files using
   *   the driver helper programs in CUPS_SERVERBIN/driver.
@@ -3508,7 +3585,7 @@ diff -up cups-1.3.5/scheduler/cups-driverd.c.1.3.x cups-1.3.5/scheduler/cups-dri
  
 diff -up cups-1.3.5/scheduler/mime.c.1.3.x cups-1.3.5/scheduler/mime.c
 --- cups-1.3.5/scheduler/mime.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/mime.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/mime.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   MIME database file routines for the Common UNIX Printing System (CUPS).
@@ -3531,7 +3608,7 @@ diff -up cups-1.3.5/scheduler/mime.c.1.3.x cups-1.3.5/scheduler/mime.c
    * Read all the .types files...
 diff -up cups-1.3.5/scheduler/job.h.1.3.x cups-1.3.5/scheduler/job.h
 --- cups-1.3.5/scheduler/job.h.1.3.x	2007-08-01 20:02:47.000000000 +0100
-+++ cups-1.3.5/scheduler/job.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/job.h	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Print job definitions for the Common UNIX Printing System (CUPS) scheduler.
@@ -3552,7 +3629,7 @@ diff -up cups-1.3.5/scheduler/job.h.1.3.x cups-1.3.5/scheduler/job.h
  
 diff -up cups-1.3.5/scheduler/cups-lpd.c.1.3.x cups-1.3.5/scheduler/cups-lpd.c
 --- cups-1.3.5/scheduler/cups-lpd.c.1.3.x	2007-08-08 22:09:31.000000000 +0100
-+++ cups-1.3.5/scheduler/cups-lpd.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cups-lpd.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Line Printer Daemon interface for the Common UNIX Printing System (CUPS).
@@ -3576,7 +3653,7 @@ diff -up cups-1.3.5/scheduler/cups-lpd.c.1.3.x cups-1.3.5/scheduler/cups-lpd.c
  
 diff -up cups-1.3.5/scheduler/client.c.1.3.x cups-1.3.5/scheduler/client.c
 --- cups-1.3.5/scheduler/client.c.1.3.x	2007-09-28 20:47:00.000000000 +0100
-+++ cups-1.3.5/scheduler/client.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/client.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Client routines for the Common UNIX Printing System (CUPS) scheduler.
@@ -4186,7 +4263,7 @@ diff -up cups-1.3.5/scheduler/client.c.1.3.x cups-1.3.5/scheduler/client.c
 +  {
 +    cupsdLogMessage(CUPSD_LOG_ERROR,
 +                    "Kerberos credentials larger than 64k (%d)!",
-+		    con->gss_output_token.length);
++		    (int)con->gss_output_token.length);
 +    return (0);
 +  }
  #endif /* HAVE_GSSAPI */
@@ -4390,7 +4467,7 @@ diff -up cups-1.3.5/scheduler/client.c.1.3.x cups-1.3.5/scheduler/client.c
    if (httpPrintf(HTTP(con), "Last-Modified: %s\r\n",
 diff -up cups-1.3.5/scheduler/cups-polld.c.1.3.x cups-1.3.5/scheduler/cups-polld.c
 --- cups-1.3.5/scheduler/cups-polld.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/cups-polld.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cups-polld.c	2008-02-14 13:03:30.000000000 +0000
 @@ -144,7 +144,7 @@ main(int  argc,				/* I - Number of comm
    * Loop forever, asking for available printers and classes...
    */
@@ -4411,7 +4488,7 @@ diff -up cups-1.3.5/scheduler/cups-polld.c.1.3.x cups-1.3.5/scheduler/cups-polld
  
 diff -up cups-1.3.5/scheduler/classes.c.1.3.x cups-1.3.5/scheduler/classes.c
 --- cups-1.3.5/scheduler/classes.c.1.3.x	2007-11-30 03:37:11.000000000 +0000
-+++ cups-1.3.5/scheduler/classes.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/classes.c	2008-02-14 13:03:30.000000000 +0000
 @@ -393,7 +393,7 @@ cupsdLoadAllClasses(void)
        {
          cupsdLogMessage(CUPSD_LOG_ERROR,
@@ -4551,7 +4628,7 @@ diff -up cups-1.3.5/scheduler/classes.c.1.3.x cups-1.3.5/scheduler/classes.c
      else
 diff -up cups-1.3.5/scheduler/cert.h.1.3.x cups-1.3.5/scheduler/cert.h
 --- cups-1.3.5/scheduler/cert.h.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/cert.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/cert.h	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Authentication certificate definitions for the Common UNIX
   *   Printing System (CUPS).
@@ -4583,7 +4660,7 @@ diff -up cups-1.3.5/scheduler/cert.h.1.3.x cups-1.3.5/scheduler/cert.h
  extern const char	*cupsdFindCert(const char *certificate);
 diff -up cups-1.3.5/scheduler/policy.c.1.3.x cups-1.3.5/scheduler/policy.c
 --- cups-1.3.5/scheduler/policy.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/policy.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/policy.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Policy routines for the Common UNIX Printing System (CUPS).
@@ -4634,7 +4711,7 @@ diff -up cups-1.3.5/scheduler/policy.c.1.3.x cups-1.3.5/scheduler/policy.c
                cupsdDenyHost(temp, name);
 diff -up cups-1.3.5/scheduler/auth.h.1.3.x cups-1.3.5/scheduler/auth.h
 --- cups-1.3.5/scheduler/auth.h.1.3.x	2007-08-08 21:50:42.000000000 +0100
-+++ cups-1.3.5/scheduler/auth.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/auth.h	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Authorization definitions for the Common UNIX Printing System (CUPS)
   *   scheduler.
@@ -4722,7 +4799,7 @@ diff -up cups-1.3.5/scheduler/auth.h.1.3.x cups-1.3.5/scheduler/auth.h
  VAR http_encryption_t	DefaultEncryption VALUE(HTTP_ENCRYPT_REQUIRED);
 diff -up cups-1.3.5/scheduler/subscriptions.h.1.3.x cups-1.3.5/scheduler/subscriptions.h
 --- cups-1.3.5/scheduler/subscriptions.h.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/subscriptions.h	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/subscriptions.h	2008-02-14 13:03:30.000000000 +0000
 @@ -20,47 +20,52 @@
  typedef enum
  {
@@ -4804,7 +4881,7 @@ diff -up cups-1.3.5/scheduler/subscriptions.h.1.3.x cups-1.3.5/scheduler/subscri
  
 diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
 --- cups-1.3.5/scheduler/job.c.1.3.x	2007-11-27 00:09:24.000000000 +0000
-+++ cups-1.3.5/scheduler/job.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/job.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Job management routines for the Common UNIX Printing System (CUPS).
@@ -4824,7 +4901,15 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  
    job->id              = NextJobId ++;
    job->priority        = priority;
-@@ -376,7 +377,11 @@ cupsdCheckJobs(void)
+@@ -351,6 +352,7 @@ cupsdCheckJobs(void)
+   cupsd_job_t		*job;		/* Current job in queue */
+   cupsd_printer_t	*printer,	/* Printer destination */
+ 			*pclass;	/* Printer class destination */
++  ipp_attribute_t	*attr;		/* Job attribute */
+ 
+ 
+   DEBUG_puts("cupsdCheckJobs()");
+@@ -376,10 +378,25 @@ cupsdCheckJobs(void)
  	job->hold_until < time(NULL))
      {
        if (job->pending_timeout)
@@ -4837,7 +4922,31 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  
        job->state->values[0].integer = IPP_JOB_PENDING;
        job->state_value              = IPP_JOB_PENDING;
-@@ -1812,6 +1817,7 @@ free_job(cupsd_job_t *job)		/* I - Job *
++
++      if ((attr = ippFindAttribute(job->attrs, "job-hold-until",
++				   IPP_TAG_KEYWORD)) == NULL)
++	attr = ippFindAttribute(job->attrs, "job-hold-until", IPP_TAG_NAME);
++
++      if (attr)
++      {
++	attr->value_tag = IPP_TAG_KEYWORD;
++	cupsdSetString(&(attr->values[0].string.text), "no-hold");
++	cupsdSaveJob(job);
++      }
+     }
+ 
+    /*
+@@ -439,9 +456,6 @@ cupsdCheckJobs(void)
+ 	  * so that we know which printer actually printed the job...
+ 	  */
+ 
+-          ipp_attribute_t	*attr;	/* job-actual-printer-uri attribute */
+-
+-
+           if ((attr = ippFindAttribute(job->attrs, "job-actual-printer-uri",
+ 	                               IPP_TAG_URI)) != NULL)
+             cupsdSetString(&attr->values[0].string.text, printer->uri);
+@@ -1812,6 +1826,7 @@ free_job(cupsd_job_t *job)		/* I - Job *
    cupsdClearString(&job->auth_username);
    cupsdClearString(&job->auth_domain);
    cupsdClearString(&job->auth_password);
@@ -4845,7 +4954,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  #ifdef HAVE_GSSAPI
   /*
    * Destroy the credential cache and clear the KRB5CCNAME env var string.
-@@ -2445,7 +2451,7 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -2445,7 +2460,7 @@ start_job(cupsd_job_t     *job,		/* I - 
  			title[IPP_MAX_NAME],
  					/* Job title string */
  			copies[255],	/* # copies string */
@@ -4854,7 +4963,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  					/* Environment variables */
  			charset[255],	/* CHARSET env variable */
  			class_name[255],/* CLASS env variable */
-@@ -2458,6 +2464,10 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -2458,6 +2473,10 @@ start_job(cupsd_job_t     *job,		/* I - 
  			final_content_type[1024],
  					/* FINAL_CONTENT_TYPE env variable */
  			lang[255],	/* LANG env variable */
@@ -4865,7 +4974,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  			ppd[1024],	/* PPD env variable */
  			printer_name[255],
  					/* PRINTER env variable */
-@@ -2514,7 +2524,7 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -2514,7 +2533,7 @@ start_job(cupsd_job_t     *job,		/* I - 
                        "[Job %d] Unable to convert file %d to printable format!",
  	              job->current_file, job->id);
        cupsdLogMessage(CUPSD_LOG_INFO,
@@ -4874,7 +4983,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  
        if (LogLevel < CUPSD_LOG_DEBUG)
          cupsdLogMessage(CUPSD_LOG_INFO,
-@@ -2964,6 +2974,17 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -2964,6 +2983,17 @@ start_job(cupsd_job_t     *job,		/* I - 
    else
      argv = calloc(8, sizeof(char *));
  
@@ -4892,7 +5001,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
    sprintf(jobid, "%d", job->id);
  
    argv[0] = printer->name;
-@@ -3000,6 +3021,12 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -3000,6 +3030,12 @@ start_job(cupsd_job_t     *job,		/* I - 
    attr = ippFindAttribute(job->attrs, "attributes-natural-language",
                            IPP_TAG_LANGUAGE);
  
@@ -4905,7 +5014,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
    switch (strlen(attr->values[0].string.text))
    {
      default :
-@@ -3060,6 +3087,9 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -3060,6 +3096,9 @@ start_job(cupsd_job_t     *job,		/* I - 
  
    envp[envc ++] = charset;
    envp[envc ++] = lang;
@@ -4915,7 +5024,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
    envp[envc ++] = ppd;
    envp[envc ++] = rip_max_cache;
    envp[envc ++] = content_type;
-@@ -3114,8 +3144,8 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -3114,8 +3153,8 @@ start_job(cupsd_job_t     *job,		/* I - 
    envp[envc] = NULL;
  
    for (i = 0; i < envc; i ++)
@@ -4926,7 +5035,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
                        job->id, i, envp[i][5]);
      else if (strncmp(envp[i], "DEVICE_URI=", 11))
        cupsdLogMessage(CUPSD_LOG_DEBUG, "[Job %d] envp[%d]=\"%s\"",
-@@ -3321,7 +3351,7 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -3321,7 +3360,7 @@ start_job(cupsd_job_t     *job,		/* I - 
  
    if (strncmp(printer->device_uri, "file:", 5) != 0)
    {
@@ -4935,7 +5044,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
      {
        sscanf(printer->device_uri, "%254[^:]", method);
        snprintf(command, sizeof(command), "%s/backend/%s", ServerBin, method);
-@@ -3538,7 +3568,7 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3538,7 +3577,7 @@ update_job(cupsd_job_t *job)		/* I - Job
        * job sheet count...
        */
  
@@ -4944,7 +5053,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
        {
          if (!strncasecmp(message, "total ", 6))
  	{
-@@ -3583,8 +3613,9 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3583,8 +3622,9 @@ update_job(cupsd_job_t *job)		/* I - Job
  
        cupsdLogPage(job, message);
  
@@ -4956,7 +5065,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
      }
      else if (loglevel == CUPSD_LOG_STATE)
      {
-@@ -3597,7 +3628,7 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3597,7 +3637,7 @@ update_job(cupsd_job_t *job)		/* I - Job
        {
  	cupsdSetPrinterReasons(job->printer, message);
  	cupsdAddPrinterHistory(job->printer);
@@ -4965,7 +5074,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
        }
  
        update_job_attrs(job);
-@@ -3626,14 +3657,42 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3626,14 +3666,42 @@ update_job(cupsd_job_t *job)		/* I - Job
        if ((attr = cupsGetOption("printer-alert", num_attrs, attrs)) != NULL)
        {
          cupsdSetString(&job->printer->alert, attr);
@@ -5010,7 +5119,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
        }
  
        cupsFreeOptions(num_attrs, attrs);
-@@ -3650,7 +3709,7 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3650,7 +3718,7 @@ update_job(cupsd_job_t *job)		/* I - Job
  
        cupsdSetString(&job->printer->recoverable, ptr);
        cupsdAddPrinterHistory(job->printer);
@@ -5019,7 +5128,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
      }
      else if (!strncmp(message, "recovered:", 10))
      {
-@@ -3663,7 +3722,7 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3663,7 +3731,7 @@ update_job(cupsd_job_t *job)		/* I - Job
  
        cupsdSetString(&job->printer->recoverable, ptr);
        cupsdAddPrinterHistory(job->printer);
@@ -5028,7 +5137,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
      }
  #endif /* __APPLE__ */
      else if (loglevel <= job->status_level)
-@@ -3678,7 +3737,7 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3678,7 +3746,7 @@ update_job(cupsd_job_t *job)		/* I - Job
        strlcpy(job->printer->state_message, message,
                sizeof(job->printer->state_message));
        cupsdAddPrinterHistory(job->printer);
@@ -5037,7 +5146,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  
        update_job_attrs(job);
      }
-@@ -3687,8 +3746,8 @@ update_job(cupsd_job_t *job)		/* I - Job
+@@ -3687,8 +3755,8 @@ update_job(cupsd_job_t *job)		/* I - Job
        break;
    }
  
@@ -5050,7 +5159,7 @@ diff -up cups-1.3.5/scheduler/job.c.1.3.x cups-1.3.5/scheduler/job.c
  		      "Printer \"%s\" state changed.",
 diff -up cups-1.3.5/scheduler/type.c.1.3.x cups-1.3.5/scheduler/type.c
 --- cups-1.3.5/scheduler/type.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/type.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/type.c	2008-02-14 13:03:30.000000000 +0000
 @@ -567,12 +567,12 @@ mimeFileType(mime_t     *mime,		/* I - M
      if ((base = strrchr(filename, '/')) != NULL)
        base ++;
@@ -5079,7 +5188,7 @@ diff -up cups-1.3.5/scheduler/type.c.1.3.x cups-1.3.5/scheduler/type.c
  }
 diff -up cups-1.3.5/scheduler/subscriptions.c.1.3.x cups-1.3.5/scheduler/subscriptions.c
 --- cups-1.3.5/scheduler/subscriptions.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scheduler/subscriptions.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/subscriptions.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Subscription routines for the Common UNIX Printing System (CUPS) scheduler.
@@ -5267,7 +5376,7 @@ diff -up cups-1.3.5/scheduler/subscriptions.c.1.3.x cups-1.3.5/scheduler/subscri
      else
 diff -up cups-1.3.5/scheduler/ipp.c.1.3.x cups-1.3.5/scheduler/ipp.c
 --- cups-1.3.5/scheduler/ipp.c.1.3.x	2007-12-15 00:23:16.000000000 +0000
-+++ cups-1.3.5/scheduler/ipp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/ipp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   IPP routines for the Common UNIX Printing System (CUPS) scheduler.
@@ -5375,6 +5484,42 @@ diff -up cups-1.3.5/scheduler/ipp.c.1.3.x cups-1.3.5/scheduler/ipp.c
    if (printer->alert && (!ra || cupsArrayFind(ra, "printer-alert")))
      ippAddString(con->response, IPP_TAG_PRINTER, IPP_TAG_STRING,
                   "printer-alert", NULL, printer->alert);
+@@ -7036,17 +7040,6 @@ move_job(cupsd_client_t  *con,		/* I - C
+   }
+ 
+  /*
+-  * Check policy...
+-  */
+-
+-  if ((status = cupsdCheckPolicy(dprinter->op_policy_ptr, con,
+-                                 NULL)) != HTTP_OK)
+-  {
+-    send_http_error(con, status, dprinter);
+-    return;
+-  }
+-
+- /*
+   * See if we have a job URI or a printer URI...
+   */
+ 
+@@ -7154,6 +7147,17 @@ move_job(cupsd_client_t  *con,		/* I - C
+   }
+ 
+  /*
++  * Check the policy of the destination printer...
++  */
++
++  if ((status = cupsdCheckPolicy(dprinter->op_policy_ptr, con,
++                                 job ? job->username : NULL)) != HTTP_OK)
++  {
++    send_http_error(con, status, dprinter);
++    return;
++  }
++
++ /*
+   * Now move the job or jobs...
+   */
+ 
 @@ -7541,7 +7545,8 @@ print_job(cupsd_client_t  *con,		/* I - 
    * See if we need to add the ending sheet...
    */
@@ -5520,7 +5665,7 @@ diff -up cups-1.3.5/scheduler/ipp.c.1.3.x cups-1.3.5/scheduler/ipp.c
    * Validate input...
 diff -up cups-1.3.5/scheduler/dirsvc.c.1.3.x cups-1.3.5/scheduler/dirsvc.c
 --- cups-1.3.5/scheduler/dirsvc.c.1.3.x	2007-12-06 20:44:04.000000000 +0000
-+++ cups-1.3.5/scheduler/dirsvc.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/dirsvc.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Directory services routines for the Common UNIX Printing System (CUPS).
@@ -5723,7 +5868,7 @@ diff -up cups-1.3.5/scheduler/dirsvc.c.1.3.x cups-1.3.5/scheduler/dirsvc.c
                      "update_cups_browse: Refused %d bytes from %s", bytes,
 diff -up cups-1.3.5/scheduler/printers.c.1.3.x cups-1.3.5/scheduler/printers.c
 --- cups-1.3.5/scheduler/printers.c.1.3.x	2007-12-11 00:37:08.000000000 +0000
-+++ cups-1.3.5/scheduler/printers.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scheduler/printers.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Printer routines for the Common UNIX Printing System (CUPS).
@@ -6055,7 +6200,7 @@ diff -up cups-1.3.5/scheduler/printers.c.1.3.x cups-1.3.5/scheduler/printers.c
  		  p->name);
 diff -up cups-1.3.5/test/ipptest.c.1.3.x cups-1.3.5/test/ipptest.c
 --- cups-1.3.5/test/ipptest.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/test/ipptest.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/test/ipptest.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   IPP test command for the Common UNIX Printing System (CUPS).
@@ -6075,7 +6220,7 @@ diff -up cups-1.3.5/test/ipptest.c.1.3.x cups-1.3.5/test/ipptest.c
  
 diff -up cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java.1.3.x cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java
 --- cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java	2008-02-14 13:03:30.000000000 +0000
 @@ -7,7 +7,7 @@ package com.easysw.cups;
   *   Internet Printing Protocol definitions for the Common UNIX Printing
   *   System (CUPS).
@@ -6201,7 +6346,7 @@ diff -up cups-1.3.5/scripting/java/src/com/easysw/cups/IPPAttribute.java.1.3.x c
          default :
 diff -up cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java.1.3.x cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java
 --- cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java	2008-02-14 13:03:30.000000000 +0000
 @@ -7,7 +7,7 @@ package com.easysw.cups;
   *   Internet Printing Protocol definitions for the Common UNIX Printing
   *   System (CUPS).
@@ -6276,15 +6421,28 @@ diff -up cups-1.3.5/scripting/java/src/com/easysw/cups/Cups.java.1.3.x cups-1.3.
  
 diff -up cups-1.3.5/CHANGES.txt.1.3.x cups-1.3.5/CHANGES.txt
 --- cups-1.3.5/CHANGES.txt.1.3.x	2007-12-17 22:12:45.000000000 +0000
-+++ cups-1.3.5/CHANGES.txt	2008-02-05 15:08:55.000000000 +0000
-@@ -1,6 +1,85 @@
++++ cups-1.3.5/CHANGES.txt	2008-02-14 13:03:30.000000000 +0000
+@@ -1,6 +1,98 @@
 -CHANGES.txt - 2007-12-17
-+CHANGES.txt - 2008-01-30
++CHANGES.txt - 2008-02-12
  ------------------------
  
 +CHANGES IN CUPS V1.3.6
 +
 +	- Documentation updates (STR #2646, STR #2647, STR #2649)
++	- Fixed a problem with the web interface "Use Kerberos
++	  Authentication" check box (STR #2703)
++	- The scheduler unconditionally overwrote the printer-state-
++	  message with "process-name failed" when a filter or backend
++	  failed, preventing a useful error message from being shown
++	  to the user.
++	- Policies on CUPS-Move-Job didn't work as expected (STR
++	  #2699)
++	- The configure script only supported D-BUS on Linux
++	  (STR #2702)
++	- The scheduler did not support </LimitExcept> (STR #2701)
++	- The scheduler did not reset the job-hold-until attribute
++	  after a job's hold time was reached.
 +	- The scheduler did not support printer supply attributes
 +	  (STR #1307)
 +	- The Kerberos credentials provided by some Windows KDCs
@@ -6366,7 +6524,7 @@ diff -up cups-1.3.5/CHANGES.txt.1.3.x cups-1.3.5/CHANGES.txt
  	- The SNMP backend did not check for negative string
 diff -up cups-1.3.5/conf/cupsd.conf.in.1.3.x cups-1.3.5/conf/cupsd.conf.in
 --- cups-1.3.5/conf/cupsd.conf.in.1.3.x	2007-07-25 01:40:03.000000000 +0100
-+++ cups-1.3.5/conf/cupsd.conf.in	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/conf/cupsd.conf.in	2008-02-14 13:03:30.000000000 +0000
 @@ -29,14 +29,12 @@ DefaultAuthType Basic
  # Restrict access to the server...
  <Location />
@@ -6392,7 +6550,7 @@ diff -up cups-1.3.5/conf/cupsd.conf.in.1.3.x cups-1.3.5/conf/cupsd.conf.in
  # Set the default printer/job policies...
 diff -up cups-1.3.5/templates/trailer.tmpl.1.3.x cups-1.3.5/templates/trailer.tmpl
 --- cups-1.3.5/templates/trailer.tmpl.1.3.x	2007-12-07 18:37:40.000000000 +0000
-+++ cups-1.3.5/templates/trailer.tmpl	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/templates/trailer.tmpl	2008-02-14 13:03:30.000000000 +0000
 @@ -6,9 +6,9 @@
  WIDTH="15" HEIGHT="15" ALT=""></TD>
  <TD COLSPAN="2" WIDTH="100%" STYLE="padding: 5;">
@@ -6408,7 +6566,7 @@ diff -up cups-1.3.5/templates/trailer.tmpl.1.3.x cups-1.3.5/templates/trailer.tm
  
 diff -up cups-1.3.5/config-scripts/cups-compiler.m4.1.3.x cups-1.3.5/config-scripts/cups-compiler.m4
 --- cups-1.3.5/config-scripts/cups-compiler.m4.1.3.x	2007-09-18 21:39:31.000000000 +0100
-+++ cups-1.3.5/config-scripts/cups-compiler.m4	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/config-scripts/cups-compiler.m4	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@ dnl "$Id: cups-compiler.m4 6976 2007-09-
  dnl
  dnl   Compiler stuff for the Common UNIX Printing System (CUPS).
@@ -6520,7 +6678,7 @@ diff -up cups-1.3.5/config-scripts/cups-compiler.m4.1.3.x cups-1.3.5/config-scri
  fi
 diff -up cups-1.3.5/config-scripts/cups-network.m4.1.3.x cups-1.3.5/config-scripts/cups-network.m4
 --- cups-1.3.5/config-scripts/cups-network.m4.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/config-scripts/cups-network.m4	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/config-scripts/cups-network.m4	2008-02-14 13:03:30.000000000 +0000
 @@ -29,24 +29,6 @@ fi
  AC_CHECK_MEMBER(struct sockaddr.sa_len,,, [#include <sys/socket.h>])
  AC_CHECK_HEADER(sys/sockio.h, AC_DEFINE(HAVE_SYS_SOCKIO_H))
@@ -6546,11 +6704,100 @@ diff -up cups-1.3.5/config-scripts/cups-network.m4.1.3.x cups-1.3.5/config-scrip
  CUPS_DEFAULT_DOMAINSOCKET=""
  
  dnl Domain socket support...
+diff -up cups-1.3.5/config-scripts/cups-defaults.m4.1.3.x cups-1.3.5/config-scripts/cups-defaults.m4
+--- cups-1.3.5/config-scripts/cups-defaults.m4.1.3.x	2007-08-01 20:00:07.000000000 +0100
++++ cups-1.3.5/config-scripts/cups-defaults.m4	2008-02-14 13:03:30.000000000 +0000
+@@ -4,7 +4,7 @@ dnl
+ dnl   Default cupsd configuration settings for the Common UNIX Printing System
+ dnl   (CUPS).
+ dnl
+-dnl   Copyright 2007 by Apple Inc.
++dnl   Copyright 2007-2008 by Apple Inc.
+ dnl   Copyright 2006-2007 by Easy Software Products, all rights reserved.
+ dnl
+ dnl   These coded instructions, statements, and computer programs are the
+@@ -337,6 +337,14 @@ AC_ARG_WITH(snmp-community, [  --with-sn
+ AC_SUBST(CUPS_SNMP_ADDRESS)
+ AC_SUBST(CUPS_SNMP_COMMUNITY)
+ 
++dnl New default port definition for IPP...
++AC_ARG_WITH(ipp-port, [  --with-ipp-port         set default port number for IPP ],
++	DEFAULT_IPP_PORT="$withval",
++	DEFAULT_IPP_PORT="631")
++
++AC_SUBST(DEFAULT_IPP_PORT)
++AC_DEFINE_UNQUOTED(CUPS_DEFAULT_IPP_PORT,$DEFAULT_IPP_PORT)
++
+ dnl
+ dnl End of "$Id: cups-defaults.m4 6754 2007-08-01 19:00:07Z mike $".
+ dnl
 diff -up cups-1.3.5/config-scripts/cups-common.m4.1.3.x cups-1.3.5/config-scripts/cups-common.m4
 --- cups-1.3.5/config-scripts/cups-common.m4.1.3.x	2007-12-17 22:14:15.000000000 +0000
-+++ cups-1.3.5/config-scripts/cups-common.m4	2008-02-05 15:08:55.000000000 +0000
-@@ -205,15 +205,6 @@ case $uname in
-                 CUPSDLIBS="-sectorder __TEXT __text cupsd.order -e start -framework IOKit -framework SystemConfiguration"
++++ cups-1.3.5/config-scripts/cups-common.m4	2008-02-14 13:03:30.000000000 +0000
+@@ -183,37 +183,60 @@ esac
+ 
+ AC_SUBST(ARFLAGS)
+ 
+-dnl Extra platform-specific libraries...
++dnl Prep libraries specifically for cupsd and backends...
+ BACKLIBS=""
+ CUPSDLIBS=""
+-DBUSDIR=""
+-CUPS_DEFAULT_PRINTADMIN_AUTH="@SYSTEM"
+-CUPS_SYSTEM_AUTHKEY=""
++AC_SUBST(BACKLIBS)
++AC_SUBST(CUPSDLIBS)
++
++dnl See if we have POSIX ACL support...
++SAVELIBS="$LIBS"
++LIBS=""
++AC_SEARCH_LIBS(acl_init, acl, AC_DEFINE(HAVE_ACL_INIT))
++CUPSDLIBS="$CUPSDLIBS $LIBS"
++LIBS="$SAVELIBS"
+ 
++dnl Check for DBUS support
+ AC_ARG_ENABLE(dbus, [  --enable-dbus           enable DBUS support, default=auto])
++AC_ARG_WITH(dbusdir, [  --with-dbusdir          set DBUS configuration directory ],
++	DBUSDIR="$withval"
++	DBUSDIR="/etc/dbus-1")
++
++if test "x$enable_dbus" != xno; then
++	AC_PATH_PROG(PKGCONFIG, pkg-config)
++	if test "x$PKGCONFIG" != x; then
++		AC_MSG_CHECKING(for DBUS)
++		if $PKGCONFIG --exists dbus-1; then
++			AC_MSG_RESULT(yes)
++			AC_DEFINE(HAVE_DBUS)
++			CFLAGS="$CFLAGS `$PKGCONFIG --cflags dbus-1` -DDBUS_API_SUBJECT_TO_CHANGE"
++			CUPSDLIBS="$CUPSDLIBS `$PKGCONFIG --libs dbus-1`"
++			AC_CHECK_LIB(dbus-1,
++			    dbus_message_iter_init_append,
++			    AC_DEFINE(HAVE_DBUS_MESSAGE_ITER_INIT_APPEND))
++		else
++			AC_MSG_RESULT(no)
++			DBUSDIR=""
++		fi
++	fi
++fi
++
++AC_SUBST(DBUSDIR)
+ 
++dnl Extra platform-specific libraries...
++CUPS_DEFAULT_PRINTADMIN_AUTH="@SYSTEM"
++CUPS_SYSTEM_AUTHKEY=""
+ FONTS="fonts"
+-AC_SUBST(FONTS)
+ LEGACY_BACKENDS="parallel scsi"
+-AC_SUBST(LEGACY_BACKENDS)
+ 
+ case $uname in
+         Darwin*)
+ 		FONTS=""
+ 		LEGACY_BACKENDS=""
+-                BACKLIBS="-framework IOKit"
+-                CUPSDLIBS="-sectorder __TEXT __text cupsd.order -e start -framework IOKit -framework SystemConfiguration"
++                BACKLIBS="$BACKLIBS -framework IOKit"
++                CUPSDLIBS="$CUPSDLIBS -sectorder __TEXT __text cupsd.order -e start -framework IOKit -framework SystemConfiguration"
                  LIBS="-framework CoreFoundation $LIBS"
  
 -		dnl Check for CFLocaleCreateCanonicalLocaleIdentifierFromString...
@@ -6565,9 +6812,65 @@ diff -up cups-1.3.5/config-scripts/cups-common.m4.1.3.x cups-1.3.5/config-script
  		dnl Check for framework headers...
  		AC_CHECK_HEADER(CoreFoundation/CoreFoundation.h,AC_DEFINE(HAVE_COREFOUNDATION_H))
  		AC_CHECK_HEADER(CoreFoundation/CFPriv.h,AC_DEFINE(HAVE_CFPRIV_H))
+@@ -238,53 +261,13 @@ case $uname in
+ 			CUPS_SYSTEM_AUTHKEY="SystemGroupAuthKey system.preferences"])
+ 		AC_CHECK_HEADER(Security/SecBasePriv.h,AC_DEFINE(HAVE_SECBASEPRIV_H))
+                 ;;
+-
+-	Linux*)
+-		dnl Check for DBUS support
+-		if test "x$enable_dbus" != xno; then
+-			AC_PATH_PROG(PKGCONFIG, pkg-config)
+-			if test "x$PKGCONFIG" != x; then
+-				AC_MSG_CHECKING(for DBUS)
+-				if $PKGCONFIG --exists dbus-1; then
+-					AC_MSG_RESULT(yes)
+-					AC_DEFINE(HAVE_DBUS)
+-					CFLAGS="$CFLAGS `$PKGCONFIG --cflags dbus-1` -DDBUS_API_SUBJECT_TO_CHANGE"
+-					CUPSDLIBS="`$PKGCONFIG --libs dbus-1`"
+-					AC_ARG_WITH(dbusdir, [  --with-dbusdir          set DBUS configuration directory ], dbusdir="$withval", dbusdir="/etc/dbus-1")
+-					DBUSDIR="$dbusdir"
+-					AC_CHECK_LIB(dbus-1,
+-					    dbus_message_iter_init_append,
+-					    AC_DEFINE(HAVE_DBUS_MESSAGE_ITER_INIT_APPEND))
+-				else
+-					AC_MSG_RESULT(no)
+-				fi
+-			fi
+-		fi
+-		;;
+ esac
+ 
+ AC_SUBST(CUPS_DEFAULT_PRINTADMIN_AUTH)
+ AC_DEFINE_UNQUOTED(CUPS_DEFAULT_PRINTADMIN_AUTH, "$CUPS_DEFAULT_PRINTADMIN_AUTH")
+ AC_SUBST(CUPS_SYSTEM_AUTHKEY)
+-
+-dnl See if we have POSIX ACL support...
+-SAVELIBS="$LIBS"
+-LIBS=""
+-AC_SEARCH_LIBS(acl_init, acl, AC_DEFINE(HAVE_ACL_INIT))
+-CUPSDLIBS="$CUPSDLIBS $LIBS"
+-LIBS="$SAVELIBS"
+-
+-AC_SUBST(BACKLIBS)
+-AC_SUBST(CUPSDLIBS)
+-AC_SUBST(DBUSDIR)
+-
+-dnl New default port definition for IPP...
+-AC_ARG_WITH(ipp-port, [  --with-ipp-port         set default port number for IPP ],
+-	DEFAULT_IPP_PORT="$withval",
+-	DEFAULT_IPP_PORT="631")
+-
+-AC_SUBST(DEFAULT_IPP_PORT)
+-AC_DEFINE_UNQUOTED(CUPS_DEFAULT_IPP_PORT,$DEFAULT_IPP_PORT)
++AC_SUBST(FONTS)
++AC_SUBST(LEGACY_BACKENDS)
+ 
+ dnl
+ dnl End of "$Id: cups-common.m4 7057 2007-11-01 23:29:14Z mike $".
 diff -up cups-1.3.5/man/lpq.man.1.3.x cups-1.3.5/man/lpq.man
 --- cups-1.3.5/man/lpq.man.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/man/lpq.man	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/man/lpq.man	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
  .\"
  .\"   lpq man page for the Common UNIX Printing System (CUPS).
@@ -6606,7 +6909,7 @@ diff -up cups-1.3.5/man/lpq.man.1.3.x cups-1.3.5/man/lpq.man
  .\"
 diff -up cups-1.3.5/man/lpadmin.man.1.3.x cups-1.3.5/man/lpadmin.man
 --- cups-1.3.5/man/lpadmin.man.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/man/lpadmin.man	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/man/lpadmin.man	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
  .\"
  .\"   lpadmin man page for the Common UNIX Printing System (CUPS).
@@ -6674,7 +6977,7 @@ diff -up cups-1.3.5/man/lpadmin.man.1.3.x cups-1.3.5/man/lpadmin.man
  .\"
 diff -up cups-1.3.5/man/cupsd.conf.man.in.1.3.x cups-1.3.5/man/cupsd.conf.man.in
 --- cups-1.3.5/man/cupsd.conf.man.in.1.3.x	2007-10-02 00:11:47.000000000 +0100
-+++ cups-1.3.5/man/cupsd.conf.man.in	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/man/cupsd.conf.man.in	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
  .\"
  .\"   cupsd.conf man page for the Common UNIX Printing System (CUPS).
@@ -6717,7 +7020,7 @@ diff -up cups-1.3.5/man/cupsd.conf.man.in.1.3.x cups-1.3.5/man/cupsd.conf.man.in
  .\"
 diff -up cups-1.3.5/INSTALL.txt.1.3.x cups-1.3.5/INSTALL.txt
 --- cups-1.3.5/INSTALL.txt.1.3.x	2007-09-18 21:39:31.000000000 +0100
-+++ cups-1.3.5/INSTALL.txt	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/INSTALL.txt	2008-02-14 13:03:30.000000000 +0000
 @@ -1,4 +1,4 @@
 -INSTALL - CUPS v1.3.2 - 2007-09-18
 +INSTALL - CUPS v1.3.6 - 2008-01-22
@@ -6747,7 +7050,7 @@ diff -up cups-1.3.5/INSTALL.txt.1.3.x cups-1.3.5/INSTALL.txt
  	autoconf -f
 diff -up cups-1.3.5/filter/pstops.c.1.3.x cups-1.3.5/filter/pstops.c
 --- cups-1.3.5/filter/pstops.c.1.3.x	2007-11-09 19:54:09.000000000 +0000
-+++ cups-1.3.5/filter/pstops.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/pstops.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   PostScript filter for the Common UNIX Printing System (CUPS).
@@ -6935,7 +7238,7 @@ diff -up cups-1.3.5/filter/pstops.c.1.3.x cups-1.3.5/filter/pstops.c
    int	level;				/* Embedded document level */
 diff -up cups-1.3.5/filter/image-photocd.c.1.3.x cups-1.3.5/filter/image-photocd.c
 --- cups-1.3.5/filter/image-photocd.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-photocd.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-photocd.c	2008-02-14 13:03:30.000000000 +0000
 @@ -7,7 +7,7 @@
   *   is only YCC encoded.  Support for the higher resolution images will
   *   require a lot of extra code...
@@ -6994,7 +7297,7 @@ diff -up cups-1.3.5/filter/image-photocd.c.1.3.x cups-1.3.5/filter/image-photocd
  
 diff -up cups-1.3.5/filter/image-sgilib.c.1.3.x cups-1.3.5/filter/image-sgilib.c
 --- cups-1.3.5/filter/image-sgilib.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-sgilib.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-sgilib.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   SGI image file format library routines for the Common UNIX Printing
   *   System (CUPS).
@@ -7073,7 +7376,7 @@ diff -up cups-1.3.5/filter/image-sgilib.c.1.3.x cups-1.3.5/filter/image-sgilib.c
                break;
 diff -up cups-1.3.5/filter/interpret.c.1.3.x cups-1.3.5/filter/interpret.c
 --- cups-1.3.5/filter/interpret.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/interpret.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/interpret.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   PPD command interpreter for the Common UNIX Printing System (CUPS).
@@ -7094,7 +7397,7 @@ diff -up cups-1.3.5/filter/interpret.c.1.3.x cups-1.3.5/filter/interpret.c
  
 diff -up cups-1.3.5/filter/image-sun.c.1.3.x cups-1.3.5/filter/image-sun.c
 --- cups-1.3.5/filter/image-sun.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-sun.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-sun.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Sun Raster image file routines for the Common UNIX Printing System (CUPS).
@@ -7142,7 +7445,7 @@ diff -up cups-1.3.5/filter/image-sun.c.1.3.x cups-1.3.5/filter/image-sun.c
  
 diff -up cups-1.3.5/filter/rastertoepson.c.1.3.x cups-1.3.5/filter/rastertoepson.c
 --- cups-1.3.5/filter/rastertoepson.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/rastertoepson.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/rastertoepson.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   EPSON ESC/P and ESC/P2 filter for the Common UNIX Printing System
   *   (CUPS).
@@ -7234,7 +7537,7 @@ diff -up cups-1.3.5/filter/rastertoepson.c.1.3.x cups-1.3.5/filter/rastertoepson
      LineCount      = 0;
 diff -up cups-1.3.5/filter/image-sgi.c.1.3.x cups-1.3.5/filter/image-sgi.c
 --- cups-1.3.5/filter/image-sgi.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-sgi.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-sgi.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   SGI image file routines for the Common UNIX Printing System (CUPS).
@@ -7290,7 +7593,7 @@ diff -up cups-1.3.5/filter/image-sgi.c.1.3.x cups-1.3.5/filter/image-sgi.c
  
 diff -up cups-1.3.5/filter/image-pnm.c.1.3.x cups-1.3.5/filter/image-pnm.c
 --- cups-1.3.5/filter/image-pnm.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-pnm.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-pnm.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Portable Any Map file routines for the Common UNIX Printing System (CUPS).
@@ -7341,7 +7644,7 @@ diff -up cups-1.3.5/filter/image-pnm.c.1.3.x cups-1.3.5/filter/image-pnm.c
    * Read the image file...
 diff -up cups-1.3.5/filter/hpgl-input.c.1.3.x cups-1.3.5/filter/hpgl-input.c
 --- cups-1.3.5/filter/hpgl-input.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/hpgl-input.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/hpgl-input.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   HP-GL/2 input processing for the Common UNIX Printing System (CUPS).
@@ -7389,7 +7692,7 @@ diff -up cups-1.3.5/filter/hpgl-input.c.1.3.x cups-1.3.5/filter/hpgl-input.c
            break;
 diff -up cups-1.3.5/filter/image-bmp.c.1.3.x cups-1.3.5/filter/image-bmp.c
 --- cups-1.3.5/filter/image-bmp.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-bmp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-bmp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   BMP image routines for the Common UNIX Printing System (CUPS).
@@ -7426,7 +7729,7 @@ diff -up cups-1.3.5/filter/image-bmp.c.1.3.x cups-1.3.5/filter/image-bmp.c
    * Read the image data...
 diff -up cups-1.3.5/filter/image-gif.c.1.3.x cups-1.3.5/filter/image-gif.c
 --- cups-1.3.5/filter/image-gif.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-gif.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-gif.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   GIF image routines for the Common UNIX Printing System (CUPS).
@@ -7453,7 +7756,7 @@ diff -up cups-1.3.5/filter/image-gif.c.1.3.x cups-1.3.5/filter/image-gif.c
    while ((pixel = gif_read_lzw(fp, 0, code_size)) >= 0)
 diff -up cups-1.3.5/filter/image-pix.c.1.3.x cups-1.3.5/filter/image-pix.c
 --- cups-1.3.5/filter/image-pix.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image-pix.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image-pix.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Alias PIX image routines for the Common UNIX Printing System (CUPS).
@@ -7490,7 +7793,7 @@ diff -up cups-1.3.5/filter/image-pix.c.1.3.x cups-1.3.5/filter/image-pix.c
    * Read the image data...
 diff -up cups-1.3.5/filter/image.c.1.3.x cups-1.3.5/filter/image.c
 --- cups-1.3.5/filter/image.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/image.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/image.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   Base image support for the Common UNIX Printing System (CUPS).
@@ -7582,7 +7885,7 @@ diff -up cups-1.3.5/filter/image.c.1.3.x cups-1.3.5/filter/image.c
      {
 diff -up cups-1.3.5/filter/rastertohp.c.1.3.x cups-1.3.5/filter/rastertohp.c
 --- cups-1.3.5/filter/rastertohp.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/filter/rastertohp.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/filter/rastertohp.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   Hewlett-Packard Page Control Language filter for the Common UNIX
   *   Printing System (CUPS).
@@ -7617,7 +7920,7 @@ diff -up cups-1.3.5/filter/rastertohp.c.1.3.x cups-1.3.5/filter/rastertohp.c
  
 diff -up cups-1.3.5/config.h.in.1.3.x cups-1.3.5/config.h.in
 --- cups-1.3.5/config.h.in.1.3.x	2007-08-29 18:22:26.000000000 +0100
-+++ cups-1.3.5/config.h.in	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/config.h.in	2008-02-14 13:03:30.000000000 +0000
 @@ -77,13 +77,6 @@
  
  
@@ -7648,7 +7951,7 @@ diff -up cups-1.3.5/config.h.in.1.3.x cups-1.3.5/config.h.in
  
 diff -up cups-1.3.5/Makedefs.in.1.3.x cups-1.3.5/Makedefs.in
 --- cups-1.3.5/Makedefs.in.1.3.x	2007-10-10 23:50:07.000000000 +0100
-+++ cups-1.3.5/Makedefs.in	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/Makedefs.in	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
  #
  #   Common makefile definitions for the Common UNIX Printing System (CUPS).
@@ -7693,7 +7996,7 @@ diff -up cups-1.3.5/Makedefs.in.1.3.x cups-1.3.5/Makedefs.in
  	echo Linking $<...
 diff -up cups-1.3.5/doc/index.html.in.1.3.x cups-1.3.5/doc/index.html.in
 --- cups-1.3.5/doc/index.html.in.1.3.x	2007-12-07 18:37:40.000000000 +0000
-+++ cups-1.3.5/doc/index.html.in	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/doc/index.html.in	2008-02-14 13:03:30.000000000 +0000
 @@ -112,9 +112,9 @@ assistance:</P>
  WIDTH="15" HEIGHT="15" ALT=""></TD>
  <TD COLSPAN="2" WIDTH="100%" STYLE="padding: 5;">
@@ -7709,7 +8012,7 @@ diff -up cups-1.3.5/doc/index.html.in.1.3.x cups-1.3.5/doc/index.html.in
  
 diff -up cups-1.3.5/doc/help/spec-ppd.html.1.3.x cups-1.3.5/doc/help/spec-ppd.html
 --- cups-1.3.5/doc/help/spec-ppd.html.1.3.x	2007-10-31 18:35:56.000000000 +0000
-+++ cups-1.3.5/doc/help/spec-ppd.html	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/doc/help/spec-ppd.html	2008-02-14 13:03:30.000000000 +0000
 @@ -1204,7 +1204,7 @@ list of locale names ("en", "en_US", "fr
  
  <pre class='command'>
@@ -7721,7 +8024,7 @@ diff -up cups-1.3.5/doc/help/spec-ppd.html.1.3.x cups-1.3.5/doc/help/spec-ppd.ht
  <h3><a name='cupsManualCopies'>cupsManualCopies</a></h3>
 diff -up cups-1.3.5/doc/help/spec-ipp.html.1.3.x cups-1.3.5/doc/help/spec-ipp.html
 --- cups-1.3.5/doc/help/spec-ipp.html.1.3.x	2007-07-12 23:58:17.000000000 +0100
-+++ cups-1.3.5/doc/help/spec-ipp.html	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/doc/help/spec-ipp.html	2008-02-14 13:03:30.000000000 +0000
 @@ -11,7 +11,7 @@
  
    CUPS IPP specification for the Common UNIX Printing System (CUPS).
@@ -7835,7 +8138,7 @@ diff -up cups-1.3.5/doc/help/spec-ipp.html.1.3.x cups-1.3.5/doc/help/spec-ipp.ht
  <p>The port-monitor attribute specifies the port monitor to use when printing
 diff -up cups-1.3.5/systemv/cupstestppd.c.1.3.x cups-1.3.5/systemv/cupstestppd.c
 --- cups-1.3.5/systemv/cupstestppd.c.1.3.x	2007-11-27 00:09:24.000000000 +0000
-+++ cups-1.3.5/systemv/cupstestppd.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/systemv/cupstestppd.c	2008-02-14 13:03:30.000000000 +0000
 @@ -3,7 +3,7 @@
   *
   *   PPD test program for the Common UNIX Printing System (CUPS).
@@ -7860,7 +8163,7 @@ diff -up cups-1.3.5/systemv/cupstestppd.c.1.3.x cups-1.3.5/systemv/cupstestppd.c
      {
 diff -up cups-1.3.5/systemv/lpmove.c.1.3.x cups-1.3.5/systemv/lpmove.c
 --- cups-1.3.5/systemv/lpmove.c.1.3.x	2007-11-27 00:09:24.000000000 +0000
-+++ cups-1.3.5/systemv/lpmove.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/systemv/lpmove.c	2008-02-14 13:03:30.000000000 +0000
 @@ -61,7 +61,6 @@ main(int  argc,				/* I - Number of comm
  
    dest      = NULL;
@@ -7918,7 +8221,7 @@ diff -up cups-1.3.5/systemv/lpmove.c.1.3.x cups-1.3.5/systemv/lpmove.c
    return (move_job(http, src, jobid, dest));
 diff -up cups-1.3.5/systemv/accept.c.1.3.x cups-1.3.5/systemv/accept.c
 --- cups-1.3.5/systemv/accept.c.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/systemv/accept.c	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/systemv/accept.c	2008-02-14 13:03:30.000000000 +0000
 @@ -4,7 +4,7 @@
   *   "accept", "disable", "enable", and "reject" commands for the Common
   *   UNIX Printing System (CUPS).
@@ -7943,7 +8246,7 @@ diff -up cups-1.3.5/systemv/accept.c.1.3.x cups-1.3.5/systemv/accept.c
  	      cupsSetServer(argv[i] + 2);
 diff -up cups-1.3.5/README.txt.1.3.x cups-1.3.5/README.txt
 --- cups-1.3.5/README.txt.1.3.x	2007-09-18 21:39:31.000000000 +0100
-+++ cups-1.3.5/README.txt	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/README.txt	2008-02-14 13:03:30.000000000 +0000
 @@ -1,4 +1,4 @@
 -README - CUPS v1.3.2 - 2007-09-18
 +README - CUPS v1.3.6 - 2008-01-22
@@ -7965,7 +8268,7 @@ diff -up cups-1.3.5/README.txt.1.3.x cups-1.3.5/README.txt
  
 diff -up cups-1.3.5/data/testprint.ps.1.3.x cups-1.3.5/data/testprint.ps
 --- cups-1.3.5/data/testprint.ps.1.3.x	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.5/data/testprint.ps	2008-02-05 15:08:55.000000000 +0000
++++ cups-1.3.5/data/testprint.ps	2008-02-14 13:03:30.000000000 +0000
 @@ -14,7 +14,7 @@
  %
  %   PostScript test page for the Common UNIX Printing System ("CUPS").
