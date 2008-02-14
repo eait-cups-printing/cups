@@ -18,6 +18,7 @@ Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
 Source8: postscript.ppd.gz
+Source9: cups.logrotate
 Source10: ncp.backend
 Source11: cups.conf
 Source12: cups.cron
@@ -47,6 +48,7 @@ Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
+Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -162,6 +164,7 @@ lpd emulation.
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .strict-ppd-line-length
+%patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
 
 %if %lspp
@@ -222,9 +225,10 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
+install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
@@ -377,6 +381,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0700,root,lp) /etc/cups/ssl
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
+%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_docdir}/cups-%{version}
 %{_docdir}/cups-%{version}/favicon.*
 %{_docdir}/cups-%{version}/images
@@ -454,6 +459,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Feb 14 2008 Tim Waugh <twaugh@redhat.com>
+- Try out logrotate again (bug #432730).
+
 * Tue Feb 12 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-5
 - Fixed admin.cgi handling of DefaultAuthType (bug #432478, STR #2703).
 
