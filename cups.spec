@@ -20,7 +20,6 @@ Source7: pstoraster.convs
 Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
-Source11: cups.conf
 Source12: cups.cron
 Source13: pdftops.conf
 Source14: textonly.filter
@@ -186,6 +185,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 	--enable-lspp \
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
+	--with-dbusdir=%{_sysconfig}/dbus-1/system.d \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -459,6 +459,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Feb 14 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-6
 - Include fixes from svn up to revision 7304.  No longer need str2703 patch.
+  Build with --with-dbusdir.
 - Try out logrotate again (bug #432730).
 
 * Tue Feb 12 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-5
