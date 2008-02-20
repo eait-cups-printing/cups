@@ -5,8 +5,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.5
-Release: 6%{?dist}
+Version: 1.3.6
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -24,7 +24,6 @@ Source12: cups.cron
 Source13: pdftops.conf
 Source14: textonly.filter
 Source15: textonly.ppd
-Patch0: cups-1.3.x.patch
 Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
@@ -139,7 +138,6 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1 -b .1.3.x
 %patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
@@ -185,7 +183,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 	--enable-lspp \
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
-	--with-dbusdir=%{_sysconfig}/dbus-1/system.d \
+	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -457,6 +455,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Feb 20 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-1
+- 1.3.6.
+
 * Thu Feb 14 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.5-6
 - Include fixes from svn up to revision 7304.  No longer need str2703 patch.
   Build with --with-dbusdir.
