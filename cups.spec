@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -47,6 +47,7 @@ Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
+Patch26: cups-str2715.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -161,6 +162,7 @@ lpd emulation.
 %patch22 -p1 -b .strict-ppd-line-length
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
+%patch26 -p1 -b .str2715
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -455,6 +457,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Sat Feb 23 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-2
+- Fix encoding of job-sheets option (bug #433753, STR #2715).
+
 * Wed Feb 20 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-1
 - 1.3.6.
 
