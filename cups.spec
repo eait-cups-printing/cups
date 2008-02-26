@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -168,7 +168,7 @@ lpd emulation.
 %patch100 -p1 -b .lspp
 %endif
 
-perl -pi -e 's,^#(Printcap\s+/etc/printcap),$1,' conf/cupsd.conf.in
+sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 autoconf
 
 cp %{SOURCE5} cups-lpd.real
@@ -457,6 +457,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-3
+- Set MaxLogSize to 0 to prevent log rotation.  Upstream default is 1Mb, but
+  we want logrotate to be in charge.
+
 * Sat Feb 23 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-2
 - Fix encoding of job-sheets option (bug #433753, STR #2715).
 
