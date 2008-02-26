@@ -179,7 +179,7 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 
 %build
 export CFLAGS="-DLDAP_DEPRECATED=1"
-%configure --with-docdir=%{_docdir}/cups-%{version} \
+%configure --with-docdir=%{_datadir}/%{name}/www \
 	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
 %if %lspp
 	--enable-lspp \
@@ -238,31 +238,6 @@ ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 %if %lspp
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
-
-# Deal with users trying to access the admin tool at
-# /usr/share/doc/cups-%{version}/index.html rather than the
-# correct http://localhost:631/
-for i in admin classes jobs printers; do
-	mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/$i
-	cat >$RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}/$i/index.html <<EOF
-<?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/transitional.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="refresh" content="2; URL=http://localhost:631/$i" />
-<title>CUPS $i</title>
-</head>
-<body bgcolor="#cccc99" text="#000000" link="#0000ff" vlink="#ff00ff">
-<p>You are trying to access the CUPS admin frontend through reading the files.
-The correct way to access the CUPS admin frontend is pointing your browser at
-<a href="http://localhost:631/">http://localhost:631/</a>.</p>
-<p>You should be automatically redirected to the correct URL in 2 seconds.
-If your browser does not support redirection, please use
-<a href="http://localhost:631/$i">this link</a>.</p>
-</body>
-</html>
-EOF
-done
 
 cat >$RPM_BUILD_ROOT%{_sysconfdir}/cups/snmp.conf <<"EOF"
 #Address @LOCAL
@@ -380,27 +355,22 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
-%dir %{_docdir}/cups-%{version}
-%{_docdir}/cups-%{version}/favicon.*
-%{_docdir}/cups-%{version}/images
-%{_docdir}/cups-%{version}/de
-%{_docdir}/cups-%{version}/es
-%{_docdir}/cups-%{version}/et
-%{_docdir}/cups-%{version}/fr
-%{_docdir}/cups-%{version}/he
-%{_docdir}/cups-%{version}/it
-%{_docdir}/cups-%{version}/ja
-%{_docdir}/cups-%{version}/pl
-%{_docdir}/cups-%{version}/sv
-%{_docdir}/cups-%{version}/zh_TW
-%{_docdir}/cups-%{version}/*.css
-%{_docdir}/cups-%{version}/admin
-%{_docdir}/cups-%{version}/classes
-%{_docdir}/cups-%{version}/jobs
-%{_docdir}/cups-%{version}/printers
-%doc %{_docdir}/cups-%{version}/index.html
-%doc %{_docdir}/cups-%{version}/help
-%doc %{_docdir}/cups-%{version}/robots.txt
+%{_datadir}/%{name}/www/favicon.*
+%{_datadir}/%{name}/www/images
+%{_datadir}/%{name}/www/de
+%{_datadir}/%{name}/www/es
+%{_datadir}/%{name}/www/et
+%{_datadir}/%{name}/www/fr
+%{_datadir}/%{name}/www/he
+%{_datadir}/%{name}/www/it
+%{_datadir}/%{name}/www/ja
+%{_datadir}/%{name}/www/pl
+%{_datadir}/%{name}/www/sv
+%{_datadir}/%{name}/www/zh_TW
+%{_datadir}/%{name}/www/*.css
+%doc %{_datadir}/%{name}/www/index.html
+%doc %{_datadir}/%{name}/www/help
+%doc %{_datadir}/%{name}/www/robots.txt
 %config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
@@ -457,6 +427,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com>
+- Move HTML-related files to main application directory so that the CUPS
+  web interface still works even with --excludedocs (bug #375631).
+
 * Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-3
 - Set MaxLogSize to 0 to prevent log rotation.  Upstream default is 1Mb, but
   we want logrotate to be in charge.
