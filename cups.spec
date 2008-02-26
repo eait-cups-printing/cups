@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -427,7 +427,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com>
+* Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-4
 - LSB header for initscript (bug #246897).
 - Move HTML-related files to main application directory so that the CUPS
   web interface still works even with --excludedocs (bug #375631).
