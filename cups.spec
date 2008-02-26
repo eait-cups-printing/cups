@@ -428,6 +428,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com>
+- LSB header for initscript (bug #246897).
 - Move HTML-related files to main application directory so that the CUPS
   web interface still works even with --excludedocs (bug #375631).
 
