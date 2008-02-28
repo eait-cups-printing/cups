@@ -6,7 +6,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
@@ -48,6 +48,7 @@ Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
 Patch26: cups-str2715.patch
+Patch27: cups-str2727.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -163,6 +164,7 @@ lpd emulation.
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
 %patch26 -p1 -b .str2715
+%patch27 -p1 -b .str2727
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -427,6 +429,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Feb 28 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-5
+- Apply upstream fix for Adobe JPEG files (bug #166460, STR #2727).
+
 * Tue Feb 26 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-4
 - LSB header for initscript (bug #246897).
 - Move HTML-related files to main application directory so that the CUPS
