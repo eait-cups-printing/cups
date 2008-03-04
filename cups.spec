@@ -24,7 +24,6 @@ Source12: cups.cron
 Source13: pdftops.conf
 Source14: textonly.filter
 Source15: textonly.ppd
-Patch1: cups-1.1.15-initscript.patch
 Patch2: cups-no-gzip-man.patch
 Patch3: cups-1.1.16-system-auth.patch
 Patch4: cups-multilib.patch
@@ -140,7 +139,6 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch1 -p1 -b .noinit
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
 %patch4 -p1 -b .multilib
@@ -195,7 +193,6 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{initdir}
 
 make BUILDROOT=$RPM_BUILD_ROOT install 
 
@@ -205,6 +202,10 @@ install -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{cups_serverbin}/backend/dnssd
 # Serial backend needs to run as root (bug #212577).
 chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 
+rm -rf	$RPM_BUILD_ROOT%{initdir} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
+	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
+mkdir -p $RPM_BUILD_ROOT%{initdir}
 install -m 755 $RPM_SOURCE_DIR/cups.init $RPM_BUILD_ROOT%{initdir}/cups
 
 find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -n9f
