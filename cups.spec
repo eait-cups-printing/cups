@@ -31,7 +31,6 @@ Patch5: cups-ext.patch
 Patch6: cups-includeifexists.patch
 Patch7: cups-banners.patch
 Patch8: cups-serverbin-compat.patch
-Patch9: cups-locale.patch
 Patch10: cups-no-export-ssllibs.patch
 Patch11: cups-paps.patch
 Patch12: cups-wbuffer.patch
@@ -146,7 +145,6 @@ lpd emulation.
 %patch6 -p1 -b .includeifexists
 %patch7 -p1 -b .banners
 %patch8 -p1 -b .serverbin-compat
-%patch9 -p1 -b .locale
 %patch10 -p1 -b .no-export-ssllibs
 %patch11 -p1 -b .paps
 %patch12 -p1 -b .wbuffer
