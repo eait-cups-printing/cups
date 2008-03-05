@@ -1,3 +1,4 @@
+#define svn 7356
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -6,10 +7,10 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 5%{?dist}
+Release: 5%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: http://www.openprinting.org/download/printing/dnssd
@@ -137,7 +138,7 @@ UNIX® operating systems. This is the package that provices standard
 lpd emulation.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}%{?svn:svn-r%{svn}}
 %patch2 -p1 -b .no-gzip-man
 %patch3 -p1 -b .system-auth
 %patch4 -p1 -b .multilib
@@ -182,6 +183,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
+	%{?svn:--enable-pdftops} \
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	localedir=%{_datadir}/locale
@@ -273,6 +275,10 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
+%if %{?svn:1}%{!?svn:0}
+rm -f $RPM_BUILD_ROOT%{_bindir}/ppd{c,html,i,merge,po}
+rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/ppdc
+%endif
 
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
@@ -358,6 +364,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_datadir}/%{name}/www/favicon.*
 %{_datadir}/%{name}/www/images
+%if %{?svn:1}%{!?svn:0}
+%else
 %{_datadir}/%{name}/www/de
 %{_datadir}/%{name}/www/es
 %{_datadir}/%{name}/www/et
@@ -368,6 +376,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/www/pl
 %{_datadir}/%{name}/www/sv
 %{_datadir}/%{name}/www/zh_TW
+%endif
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
