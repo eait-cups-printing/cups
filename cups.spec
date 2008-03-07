@@ -1,4 +1,4 @@
-#define svn 7356
+#define svn 7370
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -57,6 +57,9 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
+%endif
+%if %{?svn:1}%{!?svn:0}
+Requires: poppler-utils
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
@@ -183,9 +186,8 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	%{?svn:--enable-pdftops} \
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
-	--with-dbusdir=%{_sysconfdir}/dbus-1 \
+	--enable-pdftops --with-dbusdir=%{_sysconfdir}/dbus-1 \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -277,6 +279,8 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
 %if %{?svn:1}%{!?svn:0}
 rm -f $RPM_BUILD_ROOT%{_bindir}/ppd{c,html,i,merge,po}
+rm -f $RPM_BUILD_ROOT%{cups_serverbin}/filter/{command,raster}to{escpx,pclx}
+rm -f $RPM_BUILD_ROOT%{cups_serverbin}/driver/drv
 rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/ppdc
 %endif
 
