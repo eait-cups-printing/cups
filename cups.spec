@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 5%{?svn:.svn%{svn}}%{?dist}
+Release: 6%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -366,6 +366,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
+%dir %{_datadir}/%{name}/www
 %{_datadir}/%{name}/www/favicon.*
 %{_datadir}/%{name}/www/images
 %if %{?svn:1}%{!?svn:0}
@@ -441,6 +442,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Mar 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-6
+- Own %%{_datadir}/cups/www (bug #437742).
+
 * Thu Feb 28 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-5
 - Apply upstream fix for Adobe JPEG files (bug #166460, STR #2727).
 
