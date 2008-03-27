@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 6%{?svn:.svn%{svn}}%{?dist}
+Release: 7%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -237,7 +237,6 @@ install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
 install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
 install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
-ln -s ../doc/%{name}-%{version} $RPM_BUILD_ROOT%{_datadir}/%{name}/doc
 
 # Ship pstopdf for LSPP systems to deal with malicious postscript
 %if %lspp
@@ -410,7 +409,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/charsets
 %{_datadir}/cups/charmaps
 %{_datadir}/cups/data
-%{_datadir}/cups/doc
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
 %{_datadir}/cups/templates
@@ -442,6 +440,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Mar 27 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-7
+- Don't ship broken symlink %%{_datadir}/cups/doc (bug #438598).
+
 * Mon Mar 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-6
 - Own %%{_datadir}/cups/www (bug #437742).
 
