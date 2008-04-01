@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.6
-Release: 7%{?svn:.svn%{svn}}%{?dist}
+Release: 8%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -345,6 +345,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
 %dir %attr(0755,root,lp) /etc/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
@@ -440,6 +441,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-8
+- Ship a few doc files (bug #438598).
+
 * Thu Mar 27 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-7
 - Don't ship broken symlink %%{_datadir}/cups/doc (bug #438598).
 
