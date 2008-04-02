@@ -6,8 +6,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.6
-Release: 9%{?svn:.svn%{svn}}%{?dist}
+Version: 1.3.7
+Release: 1%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -46,9 +46,6 @@ Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
-Patch26: cups-str2715.patch
-Patch27: cups-str2727.patch
-Patch28: cups-CVE-2008-0047.patch
 Patch29: cups-CVE-2008-1373.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -165,9 +162,6 @@ lpd emulation.
 %patch22 -p1 -b .strict-ppd-line-length
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
-%patch26 -p1 -b .str2715
-%patch27 -p1 -b .str2727
-%patch28 -p1 -b .CVE-2008-0047
 %patch29 -p1 -b .CVE-2008-1373
 
 %if %lspp
@@ -445,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed Apr  2 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-1
+- 1.3.7.  No longer need str2715, str2727, or CVE-2008-0047 patches.
+
 * Thu Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-9
 - Applied patch to fix CVE-2008-1373 (GIF overflow, bug #438303).
 - Applied patch to prevent heap-based buffer overflow in CUPS helper
