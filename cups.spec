@@ -91,9 +91,6 @@ BuildRequires: gcc >= 4.0.1
 BuildPrereq: dbus-devel >= 0.90
 Requires: dbus >= 0.90
 
-# Main package requires exactly-matching libs package.
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
-
 # The paps package uses pango to render UTF-8 text to PostScript.
 Requires: paps >= 0.6.6-9
 
