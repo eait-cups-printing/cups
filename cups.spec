@@ -91,6 +91,9 @@ BuildRequires: gcc >= 4.0.1
 BuildPrereq: dbus-devel >= 0.90
 Requires: dbus >= 0.90
 
+# Main package requires exactly-matching libs package.
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
+
 # The paps package uses pango to render UTF-8 text to PostScript.
 Requires: paps >= 0.6.6-9
 
@@ -101,7 +104,7 @@ Requires: tmpwatch
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 License: LGPLv2
-Requires: %{name}-libs = %{epoch}:%{version}
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 
@@ -113,7 +116,8 @@ License: LGPLv2
 %package lpd
 Summary: Common Unix Printing System - lpd emulation
 Group: System Environment/Daemons
-Requires: %{name} = %{epoch}:%{version} xinetd
+Requires: %{name} = %{epoch}:%{version}-%{release}
+Requires: xinetd
 
 %description
 The Common UNIX Printing System provides a portable printing layer for 
@@ -439,6 +443,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu Apr  3 2008 Tim Waugh <twaugh@redhat.com>
+- Main package requires exactly-matching libs package.
+
 * Wed Apr  2 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-1
 - 1.3.7.  No longer need str2715, str2727, or CVE-2008-0047 patches.
 
