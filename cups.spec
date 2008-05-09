@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 1%{?svn:.svn%{svn}}%{?dist}
+Release: 2%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -47,6 +47,7 @@ Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
 Patch29: cups-CVE-2008-1373.patch
+Patch30: cups-CVE-2008-1722.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -164,6 +165,7 @@ lpd emulation.
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
 %patch29 -p1 -b .CVE-2008-1373
+%patch30 -p1 -b .CVE-2008-1722
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -440,6 +442,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri May  9 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-2
+- Applied patch to fix CVE-2008-1722 (integer overflow in image filter,
+  bug #441692, STR #2790).
+
 * Thu Apr  3 2008 Tim Waugh <twaugh@redhat.com>
 - Main package requires exactly-matching libs package.
 
