@@ -442,6 +442,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Wed May 28 2008 Tim Waugh <twaugh@redhat.com>
+- If cupsdTimeoutJob is called when the originating connection is still
+  known, pass that to the function so that copy_banner can get at it if
+  necessary (bug #447200).
+
 * Fri May  9 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-2
 - Applied patch to fix CVE-2008-1722 (integer overflow in image filter,
   bug #441692, STR #2790).
