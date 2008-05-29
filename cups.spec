@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 3%{?svn:.svn%{svn}}%{?dist}
+Release: 4%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -442,6 +442,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Thu May 29 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-4
+- Fix last fix (bug #447200).
+
 * Wed May 28 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-3
 - If cupsdTimeoutJob is called when the originating connection is still
   known, pass that to the function so that copy_banner can get at it if
