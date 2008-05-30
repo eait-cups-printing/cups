@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 4%{?svn:.svn%{svn}}%{?dist}
+Release: 5%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -442,6 +442,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri May 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-5
+- Better fix for cupsdTimeoutJob LSPP configuration suggested by
+  Matt Anderson (bug #447200).
+
 * Thu May 29 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-4
 - Fix last fix (bug #447200).
 
