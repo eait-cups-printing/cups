@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 5%{?svn:.svn%{svn}}%{?dist}
+Release: 6%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -40,6 +40,7 @@ Patch14: cups-lpr-help.patch
 Patch15: cups-peercred.patch
 Patch16: cups-pid.patch
 Patch17: cups-foomatic-recommended.patch
+Patch18: cups-str2750.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
@@ -158,6 +159,7 @@ lpd emulation.
 %patch15 -p1 -b .peercred
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .foomatic-recommended
+%patch18 -p1 -b .str2750
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
@@ -442,6 +444,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun  3 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-6
+- Applied patch to fix STR #2750 (IPP authentication).
+
 * Fri May 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-5
 - Better fix for cupsdTimeoutJob LSPP configuration suggested by
   Matt Anderson (bug #447200).
