@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 6%{?svn:.svn%{svn}}%{?dist}
+Release: 7%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -49,6 +49,7 @@ Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
 Patch29: cups-CVE-2008-1373.patch
 Patch30: cups-CVE-2008-1722.patch
+Patch31: cups-getnameddest.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -168,6 +169,7 @@ lpd emulation.
 %patch25 -p1 -b .usb-paperout
 %patch29 -p1 -b .CVE-2008-1373
 %patch30 -p1 -b .CVE-2008-1722
+%patch31 -p1 -b .getnameddest
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -444,6 +446,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-7
+- Backported cupsGetNamedDest from 1.4 (bug #428086).
+
 * Tue Jun  3 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-6
 - Applied patch to fix STR #2750 (IPP authentication).
 
