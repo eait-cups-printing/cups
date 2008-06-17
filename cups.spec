@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 8%{?svn:.svn%{svn}}%{?dist}
+Release: 9%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -248,13 +248,6 @@ install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
 
-cat >$RPM_BUILD_ROOT%{_sysconfdir}/cups/snmp.conf <<"EOF"
-#Address @LOCAL
-#Community public
-#DebugLevel 0
-#HostNameLookups off
-EOF
-
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
@@ -446,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-9
+- Don't overwrite the upstream snmp.conf file.
+
 * Tue Jun 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-8
 - Fixed bug #447200 again.
 
