@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 9%{?svn:.svn%{svn}}%{?dist}
+Release: 10%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -439,6 +439,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jun 24 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-10
+- Rebuilt for new gnutls.
+
 * Tue Jun 17 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-9
 - Don't overwrite the upstream snmp.conf file.
 
