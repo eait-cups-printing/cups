@@ -100,6 +100,10 @@ Requires: paps >= 0.6.6-9
 # Requires tmpwatch for the cron.daily script (bug #218901).
 Requires: tmpwatch
 
+# We use portreserve to prevent our TCP port being stolen.
+# Require the package here so that we know /etc/portreserve/ exists.
+Requires: portreserve
+
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
@@ -269,6 +273,10 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
 ln -s ../../ppd $RPM_BUILD_ROOT%{_datadir}/cups/model/3-distribution
 
+# Tell portreserve which port we want it to protect.
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/portreserve
+echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
+
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
@@ -364,6 +372,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
+%config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
 %{_datadir}/%{name}/www/favicon.*
 %{_datadir}/%{name}/www/images
@@ -439,6 +448,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jul  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-11
+- Use portreserve.
+
 * Tue Jun 24 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-10
 - Rebuilt for new gnutls.
 

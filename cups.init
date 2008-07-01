@@ -51,6 +51,9 @@ prog=cups
 start () {
 	echo -n $"Starting $prog: "
 
+	# tell portreserve to release the port
+	[ -x /sbin/portrelease ] && /sbin/portrelease cups &>/dev/null || :
+
 	# start daemon
 	daemon $DAEMON
         RETVAL=$?
