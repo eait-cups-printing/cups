@@ -1,6 +1,7 @@
---- cups-1.3b1/backend/ipp.c.eggcups	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3b1/backend/ipp.c	2007-07-18 11:34:16.000000000 +0100
-@@ -57,6 +57,70 @@
+diff -up cups-1.3.7/backend/ipp.c.eggcups cups-1.3.7/backend/ipp.c
+--- cups-1.3.7/backend/ipp.c.eggcups	2008-07-15 13:34:01.000000000 +0100
++++ cups-1.3.7/backend/ipp.c	2008-07-15 13:34:01.000000000 +0100
+@@ -58,6 +58,70 @@ static char	pstmpname[1024] = "";	/* Tem
  static char	tmpfilename[1024] = "";	/* Temporary spool file name */
  static int	job_cancelled = 0;	/* Job cancelled? */
  
@@ -71,8 +72,8 @@
  
  /*
   * Local functions...
-@@ -974,6 +1038,15 @@
-       fprintf(stderr, _("NOTICE: Print file accepted - job ID %d.\n"), job_id);
+@@ -1004,6 +1068,15 @@ main(int  argc,				/* I - Number of comm
+                       job_id);
      }
  
 +#if HAVE_DBUS
@@ -87,9 +88,10 @@
      ippDelete(response);
  
      if (job_cancelled)
---- cups-1.3b1/backend/Makefile.eggcups	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3b1/backend/Makefile	2007-07-18 11:36:35.000000000 +0100
-@@ -131,7 +131,7 @@
+diff -up cups-1.3.7/backend/Makefile.eggcups cups-1.3.7/backend/Makefile
+--- cups-1.3.7/backend/Makefile.eggcups	2007-08-08 20:27:51.000000000 +0100
++++ cups-1.3.7/backend/Makefile	2008-07-15 13:34:01.000000000 +0100
+@@ -131,7 +131,7 @@ ieee1394-linux.o:	ieee1394.h
  
  ipp:	ipp.o ../cups/$(LIBCUPS)
  	echo Linking $@...
@@ -98,9 +100,10 @@
  	$(RM) http
  	$(LN) ipp http
  
---- cups-1.3b1/scheduler/subscriptions.c.eggcups	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3b1/scheduler/subscriptions.c	2007-07-18 11:34:16.000000000 +0100
-@@ -1292,13 +1292,13 @@
+diff -up cups-1.3.7/scheduler/subscriptions.c.eggcups cups-1.3.7/scheduler/subscriptions.c
+--- cups-1.3.7/scheduler/subscriptions.c.eggcups	2008-01-23 22:23:42.000000000 +0000
++++ cups-1.3.7/scheduler/subscriptions.c	2008-07-15 13:34:01.000000000 +0100
+@@ -1295,13 +1295,13 @@ cupsd_send_dbus(cupsd_eventmask_t event,
      what = "PrinterAdded";
    else if (event & CUPSD_EVENT_PRINTER_DELETED)
      what = "PrinterRemoved";
@@ -116,7 +119,7 @@
    else
      return;
  
-@@ -1334,7 +1334,7 @@
+@@ -1337,7 +1337,7 @@ cupsd_send_dbus(cupsd_eventmask_t event,
    dbus_message_append_iter_init(message, &iter);
    if (dest)
      dbus_message_iter_append_string(&iter, dest->name);
