@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.7
-Release: 12%{?svn:.svn%{svn}}%{?dist}
+Release: 13%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -449,7 +449,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com>
+* Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-13
 - Mark HTML files and templates config(noreplace) for site-local
   modifications (bug #441719).
 - The cups-devel package requires zlib-devel (bug #455192).
