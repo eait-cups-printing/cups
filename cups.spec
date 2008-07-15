@@ -375,25 +375,25 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
-%{_datadir}/%{name}/www/favicon.*
-%{_datadir}/%{name}/www/images
+%config(noreplace) %{_datadir}/%{name}/www/favicon.*
+%config(noreplace) %{_datadir}/%{name}/www/images
 %if %{?svn:1}%{!?svn:0}
 %else
-%{_datadir}/%{name}/www/de
-%{_datadir}/%{name}/www/es
-%{_datadir}/%{name}/www/et
-%{_datadir}/%{name}/www/fr
-%{_datadir}/%{name}/www/he
-%{_datadir}/%{name}/www/it
-%{_datadir}/%{name}/www/ja
-%{_datadir}/%{name}/www/pl
-%{_datadir}/%{name}/www/sv
-%{_datadir}/%{name}/www/zh_TW
+%config(noreplace) %{_datadir}/%{name}/www/de
+%config(noreplace) %{_datadir}/%{name}/www/es
+%config(noreplace) %{_datadir}/%{name}/www/et
+%config(noreplace) %{_datadir}/%{name}/www/fr
+%config(noreplace) %{_datadir}/%{name}/www/he
+%config(noreplace) %{_datadir}/%{name}/www/it
+%config(noreplace) %{_datadir}/%{name}/www/ja
+%config(noreplace) %{_datadir}/%{name}/www/pl
+%config(noreplace) %{_datadir}/%{name}/www/sv
+%config(noreplace) %{_datadir}/%{name}/www/zh_TW
 %endif
-%{_datadir}/%{name}/www/*.css
-%doc %{_datadir}/%{name}/www/index.html
-%doc %{_datadir}/%{name}/www/help
-%doc %{_datadir}/%{name}/www/robots.txt
+%config(noreplace) %{_datadir}/%{name}/www/*.css
+%config(noreplace) %doc %{_datadir}/%{name}/www/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/help
+%config(noreplace) %doc %{_datadir}/%{name}/www/robots.txt
 %config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
@@ -450,6 +450,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com>
+- Mark HTML files and templates config(noreplace) for site-local
+  modifications (bug #441719).
 - The cups-devel package requires zlib-devel (bug #455192).
 
 * Tue Jul  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-12
