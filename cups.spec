@@ -111,6 +111,7 @@ License: LGPLv2
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
+Requires: zlib-devel
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -448,6 +449,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com>
+- The cups-devel package requires zlib-devel (bug #455192).
+
 * Tue Jul  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-12
 - Fixed bug #447200 again.
 
