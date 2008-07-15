@@ -1,6 +1,7 @@
---- cups-1.2.10/backend/usb-unix.c.usb-paperout	2007-06-26 15:11:14.000000000 +0100
-+++ cups-1.2.10/backend/usb-unix.c	2007-06-26 15:16:23.000000000 +0100
-@@ -39,6 +39,11 @@
+diff -up cups-1.3.7/backend/usb-unix.c.usb-paperout cups-1.3.7/backend/usb-unix.c
+--- cups-1.3.7/backend/usb-unix.c.usb-paperout	2008-07-15 13:47:33.000000000 +0100
++++ cups-1.3.7/backend/usb-unix.c	2008-07-15 13:47:33.000000000 +0100
+@@ -31,6 +31,11 @@
  #include "ieee1284.c"
  #include <sys/select.h>
  
@@ -12,7 +13,7 @@
  
  /*
   * Local functions...
-@@ -308,7 +313,19 @@
+@@ -323,7 +328,19 @@ open_device(const char *uri,		/* I - Dev
    if (!strncmp(uri, "usb:/dev/", 9))
  #ifdef __linux
    {
@@ -33,7 +34,7 @@
    }
    else if (!strncmp(uri, "usb://", 6))
    {
-@@ -374,7 +391,14 @@
+@@ -389,7 +406,14 @@ open_device(const char *uri,		/* I - Dev
          if (!strcmp(uri, device_uri))
  	{
  	 /*
@@ -48,4 +49,4 @@
 +	  * Return this file descriptor...
  	  */
  
- 	  fprintf(stderr, "DEBUG: Printer using device file \"%s\"...\n", device);
+ 	  fprintf(stderr, "DEBUG: Printer using device file \"%s\"...\n",
