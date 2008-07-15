@@ -47,7 +47,6 @@ Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
-Patch29: cups-CVE-2008-1373.patch
 Patch30: cups-CVE-2008-1722.patch
 Patch31: cups-getnameddest.patch
 Patch100: cups-lspp.patch
@@ -450,6 +449,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-13
+- CVE-2008-1373 patch is no longer needed (applied upstream).
 - Mark HTML files and templates config(noreplace) for site-local
   modifications (bug #441719).
 - The cups-devel package requires zlib-devel (bug #455192).
