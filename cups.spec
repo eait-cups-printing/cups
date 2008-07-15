@@ -171,7 +171,6 @@ lpd emulation.
 %patch22 -p1 -b .strict-ppd-line-length
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
-%patch29 -p1 -b .CVE-2008-1373
 %patch30 -p1 -b .CVE-2008-1722
 %patch31 -p1 -b .getnameddest
 
