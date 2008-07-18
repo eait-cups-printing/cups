@@ -80,7 +80,6 @@ BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-compat-libdns_sd-devel
-BuildRequires: autoconf
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -179,7 +178,6 @@ lpd emulation.
 %endif
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
-autoconf
 
 cp %{SOURCE5} cups-lpd.real
 perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
@@ -447,6 +445,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Fri Jul 18 2008 Tim Waugh <twaugh@redhat.com>
+- Removed autoconf requirement by applying autoconf-generated changes
+  to patches that caused them.  Affected patches: cups-lspp.
+
 * Tue Jul 15 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-13
 - CVE-2008-1373 patch is no longer needed (applied upstream).
 - Mark HTML files and templates config(noreplace) for site-local

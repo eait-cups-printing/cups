@@ -1,5 +1,549 @@
---- cups-1.3.7/cups/cups.h.lspp	2008-02-20 00:32:58.000000000 +0000
-+++ cups-1.3.7/cups/cups.h	2008-05-30 16:59:10.000000000 +0100
+diff -up cups-1.3.7/config.h.in.lspp cups-1.3.7/config.h.in
+--- cups-1.3.7/config.h.in.lspp	2008-01-07 18:26:57.000000000 +0000
++++ cups-1.3.7/config.h.in	2008-07-18 13:06:51.000000000 +0100
+@@ -530,6 +530,13 @@
+ #undef HAVE_REMOVEFILE
+ 
+ 
++/*
++ * Are we trying to meet LSPP requirements?
++ */
++
++#undef WITH_LSPP
++
++
+ #endif /* !_CUPS_CONFIG_H_ */
+ 
+ /*
+diff -up /dev/null cups-1.3.7/config-scripts/cups-lspp.m4
+--- /dev/null	2008-07-18 08:54:40.909125715 +0100
++++ cups-1.3.7/config-scripts/cups-lspp.m4	2008-07-18 13:06:51.000000000 +0100
+@@ -0,0 +1,36 @@
++dnl
++dnl   LSPP code for the Common UNIX Printing System (CUPS).
++dnl
++dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
++dnl
++dnl   This program is free software; you can redistribute it and/or modify
++dnl   it under the terms of the GNU General Public License as published by
++dnl   the Free Software Foundation; version 2.
++dnl
++dnl   This program is distributed in the hope that it will be useful, but
++dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
++dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++dnl   General Public License for more details.
++dnl
++dnl   You should have received a copy of the GNU General Public License
++dnl   along with this program; if not, write to the Free Software Foundation,
++dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
++dnl
++
++dnl Are we trying to meet LSPP requirements
++AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
++
++if test x"$enable_lspp" != xno; then
++    case "$uname" in
++        Linux)
++            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
++            AC_CHECK_HEADER(libaudit.h)
++            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
++            AC_CHECK_HEADER(selinux/selinux.h)
++            AC_DEFINE(WITH_LSPP)
++            ;;
++        *)
++            # All others
++            ;;
++    esac
++fi
+diff -up cups-1.3.7/configure.in.lspp cups-1.3.7/configure.in
+--- cups-1.3.7/configure.in.lspp	2007-07-25 00:47:12.000000000 +0100
++++ cups-1.3.7/configure.in	2008-07-18 13:06:51.000000000 +0100
+@@ -42,6 +42,8 @@ sinclude(config-scripts/cups-pap.m4)
+ sinclude(config-scripts/cups-pdf.m4)
+ sinclude(config-scripts/cups-scripting.m4)
+ 
++sinclude(config-scripts/cups-lspp.m4)
++
+ INSTALL_LANGUAGES=""
+ UNINSTALL_LANGUAGES=""
+ LANGFILES=""
+diff -up cups-1.3.7/configure.lspp cups-1.3.7/configure
+--- cups-1.3.7/configure.lspp	2008-07-18 13:07:30.000000000 +0100
++++ cups-1.3.7/configure	2008-07-18 13:07:35.000000000 +0100
+@@ -806,6 +806,8 @@ PHP
+ PHPCONFIG
+ PHPDIR
+ PYTHON
++LIBAUDIT
++LIBSELINUX
+ INSTALL_LANGUAGES
+ UNINSTALL_LANGUAGES
+ LIBOBJS
+@@ -1429,6 +1431,7 @@ Optional Features:
+                           enable UseNetworkDefault by default, default=auto
+   --enable-raw-printing   enable raw printing by default, default=auto
+   --enable-pdftops        build pdftops filter, default=auto
++  --enable-lspp           turn on auditing and label support, default=no
+ 
+ Optional Packages:
+   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+@@ -9647,10 +9650,10 @@ case "$uname" in
+ 		;;
+ 	Linux* | GNU*)
+ 		# Linux and GNU Hurd
+-		MAN1EXT=1.gz
+-		MAN5EXT=5.gz
+-		MAN7EXT=7.gz
+-		MAN8EXT=8.gz
++		MAN1EXT=1
++		MAN5EXT=5
++		MAN7EXT=7
++		MAN8EXT=8
+ 		MAN8DIR=8
+ 		;;
+ 	*)
+@@ -18413,6 +18416,412 @@ fi
+ 
+ 
+ 
++
++# Check whether --enable-lspp was given.
++if test "${enable_lspp+set}" = set; then
++  enableval=$enable_lspp;
++fi
++
++
++if test x"$enable_lspp" != xno; then
++    case "$uname" in
++        Linux)
++            { echo "$as_me:$LINENO: checking for audit_log_user_message in -laudit" >&5
++echo $ECHO_N "checking for audit_log_user_message in -laudit... $ECHO_C" >&6; }
++if test "${ac_cv_lib_audit_audit_log_user_message+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-laudit  $LIBS"
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char audit_log_user_message ();
++int
++main ()
++{
++return audit_log_user_message ();
++  ;
++  return 0;
++}
++_ACEOF
++rm -f conftest.$ac_objext conftest$ac_exeext
++if { (ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_link") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext &&
++       $as_test_x conftest$ac_exeext; then
++  ac_cv_lib_audit_audit_log_user_message=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_cv_lib_audit_audit_log_user_message=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
++      conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_lib_audit_audit_log_user_message" >&5
++echo "${ECHO_T}$ac_cv_lib_audit_audit_log_user_message" >&6; }
++if test $ac_cv_lib_audit_audit_log_user_message = yes; then
++  LIBAUDIT="-laudit"
++fi
++
++            if test "${ac_cv_header_libaudit_h+set}" = set; then
++  { echo "$as_me:$LINENO: checking for libaudit.h" >&5
++echo $ECHO_N "checking for libaudit.h... $ECHO_C" >&6; }
++if test "${ac_cv_header_libaudit_h+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_header_libaudit_h" >&5
++echo "${ECHO_T}$ac_cv_header_libaudit_h" >&6; }
++else
++  # Is the header compilable?
++{ echo "$as_me:$LINENO: checking libaudit.h usability" >&5
++echo $ECHO_N "checking libaudit.h usability... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++$ac_includes_default
++#include <libaudit.h>
++_ACEOF
++rm -f conftest.$ac_objext
++if { (ac_try="$ac_compile"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_compile") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest.$ac_objext; then
++  ac_header_compiler=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_header_compiler=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
++echo "${ECHO_T}$ac_header_compiler" >&6; }
++
++# Is the header present?
++{ echo "$as_me:$LINENO: checking libaudit.h presence" >&5
++echo $ECHO_N "checking libaudit.h presence... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++#include <libaudit.h>
++_ACEOF
++if { (ac_try="$ac_cpp conftest.$ac_ext"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } >/dev/null && {
++	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       }; then
++  ac_header_preproc=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++  ac_header_preproc=no
++fi
++
++rm -f conftest.err conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
++echo "${ECHO_T}$ac_header_preproc" >&6; }
++
++# So?  What about this header?
++case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
++  yes:no: )
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: accepted by the compiler, rejected by the preprocessor!" >&5
++echo "$as_me: WARNING: libaudit.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: proceeding with the compiler's result" >&5
++echo "$as_me: WARNING: libaudit.h: proceeding with the compiler's result" >&2;}
++    ac_header_preproc=yes
++    ;;
++  no:yes:* )
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: present but cannot be compiled" >&5
++echo "$as_me: WARNING: libaudit.h: present but cannot be compiled" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h:     check for missing prerequisite headers?" >&5
++echo "$as_me: WARNING: libaudit.h:     check for missing prerequisite headers?" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: see the Autoconf documentation" >&5
++echo "$as_me: WARNING: libaudit.h: see the Autoconf documentation" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h:     section \"Present But Cannot Be Compiled\"" >&5
++echo "$as_me: WARNING: libaudit.h:     section \"Present But Cannot Be Compiled\"" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: proceeding with the preprocessor's result" >&5
++echo "$as_me: WARNING: libaudit.h: proceeding with the preprocessor's result" >&2;}
++    { echo "$as_me:$LINENO: WARNING: libaudit.h: in the future, the compiler will take precedence" >&5
++echo "$as_me: WARNING: libaudit.h: in the future, the compiler will take precedence" >&2;}
++
++    ;;
++esac
++{ echo "$as_me:$LINENO: checking for libaudit.h" >&5
++echo $ECHO_N "checking for libaudit.h... $ECHO_C" >&6; }
++if test "${ac_cv_header_libaudit_h+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  ac_cv_header_libaudit_h=$ac_header_preproc
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_header_libaudit_h" >&5
++echo "${ECHO_T}$ac_cv_header_libaudit_h" >&6; }
++
++fi
++
++
++            { echo "$as_me:$LINENO: checking for getpeercon in -lselinux" >&5
++echo $ECHO_N "checking for getpeercon in -lselinux... $ECHO_C" >&6; }
++if test "${ac_cv_lib_selinux_getpeercon+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lselinux  $LIBS"
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char getpeercon ();
++int
++main ()
++{
++return getpeercon ();
++  ;
++  return 0;
++}
++_ACEOF
++rm -f conftest.$ac_objext conftest$ac_exeext
++if { (ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_link") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext &&
++       $as_test_x conftest$ac_exeext; then
++  ac_cv_lib_selinux_getpeercon=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_cv_lib_selinux_getpeercon=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
++      conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_lib_selinux_getpeercon" >&5
++echo "${ECHO_T}$ac_cv_lib_selinux_getpeercon" >&6; }
++if test $ac_cv_lib_selinux_getpeercon = yes; then
++  LIBSELINUX="-lselinux"
++fi
++
++            if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
++  { echo "$as_me:$LINENO: checking for selinux/selinux.h" >&5
++echo $ECHO_N "checking for selinux/selinux.h... $ECHO_C" >&6; }
++if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_header_selinux_selinux_h" >&5
++echo "${ECHO_T}$ac_cv_header_selinux_selinux_h" >&6; }
++else
++  # Is the header compilable?
++{ echo "$as_me:$LINENO: checking selinux/selinux.h usability" >&5
++echo $ECHO_N "checking selinux/selinux.h usability... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++$ac_includes_default
++#include <selinux/selinux.h>
++_ACEOF
++rm -f conftest.$ac_objext
++if { (ac_try="$ac_compile"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_compile") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } && {
++	 test -z "$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest.$ac_objext; then
++  ac_header_compiler=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_header_compiler=no
++fi
++
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
++echo "${ECHO_T}$ac_header_compiler" >&6; }
++
++# Is the header present?
++{ echo "$as_me:$LINENO: checking selinux/selinux.h presence" >&5
++echo $ECHO_N "checking selinux/selinux.h presence... $ECHO_C" >&6; }
++cat >conftest.$ac_ext <<_ACEOF
++/* confdefs.h.  */
++_ACEOF
++cat confdefs.h >>conftest.$ac_ext
++cat >>conftest.$ac_ext <<_ACEOF
++/* end confdefs.h.  */
++#include <selinux/selinux.h>
++_ACEOF
++if { (ac_try="$ac_cpp conftest.$ac_ext"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
++  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
++  ac_status=$?
++  grep -v '^ *+' conftest.er1 >conftest.err
++  rm -f conftest.er1
++  cat conftest.err >&5
++  echo "$as_me:$LINENO: \$? = $ac_status" >&5
++  (exit $ac_status); } >/dev/null && {
++	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       }; then
++  ac_header_preproc=yes
++else
++  echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++  ac_header_preproc=no
++fi
++
++rm -f conftest.err conftest.$ac_ext
++{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
++echo "${ECHO_T}$ac_header_preproc" >&6; }
++
++# So?  What about this header?
++case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
++  yes:no: )
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: accepted by the compiler, rejected by the preprocessor!" >&5
++echo "$as_me: WARNING: selinux/selinux.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: proceeding with the compiler's result" >&5
++echo "$as_me: WARNING: selinux/selinux.h: proceeding with the compiler's result" >&2;}
++    ac_header_preproc=yes
++    ;;
++  no:yes:* )
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: present but cannot be compiled" >&5
++echo "$as_me: WARNING: selinux/selinux.h: present but cannot be compiled" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h:     check for missing prerequisite headers?" >&5
++echo "$as_me: WARNING: selinux/selinux.h:     check for missing prerequisite headers?" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: see the Autoconf documentation" >&5
++echo "$as_me: WARNING: selinux/selinux.h: see the Autoconf documentation" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h:     section \"Present But Cannot Be Compiled\"" >&5
++echo "$as_me: WARNING: selinux/selinux.h:     section \"Present But Cannot Be Compiled\"" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: proceeding with the preprocessor's result" >&5
++echo "$as_me: WARNING: selinux/selinux.h: proceeding with the preprocessor's result" >&2;}
++    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: in the future, the compiler will take precedence" >&5
++echo "$as_me: WARNING: selinux/selinux.h: in the future, the compiler will take precedence" >&2;}
++
++    ;;
++esac
++{ echo "$as_me:$LINENO: checking for selinux/selinux.h" >&5
++echo $ECHO_N "checking for selinux/selinux.h... $ECHO_C" >&6; }
++if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
++  echo $ECHO_N "(cached) $ECHO_C" >&6
++else
++  ac_cv_header_selinux_selinux_h=$ac_header_preproc
++fi
++{ echo "$as_me:$LINENO: result: $ac_cv_header_selinux_selinux_h" >&5
++echo "${ECHO_T}$ac_cv_header_selinux_selinux_h" >&6; }
++
++fi
++
++
++            cat >>confdefs.h <<\_ACEOF
++#define WITH_LSPP 1
++_ACEOF
++
++            ;;
++        *)
++            # All others
++            ;;
++    esac
++fi
++
++
+ INSTALL_LANGUAGES=""
+ UNINSTALL_LANGUAGES=""
+ LANGFILES=""
+@@ -19306,8 +19715,8 @@ PHP!$PHP$ac_delim
+ PHPCONFIG!$PHPCONFIG$ac_delim
+ PHPDIR!$PHPDIR$ac_delim
+ PYTHON!$PYTHON$ac_delim
+-INSTALL_LANGUAGES!$INSTALL_LANGUAGES$ac_delim
+-UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
++LIBAUDIT!$LIBAUDIT$ac_delim
++LIBSELINUX!$LIBSELINUX$ac_delim
+ _ACEOF
+ 
+   if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
+@@ -19349,11 +19758,13 @@ _ACEOF
+ ac_delim='%!_!# '
+ for ac_last_try in false false false false false :; do
+   cat >conf$$subs.sed <<_ACEOF
++INSTALL_LANGUAGES!$INSTALL_LANGUAGES$ac_delim
++UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
+ LIBOBJS!$LIBOBJS$ac_delim
+ LTLIBOBJS!$LTLIBOBJS$ac_delim
+ _ACEOF
+ 
+-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 2; then
++  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 4; then
+     break
+   elif $ac_last_try; then
+     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
+diff -up cups-1.3.7/cups/cups.h.lspp cups-1.3.7/cups/cups.h
+--- cups-1.3.7/cups/cups.h.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/cups/cups.h	2008-07-18 13:06:51.000000000 +0100
 @@ -15,6 +15,9 @@
   *   This file is subject to the Apple OS-Developed Software exception.
   */
@@ -23,8 +567,1994 @@
  /*
   * Types and structures...
   */
---- cups-1.3.7/scheduler/job.c.lspp	2008-05-30 16:59:10.000000000 +0100
-+++ cups-1.3.7/scheduler/job.c	2008-05-30 17:01:23.000000000 +0100
+diff -up cups-1.3.7/data/Makefile.lspp cups-1.3.7/data/Makefile
+--- cups-1.3.7/data/Makefile.lspp	2007-10-10 23:00:43.000000000 +0100
++++ cups-1.3.7/data/Makefile	2008-07-18 13:06:51.000000000 +0100
+@@ -25,7 +25,10 @@ BANNERS	=	\
+ 		secret \
+ 		standard \
+ 		topsecret \
+-		unclassified
++		unclassified \
++		selinux \
++		mls \
++		te
+ 
+ CHARMAPS =	\
+ 		euc-cn.txt \
+diff -up /dev/null cups-1.3.7/data/mls
+--- /dev/null	2008-07-18 08:54:40.909125715 +0100
++++ cups-1.3.7/data/mls	2008-07-18 13:06:51.000000000 +0100
+@@ -0,0 +1,261 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -up /dev/null cups-1.3.7/data/selinux
+--- /dev/null	2008-07-18 08:54:40.909125715 +0100
++++ cups-1.3.7/data/selinux	2008-07-18 13:06:51.000000000 +0100
+@@ -0,0 +1,261 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -up /dev/null cups-1.3.7/data/te
+--- /dev/null	2008-07-18 08:54:40.909125715 +0100
++++ cups-1.3.7/data/te	2008-07-18 13:06:51.000000000 +0100
+@@ -0,0 +1,261 @@
++%!PS-Adobe-3.0
++%%BoundingBox: 0 0 612 792
++%%Pages: 1
++%%LanguageLevel: 1
++%%DocumentData: Clean7Bit
++%%DocumentSuppliedResources: procset bannerprint/1.0
++%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
++%%Creator: Michael Sweet, Easy Software Products
++%%CreationDate: May 10, 2000
++%%Title: Test Page
++%%EndComments
++%%BeginProlog
++%%BeginResource procset bannerprint 1.1 0
++%
++%   PostScript banner page for the Common UNIX Printing System ("CUPS").
++%
++%   Copyright 1993-2005 by Easy Software Products
++%
++%   These coded instructions, statements, and computer programs are the
++%   property of Easy Software Products and are protected by Federal
++%   copyright law.  Distribution and use rights are outlined in the file
++%   "LICENSE.txt" which should have been included with this file.  If this
++%   file is missing or damaged please contact Easy Software Products
++%   at:
++%
++%       Attn: CUPS Licensing Information
++%       Easy Software Products
++%       44141 Airport View Drive, Suite 204
++%       Hollywood, Maryland 20636 USA
++%
++%       Voice: (301) 373-9600
++%       EMail: cups-info@cups.org
++%         WWW: http://www.cups.org
++%
++/CENTER {			% Draw centered text
++				% (name) CENTER -
++  dup stringwidth pop		% Get the width of the string
++  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
++  show				% Show the string
++} bind def
++/RIGHT {			% Draw right-justified text
++				% (name) RIGHT -
++  dup stringwidth pop		% Get the width of the string
++  neg 0 rmoveto			% Shift left the entire distance
++  show				% Show the string
++} bind def
++/NUMBER {			% Draw a number
++				% power n NUMBER -
++  1 index 1 eq {		% power == 1?
++    round cvi exch pop		% Convert "n" to integer
++  } {
++    1 index mul round exch div	% Truncate extra decimal places
++  } ifelse
++  100 string cvs show		% Convert to a string and show it...
++} bind def
++/CUPSLOGO {			% Draw the CUPS logo
++				% height CUPSLOGO
++  % Start with a big C...
++  /Helvetica findfont 1 index scalefont setfont
++  0 setgray
++  0 0 moveto
++  (C) show
++
++  % Then "UNIX Printing System" much smaller...
++  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
++  0.25 mul
++  dup dup 2.0 mul moveto
++  (UNIX) show
++  dup dup 1.6 mul moveto
++  (Printing) show
++  dup 1.2 mul moveto
++  (System) show
++} bind def
++/ESPLOGO {			% Draw the ESP logo
++				% height ESPLOGO
++  % Compute the size of the logo...
++  0 0
++  2 index 1.5 mul 3 index
++
++  % Do the "metallic" fill from 10% black to 40% black...
++  1 -0.001 0 {
++    dup			% loopval
++    -0.15 mul		% loopval * -0.15
++    0.9 add		% 0.9 - loopval * 0.15
++    setgray		% set gray shade
++
++    0			% x
++    1 index neg		% loopval
++    1 add		% 1 - loopval
++    3 index		% height
++    mul			% height * (1 - loopval)
++    moveto		% starting point
++
++    dup			% loopval
++    3 index		% width
++    mul			% loopval * width
++    2 index		% height
++    lineto		% Next point
++
++    0			% x
++    2 index		% height
++    lineto		% Next point
++
++    closepath
++    fill
++
++    dup			% loopval
++    0.15 mul		% loopval * 0.15
++    0.6 add		% 0.6 + loopval * 0.15
++    setgray
++
++    dup			% loopval
++    neg 1 add		% 1 - loopval
++    3 index		% width
++    mul			% (1 - loopval) * width
++    0			% y
++    moveto		% Starting point
++
++    2 index		% width
++    exch		% loopval
++    2 index		% height
++    mul			% loopval * height
++    lineto		% Next point
++
++    1 index		% width
++    0			% y
++    lineto		% Next point
++
++    closepath
++    fill
++  } for
++
++  0 setgray rectstroke
++
++  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
++  dup 40 div
++
++  dup 4 mul 1 index 25 mul moveto (E) show
++  dup 10 mul 1 index 15 mul moveto (S) show
++  dup 16 mul 1 index 5 mul moveto (P) show
++
++  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
++  dup 14 mul 1 index 29 mul moveto (asy) show
++  dup 20 mul 1 index 19 mul moveto (oftware) show
++  dup 26 mul 1 index 9 mul moveto (roducts) show
++
++  pop
++} bind def
++%%EndResource
++%%EndProlog
++%%Page: 1 1
++gsave
++
++  % Determine the imageable area and device resolution...
++  initclip newpath clippath pathbbox	% Get bounding rectangle
++  72 div /pageTop exch def		% Get top margin in inches
++  72 div /pageRight exch def		% Get right margin in inches
++  72 div /pageBottom exch def		% Get bottom margin in inches
++  72 div /pageLeft exch def		% Get left margin in inches
++
++  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
++  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
++
++  /boxWidth				% width of text box
++  pageWidth pageHeight lt
++  { pageWidth 54 mul }
++  { pageHeight 42 mul }
++  ifelse def
++
++  newpath				% Clear bounding path
++
++  % Create fonts...
++  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
++  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
++
++  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
++  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
++
++  % Offset page to account for lower-left margin...
++  pageLeft 72 mul
++  pageBottom 72 mul
++  translate
++
++  % Job information box...
++  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++  0.5 setgray rectfill			% Draw a shadow
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  boxWidth 0.5 mul sub			% x-= 1/2 box width
++  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
++  boxWidth				% w = box width
++  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
++
++  4 copy 1 setgray rectfill		% Clear the box to white
++  0 setgray rectstroke			% Draw a black box around it...
++
++  % Job information text...
++  mediumFont setfont			% Medium sized font
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 5 mul add			% y += 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Job ID: ) RIGHT
++  moveto
++  ({printer-name}-{job-id}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight 2 mul add			% y += 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Title: ) RIGHT
++  moveto
++  ({job-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -1 mul add			% y -= 1 line
++  2 copy				% Copy X & Y
++  moveto
++  (Requesting User: ) RIGHT
++  moveto
++  ({job-originating-user-name}) show
++
++  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
++  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
++  pageHeight -4 mul add			% y -= 2 lines
++  2 copy				% Copy X & Y
++  moveto
++  (Billing Info: ) RIGHT
++  moveto
++  ({?job-billing}) show
++
++  % Then the CUPS logo....
++  gsave
++    pageWidth 4 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 9 mul CUPSLOGO
++  grestore
++
++  % And the ESP logo....
++  gsave
++    pageWidth 59 mul
++    pageWidth 6 mul
++    translate
++    pageWidth 6 mul ESPLOGO
++  grestore
++% Show the page...
++grestore
++showpage
++%
++% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
++%
++%%EOF
+diff -up cups-1.3.7/filter/common.c.lspp cups-1.3.7/filter/common.c
+--- cups-1.3.7/filter/common.c.lspp	2007-07-11 22:46:42.000000000 +0100
++++ cups-1.3.7/filter/common.c	2008-07-18 13:06:51.000000000 +0100
+@@ -30,6 +30,12 @@
+  * Include necessary headers...
+  */
+ 
++#include "config.h"
++#ifdef WITH_LSPP
++#define _GNU_SOURCE
++#include <string.h>
++#endif /* WITH_LSPP */
++
+ #include "common.h"
+ #include <locale.h>
+ 
+@@ -312,6 +318,18 @@ WriteLabelProlog(const char *label,	/* I
+ {
+   const char	*classification;	/* CLASSIFICATION environment variable */
+   const char	*ptr;			/* Temporary string pointer */
++#ifdef WITH_LSPP
++  int           i,                      /* counter */
++                n,                      /* counter */
++                lines,                  /* number of lines needed */
++                line_len,               /* index into tmp_label */
++                label_len,              /* length of the label in characters */
++                label_index,            /* index into the label */
++                longest,                /* length of the longest line */
++                longest_line,           /* index to the longest line */
++                max_width;              /* maximum width in characters */
++  char          **wrapped_label;        /* label with line breaks */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -334,6 +352,124 @@ WriteLabelProlog(const char *label,	/* I
+     return;
+   }
+ 
++#ifdef WITH_LSPP
++  if (strncmp(classification, "LSPP:", 5) == 0 && label == NULL)
++  {
++   /*
++    * Based on the 12pt fixed width font below determine the max_width
++    */
++    max_width = width / 8;
++    longest_line = 0;
++    longest = 0;
++    classification += 5; // Skip the "LSPP:"
++    label_len = strlen(classification);
++
++    if (label_len > max_width)
++    {
++      lines = 1 + (int)(label_len / max_width);
++      line_len = (int)(label_len / lines);
++      wrapped_label = malloc(sizeof(wrapped_label) * lines);
++      label_index = i = n = 0;
++      while (classification[label_index])
++      {
++        if ((label_index + line_len) > label_len)
++          break;
++        switch (classification[label_index + line_len + i])
++        {
++          case ':':
++          case ',':
++          case '-':
++            i++;
++            wrapped_label[n++] = strndup(&classification[label_index], (line_len + i));
++            label_index += line_len + i;
++            i = 0;
++            break;
++          default:
++            i++;
++            break;
++        }
++        if ((i + line_len) == max_width)
++        {
++          wrapped_label[n++] = strndup(&(classification[label_index]), (line_len + i));
++          label_index = label_index + line_len + i;
++          i = 0;
++        }
++      }
++      wrapped_label[n] = strndup(&classification[label_index], label_len - label_index);
++    }
++    else
++    {
++      lines = 1;
++      wrapped_label = malloc(sizeof(wrapped_label));
++      wrapped_label[0] = (char*)classification;
++    }
++
++    for (n = 0; n < lines; n++ )
++    {
++      printf("userdict/ESPp%c(", ('a' + n));
++      for (ptr = wrapped_label[n], i = 0; *ptr; ptr ++, i++)
++        if (*ptr < 32 || *ptr > 126)
++          printf("\\%03o", *ptr);
++        else
++        {
++          if (*ptr == '(' || *ptr == ')' || *ptr == '\\')
++            putchar('\\');
++
++          printf("%c", *ptr);
++        }
++      if (i > longest)
++      {
++        longest = i;
++        longest_line = n;
++      }
++      printf(")put\n");
++    }
++
++   /*
++    * For LSPP use a fixed width font so that line wrapping can be calculated
++    */
++
++    puts("userdict/ESPlf /Nimbus-Mono findfont 12 scalefont put");
++
++   /*
++    * Finally, the procedure to write the labels on the page...
++    */
++
++    printf("userdict/ESPwl{\n"
++           "  ESPlf setfont\n");
++    printf("  ESPp%c stringwidth pop dup 12 add exch -0.5 mul %.0f add\n ",
++           'a' + longest_line, width * 0.5f);
++    for (n = 1; n < lines; n++)
++      printf(" dup");
++    printf("\n  1 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    printf("  0 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    for (n = 0; n < lines; n ++)
++    {
++      printf("  dup %.0f moveto ESPp%c show\n",
++             bottom + 6.0 + ((lines - (n+1)) * 16.0), 'a' + n);
++      printf("  %.0f moveto ESPp%c show\n", top + 2.0 - ((n + 1) * 16.0), 'a' + n);
++    }
++    printf("  pop\n"
++           "}bind put\n");
++
++   /*
++    * Do some clean up at the end of the LSPP special case
++    */
++    free(wrapped_label);
++
++  }
++  else
++  {
++#endif /* !WITH_LSPP */
++  
+  /*
+   * Set the classification + page label string...
+   */
+@@ -414,7 +550,10 @@ WriteLabelProlog(const char *label,	/* I
+   printf("  %.0f moveto ESPpl show\n", top - 14.0);
+   puts("pop");
+   puts("}bind put");
++  }
++#ifdef WITH_LSPP
+ }
++#endif /* WITH_LSPP */
+ 
+ 
+ /*
+diff -up cups-1.3.7/Makedefs.in.lspp cups-1.3.7/Makedefs.in
+--- cups-1.3.7/Makedefs.in.lspp	2008-01-22 22:37:21.000000000 +0000
++++ cups-1.3.7/Makedefs.in	2008-07-18 13:06:51.000000000 +0100
+@@ -134,7 +134,7 @@ LIBCUPSORDER	=	@LIBCUPSORDER@
+ LIBCUPSIMAGEORDER =	@LIBCUPSIMAGEORDER@
+ LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
+ LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
+-LIBS		=	$(LINKCUPS) $(COMMONLIBS)
++LIBS		=	$(LINKCUPS) $(COMMONLIBS) @LIBAUDIT@ @LIBSELINUX@
+ OPTIM		=	@OPTIM@
+ OPTIONS		=
+ PAMLIBS		=	@PAMLIBS@
+diff -up cups-1.3.7/scheduler/client.c.lspp cups-1.3.7/scheduler/client.c
+--- cups-1.3.7/scheduler/client.c.lspp	2008-02-12 00:20:32.000000000 +0000
++++ cups-1.3.7/scheduler/client.c	2008-07-18 13:06:51.000000000 +0100
+@@ -39,12 +39,14 @@
+  *   pipe_command()          - Pipe the output of a command to the remote client.
+  *   write_file()            - Send a file via HTTP.
+  *   write_pipe()            - Flag that data is available on the CGI pipe.
++ *   client_pid_to_auid()    - Get the audit login uid of the client.
+  */
+ 
+ /*
+  * Include necessary headers...
+  */
+ 
++#define _GNU_SOURCE
+ #include <cups/http-private.h>
+ #include "cupsd.h"
+ 
+@@ -76,6 +78,12 @@ extern const char *cssmErrorString(int e
+ #  include <gnutls/x509.h>
+ #endif /* HAVE_GNUTLS */
+ 
++#ifdef WITH_LSPP
++#include <selinux/selinux.h>
++#include <selinux/context.h>
++#include <fcntl.h>
++#endif /* WITH_LSPP */
++
+ 
+ /*
+  * Local functions...
+@@ -349,6 +357,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
+     }
+   }
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++    struct ucred cr;
++    unsigned int cl=sizeof(cr);
++
++    if (getsockopt(con->http.fd, SOL_SOCKET, SO_PEERCRED, &cr, &cl) == 0)
++    {
++     /*
++      * client_pid_to_auid() can be racey
++      * In this case the pid is based on a socket connected to the client
++      */
++      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
++      {
++        close(con->http.fd);
++        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: "
++                        "unable to determine client auid for client pid=%d", cr.pid);
++        free(con);
++        return;
++      }
++      cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: peer's pid=%d, uid=%d, gid=%d, auid=%d",
++                      cr.pid, cr.uid, cr.gid, con->auid);
++    }
++    else
++    {
++      close(con->http.fd);
++      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getsockopt() failed");
++      free(con);
++      return; 
++    }
++
++   /*
++    * get the context of the peer connection
++    */
++    if (getpeercon(con->http.fd, &con->scon))
++    {
++      close(con->http.fd);
++      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
++      free(con);
++      return; 
++    }
++
++    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
++  }
++  else
++  {
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdSetString(&con->scon, UNKNOWN_SL);
++  }
++#endif /* WITH_LSPP */
++
+ #ifdef AF_INET6
+   if (con->http.hostaddr->addr.sa_family == AF_INET6)
+     cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: %d from %s:%d (IPv6)",
+@@ -731,6 +790,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+   mime_type_t		*type;		/* MIME type of file */
+   cupsd_printer_t	*p;		/* Printer */
+   static unsigned	request_id = 0;	/* Request ID for temp files */
++#ifdef WITH_LSPP
++  security_context_t	spoolcon;	/* context of the job file */
++  context_t		clicon;		/* contex_t container for con->scon */
++  context_t		tmpcon;		/* temp context to swap the level */
++  char			*clirange;	/* SELinux sensitivity range */
++  char			*cliclearance;	/* SELinux low end clearance */
++#endif /* WITH_LSPP */
+ 
+ 
+   status = HTTP_CONTINUE;
+@@ -2011,6 +2077,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+ 	    fchmod(con->file, 0640);
+ 	    fchown(con->file, RunUser, Group);
+             fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
++#ifdef WITH_LSPP
++	    if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
++	    {
++	      if (getfilecon(con->filename, &spoolcon) == -1)
++	      {
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
++		return (cupsdCloseClient(con));
++	      }
++	      clicon = context_new(con->scon);
++	      tmpcon = context_new(spoolcon);
++	      freecon(spoolcon);
++	      if (!clicon || !tmpcon)
++	      {
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
++		if (clicon)
++		  context_free(clicon);
++		if (tmpcon)
++		  context_free(tmpcon);
++		return (cupsdCloseClient(con));
++	      }
++	      clirange = context_range_get(clicon);
++	      if (clirange)
++	      {
++		clirange = strdup(clirange);
++		if ((cliclearance = strtok(clirange, "-")) != NULL)
++		{
++		  if (context_range_set(tmpcon, cliclearance) == -1)
++		  {
++		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
++		    free(clirange);
++		    context_free(tmpcon);
++		    context_free(clicon);
++		    return (cupsdCloseClient(con));
++		  }
++		}
++		else
++		{
++		  if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
++		  {
++		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
++		    free(clirange);
++		    context_free(tmpcon);
++		    context_free(clicon);
++		    return (cupsdCloseClient(con));
++		  }
++		}
++		free(clirange);
++	      }
++	      if (setfilecon(con->filename, context_str(tmpcon)) == -1)
++	      {
++		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
++		context_free(tmpcon);
++		context_free(clicon);
++		return (cupsdCloseClient(con));
++	      }
++	      cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdReadClient: %s set to %s", 
++			      con->filename, context_str(tmpcon));
++	      context_free(tmpcon);
++	      context_free(clicon);
++	    }
++#endif /* WITH_LSPP */
+ 	  }
+ 
+ 	  if (con->http.state != HTTP_POST_SEND)
+@@ -4253,6 +4380,50 @@ make_certificate(cupsd_client_t *con)	/*
+ #endif /* HAVE_SSL */
+ 
+ 
++#ifdef WITH_LSPP
++/*
++ * 'client_pid_to_auid()' - Using the client's pid, read /proc and determine the loginuid.
++ */
++
++uid_t client_pid_to_auid(pid_t clipid)
++{
++  uid_t uid;
++  int len, in;
++  char buf[16] = {0};
++  char fname[32] = {0};
++
++
++ /*
++  * Hopefully this pid is still the one we are interested in.
++  */
++  snprintf(fname, 32, "/proc/%d/loginuid", clipid);
++  in = open(fname, O_NOFOLLOW|O_RDONLY);
++
++  if (in < 0)
++    return -1;
++
++  errno = 0;
++
++  do {
++    len = read(in, buf, sizeof(buf));
++  } while (len < 0 && errno == EINTR);
++
++  close(in);
++
++  if (len < 0 || len >= sizeof(buf))
++    return -1;
++
++  errno = 0;
++  buf[len] = 0;
++  uid = strtol(buf, 0, 10);
++
++  if (errno != 0)
++    return -1;
++  else
++    return uid;
++}
++#endif /* WITH_LSPP */
++
+ /*
+  * 'pipe_command()' - Pipe the output of a command to the remote client.
+  */
+diff -up cups-1.3.7/scheduler/client.h.lspp cups-1.3.7/scheduler/client.h
+--- cups-1.3.7/scheduler/client.h.lspp	2007-10-22 19:52:13.000000000 +0100
++++ cups-1.3.7/scheduler/client.h	2008-07-18 13:06:51.000000000 +0100
+@@ -17,6 +17,13 @@
+ #  include <Security/Authorization.h>
+ #endif /* HAVE_AUTHORIZATION_H */
+ 
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
++#ifdef WITH_LSPP
++#include <selinux/selinux.h>
++#endif /* WITH_LSPP */
++
+ /*
+  * HTTP client structure...
+  */
+@@ -62,6 +69,10 @@ struct cupsd_client_s
+ #ifdef HAVE_AUTHORIZATION_H
+   AuthorizationRef	authref;	/* Authorization ref */
+ #endif /* HAVE_AUTHORIZATION_H */
++#ifdef WITH_LSPP
++  security_context_t	scon;		/* Security context of connection */
++  uid_t			auid;		/* Audit loginuid of the client */
++#endif /* WITH_LSPP */
+ };
+ 
+ #define HTTP(con) &((con)->http)
+@@ -129,6 +140,9 @@ extern void	cupsdStartListening(void);
+ extern void	cupsdStopListening(void);
+ extern void	cupsdUpdateCGI(void);
+ extern void	cupsdWriteClient(cupsd_client_t *con);
++#ifdef WITH_LSPP
++extern uid_t	client_pid_to_auid(pid_t clipid);
++#endif /* WITH_LSPP */
+ 
+ 
+ /*
+diff -up cups-1.3.7/scheduler/conf.c.lspp cups-1.3.7/scheduler/conf.c
+--- cups-1.3.7/scheduler/conf.c.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/conf.c	2008-07-18 13:06:51.000000000 +0100
+@@ -26,6 +26,7 @@
+  *   read_configuration()     - Read a configuration file.
+  *   read_location()          - Read a <Location path> definition.
+  *   read_policy()            - Read a <Policy name> definition.
++ *   is_lspp_config()         - Is the system configured for LSPP
+  */
+ 
+ /*
+@@ -47,6 +48,9 @@
+ #  define INADDR_NONE	0xffffffff
+ #endif /* !INADDR_NONE */
+ 
++#ifdef WITH_LSPP
++#  include <libaudit.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Configuration variable structure...
+@@ -160,6 +164,10 @@ static const cupsd_var_t	variables[] =
+ #  if defined(HAVE_LIBSSL) || defined(HAVE_GNUTLS)
+   { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_PATHNAME },
+ #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
++#ifdef WITH_LSPP
++  { "AuditLog",			&AuditLog,		CUPSD_VARTYPE_INTEGER },
++  { "PerPageLabels",		&PerPageLabels,		CUPSD_VARTYPE_BOOLEAN },
++#endif /* WITH_LSPP */
+ #endif /* HAVE_SSL */
+   { "ServerName",		&ServerName,		CUPSD_VARTYPE_STRING },
+   { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
+@@ -350,6 +358,9 @@ cupsdReadConfiguration(void)
+ 		*old_requestroot;	/* Old RequestRoot */
+   const char	*tmpdir;		/* TMPDIR environment variable */
+   struct stat	tmpinfo;		/* Temporary directory info */
++#ifdef WITH_LSPP
++  char		*audit_message;		/* Audit message string */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -611,6 +622,25 @@ cupsdReadConfiguration(void)
+ 
+   RunUser = getuid();
+ 
++#ifdef WITH_LSPP
++  if (AuditLog != -1)
++  {
++   /*
++    * ClassifyOverride is set during read_configuration, if its ON, report it now
++    */
++    if (ClassifyOverride)
++      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
++                "[Config] ClassifyOverride=enabled Users can override print banners",
++                ServerName, NULL, NULL, 1);
++   /*
++    * PerPageLabel is set during read_configuration, if its OFF, report it now
++    */
++    if (!PerPageLabels)
++      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
++                "[Config] PerPageLabels=disabled", ServerName, NULL, NULL, 1);
++  }
++#endif /* WITH_LSPP */
++
+  /*
+   * See if the ServerName is an IP address...
+   */
+@@ -885,11 +915,23 @@ cupsdReadConfiguration(void)
+   if (MaxActiveJobs > (MaxFDs / 3))
+     MaxActiveJobs = MaxFDs / 3;
+ 
+-  if (Classification && !strcasecmp(Classification, "none"))
++  if (Classification && strcasecmp(Classification, "none") == 0)
+     cupsdClearString(&Classification);
+ 
+   if (Classification)
++  {
+     cupsdLogMessage(CUPSD_LOG_INFO, "Security set to \"%s\"", Classification);
++#ifdef WITH_LSPP
++    if (AuditLog != -1)
++    {
++      audit_message = NULL;
++      cupsdSetStringf(&audit_message, "[Config] Classification=%s", Classification);
++      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
++                             ServerName, NULL, NULL, 1);
++      cupsdClearString(&audit_message);
++    }
++#endif /* WITH_LSPP */
++  }
+ 
+  /*
+   * Update the MaxClientsPerHost value, as needed...
+@@ -3379,6 +3421,18 @@ read_policy(cups_file_t *fp,		/* I - Con
+   return (0);
+ }
+ 
++#ifdef WITH_LSPP
++int is_lspp_config()
++{
++  if (Classification != NULL)
++    return ((strcasecmp(Classification, MLS_CONFIG) == 0) 
++            || (strcasecmp(Classification, TE_CONFIG) == 0)
++            || (strcasecmp(Classification, SELINUX_CONFIG) == 0));
++  else
++    return 0;
++}
++#endif /* WITH_LSPP */
++
+ 
+ /*
+  * End of "$Id: conf.c 7382 2008-03-20 04:06:01Z mike $".
+diff -up cups-1.3.7/scheduler/conf.h.lspp cups-1.3.7/scheduler/conf.h
+--- cups-1.3.7/scheduler/conf.h.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/conf.h	2008-07-18 13:06:51.000000000 +0100
+@@ -193,6 +193,12 @@ VAR char		*ServerKey		VALUE(NULL);
+ 					/* Server key file */
+ #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
+ #endif /* HAVE_SSL */
++#ifdef WITH_LSPP
++VAR int			AuditLog		VALUE(-1),
++					/* File descriptor for audit */
++			PerPageLabels		VALUE(TRUE);
++					/* Put the label on each page */
++#endif /* WITH_LSPP */
+ 
+ #ifdef HAVE_LAUNCHD
+ VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
+@@ -211,6 +217,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
+ 					/* System group auth key */
+ #endif /* HAVE_AUTHORIZATION_H */
+ 
++#ifdef WITH_LSPP
++extern int	is_lspp_config(void);
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Prototypes...
+diff -up cups-1.3.7/scheduler/ipp.c.lspp cups-1.3.7/scheduler/ipp.c
+--- cups-1.3.7/scheduler/ipp.c.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/ipp.c	2008-07-18 13:06:51.000000000 +0100
+@@ -36,6 +36,7 @@
+  *   cancel_all_jobs()           - Cancel all print jobs.
+  *   cancel_job()                - Cancel a print job.
+  *   cancel_subscription()       - Cancel a subscription.
++ *   check_context()             - Check the SELinux context for a user and job
+  *   check_quotas()              - Check quotas for a printer and user.
+  *   copy_attribute()            - Copy a single attribute.
+  *   copy_attrs()                - Copy attributes from one request to another.
+@@ -93,6 +94,9 @@
+  *   validate_user()             - Validate the user for the request.
+  */
+ 
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -116,6 +120,14 @@ extern int mbr_check_membership_by_id(uu
+ #  endif /* HAVE_MEMBERSHIPPRIV_H */
+ #endif /* __APPLE__ */
+ 
++#ifdef WITH_LSPP
++#include <libaudit.h>
++#include <selinux/selinux.h>
++#include <selinux/context.h>
++#include <selinux/avc.h>
++#include <selinux/flask.h>
++#include <selinux/av_permissions.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Local functions...
+@@ -140,6 +152,9 @@ static void	authenticate_job(cupsd_clien
+ static void	cancel_all_jobs(cupsd_client_t *con, ipp_attribute_t *uri);
+ static void	cancel_job(cupsd_client_t *con, ipp_attribute_t *uri);
+ static void	cancel_subscription(cupsd_client_t *con, int id);
++#ifdef WITH_LSPP
++static int	check_context(cupsd_client_t *con, cupsd_job_t *job);
++#endif /* WITH_LSPP */
+ static int	check_quotas(cupsd_client_t *con, cupsd_printer_t *p);
+ static ipp_attribute_t	*copy_attribute(ipp_t *to, ipp_attribute_t *attr,
+ 		                        int quickcopy);
+@@ -1267,6 +1282,21 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+   int		kbytes;			/* Size of print file */
+   int		i;			/* Looping var */
+   int		lowerpagerange;		/* Page range bound */
++#ifdef WITH_LSPP
++  char		*audit_message;		/* Audit message string */
++  char		*printerfile;		/* device file pointed to by the printer */
++  char		*userheader = NULL;	/* User supplied job-sheets[0] */
++  char		*userfooter = NULL;	/* User supplied job-sheets[1] */
++  int		override = 0;		/* Was a banner overrode on a job */
++  security_id_t	clisid;			/* SELinux SID for the client */
++  security_id_t	psid;			/* SELinux SID for the printer */
++  context_t	printercon;		/* Printer's context string */
++  struct stat	printerstat;		/* Printer's stat buffer */
++  security_context_t	devcon;		/* Printer's SELinux context */
++  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
++  security_class_t	tclass;		/* Object class for the SELinux check */
++  access_vector_t	avr;		/* Access method being requested */
++#endif /* WITH_LSPP */
+ 
+ 
+   cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %p(%s), %p(%s/%s))",
+@@ -1454,6 +1484,104 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+     ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL,
+                  title = "Untitled");
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++    if (!con->scon || strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "add_job: missing classification for connection \'%s\'!", printer->name);
++      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Missing required security attributes."));
++      return (NULL);
++    }
++
++   /*
++    * Perform an access check so that if the user gets feedback at enqueue time
++    */
++
++    printerfile = strstr(printer->device_uri, "/dev/");
++    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
++      printerfile = strdup(printer->device_uri + strlen("file:/"));
++
++    if (printerfile != NULL)
++    {
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: Attempting an access check on printer device %s",
++                      printerfile);
++
++      if (lstat(printerfile, &printerstat) < 0)
++      {
++	if (errno != ENOENT)
++	{
++	  send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to stat the printer"));
++	  return (NULL);
++	}
++	/*
++	 * The printer does not exist, so for now assume it's a FileDevice
++	 */
++	tclass = SECCLASS_FILE;
++	avr = FILE__WRITE;
++      }
++      else if (S_ISCHR(printerstat.st_mode))
++      {
++	tclass = SECCLASS_CHR_FILE;
++	avr = CHR_FILE__WRITE;
++      }
++      else if (S_ISREG(printerstat.st_mode))
++      {
++	tclass = SECCLASS_FILE;
++	avr = FILE__WRITE;
++      }
++      else
++      {
++	send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Printer is not a character device or regular file"));
++	return (NULL);
++      }
++      avc_init("cupsd_enqueue_", NULL, NULL, NULL, NULL);
++      avc_entry_ref_init(&avcref);
++      if (avc_context_to_sid(con->scon, &clisid) != 0)
++      {
++        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux sid of the client"));
++        return (NULL);
++      }
++      if (getfilecon(printerfile, &devcon) == -1)
++      {
++        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux context of the printer"));
++        return (NULL);
++      }
++      printercon = context_new(devcon);
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: printer context %s client context %s",
++                      context_str(printercon), con->scon);
++      context_free(printercon);
++
++      if (avc_context_to_sid(devcon, &psid) != 0)
++      {
++        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux sid of the printer"));
++        freecon(devcon);
++        return (NULL);
++      }
++      freecon(devcon);
++      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
++      {
++       /*
++        * The access check failed, so cancel the job and send an audit message
++        */
++        if (AuditLog != -1)
++        {
++          audit_message = NULL;
++          cupsdSetStringf(&audit_message, "job=? auid=%u acct=%s obj=%s refused"
++                          " unable to access printer=%s", con->auid,
++                          con->username, con->scon, printer->name);
++          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                 ServerName, NULL, NULL, 0);
++          cupsdClearString(&audit_message);
++        }
++
++        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("SELinux prohibits access to the printer"));
++        return (NULL);
++      }
++    }
++  }
++#endif /* WITH_LSPP */
++
+   if ((job = cupsdAddJob(priority, printer->name)) == NULL)
+   {
+     send_ipp_status(con, IPP_INTERNAL_ERROR,
+@@ -1462,6 +1590,32 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+     return (NULL);
+   }
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++   /*
++    * duplicate the security context and auid of the connection into the job structure
++    */
++    job->scon = strdup(con->scon);
++    job->auid = con->auid;
++
++   /* 
++    * add the security context to the request so that on a restart the security
++    * attributes will be able to be restored
++    */
++    ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "security-context", 
++		 NULL, job->scon);
++  }
++  else
++  {
++   /*
++    * Fill in the security context of the job as unlabeled
++    */
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: setting context of job to %s", UNKNOWN_SL);
++    cupsdSetString(&job->scon, UNKNOWN_SL);
++  }
++#endif /* WITH_LSPP */
++
+   job->dtype   = printer->type & (CUPS_PRINTER_CLASS | CUPS_PRINTER_IMPLICIT |
+                                   CUPS_PRINTER_REMOTE);
+   job->attrs   = con->request;
+@@ -1668,6 +1822,29 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+       attr->values[0].string.text = _cupsStrAlloc(printer->job_sheets[0]);
+       attr->values[1].string.text = _cupsStrAlloc(printer->job_sheets[1]);
+     }
++#ifdef WITH_LSPP
++    else
++    {
++     /*
++      * The option was present, so capture the user supplied strings
++      */
++      userheader = strdup(attr->values[0].string.text);
++
++      if (attr->num_values > 1)
++        userfooter = strdup(attr->values[1].string.text);
++  
++      if (Classification != NULL && (strcmp(userheader, Classification) == 0)
++          && userfooter &&(strcmp(userfooter, Classification) == 0))
++      {
++       /*
++        * Since both values are Classification, the user is not trying to Override
++        */
++        free(userheader);
++        if (userfooter) free(userfooter);
++        userheader = userfooter = NULL;
++      }
++    }
++#endif /* WITH_LSPP */
+ 
+     job->job_sheets = attr;
+ 
+@@ -1698,6 +1875,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+ 	                		    "job-sheets=\"%s,none\", "
+ 					    "job-originating-user-name=\"%s\"",
+ 	        	 job->id, Classification, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+ 	}
+ 	else if (attr->num_values == 2 &&
+ 	         strcmp(attr->values[0].string.text,
+@@ -1716,6 +1896,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+ 					    "job-originating-user-name=\"%s\"",
+ 	        	 job->id, attr->values[0].string.text,
+ 			 attr->values[1].string.text, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+ 	}
+ 	else if (strcmp(attr->values[0].string.text, Classification) &&
+ 	         strcmp(attr->values[0].string.text, "none") &&
+@@ -1736,6 +1919,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+ 			    "job-originating-user-name=\"%s\"",
+ 	        	    job->id, attr->values[0].string.text,
+ 			    attr->values[1].string.text, job->username);
++#ifdef WITH_LSPP
++          override = 1;
++#endif /* WITH_LSPP */
+         }
+       }
+       else if (strcmp(attr->values[0].string.text, Classification) &&
+@@ -1776,9 +1962,52 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+ 	                  "job-sheets=\"%s\", "
+ 			  "job-originating-user-name=\"%s\"",
+ 	        	 job->id, Classification, job->username);
++#ifdef WITH_LSPP
++        override = 1;
++#endif /* WITH_LSPP */
++      }
++#ifdef WITH_LSPP
++      if (is_lspp_config() && AuditLog != -1)
++      {
++        audit_message = NULL;
++
++        if (userheader || userfooter)
++        {
++          if (!override)
++          {
++           /*
++            * The user overrode the banner, so audit it
++            */
++            cupsdSetStringf(&audit_message, "job=%d user supplied job-sheets=%s,%s"
++                            " using banners=%s,%s", job->id, userheader,
++                            userfooter, attr->values[0].string.text,
++                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
++            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
++                                   ServerName, NULL, NULL, 1);
++      }
++          else
++          {
++           /*
++            * The user tried to override the banner, audit the failure
++            */
++            cupsdSetStringf(&audit_message, "job=%d user supplied job-sheets=%s,%s"
++                            " ignored banners=%s,%s", job->id, userheader,
++                            userfooter, attr->values[0].string.text,
++                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
++            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
++                                   ServerName, NULL, NULL, 0);
++      }
++          cupsdClearString(&audit_message);
+       }
+     }
+ 
++      if (userheader)
++        free(userheader);
++      if (userfooter)
++        free(userfooter);
++#endif /* WITH_LSPP */
++    }
++
+    /*
+     * See if we need to add the starting sheet...
+     */
+@@ -3391,6 +3620,103 @@ cancel_subscription(
+ }
+ 
+ 
++#ifdef WITH_LSPP
++/*
++ * 'check_context()' - Check SELinux security context of a user and job
++ */
++
++static int				/* O - 1 if OK, 0 if not, -1 on error */
++check_context(cupsd_client_t *con,	/* I - Client connection */
++             cupsd_job_t    *job)	/* I - Job */
++{
++  int			enforcing;	/* is SELinux in enforcing mode */
++  char			filename[1024]; /* Filename of the spool file */
++  security_id_t		clisid;		/* SELinux SID of the client */
++  security_id_t		jobsid;		/* SELinux SID of the job */
++  security_id_t		filesid;	/* SELinux SID of the spool file */
++  struct avc_entry_ref	avcref;		/* AVC entry cache pointer */
++  security_class_t	tclass;		/* SELinux security class */
++  access_vector_t	avr;		/* SELinux access being queried */
++  security_context_t	spoolfilecon;	/* SELinux context of the spool file */
++
++
++ /*
++  * Validate the input to be sure there are contexts to work with...
++  */
++
++  if (con->scon == NULL || job->scon == NULL
++      || strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0
++      || strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
++    return -1;
++
++  if ((enforcing = security_getenforce()) == -1)
++  {
++    cupsdLogMessage(CUPSD_LOG_ERROR, "Error while determining SELinux enforcement");
++    return -1;
++  }
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "check_context: client context %s job context %s", con->scon, job->scon);
++
++
++ /*
++  * Initialize the avc engine...
++  */
++
++  if (avc_init("cupsd", NULL, NULL, NULL, NULL) < 0)
++  {
++    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable avc_init");
++    return -1;
++  } 
++  if (avc_context_to_sid(con->scon, &clisid) != 0)
++  {
++    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", con->scon);
++    return -1;
++  }
++  avc_context_to_sid(job->scon, &jobsid);
++  avc_entry_ref_init(&avcref);
++  tclass = SECCLASS_FILE;
++  avr = FILE__READ;
++
++ /*
++  * Perform the check with the client as the subject, first with the job as the object
++  *   if that fails then with the spool file as the object...
++  */
++
++  if (avc_has_perm_noaudit(clisid, jobsid, tclass, avr, &avcref, NULL) != 0)
++  {
++    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access based on the client context");
++
++    snprintf(filename, sizeof(filename), "%s/c%05d", RequestRoot, job->id);
++    if (getfilecon(filename, &spoolfilecon) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to get spoolfile context");
++      return -1;
++    }
++    if (avc_context_to_sid(spoolfilecon, &filesid) != 0)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to determine the SELinux sid for the spool file");
++      freecon(spoolfilecon);
++      return -1;
++    }
++    freecon(spoolfilecon);
++    if (avc_has_perm_noaudit(clisid, filesid, tclass, avr, &avcref, NULL) != 0)
++    {
++      cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access to the spool file");
++      return 0;
++    }
++    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access to the spool file");
++    return 1;
++  }
++  else
++    if (enforcing == 0)
++        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: allowing operation due to permissive mode");
++    else
++        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access based on the client context");
++
++  return 1;
++}
++#endif /* WITH_LSPP */
++
++
+ /*
+  * 'check_quotas()' - Check quotas for a printer and user.
+  */
+@@ -3912,6 +4238,15 @@ copy_banner(cupsd_client_t *con,	/* I - 
+   char		attrname[255],		/* Name of attribute */
+ 		*s;			/* Pointer into name */
+   ipp_attribute_t *attr;		/* Attribute */
++#ifdef WITH_LSPP
++  const char	*mls_label;		/* SL of print job */
++  char		*jobrange;		/* SELinux sensitivity range */
++  char		*jobclearance;		/* SELinux low end clearance */
++  context_t	jobcon;			/* SELinux context of the job */
++  context_t	tmpcon;			/* Temp context to set the level */
++  security_context_t	spoolcon;	/* Context of the file in the spool */
++#endif /* WITH_LSPP */
++
+ 
+ 
+   cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner(%p[%d], %p[%d], %s)",
+@@ -3946,6 +4281,82 @@ copy_banner(cupsd_client_t *con,	/* I - 
+ 
+   fchmod(cupsFileNumber(out), 0640);
+   fchown(cupsFileNumber(out), RunUser, Group);
++#ifdef WITH_LSPP
++  if (job->scon != NULL &&
++      strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
++  {
++    if (getfilecon(filename, &spoolcon) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to get the context of the banner file %s - %s",
++                      filename, strerror(errno));
++      job->num_files --;
++      return (0);
++    }
++    tmpcon = context_new(spoolcon);
++    jobcon = context_new(job->scon);
++    freecon(spoolcon);
++    if (!tmpcon || !jobcon)
++    {
++      if (tmpcon)
++        context_free(tmpcon);
++      if (jobcon)
++        context_free(jobcon);
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to get the SELinux contexts");
++      job->num_files --;
++      return (0);
++    }
++    jobrange = context_range_get(jobcon);
++    if (jobrange)
++    {
++      jobrange = strdup(jobrange);
++      if ((jobclearance = strtok(jobrange, "-")) != NULL)
++      {
++	if (context_range_set(tmpcon, jobclearance) == -1)
++	{
++	  cupsdLogMessage(CUPSD_LOG_ERROR,
++			  "copy_banner: Unable to set the level of the context for file %s - %s",
++			  filename, strerror(errno));
++	  free(jobrange);
++	  context_free(jobcon);
++	  context_free(tmpcon);
++	  job->num_files --;
++	  return (0);
++	}
++      }
++      else
++      {
++	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++	{
++	  cupsdLogMessage(CUPSD_LOG_ERROR,
++			  "copy_banner: Unable to set the level of the context for file %s - %s",
++			  filename, strerror(errno));
++	  free(jobrange);
++	  context_free(jobcon);
++	  context_free(tmpcon);
++	  job->num_files --;
++	  return (0);
++	}
++      }
++      free(jobrange);
++    }
++    if (setfilecon(filename, context_str(tmpcon)) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "copy_banner: Unable to set the context of the banner file %s - %s",
++                      filename, strerror(errno));
++      context_free(jobcon);
++      context_free(tmpcon);
++      job->num_files --;
++      return (0);
++    }
++    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
++                    filename, context_str(tmpcon));
++    context_free(jobcon);
++    context_free(tmpcon);
++  }
++#endif /* WITH_LSPP */
+ 
+  /*
+   * Try the localized banner file under the subdirectory...
+@@ -4040,6 +4451,24 @@ copy_banner(cupsd_client_t *con,	/* I - 
+       else
+         s = attrname;
+ 
++#ifdef WITH_LSPP
++      if (strcmp(s, "mls-label") == 0)
++      {
++        if (job->scon != NULL && strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
++        {
++          jobcon = context_new(job->scon);
++          if (strcasecmp(name, MLS_CONFIG) == 0)
++            mls_label = context_range_get(jobcon);
++          else if (strcasecmp(name, TE_CONFIG) == 0)
++            mls_label = context_type_get(jobcon);
++          else // default to using the whole context string
++            mls_label = context_str(jobcon);
++          cupsFilePuts(out, mls_label);
++          context_free(jobcon);
++        }
++        continue;
++      }
++#endif /* WITH_LSPP */
+       if (!strcmp(s, "printer-name"))
+       {
+         cupsFilePuts(out, job->dest);
+@@ -5765,6 +6194,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
+     return;
+   }
+ 
++
++#ifdef WITH_LSPP
++ /*
++  * Check SELinux...
++  */
++  if (is_lspp_config() && check_context(con, job) != 1)
++  {
++   /*
++    * Unfortunately we have to lie to the user...
++    */
++    send_ipp_status(con, IPP_NOT_FOUND, _("Job #%d does not exist!"), jobid);
++    return;
++  }
++#endif /* WITH_LSPP */
++
++
+  /*
+   * Copy attributes...
+   */
+@@ -5970,6 +6415,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
+     if (count > 0)
+       ippAddSeparator(con->response);
+ 
++#ifdef WITH_LSPP
++    if (is_lspp_config() && check_context(con, job) != 1)
++      continue;
++#endif /* WITH_LSPP */
++
+     count ++;
+ 
+     cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
+@@ -10042,6 +10492,11 @@ validate_user(cupsd_job_t    *job,	/* I 
+ 
+   strlcpy(username, get_username(con), userlen);
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config() && check_context(con, job) != 1)
++    return 0;
++#endif /* WITH_LSPP */
++
+  /*
+   * Check the username against the owner...
+   */
+diff -up cups-1.3.7/scheduler/job.c.lspp cups-1.3.7/scheduler/job.c
+--- cups-1.3.7/scheduler/job.c.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/job.c	2008-07-18 13:06:51.000000000 +0100
 @@ -60,6 +60,9 @@
   *   update_job_attrs()         - Update the job-printer-* attributes.
   */
@@ -381,8 +2911,107 @@
    if (Classification && !banner_page)
    {
      if ((attr = ippFindAttribute(job->attrs, "job-sheets",
---- cups-1.3.7/scheduler/printers.c.lspp	2008-05-30 16:59:10.000000000 +0100
-+++ cups-1.3.7/scheduler/printers.c	2008-05-30 16:59:10.000000000 +0100
+diff -up cups-1.3.7/scheduler/job.h.lspp cups-1.3.7/scheduler/job.h
+--- cups-1.3.7/scheduler/job.h.lspp	2008-01-16 22:20:33.000000000 +0000
++++ cups-1.3.7/scheduler/job.h	2008-07-18 13:06:51.000000000 +0100
+@@ -13,6 +13,13 @@
+  *   file is missing or damaged, see the license at "http://www.cups.org/".
+  */
+ 
++/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
++#ifdef WITH_LSPP
++#include <selinux/selinux.h>
++#endif /* WITH_LSPP */
++
+ /*
+  * Job request structure...
+  */
+@@ -60,6 +67,10 @@ typedef struct cupsd_job_s
+   krb5_ccache		ccache;		/* Kerberos credential cache */
+   char			*ccname;	/* KRB5CCNAME environment variable */
+ #endif /* HAVE_GSSAPI */
++#ifdef WITH_LSPP
++  security_context_t	scon;		/* Security context of job */
++  uid_t			auid;		/* Audit loginuid for this job */
++#endif /* WITH_LSPP */
+ } cupsd_job_t;
+ 
+ 
+diff -up cups-1.3.7/scheduler/main.c.lspp cups-1.3.7/scheduler/main.c
+--- cups-1.3.7/scheduler/main.c.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/main.c	2008-07-18 13:06:51.000000000 +0100
+@@ -35,6 +35,8 @@
+  *   usage()                   - Show scheduler usage.
+  */
+ 
++/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
++
+ /*
+  * Include necessary headers...
+  */
+@@ -73,6 +75,9 @@
+ #  include <dlfcn.h>
+ #endif /* __APPLE__ && HAVE_DLFCN_H */
+ 
++#ifdef WITH_LSPP
++#  include <libaudit.h>
++#endif /* WITH_LSPP */
+ 
+ /*
+  * Local functions...
+@@ -154,6 +159,9 @@ main(int  argc,				/* I - Number of comm
+   int			launchd_idle_exit;
+ 					/* Idle exit on select timeout? */
+ #endif	/* HAVE_LAUNCHD */
++#if WITH_LSPP
++  auditfail_t           failmode;       /* Action for audit_open failure */
++#endif /* WITH_LSPP */
+ 
+ 
+ #ifdef HAVE_GETEUID
+@@ -413,6 +421,25 @@ main(int  argc,				/* I - Number of comm
+ #endif /* DEBUG */
+   }
+ 
++#ifdef WITH_LSPP
++  if ((AuditLog = audit_open()) < 0 )
++  {
++    if (get_auditfail_action(&failmode) == 0)
++    {
++      if (failmode == FAIL_LOG)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to connect to audit subsystem.");
++        AuditLog = -1;
++      }
++      else if (failmode == FAIL_TERMINATE)
++      {
++        fprintf(stderr, "cupsd: unable to start auditing, terminating");
++        return -1;
++      }
++    }
++  }
++#endif /* WITH_LSPP */
++
+  /*
+   * Set the timezone info...
+   */
+@@ -1160,6 +1187,11 @@ main(int  argc,				/* I - Number of comm
+ 
+   cupsdStopSelect();
+ 
++#ifdef WITH_LSPP
++  if (AuditLog != -1)
++    audit_close(AuditLog);
++#endif /* WITH_LSPP */
++
+   return (!stop_scheduler);
+ }
+ 
+diff -up cups-1.3.7/scheduler/printers.c.lspp cups-1.3.7/scheduler/printers.c
+--- cups-1.3.7/scheduler/printers.c.lspp	2008-07-18 13:06:51.000000000 +0100
++++ cups-1.3.7/scheduler/printers.c	2008-07-18 13:06:51.000000000 +0100
 @@ -51,6 +51,8 @@
   *                                 printing desktop tools.
   */
@@ -462,2137 +3091,3 @@
    }
  
    p->raw    = 0;
---- cups-1.3.7/scheduler/conf.c.lspp	2008-05-30 16:59:10.000000000 +0100
-+++ cups-1.3.7/scheduler/conf.c	2008-05-30 16:59:10.000000000 +0100
-@@ -26,6 +26,7 @@
-  *   read_configuration()     - Read a configuration file.
-  *   read_location()          - Read a <Location path> definition.
-  *   read_policy()            - Read a <Policy name> definition.
-+ *   is_lspp_config()         - Is the system configured for LSPP
-  */
- 
- /*
-@@ -47,6 +48,9 @@
- #  define INADDR_NONE	0xffffffff
- #endif /* !INADDR_NONE */
- 
-+#ifdef WITH_LSPP
-+#  include <libaudit.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * Configuration variable structure...
-@@ -160,6 +164,10 @@ static const cupsd_var_t	variables[] =
- #  if defined(HAVE_LIBSSL) || defined(HAVE_GNUTLS)
-   { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_PATHNAME },
- #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
-+#ifdef WITH_LSPP
-+  { "AuditLog",			&AuditLog,		CUPSD_VARTYPE_INTEGER },
-+  { "PerPageLabels",		&PerPageLabels,		CUPSD_VARTYPE_BOOLEAN },
-+#endif /* WITH_LSPP */
- #endif /* HAVE_SSL */
-   { "ServerName",		&ServerName,		CUPSD_VARTYPE_STRING },
-   { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
-@@ -350,6 +358,9 @@ cupsdReadConfiguration(void)
- 		*old_requestroot;	/* Old RequestRoot */
-   const char	*tmpdir;		/* TMPDIR environment variable */
-   struct stat	tmpinfo;		/* Temporary directory info */
-+#ifdef WITH_LSPP
-+  char		*audit_message;		/* Audit message string */
-+#endif /* WITH_LSPP */
- 
- 
-  /*
-@@ -611,6 +622,25 @@ cupsdReadConfiguration(void)
- 
-   RunUser = getuid();
- 
-+#ifdef WITH_LSPP
-+  if (AuditLog != -1)
-+  {
-+   /*
-+    * ClassifyOverride is set during read_configuration, if its ON, report it now
-+    */
-+    if (ClassifyOverride)
-+      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
-+                "[Config] ClassifyOverride=enabled Users can override print banners",
-+                ServerName, NULL, NULL, 1);
-+   /*
-+    * PerPageLabel is set during read_configuration, if its OFF, report it now
-+    */
-+    if (!PerPageLabels)
-+      audit_log_user_message(AuditLog, AUDIT_USYS_CONFIG,
-+                "[Config] PerPageLabels=disabled", ServerName, NULL, NULL, 1);
-+  }
-+#endif /* WITH_LSPP */
-+
-  /*
-   * See if the ServerName is an IP address...
-   */
-@@ -885,11 +915,23 @@ cupsdReadConfiguration(void)
-   if (MaxActiveJobs > (MaxFDs / 3))
-     MaxActiveJobs = MaxFDs / 3;
- 
--  if (Classification && !strcasecmp(Classification, "none"))
-+  if (Classification && strcasecmp(Classification, "none") == 0)
-     cupsdClearString(&Classification);
- 
-   if (Classification)
-+  {
-     cupsdLogMessage(CUPSD_LOG_INFO, "Security set to \"%s\"", Classification);
-+#ifdef WITH_LSPP
-+    if (AuditLog != -1)
-+    {
-+      audit_message = NULL;
-+      cupsdSetStringf(&audit_message, "[Config] Classification=%s", Classification);
-+      audit_log_user_message(AuditLog, AUDIT_LABEL_LEVEL_CHANGE, audit_message,
-+                             ServerName, NULL, NULL, 1);
-+      cupsdClearString(&audit_message);
-+    }
-+#endif /* WITH_LSPP */
-+  }
- 
-  /*
-   * Update the MaxClientsPerHost value, as needed...
-@@ -3379,6 +3421,18 @@ read_policy(cups_file_t *fp,		/* I - Con
-   return (0);
- }
- 
-+#ifdef WITH_LSPP
-+int is_lspp_config()
-+{
-+  if (Classification != NULL)
-+    return ((strcasecmp(Classification, MLS_CONFIG) == 0) 
-+            || (strcasecmp(Classification, TE_CONFIG) == 0)
-+            || (strcasecmp(Classification, SELINUX_CONFIG) == 0));
-+  else
-+    return 0;
-+}
-+#endif /* WITH_LSPP */
-+
- 
- /*
-  * End of "$Id: conf.c 7382 2008-03-20 04:06:01Z mike $".
---- cups-1.3.7/scheduler/job.h.lspp	2008-01-16 22:20:33.000000000 +0000
-+++ cups-1.3.7/scheduler/job.h	2008-05-30 16:59:31.000000000 +0100
-@@ -13,6 +13,13 @@
-  *   file is missing or damaged, see the license at "http://www.cups.org/".
-  */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
-+#ifdef WITH_LSPP
-+#include <selinux/selinux.h>
-+#endif /* WITH_LSPP */
-+
- /*
-  * Job request structure...
-  */
-@@ -60,6 +67,10 @@ typedef struct cupsd_job_s
-   krb5_ccache		ccache;		/* Kerberos credential cache */
-   char			*ccname;	/* KRB5CCNAME environment variable */
- #endif /* HAVE_GSSAPI */
-+#ifdef WITH_LSPP
-+  security_context_t	scon;		/* Security context of job */
-+  uid_t			auid;		/* Audit loginuid for this job */
-+#endif /* WITH_LSPP */
- } cupsd_job_t;
- 
- 
---- cups-1.3.7/scheduler/main.c.lspp	2008-05-30 16:59:10.000000000 +0100
-+++ cups-1.3.7/scheduler/main.c	2008-05-30 16:59:10.000000000 +0100
-@@ -35,6 +35,8 @@
-  *   usage()                   - Show scheduler usage.
-  */
- 
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
-@@ -73,6 +75,9 @@
- #  include <dlfcn.h>
- #endif /* __APPLE__ && HAVE_DLFCN_H */
- 
-+#ifdef WITH_LSPP
-+#  include <libaudit.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * Local functions...
-@@ -154,6 +159,9 @@ main(int  argc,				/* I - Number of comm
-   int			launchd_idle_exit;
- 					/* Idle exit on select timeout? */
- #endif	/* HAVE_LAUNCHD */
-+#if WITH_LSPP
-+  auditfail_t           failmode;       /* Action for audit_open failure */
-+#endif /* WITH_LSPP */
- 
- 
- #ifdef HAVE_GETEUID
-@@ -413,6 +421,25 @@ main(int  argc,				/* I - Number of comm
- #endif /* DEBUG */
-   }
- 
-+#ifdef WITH_LSPP
-+  if ((AuditLog = audit_open()) < 0 )
-+  {
-+    if (get_auditfail_action(&failmode) == 0)
-+    {
-+      if (failmode == FAIL_LOG)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to connect to audit subsystem.");
-+        AuditLog = -1;
-+      }
-+      else if (failmode == FAIL_TERMINATE)
-+      {
-+        fprintf(stderr, "cupsd: unable to start auditing, terminating");
-+        return -1;
-+      }
-+    }
-+  }
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Set the timezone info...
-   */
-@@ -1160,6 +1187,11 @@ main(int  argc,				/* I - Number of comm
- 
-   cupsdStopSelect();
- 
-+#ifdef WITH_LSPP
-+  if (AuditLog != -1)
-+    audit_close(AuditLog);
-+#endif /* WITH_LSPP */
-+
-   return (!stop_scheduler);
- }
- 
---- cups-1.3.7/scheduler/ipp.c	2008-05-30 17:01:08.000000000 +0100
-+++ cups-1.3.7/scheduler/ipp.c	2008-07-01 12:30:59.000000000 +0100
-@@ -36,6 +36,7 @@
-  *   cancel_all_jobs()           - Cancel all print jobs.
-  *   cancel_job()                - Cancel a print job.
-  *   cancel_subscription()       - Cancel a subscription.
-+ *   check_context()             - Check the SELinux context for a user and job
-  *   check_quotas()              - Check quotas for a printer and user.
-  *   copy_attribute()            - Copy a single attribute.
-  *   copy_attrs()                - Copy attributes from one request to another.
-@@ -93,6 +94,9 @@
-  *   validate_user()             - Validate the user for the request.
-  */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
-@@ -116,6 +120,14 @@
- #  endif /* HAVE_MEMBERSHIPPRIV_H */
- #endif /* __APPLE__ */
- 
-+#ifdef WITH_LSPP
-+#include <libaudit.h>
-+#include <selinux/selinux.h>
-+#include <selinux/context.h>
-+#include <selinux/avc.h>
-+#include <selinux/flask.h>
-+#include <selinux/av_permissions.h>
-+#endif /* WITH_LSPP */
- 
- /*
-  * Local functions...
-@@ -140,6 +152,9 @@
- static void	cancel_all_jobs(cupsd_client_t *con, ipp_attribute_t *uri);
- static void	cancel_job(cupsd_client_t *con, ipp_attribute_t *uri);
- static void	cancel_subscription(cupsd_client_t *con, int id);
-+#ifdef WITH_LSPP
-+static int	check_context(cupsd_client_t *con, cupsd_job_t *job);
-+#endif /* WITH_LSPP */
- static int	check_quotas(cupsd_client_t *con, cupsd_printer_t *p);
- static ipp_attribute_t	*copy_attribute(ipp_t *to, ipp_attribute_t *attr,
- 		                        int quickcopy);
-@@ -1267,6 +1282,21 @@
-   int		kbytes;			/* Size of print file */
-   int		i;			/* Looping var */
-   int		lowerpagerange;		/* Page range bound */
-+#ifdef WITH_LSPP
-+  char		*audit_message;		/* Audit message string */
-+  char		*printerfile;		/* device file pointed to by the printer */
-+  char		*userheader = NULL;	/* User supplied job-sheets[0] */
-+  char		*userfooter = NULL;	/* User supplied job-sheets[1] */
-+  int		override = 0;		/* Was a banner overrode on a job */
-+  security_id_t	clisid;			/* SELinux SID for the client */
-+  security_id_t	psid;			/* SELinux SID for the printer */
-+  context_t	printercon;		/* Printer's context string */
-+  struct stat	printerstat;		/* Printer's stat buffer */
-+  security_context_t	devcon;		/* Printer's SELinux context */
-+  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
-+  security_class_t	tclass;		/* Object class for the SELinux check */
-+  access_vector_t	avr;		/* Access method being requested */
-+#endif /* WITH_LSPP */
- 
- 
-   cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %p(%s), %p(%s/%s))",
-@@ -1454,6 +1484,104 @@
-     ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL,
-                  title = "Untitled");
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+    if (!con->scon || strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "add_job: missing classification for connection \'%s\'!", printer->name);
-+      send_ipp_status(con, IPP_INTERNAL_ERROR, _("Missing required security attributes."));
-+      return (NULL);
-+    }
-+
-+   /*
-+    * Perform an access check so that if the user gets feedback at enqueue time
-+    */
-+
-+    printerfile = strstr(printer->device_uri, "/dev/");
-+    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = strdup(printer->device_uri + strlen("file:/"));
-+
-+    if (printerfile != NULL)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: Attempting an access check on printer device %s",
-+                      printerfile);
-+
-+      if (lstat(printerfile, &printerstat) < 0)
-+      {
-+	if (errno != ENOENT)
-+	{
-+	  send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to stat the printer"));
-+	  return (NULL);
-+	}
-+	/*
-+	 * The printer does not exist, so for now assume it's a FileDevice
-+	 */
-+	tclass = SECCLASS_FILE;
-+	avr = FILE__WRITE;
-+      }
-+      else if (S_ISCHR(printerstat.st_mode))
-+      {
-+	tclass = SECCLASS_CHR_FILE;
-+	avr = CHR_FILE__WRITE;
-+      }
-+      else if (S_ISREG(printerstat.st_mode))
-+      {
-+	tclass = SECCLASS_FILE;
-+	avr = FILE__WRITE;
-+      }
-+      else
-+      {
-+	send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Printer is not a character device or regular file"));
-+	return (NULL);
-+      }
-+      avc_init("cupsd_enqueue_", NULL, NULL, NULL, NULL);
-+      avc_entry_ref_init(&avcref);
-+      if (avc_context_to_sid(con->scon, &clisid) != 0)
-+      {
-+        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux sid of the client"));
-+        return (NULL);
-+      }
-+      if (getfilecon(printerfile, &devcon) == -1)
-+      {
-+        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux context of the printer"));
-+        return (NULL);
-+      }
-+      printercon = context_new(devcon);
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: printer context %s client context %s",
-+                      context_str(printercon), con->scon);
-+      context_free(printercon);
-+
-+      if (avc_context_to_sid(devcon, &psid) != 0)
-+      {
-+        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("Unable to get the SELinux sid of the printer"));
-+        freecon(devcon);
-+        return (NULL);
-+      }
-+      freecon(devcon);
-+      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
-+      {
-+       /*
-+        * The access check failed, so cancel the job and send an audit message
-+        */
-+        if (AuditLog != -1)
-+        {
-+          audit_message = NULL;
-+          cupsdSetStringf(&audit_message, "job=? auid=%u acct=%s obj=%s refused"
-+                          " unable to access printer=%s", con->auid,
-+                          con->username, con->scon, printer->name);
-+          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                 ServerName, NULL, NULL, 0);
-+          cupsdClearString(&audit_message);
-+        }
-+
-+        send_ipp_status(con, IPP_NOT_AUTHORIZED, _("SELinux prohibits access to the printer"));
-+        return (NULL);
-+      }
-+    }
-+  }
-+#endif /* WITH_LSPP */
-+
-   if ((job = cupsdAddJob(priority, printer->name)) == NULL)
-   {
-     send_ipp_status(con, IPP_INTERNAL_ERROR,
-@@ -1462,6 +1590,32 @@
-     return (NULL);
-   }
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+   /*
-+    * duplicate the security context and auid of the connection into the job structure
-+    */
-+    job->scon = strdup(con->scon);
-+    job->auid = con->auid;
-+
-+   /* 
-+    * add the security context to the request so that on a restart the security
-+    * attributes will be able to be restored
-+    */
-+    ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "security-context", 
-+		 NULL, job->scon);
-+  }
-+  else
-+  {
-+   /*
-+    * Fill in the security context of the job as unlabeled
-+    */
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "add_job: setting context of job to %s", UNKNOWN_SL);
-+    cupsdSetString(&job->scon, UNKNOWN_SL);
-+  }
-+#endif /* WITH_LSPP */
-+
-   job->dtype   = printer->type & (CUPS_PRINTER_CLASS | CUPS_PRINTER_IMPLICIT |
-                                   CUPS_PRINTER_REMOTE);
-   job->attrs   = con->request;
-@@ -1668,6 +1822,29 @@
-       attr->values[0].string.text = _cupsStrAlloc(printer->job_sheets[0]);
-       attr->values[1].string.text = _cupsStrAlloc(printer->job_sheets[1]);
-     }
-+#ifdef WITH_LSPP
-+    else
-+    {
-+     /*
-+      * The option was present, so capture the user supplied strings
-+      */
-+      userheader = strdup(attr->values[0].string.text);
-+
-+      if (attr->num_values > 1)
-+        userfooter = strdup(attr->values[1].string.text);
-+  
-+      if (Classification != NULL && (strcmp(userheader, Classification) == 0)
-+          && userfooter &&(strcmp(userfooter, Classification) == 0))
-+      {
-+       /*
-+        * Since both values are Classification, the user is not trying to Override
-+        */
-+        free(userheader);
-+        if (userfooter) free(userfooter);
-+        userheader = userfooter = NULL;
-+      }
-+    }
-+#endif /* WITH_LSPP */
- 
-     job->job_sheets = attr;
- 
-@@ -1698,6 +1875,9 @@
- 	                		    "job-sheets=\"%s,none\", "
- 					    "job-originating-user-name=\"%s\"",
- 	        	 job->id, Classification, job->username);
-+#ifdef WITH_LSPP
-+          override = 1;
-+#endif /* WITH_LSPP */
- 	}
- 	else if (attr->num_values == 2 &&
- 	         strcmp(attr->values[0].string.text,
-@@ -1716,6 +1896,9 @@
- 					    "job-originating-user-name=\"%s\"",
- 	        	 job->id, attr->values[0].string.text,
- 			 attr->values[1].string.text, job->username);
-+#ifdef WITH_LSPP
-+          override = 1;
-+#endif /* WITH_LSPP */
- 	}
- 	else if (strcmp(attr->values[0].string.text, Classification) &&
- 	         strcmp(attr->values[0].string.text, "none") &&
-@@ -1736,6 +1919,9 @@
- 			    "job-originating-user-name=\"%s\"",
- 	        	    job->id, attr->values[0].string.text,
- 			    attr->values[1].string.text, job->username);
-+#ifdef WITH_LSPP
-+          override = 1;
-+#endif /* WITH_LSPP */
-         }
-       }
-       else if (strcmp(attr->values[0].string.text, Classification) &&
-@@ -1776,7 +1962,50 @@
- 	                  "job-sheets=\"%s\", "
- 			  "job-originating-user-name=\"%s\"",
- 	        	 job->id, Classification, job->username);
-+#ifdef WITH_LSPP
-+        override = 1;
-+#endif /* WITH_LSPP */
-+      }
-+#ifdef WITH_LSPP
-+      if (is_lspp_config() && AuditLog != -1)
-+      {
-+        audit_message = NULL;
-+
-+        if (userheader || userfooter)
-+        {
-+          if (!override)
-+          {
-+           /*
-+            * The user overrode the banner, so audit it
-+            */
-+            cupsdSetStringf(&audit_message, "job=%d user supplied job-sheets=%s,%s"
-+                            " using banners=%s,%s", job->id, userheader,
-+                            userfooter, attr->values[0].string.text,
-+                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
-+            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
-+                                   ServerName, NULL, NULL, 1);
-+      }
-+          else
-+          {
-+           /*
-+            * The user tried to override the banner, audit the failure
-+            */
-+            cupsdSetStringf(&audit_message, "job=%d user supplied job-sheets=%s,%s"
-+                            " ignored banners=%s,%s", job->id, userheader,
-+                            userfooter, attr->values[0].string.text,
-+                            (attr->num_values > 1) ? attr->values[1].string.text : "(null)");
-+            audit_log_user_message(AuditLog, AUDIT_LABEL_OVERRIDE, audit_message,
-+                                   ServerName, NULL, NULL, 0);
-       }
-+          cupsdClearString(&audit_message);
-+      }
-+    }
-+
-+      if (userheader)
-+        free(userheader);
-+      if (userfooter)
-+        free(userfooter);
-+#endif /* WITH_LSPP */
-     }
- 
-    /*
-@@ -3391,6 +3620,103 @@
- }
- 
- 
-+#ifdef WITH_LSPP
-+/*
-+ * 'check_context()' - Check SELinux security context of a user and job
-+ */
-+
-+static int				/* O - 1 if OK, 0 if not, -1 on error */
-+check_context(cupsd_client_t *con,	/* I - Client connection */
-+             cupsd_job_t    *job)	/* I - Job */
-+{
-+  int			enforcing;	/* is SELinux in enforcing mode */
-+  char			filename[1024]; /* Filename of the spool file */
-+  security_id_t		clisid;		/* SELinux SID of the client */
-+  security_id_t		jobsid;		/* SELinux SID of the job */
-+  security_id_t		filesid;	/* SELinux SID of the spool file */
-+  struct avc_entry_ref	avcref;		/* AVC entry cache pointer */
-+  security_class_t	tclass;		/* SELinux security class */
-+  access_vector_t	avr;		/* SELinux access being queried */
-+  security_context_t	spoolfilecon;	/* SELinux context of the spool file */
-+
-+
-+ /*
-+  * Validate the input to be sure there are contexts to work with...
-+  */
-+
-+  if (con->scon == NULL || job->scon == NULL
-+      || strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0
-+      || strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) == 0)
-+    return -1;
-+
-+  if ((enforcing = security_getenforce()) == -1)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "Error while determining SELinux enforcement");
-+    return -1;
-+  }
-+  cupsdLogMessage(CUPSD_LOG_DEBUG, "check_context: client context %s job context %s", con->scon, job->scon);
-+
-+
-+ /*
-+  * Initialize the avc engine...
-+  */
-+
-+  if (avc_init("cupsd", NULL, NULL, NULL, NULL) < 0)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable avc_init");
-+    return -1;
-+  } 
-+  if (avc_context_to_sid(con->scon, &clisid) != 0)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", con->scon);
-+    return -1;
-+  }
-+  avc_context_to_sid(job->scon, &jobsid);
-+  avc_entry_ref_init(&avcref);
-+  tclass = SECCLASS_FILE;
-+  avr = FILE__READ;
-+
-+ /*
-+  * Perform the check with the client as the subject, first with the job as the object
-+  *   if that fails then with the spool file as the object...
-+  */
-+
-+  if (avc_has_perm_noaudit(clisid, jobsid, tclass, avr, &avcref, NULL) != 0)
-+  {
-+    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access based on the client context");
-+
-+    snprintf(filename, sizeof(filename), "%s/c%05d", RequestRoot, job->id);
-+    if (getfilecon(filename, &spoolfilecon) == -1)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to get spoolfile context");
-+      return -1;
-+    }
-+    if (avc_context_to_sid(spoolfilecon, &filesid) != 0)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to determine the SELinux sid for the spool file");
-+      freecon(spoolfilecon);
-+      return -1;
-+    }
-+    freecon(spoolfilecon);
-+    if (avc_has_perm_noaudit(clisid, filesid, tclass, avr, &avcref, NULL) != 0)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access to the spool file");
-+      return 0;
-+    }
-+    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access to the spool file");
-+    return 1;
-+  }
-+  else
-+    if (enforcing == 0)
-+        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: allowing operation due to permissive mode");
-+    else
-+        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access based on the client context");
-+
-+  return 1;
-+}
-+#endif /* WITH_LSPP */
-+
-+
- /*
-  * 'check_quotas()' - Check quotas for a printer and user.
-  */
-@@ -3912,6 +4238,15 @@
-   char		attrname[255],		/* Name of attribute */
- 		*s;			/* Pointer into name */
-   ipp_attribute_t *attr;		/* Attribute */
-+#ifdef WITH_LSPP
-+  const char	*mls_label;		/* SL of print job */
-+  char		*jobrange;		/* SELinux sensitivity range */
-+  char		*jobclearance;		/* SELinux low end clearance */
-+  context_t	jobcon;			/* SELinux context of the job */
-+  context_t	tmpcon;			/* Temp context to set the level */
-+  security_context_t	spoolcon;	/* Context of the file in the spool */
-+#endif /* WITH_LSPP */
-+
- 
- 
-   cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner(%p[%d], %p[%d], %s)",
-@@ -3946,6 +4281,82 @@
- 
-   fchmod(cupsFileNumber(out), 0640);
-   fchown(cupsFileNumber(out), RunUser, Group);
-+#ifdef WITH_LSPP
-+  if (job->scon != NULL &&
-+      strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
-+  {
-+    if (getfilecon(filename, &spoolcon) == -1)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to get the context of the banner file %s - %s",
-+                      filename, strerror(errno));
-+      job->num_files --;
-+      return (0);
-+    }
-+    tmpcon = context_new(spoolcon);
-+    jobcon = context_new(job->scon);
-+    freecon(spoolcon);
-+    if (!tmpcon || !jobcon)
-+    {
-+      if (tmpcon)
-+        context_free(tmpcon);
-+      if (jobcon)
-+        context_free(jobcon);
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to get the SELinux contexts");
-+      job->num_files --;
-+      return (0);
-+    }
-+    jobrange = context_range_get(jobcon);
-+    if (jobrange)
-+    {
-+      jobrange = strdup(jobrange);
-+      if ((jobclearance = strtok(jobrange, "-")) != NULL)
-+      {
-+	if (context_range_set(tmpcon, jobclearance) == -1)
-+	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "copy_banner: Unable to set the level of the context for file %s - %s",
-+			  filename, strerror(errno));
-+	  free(jobrange);
-+	  context_free(jobcon);
-+	  context_free(tmpcon);
-+	  job->num_files --;
-+	  return (0);
-+	}
-+      }
-+      else
-+      {
-+	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
-+	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "copy_banner: Unable to set the level of the context for file %s - %s",
-+			  filename, strerror(errno));
-+	  free(jobrange);
-+	  context_free(jobcon);
-+	  context_free(tmpcon);
-+	  job->num_files --;
-+	  return (0);
-+	}
-+      }
-+      free(jobrange);
-+    }
-+    if (setfilecon(filename, context_str(tmpcon)) == -1)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to set the context of the banner file %s - %s",
-+                      filename, strerror(errno));
-+      context_free(jobcon);
-+      context_free(tmpcon);
-+      job->num_files --;
-+      return (0);
-+    }
-+    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
-+                    filename, context_str(tmpcon));
-+    context_free(jobcon);
-+    context_free(tmpcon);
-+  }
-+#endif /* WITH_LSPP */
- 
-  /*
-   * Try the localized banner file under the subdirectory...
-@@ -4040,6 +4451,24 @@
-       else
-         s = attrname;
- 
-+#ifdef WITH_LSPP
-+      if (strcmp(s, "mls-label") == 0)
-+      {
-+        if (job->scon != NULL && strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
-+        {
-+          jobcon = context_new(job->scon);
-+          if (strcasecmp(name, MLS_CONFIG) == 0)
-+            mls_label = context_range_get(jobcon);
-+          else if (strcasecmp(name, TE_CONFIG) == 0)
-+            mls_label = context_type_get(jobcon);
-+          else // default to using the whole context string
-+            mls_label = context_str(jobcon);
-+          cupsFilePuts(out, mls_label);
-+          context_free(jobcon);
-+        }
-+        continue;
-+      }
-+#endif /* WITH_LSPP */
-       if (!strcmp(s, "printer-name"))
-       {
-         cupsFilePuts(out, job->dest);
-@@ -5765,6 +6194,22 @@
-     return;
-   }
- 
-+
-+#ifdef WITH_LSPP
-+ /*
-+  * Check SELinux...
-+  */
-+  if (is_lspp_config() && check_context(con, job) != 1)
-+  {
-+   /*
-+    * Unfortunately we have to lie to the user...
-+    */
-+    send_ipp_status(con, IPP_NOT_FOUND, _("Job #%d does not exist!"), jobid);
-+    return;
-+  }
-+#endif /* WITH_LSPP */
-+
-+
-  /*
-   * Copy attributes...
-   */
-@@ -5970,6 +6415,11 @@
-     if (count > 0)
-       ippAddSeparator(con->response);
- 
-+#ifdef WITH_LSPP
-+    if (is_lspp_config() && check_context(con, job) != 1)
-+      continue;
-+#endif /* WITH_LSPP */
-+
-     count ++;
- 
-     cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
-@@ -10042,6 +10492,11 @@
- 
-   strlcpy(username, get_username(con), userlen);
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config() && check_context(con, job) != 1)
-+    return 0;
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Check the username against the owner...
-   */
---- cups-1.3.7/scheduler/conf.h.lspp	2008-05-30 16:59:10.000000000 +0100
-+++ cups-1.3.7/scheduler/conf.h	2008-05-30 16:59:10.000000000 +0100
-@@ -193,6 +193,12 @@ VAR char		*ServerKey		VALUE(NULL);
- 					/* Server key file */
- #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
- #endif /* HAVE_SSL */
-+#ifdef WITH_LSPP
-+VAR int			AuditLog		VALUE(-1),
-+					/* File descriptor for audit */
-+			PerPageLabels		VALUE(TRUE);
-+					/* Put the label on each page */
-+#endif /* WITH_LSPP */
- 
- #ifdef HAVE_LAUNCHD
- VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
-@@ -211,6 +217,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
- 					/* System group auth key */
- #endif /* HAVE_AUTHORIZATION_H */
- 
-+#ifdef WITH_LSPP
-+extern int	is_lspp_config(void);
-+#endif /* WITH_LSPP */
- 
- /*
-  * Prototypes...
---- cups-1.3.7/scheduler/client.c.lspp	2008-02-12 00:20:32.000000000 +0000
-+++ cups-1.3.7/scheduler/client.c	2008-05-30 16:59:10.000000000 +0100
-@@ -39,12 +39,14 @@
-  *   pipe_command()          - Pipe the output of a command to the remote client.
-  *   write_file()            - Send a file via HTTP.
-  *   write_pipe()            - Flag that data is available on the CGI pipe.
-+ *   client_pid_to_auid()    - Get the audit login uid of the client.
-  */
- 
- /*
-  * Include necessary headers...
-  */
- 
-+#define _GNU_SOURCE
- #include <cups/http-private.h>
- #include "cupsd.h"
- 
-@@ -76,6 +78,12 @@ extern const char *cssmErrorString(int e
- #  include <gnutls/x509.h>
- #endif /* HAVE_GNUTLS */
- 
-+#ifdef WITH_LSPP
-+#include <selinux/selinux.h>
-+#include <selinux/context.h>
-+#include <fcntl.h>
-+#endif /* WITH_LSPP */
-+
- 
- /*
-  * Local functions...
-@@ -349,6 +357,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
-     }
-   }
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+    struct ucred cr;
-+    unsigned int cl=sizeof(cr);
-+
-+    if (getsockopt(con->http.fd, SOL_SOCKET, SO_PEERCRED, &cr, &cl) == 0)
-+    {
-+     /*
-+      * client_pid_to_auid() can be racey
-+      * In this case the pid is based on a socket connected to the client
-+      */
-+      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
-+      {
-+        close(con->http.fd);
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: "
-+                        "unable to determine client auid for client pid=%d", cr.pid);
-+        free(con);
-+        return;
-+      }
-+      cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: peer's pid=%d, uid=%d, gid=%d, auid=%d",
-+                      cr.pid, cr.uid, cr.gid, con->auid);
-+    }
-+    else
-+    {
-+      close(con->http.fd);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getsockopt() failed");
-+      free(con);
-+      return; 
-+    }
-+
-+   /*
-+    * get the context of the peer connection
-+    */
-+    if (getpeercon(con->http.fd, &con->scon))
-+    {
-+      close(con->http.fd);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
-+      free(con);
-+      return; 
-+    }
-+
-+    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
-+  }
-+  else
-+  {
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
-+    cupsdSetString(&con->scon, UNKNOWN_SL);
-+  }
-+#endif /* WITH_LSPP */
-+
- #ifdef AF_INET6
-   if (con->http.hostaddr->addr.sa_family == AF_INET6)
-     cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: %d from %s:%d (IPv6)",
-@@ -731,6 +790,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
-   mime_type_t		*type;		/* MIME type of file */
-   cupsd_printer_t	*p;		/* Printer */
-   static unsigned	request_id = 0;	/* Request ID for temp files */
-+#ifdef WITH_LSPP
-+  security_context_t	spoolcon;	/* context of the job file */
-+  context_t		clicon;		/* contex_t container for con->scon */
-+  context_t		tmpcon;		/* temp context to swap the level */
-+  char			*clirange;	/* SELinux sensitivity range */
-+  char			*cliclearance;	/* SELinux low end clearance */
-+#endif /* WITH_LSPP */
- 
- 
-   status = HTTP_CONTINUE;
-@@ -2011,6 +2077,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
- 	    fchmod(con->file, 0640);
- 	    fchown(con->file, RunUser, Group);
-             fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
-+#ifdef WITH_LSPP
-+	    if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
-+	    {
-+	      if (getfilecon(con->filename, &spoolcon) == -1)
-+	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		return (cupsdCloseClient(con));
-+	      }
-+	      clicon = context_new(con->scon);
-+	      tmpcon = context_new(spoolcon);
-+	      freecon(spoolcon);
-+	      if (!clicon || !tmpcon)
-+	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		if (clicon)
-+		  context_free(clicon);
-+		if (tmpcon)
-+		  context_free(tmpcon);
-+		return (cupsdCloseClient(con));
-+	      }
-+	      clirange = context_range_get(clicon);
-+	      if (clirange)
-+	      {
-+		clirange = strdup(clirange);
-+		if ((cliclearance = strtok(clirange, "-")) != NULL)
-+		{
-+		  if (context_range_set(tmpcon, cliclearance) == -1)
-+		  {
-+		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		    free(clirange);
-+		    context_free(tmpcon);
-+		    context_free(clicon);
-+		    return (cupsdCloseClient(con));
-+		  }
-+		}
-+		else
-+		{
-+		  if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
-+		  {
-+		    cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		    free(clirange);
-+		    context_free(tmpcon);
-+		    context_free(clicon);
-+		    return (cupsdCloseClient(con));
-+		  }
-+		}
-+		free(clirange);
-+	      }
-+	      if (setfilecon(con->filename, context_str(tmpcon)) == -1)
-+	      {
-+		cupsdSendError(con, HTTP_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		context_free(tmpcon);
-+		context_free(clicon);
-+		return (cupsdCloseClient(con));
-+	      }
-+	      cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdReadClient: %s set to %s", 
-+			      con->filename, context_str(tmpcon));
-+	      context_free(tmpcon);
-+	      context_free(clicon);
-+	    }
-+#endif /* WITH_LSPP */
- 	  }
- 
- 	  if (con->http.state != HTTP_POST_SEND)
-@@ -4253,6 +4380,50 @@ make_certificate(cupsd_client_t *con)	/*
- #endif /* HAVE_SSL */
- 
- 
-+#ifdef WITH_LSPP
-+/*
-+ * 'client_pid_to_auid()' - Using the client's pid, read /proc and determine the loginuid.
-+ */
-+
-+uid_t client_pid_to_auid(pid_t clipid)
-+{
-+  uid_t uid;
-+  int len, in;
-+  char buf[16] = {0};
-+  char fname[32] = {0};
-+
-+
-+ /*
-+  * Hopefully this pid is still the one we are interested in.
-+  */
-+  snprintf(fname, 32, "/proc/%d/loginuid", clipid);
-+  in = open(fname, O_NOFOLLOW|O_RDONLY);
-+
-+  if (in < 0)
-+    return -1;
-+
-+  errno = 0;
-+
-+  do {
-+    len = read(in, buf, sizeof(buf));
-+  } while (len < 0 && errno == EINTR);
-+
-+  close(in);
-+
-+  if (len < 0 || len >= sizeof(buf))
-+    return -1;
-+
-+  errno = 0;
-+  buf[len] = 0;
-+  uid = strtol(buf, 0, 10);
-+
-+  if (errno != 0)
-+    return -1;
-+  else
-+    return uid;
-+}
-+#endif /* WITH_LSPP */
-+
- /*
-  * 'pipe_command()' - Pipe the output of a command to the remote client.
-  */
---- cups-1.3.7/scheduler/client.h.lspp	2007-10-22 19:52:13.000000000 +0100
-+++ cups-1.3.7/scheduler/client.h	2008-05-30 16:59:10.000000000 +0100
-@@ -17,6 +17,13 @@
- #  include <Security/Authorization.h>
- #endif /* HAVE_AUTHORIZATION_H */
- 
-+/* Copyright (C) 2005 Trusted Computer Solutions, Inc. */
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
-+#ifdef WITH_LSPP
-+#include <selinux/selinux.h>
-+#endif /* WITH_LSPP */
-+
- /*
-  * HTTP client structure...
-  */
-@@ -62,6 +69,10 @@ struct cupsd_client_s
- #ifdef HAVE_AUTHORIZATION_H
-   AuthorizationRef	authref;	/* Authorization ref */
- #endif /* HAVE_AUTHORIZATION_H */
-+#ifdef WITH_LSPP
-+  security_context_t	scon;		/* Security context of connection */
-+  uid_t			auid;		/* Audit loginuid of the client */
-+#endif /* WITH_LSPP */
- };
- 
- #define HTTP(con) &((con)->http)
-@@ -129,6 +140,9 @@ extern void	cupsdStartListening(void);
- extern void	cupsdStopListening(void);
- extern void	cupsdUpdateCGI(void);
- extern void	cupsdWriteClient(cupsd_client_t *con);
-+#ifdef WITH_LSPP
-+extern uid_t	client_pid_to_auid(pid_t clipid);
-+#endif /* WITH_LSPP */
- 
- 
- /*
---- cups-1.3.7/config.h.in.lspp	2008-01-07 18:26:57.000000000 +0000
-+++ cups-1.3.7/config.h.in	2008-05-30 16:59:10.000000000 +0100
-@@ -530,6 +530,13 @@
- #undef HAVE_REMOVEFILE
- 
- 
-+/*
-+ * Are we trying to meet LSPP requirements?
-+ */
-+
-+#undef WITH_LSPP
-+
-+
- #endif /* !_CUPS_CONFIG_H_ */
- 
- /*
---- cups-1.3.7/Makedefs.in.lspp	2008-01-22 22:37:21.000000000 +0000
-+++ cups-1.3.7/Makedefs.in	2008-05-30 16:59:10.000000000 +0100
-@@ -134,7 +134,7 @@ LIBCUPSORDER	=	@LIBCUPSORDER@
- LIBCUPSIMAGEORDER =	@LIBCUPSIMAGEORDER@
- LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
- LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
--LIBS		=	$(LINKCUPS) $(COMMONLIBS)
-+LIBS		=	$(LINKCUPS) $(COMMONLIBS) @LIBAUDIT@ @LIBSELINUX@
- OPTIM		=	@OPTIM@
- OPTIONS		=
- PAMLIBS		=	@PAMLIBS@
---- cups-1.3.7/configure.in.lspp	2007-07-25 00:47:12.000000000 +0100
-+++ cups-1.3.7/configure.in	2008-05-30 16:59:10.000000000 +0100
-@@ -42,6 +42,8 @@ sinclude(config-scripts/cups-pap.m4)
- sinclude(config-scripts/cups-pdf.m4)
- sinclude(config-scripts/cups-scripting.m4)
- 
-+sinclude(config-scripts/cups-lspp.m4)
-+
- INSTALL_LANGUAGES=""
- UNINSTALL_LANGUAGES=""
- LANGFILES=""
---- /dev/null	2008-05-30 08:00:32.690000973 +0100
-+++ cups-1.3.7/config-scripts/cups-lspp.m4	2008-05-30 16:59:10.000000000 +0100
-@@ -0,0 +1,36 @@
-+dnl
-+dnl   LSPP code for the Common UNIX Printing System (CUPS).
-+dnl
-+dnl   Copyright 2005-2006 by Hewlett-Packard Development Company, L.P.
-+dnl
-+dnl   This program is free software; you can redistribute it and/or modify
-+dnl   it under the terms of the GNU General Public License as published by
-+dnl   the Free Software Foundation; version 2.
-+dnl
-+dnl   This program is distributed in the hope that it will be useful, but
-+dnl   WITHOUT ANY WARRANTY; without even the implied warranty of
-+dnl   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+dnl   General Public License for more details.
-+dnl
-+dnl   You should have received a copy of the GNU General Public License
-+dnl   along with this program; if not, write to the Free Software Foundation,
-+dnl   Inc., 51 Franklin Street, Fifth Floor Boston, MA 02110-1301 USA
-+dnl
-+
-+dnl Are we trying to meet LSPP requirements
-+AC_ARG_ENABLE(lspp, [  --enable-lspp           turn on auditing and label support, default=no])
-+
-+if test x"$enable_lspp" != xno; then
-+    case "$uname" in
-+        Linux)
-+            AC_CHECK_LIB(audit,audit_log_user_message, [LIBAUDIT="-laudit" AC_SUBST(LIBAUDIT)])
-+            AC_CHECK_HEADER(libaudit.h)
-+            AC_CHECK_LIB(selinux,getpeercon, [LIBSELINUX="-lselinux" AC_SUBST(LIBSELINUX)])
-+            AC_CHECK_HEADER(selinux/selinux.h)
-+            AC_DEFINE(WITH_LSPP)
-+            ;;
-+        *)
-+            # All others
-+            ;;
-+    esac
-+fi
---- cups-1.3.7/filter/common.c.lspp	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.7/filter/common.c	2008-05-30 16:59:10.000000000 +0100
-@@ -30,6 +30,12 @@
-  * Include necessary headers...
-  */
- 
-+#include "config.h"
-+#ifdef WITH_LSPP
-+#define _GNU_SOURCE
-+#include <string.h>
-+#endif /* WITH_LSPP */
-+
- #include "common.h"
- #include <locale.h>
- 
-@@ -312,6 +318,18 @@ WriteLabelProlog(const char *label,	/* I
- {
-   const char	*classification;	/* CLASSIFICATION environment variable */
-   const char	*ptr;			/* Temporary string pointer */
-+#ifdef WITH_LSPP
-+  int           i,                      /* counter */
-+                n,                      /* counter */
-+                lines,                  /* number of lines needed */
-+                line_len,               /* index into tmp_label */
-+                label_len,              /* length of the label in characters */
-+                label_index,            /* index into the label */
-+                longest,                /* length of the longest line */
-+                longest_line,           /* index to the longest line */
-+                max_width;              /* maximum width in characters */
-+  char          **wrapped_label;        /* label with line breaks */
-+#endif /* WITH_LSPP */
- 
- 
-  /*
-@@ -334,6 +352,124 @@ WriteLabelProlog(const char *label,	/* I
-     return;
-   }
- 
-+#ifdef WITH_LSPP
-+  if (strncmp(classification, "LSPP:", 5) == 0 && label == NULL)
-+  {
-+   /*
-+    * Based on the 12pt fixed width font below determine the max_width
-+    */
-+    max_width = width / 8;
-+    longest_line = 0;
-+    longest = 0;
-+    classification += 5; // Skip the "LSPP:"
-+    label_len = strlen(classification);
-+
-+    if (label_len > max_width)
-+    {
-+      lines = 1 + (int)(label_len / max_width);
-+      line_len = (int)(label_len / lines);
-+      wrapped_label = malloc(sizeof(wrapped_label) * lines);
-+      label_index = i = n = 0;
-+      while (classification[label_index])
-+      {
-+        if ((label_index + line_len) > label_len)
-+          break;
-+        switch (classification[label_index + line_len + i])
-+        {
-+          case ':':
-+          case ',':
-+          case '-':
-+            i++;
-+            wrapped_label[n++] = strndup(&classification[label_index], (line_len + i));
-+            label_index += line_len + i;
-+            i = 0;
-+            break;
-+          default:
-+            i++;
-+            break;
-+        }
-+        if ((i + line_len) == max_width)
-+        {
-+          wrapped_label[n++] = strndup(&(classification[label_index]), (line_len + i));
-+          label_index = label_index + line_len + i;
-+          i = 0;
-+        }
-+      }
-+      wrapped_label[n] = strndup(&classification[label_index], label_len - label_index);
-+    }
-+    else
-+    {
-+      lines = 1;
-+      wrapped_label = malloc(sizeof(wrapped_label));
-+      wrapped_label[0] = (char*)classification;
-+    }
-+
-+    for (n = 0; n < lines; n++ )
-+    {
-+      printf("userdict/ESPp%c(", ('a' + n));
-+      for (ptr = wrapped_label[n], i = 0; *ptr; ptr ++, i++)
-+        if (*ptr < 32 || *ptr > 126)
-+          printf("\\%03o", *ptr);
-+        else
-+        {
-+          if (*ptr == '(' || *ptr == ')' || *ptr == '\\')
-+            putchar('\\');
-+
-+          printf("%c", *ptr);
-+        }
-+      if (i > longest)
-+      {
-+        longest = i;
-+        longest_line = n;
-+      }
-+      printf(")put\n");
-+    }
-+
-+   /*
-+    * For LSPP use a fixed width font so that line wrapping can be calculated
-+    */
-+
-+    puts("userdict/ESPlf /Nimbus-Mono findfont 12 scalefont put");
-+
-+   /*
-+    * Finally, the procedure to write the labels on the page...
-+    */
-+
-+    printf("userdict/ESPwl{\n"
-+           "  ESPlf setfont\n");
-+    printf("  ESPp%c stringwidth pop dup 12 add exch -0.5 mul %.0f add\n ",
-+           'a' + longest_line, width * 0.5f);
-+    for (n = 1; n < lines; n++)
-+      printf(" dup");
-+    printf("\n  1 setgray\n");
-+    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
-+           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
-+    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
-+           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
-+    printf("  0 setgray\n");
-+    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
-+           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
-+    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
-+           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
-+    for (n = 0; n < lines; n ++)
-+    {
-+      printf("  dup %.0f moveto ESPp%c show\n",
-+             bottom + 6.0 + ((lines - (n+1)) * 16.0), 'a' + n);
-+      printf("  %.0f moveto ESPp%c show\n", top + 2.0 - ((n + 1) * 16.0), 'a' + n);
-+    }
-+    printf("  pop\n"
-+           "}bind put\n");
-+
-+   /*
-+    * Do some clean up at the end of the LSPP special case
-+    */
-+    free(wrapped_label);
-+
-+  }
-+  else
-+  {
-+#endif /* !WITH_LSPP */
-+  
-  /*
-   * Set the classification + page label string...
-   */
-@@ -414,7 +550,10 @@ WriteLabelProlog(const char *label,	/* I
-   printf("  %.0f moveto ESPpl show\n", top - 14.0);
-   puts("pop");
-   puts("}bind put");
-+  }
-+#ifdef WITH_LSPP
- }
-+#endif /* WITH_LSPP */
- 
- 
- /*
---- cups-1.3.7/data/Makefile.lspp	2007-10-10 23:00:43.000000000 +0100
-+++ cups-1.3.7/data/Makefile	2008-05-30 16:59:10.000000000 +0100
-@@ -25,7 +25,10 @@ BANNERS	=	\
- 		secret \
- 		standard \
- 		topsecret \
--		unclassified
-+		unclassified \
-+		selinux \
-+		mls \
-+		te
- 
- CHARMAPS =	\
- 		euc-cn.txt \
---- /dev/null	2008-05-30 08:00:32.690000973 +0100
-+++ cups-1.3.7/data/te	2008-05-30 16:59:10.000000000 +0100
-@@ -0,0 +1,261 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
---- /dev/null	2008-05-30 08:00:32.690000973 +0100
-+++ cups-1.3.7/data/selinux	2008-05-30 16:59:10.000000000 +0100
-@@ -0,0 +1,261 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
---- /dev/null	2008-05-30 08:00:32.690000973 +0100
-+++ cups-1.3.7/data/mls	2008-05-30 16:59:10.000000000 +0100
-@@ -0,0 +1,261 @@
-+%!PS-Adobe-3.0
-+%%BoundingBox: 0 0 612 792
-+%%Pages: 1
-+%%LanguageLevel: 1
-+%%DocumentData: Clean7Bit
-+%%DocumentSuppliedResources: procset bannerprint/1.0
-+%%DocumentNeededResources: font Helvetica Helvetica-Bold Times-Roman
-+%%Creator: Michael Sweet, Easy Software Products
-+%%CreationDate: May 10, 2000
-+%%Title: Test Page
-+%%EndComments
-+%%BeginProlog
-+%%BeginResource procset bannerprint 1.1 0
-+%
-+%   PostScript banner page for the Common UNIX Printing System ("CUPS").
-+%
-+%   Copyright 1993-2005 by Easy Software Products
-+%
-+%   These coded instructions, statements, and computer programs are the
-+%   property of Easy Software Products and are protected by Federal
-+%   copyright law.  Distribution and use rights are outlined in the file
-+%   "LICENSE.txt" which should have been included with this file.  If this
-+%   file is missing or damaged please contact Easy Software Products
-+%   at:
-+%
-+%       Attn: CUPS Licensing Information
-+%       Easy Software Products
-+%       44141 Airport View Drive, Suite 204
-+%       Hollywood, Maryland 20636 USA
-+%
-+%       Voice: (301) 373-9600
-+%       EMail: cups-info@cups.org
-+%         WWW: http://www.cups.org
-+%
-+/CENTER {			% Draw centered text
-+				% (name) CENTER -
-+  dup stringwidth pop		% Get the width of the string
-+  0.5 mul neg 0 rmoveto		% Shift left 1/2 of the distance
-+  show				% Show the string
-+} bind def
-+/RIGHT {			% Draw right-justified text
-+				% (name) RIGHT -
-+  dup stringwidth pop		% Get the width of the string
-+  neg 0 rmoveto			% Shift left the entire distance
-+  show				% Show the string
-+} bind def
-+/NUMBER {			% Draw a number
-+				% power n NUMBER -
-+  1 index 1 eq {		% power == 1?
-+    round cvi exch pop		% Convert "n" to integer
-+  } {
-+    1 index mul round exch div	% Truncate extra decimal places
-+  } ifelse
-+  100 string cvs show		% Convert to a string and show it...
-+} bind def
-+/CUPSLOGO {			% Draw the CUPS logo
-+				% height CUPSLOGO
-+  % Start with a big C...
-+  /Helvetica findfont 1 index scalefont setfont
-+  0 setgray
-+  0 0 moveto
-+  (C) show
-+
-+  % Then "UNIX Printing System" much smaller...
-+  /Helvetica-Bold findfont 1 index 9 div scalefont setfont
-+  0.25 mul
-+  dup dup 2.0 mul moveto
-+  (UNIX) show
-+  dup dup 1.6 mul moveto
-+  (Printing) show
-+  dup 1.2 mul moveto
-+  (System) show
-+} bind def
-+/ESPLOGO {			% Draw the ESP logo
-+				% height ESPLOGO
-+  % Compute the size of the logo...
-+  0 0
-+  2 index 1.5 mul 3 index
-+
-+  % Do the "metallic" fill from 10% black to 40% black...
-+  1 -0.001 0 {
-+    dup			% loopval
-+    -0.15 mul		% loopval * -0.15
-+    0.9 add		% 0.9 - loopval * 0.15
-+    setgray		% set gray shade
-+
-+    0			% x
-+    1 index neg		% loopval
-+    1 add		% 1 - loopval
-+    3 index		% height
-+    mul			% height * (1 - loopval)
-+    moveto		% starting point
-+
-+    dup			% loopval
-+    3 index		% width
-+    mul			% loopval * width
-+    2 index		% height
-+    lineto		% Next point
-+
-+    0			% x
-+    2 index		% height
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+
-+    dup			% loopval
-+    0.15 mul		% loopval * 0.15
-+    0.6 add		% 0.6 + loopval * 0.15
-+    setgray
-+
-+    dup			% loopval
-+    neg 1 add		% 1 - loopval
-+    3 index		% width
-+    mul			% (1 - loopval) * width
-+    0			% y
-+    moveto		% Starting point
-+
-+    2 index		% width
-+    exch		% loopval
-+    2 index		% height
-+    mul			% loopval * height
-+    lineto		% Next point
-+
-+    1 index		% width
-+    0			% y
-+    lineto		% Next point
-+
-+    closepath
-+    fill
-+  } for
-+
-+  0 setgray rectstroke
-+
-+  /Helvetica-BoldOblique findfont 1 index 3 div scalefont setfont
-+  dup 40 div
-+
-+  dup 4 mul 1 index 25 mul moveto (E) show
-+  dup 10 mul 1 index 15 mul moveto (S) show
-+  dup 16 mul 1 index 5 mul moveto (P) show
-+
-+  /Helvetica-BoldOblique findfont 2 index 5 div scalefont setfont
-+  dup 14 mul 1 index 29 mul moveto (asy) show
-+  dup 20 mul 1 index 19 mul moveto (oftware) show
-+  dup 26 mul 1 index 9 mul moveto (roducts) show
-+
-+  pop
-+} bind def
-+%%EndResource
-+%%EndProlog
-+%%Page: 1 1
-+gsave
-+
-+  % Determine the imageable area and device resolution...
-+  initclip newpath clippath pathbbox	% Get bounding rectangle
-+  72 div /pageTop exch def		% Get top margin in inches
-+  72 div /pageRight exch def		% Get right margin in inches
-+  72 div /pageBottom exch def		% Get bottom margin in inches
-+  72 div /pageLeft exch def		% Get left margin in inches
-+
-+  /pageWidth pageRight pageLeft sub def	% pageWidth = pageRight - pageLeft
-+  /pageHeight pageTop pageBottom sub def% pageHeight = pageTop - pageBottom
-+
-+  /boxWidth				% width of text box
-+  pageWidth pageHeight lt
-+  { pageWidth 54 mul }
-+  { pageHeight 42 mul }
-+  ifelse def
-+
-+  newpath				% Clear bounding path
-+
-+  % Create fonts...
-+  /bigFont /Helvetica-Bold findfont	% bigFont = Helvetica-Bold
-+  pageHeight 3 mul scalefont def	% size = pageHeight * 3 (nominally 33)
-+
-+  /mediumFont /Helvetica findfont	% mediumFont = Helvetica
-+  pageHeight 1.5 mul scalefont def	% size = pageHeight * 1.5 (nominally 16.5)
-+
-+  % Offset page to account for lower-left margin...
-+  pageLeft 72 mul
-+  pageBottom 72 mul
-+  translate
-+
-+  % Job information box...
-+  pageWidth 36 mul 9 add		% x = pageWidth * 1/2 * 72 + 9
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul 9 sub		% y = pageHeight * 1/2 * 72 - 9
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+  0.5 setgray rectfill			% Draw a shadow
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  boxWidth 0.5 mul sub			% x-= 1/2 box width
-+  pageHeight 30 mul			% y = pageHeight * 1/4 * 72
-+  boxWidth				% w = box width
-+  pageHeight 14 mul			% h = pageHeight * 1/2 * 72
-+
-+  4 copy 1 setgray rectfill		% Clear the box to white
-+  0 setgray rectstroke			% Draw a black box around it...
-+
-+  % Job information text...
-+  mediumFont setfont			% Medium sized font
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 5 mul add			% y += 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Job ID: ) RIGHT
-+  moveto
-+  ({printer-name}-{job-id}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight 2 mul add			% y += 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Title: ) RIGHT
-+  moveto
-+  ({job-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -1 mul add			% y -= 1 line
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Requesting User: ) RIGHT
-+  moveto
-+  ({job-originating-user-name}) show
-+
-+  pageWidth 36 mul			% x = pageWidth * 1/2 * 72
-+  pageHeight 36 mul			% y = pageHeight * 1/2 * 72
-+  pageHeight -4 mul add			% y -= 2 lines
-+  2 copy				% Copy X & Y
-+  moveto
-+  (Billing Info: ) RIGHT
-+  moveto
-+  ({?job-billing}) show
-+
-+  % Then the CUPS logo....
-+  gsave
-+    pageWidth 4 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 9 mul CUPSLOGO
-+  grestore
-+
-+  % And the ESP logo....
-+  gsave
-+    pageWidth 59 mul
-+    pageWidth 6 mul
-+    translate
-+    pageWidth 6 mul ESPLOGO
-+  grestore
-+% Show the page...
-+grestore
-+showpage
-+%
-+% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
-+%
-+%%EOF
