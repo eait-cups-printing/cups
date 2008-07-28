@@ -6,8 +6,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.7
-Release: 13%{?svn:.svn%{svn}}%{?dist}
+Version: 1.3.8
+Release: 1%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -40,14 +40,12 @@ Patch14: cups-lpr-help.patch
 Patch15: cups-peercred.patch
 Patch16: cups-pid.patch
 Patch17: cups-foomatic-recommended.patch
-Patch18: cups-str2750.patch
 Patch19: cups-eggcups.patch
 Patch20: cups-getpass.patch
 Patch21: cups-driverd-timeout.patch
 Patch22: cups-strict-ppd-line-length.patch
 Patch23: cups-logrotate.patch
 Patch25: cups-usb-paperout.patch
-Patch30: cups-CVE-2008-1722.patch
 Patch31: cups-getnameddest.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -163,14 +161,12 @@ lpd emulation.
 %patch15 -p1 -b .peercred
 %patch16 -p1 -b .pid
 %patch17 -p1 -b .foomatic-recommended
-%patch18 -p1 -b .str2750
 %patch19 -p1 -b .eggcups
 %patch20 -p1 -b .getpass
 %patch21 -p1 -b .driverd-timeout
 %patch22 -p1 -b .strict-ppd-line-length
 %patch23 -p1 -b .logrotate
 %patch25 -p1 -b .usb-paperout
-%patch30 -p1 -b .CVE-2008-1722
 %patch31 -p1 -b .getnameddest
 
 %if %lspp
@@ -445,6 +441,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Jul 28 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-1
+- 1.3.8.
+
 * Fri Jul 18 2008 Tim Waugh <twaugh@redhat.com>
 - Removed autoconf requirement by applying autoconf-generated changes
   to patches that caused them.  Affected patches: cups-lspp.

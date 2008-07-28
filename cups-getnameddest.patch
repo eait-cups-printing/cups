@@ -1,6 +1,76 @@
-diff -up cups-1.3.7/cups/dest.c.getnameddest cups-1.3.7/cups/dest.c
---- cups-1.3.7/cups/dest.c.getnameddest	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.7/cups/dest.c	2008-06-17 11:00:50.000000000 +0100
+diff -up cups-1.3.8/berkeley/lpr.c.getnameddest cups-1.3.8/berkeley/lpr.c
+--- cups-1.3.8/berkeley/lpr.c.getnameddest	2008-07-28 16:28:24.000000000 +0100
++++ cups-1.3.8/berkeley/lpr.c	2008-07-28 16:28:24.000000000 +0100
+@@ -92,9 +92,7 @@ main(int  argc,				/* I - Number of comm
+   int		num_copies;		/* Number of copies per file */
+   int		num_files;		/* Number of files to print */
+   const char	*files[1000];		/* Files to print */
+-  int		num_dests;		/* Number of destinations */
+-  cups_dest_t	*dests,			/* Destinations */
+-		*dest;			/* Selected destination */
++  cups_dest_t	*dest;			/* Selected destination */
+   int		num_options;		/* Number of options */
+   cups_option_t	*options;		/* Options */
+   int		deletefile;		/* Delete file after print? */
+@@ -112,8 +110,7 @@ main(int  argc,				/* I - Number of comm
+ 
+   deletefile  = 0;
+   printer     = NULL;
+-  num_dests   = 0;
+-  dests       = NULL;
++  dest        = NULL;
+   num_options = 0;
+   options     = NULL;
+   num_files   = 0;
+@@ -282,10 +279,7 @@ main(int  argc,				/* I - Number of comm
+             if ((instance = strrchr(printer, '/')) != NULL)
+ 	      *instance++ = '\0';
+ 
+-	    if (num_dests == 0)
+-	      num_dests = cupsGetDests(&dests);
+-
+-            if ((dest = cupsGetDest(printer, instance, num_dests, dests)) != NULL)
++            if ((dest = cupsGetNamedDest(NULL, printer, instance)) != NULL)
+ 	    {
+ 	      for (j = 0; j < dest->num_options; j ++)
+ 	        if (cupsGetOption(dest->options[j].name, num_options,
+@@ -385,10 +379,7 @@ main(int  argc,				/* I - Number of comm
+ 
+   if (printer == NULL)
+   {
+-    if (num_dests == 0)
+-      num_dests = cupsGetDests(&dests);
+-
+-    if ((dest = cupsGetDest(NULL, NULL, num_dests, dests)) != NULL)
++    if ((dest = cupsGetNamedDest(NULL, NULL, NULL)) != NULL)
+     {
+       printer = dest->name;
+ 
+@@ -417,7 +408,7 @@ main(int  argc,				/* I - Number of comm
+     else
+       val = "LPDEST";
+ 
+-    if (printer && !cupsGetDest(printer, NULL, num_dests, dests))
++    if (printer && !cupsGetNamedDest(NULL, printer, NULL))
+       _cupsLangPrintf(stderr,
+                       _("%s: Error - %s environment variable names "
+ 		        "non-existent destination \"%s\"!\n"),
+diff -up cups-1.3.8/cups/cups.h.getnameddest cups-1.3.8/cups/cups.h
+--- cups-1.3.8/cups/cups.h.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.8/cups/cups.h	2008-07-28 16:28:24.000000000 +0100
+@@ -248,6 +248,9 @@ extern void		cupsSetDefaultDest(const ch
+ 					   int num_dests,
+ 					   cups_dest_t *dests);
+ 
++/**** New in CUPS 1.4 ****/
++extern cups_dest_t	*cupsGetNamedDest(http_t *http, const char *name,
++			                  const char *instance);
+ 
+ #  ifdef __cplusplus
+ }
+diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
+--- cups-1.3.8/cups/dest.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.8/cups/dest.c	2008-07-28 16:28:24.000000000 +0100
 @@ -25,6 +25,7 @@
   *                              server.
   *   cupsGetDests2()          - Get the list of destinations from the
@@ -611,22 +681,20 @@ diff -up cups-1.3.7/cups/dest.c.getnameddest cups-1.3.7/cups/dest.c
        {
          dest->num_options = num_options;
  	dest->options     = options;
-diff -up cups-1.3.7/cups/cups.h.getnameddest cups-1.3.7/cups/cups.h
---- cups-1.3.7/cups/cups.h.getnameddest	2008-02-20 00:32:58.000000000 +0000
-+++ cups-1.3.7/cups/cups.h	2008-06-17 11:05:32.000000000 +0100
-@@ -248,6 +248,9 @@ extern void		cupsSetDefaultDest(const ch
- 					   int num_dests,
- 					   cups_dest_t *dests);
- 
-+/**** New in CUPS 1.4 ****/
-+extern cups_dest_t	*cupsGetNamedDest(http_t *http, const char *name,
-+			                  const char *instance);
- 
- #  ifdef __cplusplus
- }
-diff -up cups-1.3.7/cups/Makefile.getnameddest cups-1.3.7/cups/Makefile
---- cups-1.3.7/cups/Makefile.getnameddest	2008-02-20 20:18:33.000000000 +0000
-+++ cups-1.3.7/cups/Makefile	2008-06-17 11:00:50.000000000 +0100
+diff -up cups-1.3.8/cups/libcups.exp.getnameddest cups-1.3.8/cups/libcups.exp
+--- cups-1.3.8/cups/libcups.exp.getnameddest	2008-04-09 04:39:40.000000000 +0100
++++ cups-1.3.8/cups/libcups.exp	2008-07-28 16:28:24.000000000 +0100
+@@ -114,6 +114,7 @@ _cupsGetFd
+ _cupsGetFile
+ _cupsGetJobs
+ _cupsGetJobs2
++_cupsGetNamedDest
+ _cupsGetOption
+ _cupsGetPassword
+ _cupsGetPPD
+diff -up cups-1.3.8/cups/Makefile.getnameddest cups-1.3.8/cups/Makefile
+--- cups-1.3.8/cups/Makefile.getnameddest	2008-02-20 20:18:33.000000000 +0000
++++ cups-1.3.8/cups/Makefile	2008-07-28 16:28:24.000000000 +0100
 @@ -263,7 +263,7 @@ libcups.so.2 libcups.sl.2:	$(LIBOBJS)
  # libcups.2.dylib
  #
@@ -636,9 +704,9 @@ diff -up cups-1.3.7/cups/Makefile.getnameddest cups-1.3.7/cups/Makefile
  	echo Linking $@...
  	$(DSO) $(ARCHFLAGS) $(DSOFLAGS) -o $@ \
  		-install_name $(libdir)/$@ \
-diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
---- cups-1.3.7/cups/testcups.c.getnameddest	2008-01-14 22:12:58.000000000 +0000
-+++ cups-1.3.7/cups/testcups.c	2008-06-17 11:00:50.000000000 +0100
+diff -up cups-1.3.8/cups/testcups.c.getnameddest cups-1.3.8/cups/testcups.c
+--- cups-1.3.8/cups/testcups.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.8/cups/testcups.c	2008-07-28 16:37:24.000000000 +0100
 @@ -16,7 +16,8 @@
   *
   * Contents:
@@ -757,7 +825,7 @@ diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
  
   /*
    * cupsGetDest(printer)
-@@ -80,20 +162,34 @@ main(int  argc,				/* I - Number of comm
+@@ -79,20 +161,33 @@ main(int  argc,				/* I - Number of comm
      puts("PASS");
  
   /*
@@ -767,14 +835,15 @@ diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
  
 -  fputs("cupsGetDest(NULL): ", stdout);
 +  printf("cupsGetNamedDest(NULL, \"%s\", \"%s\"): ", dest->name,
-+         dest->instance ? dest->instance : "(null)");
++	 dest->instance ? dest->instance : "(null)");
    fflush(stdout);
  
 -  if ((dest = cupsGetDest(NULL, NULL, num_dests, dests)) == NULL)
 +  if ((named_dest = cupsGetNamedDest(NULL, dest->name,
-+                                     dest->instance)) == NULL ||
++				     dest->instance)) == NULL ||
 +      !dests_equal(dest, named_dest))
    {
+-    puts("FAIL");
 +    if (named_dest)
 +    {
 +      puts("FAIL (different values)");
@@ -783,9 +852,7 @@ diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
 +    else
 +      puts("FAIL (no destination)");
 +
-+
-     status = 1;
--    puts("FAIL");
+     return (1);
    }
    else
      puts("PASS");
@@ -796,7 +863,7 @@ diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
   /*
    * cupsPrintFile()
    */
-@@ -171,5 +267,83 @@ main(int  argc,				/* I - Number of comm
+@@ -169,5 +264,83 @@ main(int  argc,				/* I - Number of comm
  
  
  /*
@@ -878,80 +945,11 @@ diff -up cups-1.3.7/cups/testcups.c.getnameddest cups-1.3.7/cups/testcups.c
 +
 +
 +/*
-  * End of "$Id: testfile.c 6192 2007-01-10 19:26:48Z mike $".
+  * End of "$Id: testcups.c 7721 2008-07-11 22:48:49Z mike $".
   */
-diff -up cups-1.3.7/cups/libcups.exp.getnameddest cups-1.3.7/cups/libcups.exp
---- cups-1.3.7/cups/libcups.exp.getnameddest	2008-01-22 22:02:46.000000000 +0000
-+++ cups-1.3.7/cups/libcups.exp	2008-06-17 11:00:50.000000000 +0100
-@@ -113,6 +113,7 @@ _cupsGetFd
- _cupsGetFile
- _cupsGetJobs
- _cupsGetJobs2
-+_cupsGetNamedDest
- _cupsGetOption
- _cupsGetPassword
- _cupsGetPPD
-diff -up cups-1.3.7/CHANGES.txt.getnameddest cups-1.3.7/CHANGES.txt
-diff -up cups-1.3.7/berkeley/lpr.c.getnameddest cups-1.3.7/berkeley/lpr.c
---- cups-1.3.7/berkeley/lpr.c.getnameddest	2008-06-17 11:00:11.000000000 +0100
-+++ cups-1.3.7/berkeley/lpr.c	2008-06-17 11:00:50.000000000 +0100
-@@ -92,9 +92,7 @@ main(int  argc,				/* I - Number of comm
-   int		num_copies;		/* Number of copies per file */
-   int		num_files;		/* Number of files to print */
-   const char	*files[1000];		/* Files to print */
--  int		num_dests;		/* Number of destinations */
--  cups_dest_t	*dests,			/* Destinations */
--		*dest;			/* Selected destination */
-+  cups_dest_t	*dest;			/* Selected destination */
-   int		num_options;		/* Number of options */
-   cups_option_t	*options;		/* Options */
-   int		deletefile;		/* Delete file after print? */
-@@ -112,8 +110,7 @@ main(int  argc,				/* I - Number of comm
- 
-   deletefile  = 0;
-   printer     = NULL;
--  num_dests   = 0;
--  dests       = NULL;
-+  dest        = NULL;
-   num_options = 0;
-   options     = NULL;
-   num_files   = 0;
-@@ -282,10 +279,7 @@ main(int  argc,				/* I - Number of comm
-             if ((instance = strrchr(printer, '/')) != NULL)
- 	      *instance++ = '\0';
- 
--	    if (num_dests == 0)
--	      num_dests = cupsGetDests(&dests);
--
--            if ((dest = cupsGetDest(printer, instance, num_dests, dests)) != NULL)
-+            if ((dest = cupsGetNamedDest(NULL, printer, instance)) != NULL)
- 	    {
- 	      for (j = 0; j < dest->num_options; j ++)
- 	        if (cupsGetOption(dest->options[j].name, num_options,
-@@ -385,10 +379,7 @@ main(int  argc,				/* I - Number of comm
- 
-   if (printer == NULL)
-   {
--    if (num_dests == 0)
--      num_dests = cupsGetDests(&dests);
--
--    if ((dest = cupsGetDest(NULL, NULL, num_dests, dests)) != NULL)
-+    if ((dest = cupsGetNamedDest(NULL, NULL, NULL)) != NULL)
-     {
-       printer = dest->name;
- 
-@@ -417,7 +408,7 @@ main(int  argc,				/* I - Number of comm
-     else
-       val = "LPDEST";
- 
--    if (printer && !cupsGetDest(printer, NULL, num_dests, dests))
-+    if (printer && !cupsGetNamedDest(NULL, printer, NULL))
-       _cupsLangPrintf(stderr,
-                       _("%s: Error - %s environment variable names "
- 		        "non-existent destination \"%s\"!\n"),
-diff -up cups-1.3.7/systemv/lp.c.getnameddest cups-1.3.7/systemv/lp.c
---- cups-1.3.7/systemv/lp.c.getnameddest	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.3.7/systemv/lp.c	2008-06-17 11:00:50.000000000 +0100
+diff -up cups-1.3.8/systemv/lp.c.getnameddest cups-1.3.8/systemv/lp.c
+--- cups-1.3.8/systemv/lp.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.8/systemv/lp.c	2008-07-28 16:28:24.000000000 +0100
 @@ -73,9 +73,7 @@ main(int  argc,				/* I - Number of comm
    int		num_copies;		/* Number of copies per file */
    int		num_files;		/* Number of files to print */
