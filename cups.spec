@@ -376,6 +376,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/%{name}/www/et
 %config(noreplace) %{_datadir}/%{name}/www/fr
 %config(noreplace) %{_datadir}/%{name}/www/he
+%config(noreplace) %{_datadir}/%{name}/www/id
 %config(noreplace) %{_datadir}/%{name}/www/it
 %config(noreplace) %{_datadir}/%{name}/www/ja
 %config(noreplace) %{_datadir}/%{name}/www/pl
