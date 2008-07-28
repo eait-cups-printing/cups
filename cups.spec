@@ -25,28 +25,28 @@ Source12: cups.cron
 Source13: pdftops.conf
 Source14: textonly.filter
 Source15: textonly.ppd
-Patch2: cups-no-gzip-man.patch
-Patch3: cups-1.1.16-system-auth.patch
-Patch4: cups-multilib.patch
-Patch5: cups-ext.patch
-Patch6: cups-includeifexists.patch
-Patch7: cups-banners.patch
-Patch8: cups-serverbin-compat.patch
-Patch10: cups-no-export-ssllibs.patch
-Patch11: cups-paps.patch
-Patch12: cups-wbuffer.patch
-Patch13: cups-direct-usb.patch
-Patch14: cups-lpr-help.patch
-Patch15: cups-peercred.patch
-Patch16: cups-pid.patch
-Patch17: cups-foomatic-recommended.patch
-Patch19: cups-eggcups.patch
-Patch20: cups-getpass.patch
-Patch21: cups-driverd-timeout.patch
-Patch22: cups-strict-ppd-line-length.patch
-Patch23: cups-logrotate.patch
-Patch25: cups-usb-paperout.patch
-Patch31: cups-getnameddest.patch
+Patch1: cups-no-gzip-man.patch
+Patch2: cups-1.1.16-system-auth.patch
+Patch3: cups-multilib.patch
+Patch4: cups-ext.patch
+Patch5: cups-includeifexists.patch
+Patch6: cups-banners.patch
+Patch7: cups-serverbin-compat.patch
+Patch8: cups-no-export-ssllibs.patch
+Patch9: cups-paps.patch
+Patch10: cups-wbuffer.patch
+Patch11: cups-direct-usb.patch
+Patch12: cups-lpr-help.patch
+Patch13: cups-peercred.patch
+Patch14: cups-pid.patch
+Patch15: cups-foomatic-recommended.patch
+Patch16: cups-eggcups.patch
+Patch17: cups-getpass.patch
+Patch18: cups-driverd-timeout.patch
+Patch19: cups-strict-ppd-line-length.patch
+Patch20: cups-logrotate.patch
+Patch21: cups-usb-paperout.patch
+Patch22: cups-getnameddest.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -146,28 +146,28 @@ lpd emulation.
 
 %prep
 %setup -q -n %{name}-%{version}%{?svn:svn-r%{svn}}
-%patch2 -p1 -b .no-gzip-man
-%patch3 -p1 -b .system-auth
-%patch4 -p1 -b .multilib
-%patch5 -p1 -b .ext
-%patch6 -p1 -b .includeifexists
-%patch7 -p1 -b .banners
-%patch8 -p1 -b .serverbin-compat
-%patch10 -p1 -b .no-export-ssllibs
-%patch11 -p1 -b .paps
-%patch12 -p1 -b .wbuffer
-%patch13 -p1 -b .direct-usb
-%patch14 -p1 -b .lpr-help
-%patch15 -p1 -b .peercred
-%patch16 -p1 -b .pid
-%patch17 -p1 -b .foomatic-recommended
-%patch19 -p1 -b .eggcups
-%patch20 -p1 -b .getpass
-%patch21 -p1 -b .driverd-timeout
-%patch22 -p1 -b .strict-ppd-line-length
-%patch23 -p1 -b .logrotate
-%patch25 -p1 -b .usb-paperout
-%patch31 -p1 -b .getnameddest
+%patch1 -p1 -b .no-gzip-man
+%patch2 -p1 -b .system-auth
+%patch3 -p1 -b .multilib
+%patch4 -p1 -b .ext
+%patch5 -p1 -b .includeifexists
+%patch6 -p1 -b .banners
+%patch7 -p1 -b .serverbin-compat
+%patch8 -p1 -b .no-export-ssllibs
+%patch9 -p1 -b .paps
+%patch10 -p1 -b .wbuffer
+%patch11 -p1 -b .direct-usb
+%patch12 -p1 -b .lpr-help
+%patch13 -p1 -b .peercred
+%patch14 -p1 -b .pid
+%patch15 -p1 -b .foomatic-recommended
+%patch16 -p1 -b .eggcups
+%patch17 -p1 -b .getpass
+%patch18 -p1 -b .driverd-timeout
+%patch19 -p1 -b .strict-ppd-line-length
+%patch20 -p1 -b .logrotate
+%patch21 -p1 -b .usb-paperout
+%patch22 -p1 -b .getnameddest
 
 %if %lspp
 %patch100 -p1 -b .lspp
