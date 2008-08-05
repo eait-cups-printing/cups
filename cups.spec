@@ -415,7 +415,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/data
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
-%{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates/de
+%dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/et
+%dir %{_datadir}/cups/templates/fr
+%dir %{_datadir}/cups/templates/he
+%dir %{_datadir}/cups/templates/id
+%dir %{_datadir}/cups/templates/it
+%dir %{_datadir}/cups/templates/ja
+%dir %{_datadir}/cups/templates/pl
+%dir %{_datadir}/cups/templates/sv
+%dir %{_datadir}/cups/templates/zh_TW
+%config(noreplace) %{_datadir}/cups/templates/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/*/*.tmpl
 %{_datadir}/locale/*/*
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
@@ -444,6 +457,10 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Tue Aug  5 2008 Tim Waugh <twaugh@redhat.com>
+- Mark template files config(noreplace) for site-local modifications
+  (bug #441719).
+
 * Sun Aug  3 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-2
 - Applied patch to fix STR #2892 (bug #453610).
 
