@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.8
-Release: 2%{?svn:.svn%{svn}}%{?dist}
+Release: 3%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -457,7 +457,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
-* Tue Aug  5 2008 Tim Waugh <twaugh@redhat.com>
+* Tue Aug  5 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-3
 - Mark template files config(noreplace) for site-local modifications
   (bug #441719).
 
