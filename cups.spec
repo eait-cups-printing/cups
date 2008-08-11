@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.8
-Release: 3%{?svn:.svn%{svn}}%{?dist}
+Release: 4%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -48,6 +48,7 @@ Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-getnameddest.patch
 Patch23: cups-str2892.patch
+Patch24: cups-str2101.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -170,6 +171,7 @@ lpd emulation.
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .getnameddest
 %patch23 -p1 -b .str2892
+%patch24 -p1 -b .str2101
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -457,6 +459,9 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-lpd
 
 %changelog
+* Mon Aug 11 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-4
+- Better password prompting behaviour (bug #215133, STR #2101).
+
 * Tue Aug  5 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-3
 - Mark template files config(noreplace) for site-local modifications
   (bug #441719).
