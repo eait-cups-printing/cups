@@ -103,6 +103,9 @@ Requires: tmpwatch
 # Require the package here so that we know /etc/portreserve/ exists.
 Requires: portreserve
 
+# The dnssd backend uses avahi-browse so require it (bug #458565).
+Requires: avahi-tools
+
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
@@ -476,6 +479,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Sep  3 2008 Tim Waugh <twaugh@redhat.com>
+- The dnssd backend uses avahi-browse so require it (bug #458565).
 - New php sub-package (bug #428235).
 - cups-polld: reinit the resolver if we haven't yet resolved the
   hostname (bug #354071).
