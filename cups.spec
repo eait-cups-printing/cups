@@ -123,6 +123,12 @@ Group: System Environment/Daemons
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: xinetd
 
+%package php
+Summary: Common Unix Printing System - php module
+Group: Development/Languages
+Requires: %{name} = %{epoch}:%{version}-%{release}
+Requires: php-common
+
 %description
 The Common UNIX Printing System provides a portable printing layer for 
 UNIX® operating systems. It has been developed by Easy Software Products 
@@ -146,6 +152,11 @@ natively, without needing the lp/lpr commands.
 The Common UNIX Printing System provides a portable printing layer for 
 UNIX® operating systems. This is the package that provices standard 
 lpd emulation.
+
+%description php
+The Common UNIX Printing System provides a portable printing layer for
+UNIX® operating systems. This is the package that provices a PHP
+module. 
 
 %prep
 %setup -q -n %{name}-%{version}%{?svn:svn-r%{svn}}
@@ -441,7 +452,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
 %{_sysconfdir}/dbus-1/system.d/cups.conf
-%{_libdir}/php/modules/*.so
 
 %files libs
 %defattr(-,root,root)
@@ -460,8 +470,13 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{cups_serverbin}/daemon
 %{cups_serverbin}/daemon/cups-lpd
 
+%files php
+%defattr(-,root,root)
+%{_libdir}/php/modules/*.so
+
 %changelog
 * Wed Sep  3 2008 Tim Waugh <twaugh@redhat.com>
+- New php sub-package (bug #428235).
 - cups-polld: reinit the resolver if we haven't yet resolved the
   hostname (bug #354071).
 
