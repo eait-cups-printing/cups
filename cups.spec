@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.8
-Release: 4%{?svn:.svn%{svn}}%{?dist}
+Release: 5%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -478,7 +478,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
-* Wed Sep  3 2008 Tim Waugh <twaugh@redhat.com>
+* Wed Sep  3 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-5
 - The dnssd backend uses avahi-browse so require it (bug #458565).
 - New php sub-package (bug #428235).
 - cups-polld: reinit the resolver if we haven't yet resolved the
