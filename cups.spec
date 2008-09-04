@@ -210,6 +210,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
 	--enable-pdftops --with-dbusdir=%{_sysconfdir}/dbus-1 \
+	--with-php=/usr/bin/php-cgi \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -478,6 +479,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu Sep  4 2008 Tim Waugh <twaugh@redhat.com>
+- Use php-cgi for executing PHP scripts (bug #460898).
+
 * Wed Sep  3 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-5
 - The dnssd backend uses avahi-browse so require it (bug #458565).
 - New php sub-package (bug #428235).
