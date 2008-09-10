@@ -50,6 +50,7 @@ Patch22: cups-getnameddest.patch
 Patch23: cups-str2892.patch
 Patch24: cups-str2101.patch
 Patch25: cups-res_init.patch
+Patch26: cups-str2536.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -188,6 +189,7 @@ module.
 %patch23 -p1 -b .str2892
 %patch24 -p1 -b .str2101
 %patch25 -p1 -b .res_init
+%patch26 -p1 -b .str2536
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -479,6 +481,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Sep 10 2008 Tim Waugh <twaugh@redhat.com>
+- Backported patch for FatalErrors configuration directive
+  (bug #314941, STR #2536).
+
 * Thu Sep  4 2008 Tim Waugh <twaugh@redhat.com>
 - Use php-cgi for executing PHP scripts (bug #460898).
 

@@ -1,7 +1,7 @@
 diff -up cups-1.3.8/config.h.in.lspp cups-1.3.8/config.h.in
---- cups-1.3.8/config.h.in.lspp	2008-01-07 18:26:57.000000000 +0000
-+++ cups-1.3.8/config.h.in	2008-07-28 16:37:51.000000000 +0100
-@@ -530,6 +530,13 @@
+--- cups-1.3.8/config.h.in.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/config.h.in	2008-09-10 16:18:26.000000000 +0100
+@@ -544,6 +544,13 @@
  #undef HAVE_REMOVEFILE
  
  
@@ -16,8 +16,8 @@ diff -up cups-1.3.8/config.h.in.lspp cups-1.3.8/config.h.in
  
  /*
 diff -up /dev/null cups-1.3.8/config-scripts/cups-lspp.m4
---- /dev/null	2008-07-28 15:45:57.127000670 +0100
-+++ cups-1.3.8/config-scripts/cups-lspp.m4	2008-07-28 16:37:51.000000000 +0100
+--- /dev/null	2008-09-10 08:56:32.430063181 +0100
++++ cups-1.3.8/config-scripts/cups-lspp.m4	2008-09-10 16:18:26.000000000 +0100
 @@ -0,0 +1,36 @@
 +dnl
 +dnl   LSPP code for the Common UNIX Printing System (CUPS).
@@ -57,7 +57,7 @@ diff -up /dev/null cups-1.3.8/config-scripts/cups-lspp.m4
 +fi
 diff -up cups-1.3.8/configure.in.lspp cups-1.3.8/configure.in
 --- cups-1.3.8/configure.in.lspp	2007-07-25 00:47:12.000000000 +0100
-+++ cups-1.3.8/configure.in	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/configure.in	2008-09-10 16:18:26.000000000 +0100
 @@ -42,6 +42,8 @@ sinclude(config-scripts/cups-pap.m4)
  sinclude(config-scripts/cups-pdf.m4)
  sinclude(config-scripts/cups-scripting.m4)
@@ -68,9 +68,9 @@ diff -up cups-1.3.8/configure.in.lspp cups-1.3.8/configure.in
  UNINSTALL_LANGUAGES=""
  LANGFILES=""
 diff -up cups-1.3.8/configure.lspp cups-1.3.8/configure
---- cups-1.3.8/configure.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/configure	2008-07-28 16:37:51.000000000 +0100
-@@ -806,6 +806,8 @@ PHP
+--- cups-1.3.8/configure.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/configure	2008-09-10 16:18:43.000000000 +0100
+@@ -807,6 +807,8 @@ PHP
  PHPCONFIG
  PHPDIR
  PYTHON
@@ -79,7 +79,7 @@ diff -up cups-1.3.8/configure.lspp cups-1.3.8/configure
  INSTALL_LANGUAGES
  UNINSTALL_LANGUAGES
  LIBOBJS
-@@ -1429,6 +1431,7 @@ Optional Features:
+@@ -1430,6 +1432,7 @@ Optional Features:
                            enable UseNetworkDefault by default, default=auto
    --enable-raw-printing   enable raw printing by default, default=auto
    --enable-pdftops        build pdftops filter, default=auto
@@ -87,22 +87,7 @@ diff -up cups-1.3.8/configure.lspp cups-1.3.8/configure
  
  Optional Packages:
    --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-@@ -9680,10 +9683,10 @@ case "$uname" in
- 		;;
- 	Linux* | GNU*)
- 		# Linux and GNU Hurd
--		MAN1EXT=1.gz
--		MAN5EXT=5.gz
--		MAN7EXT=7.gz
--		MAN8EXT=8.gz
-+		MAN1EXT=1
-+		MAN5EXT=5
-+		MAN7EXT=7
-+		MAN8EXT=8
- 		MAN8DIR=8
- 		;;
- 	*)
-@@ -18452,6 +18455,412 @@ fi
+@@ -18555,6 +18558,412 @@ fi
  
  
  
@@ -515,35 +500,34 @@ diff -up cups-1.3.8/configure.lspp cups-1.3.8/configure
  INSTALL_LANGUAGES=""
  UNINSTALL_LANGUAGES=""
  LANGFILES=""
-@@ -19345,8 +19754,8 @@ PHP!$PHP$ac_delim
+@@ -19449,7 +19858,7 @@ PHP!$PHP$ac_delim
  PHPCONFIG!$PHPCONFIG$ac_delim
  PHPDIR!$PHPDIR$ac_delim
  PYTHON!$PYTHON$ac_delim
 -INSTALL_LANGUAGES!$INSTALL_LANGUAGES$ac_delim
--UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
 +LIBAUDIT!$LIBAUDIT$ac_delim
-+LIBSELINUX!$LIBSELINUX$ac_delim
  _ACEOF
  
    if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
-@@ -19388,11 +19797,13 @@ _ACEOF
+@@ -19491,12 +19900,14 @@ _ACEOF
  ac_delim='%!_!# '
  for ac_last_try in false false false false false :; do
    cat >conf$$subs.sed <<_ACEOF
++LIBSELINUX!$LIBSELINUX$ac_delim
 +INSTALL_LANGUAGES!$INSTALL_LANGUAGES$ac_delim
-+UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
+ UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
  LIBOBJS!$LIBOBJS$ac_delim
  LTLIBOBJS!$LTLIBOBJS$ac_delim
  _ACEOF
  
--  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 2; then
-+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 4; then
+-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 3; then
++  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 5; then
      break
    elif $ac_last_try; then
      { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
 diff -up cups-1.3.8/cups/cups.h.lspp cups-1.3.8/cups/cups.h
---- cups-1.3.8/cups/cups.h.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/cups/cups.h	2008-07-28 16:37:51.000000000 +0100
+--- cups-1.3.8/cups/cups.h.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/cups/cups.h	2008-09-10 16:18:26.000000000 +0100
 @@ -15,6 +15,9 @@
   *   This file is subject to the Apple OS-Developed Software exception.
   */
@@ -569,7 +553,7 @@ diff -up cups-1.3.8/cups/cups.h.lspp cups-1.3.8/cups/cups.h
   */
 diff -up cups-1.3.8/data/Makefile.lspp cups-1.3.8/data/Makefile
 --- cups-1.3.8/data/Makefile.lspp	2007-10-10 23:00:43.000000000 +0100
-+++ cups-1.3.8/data/Makefile	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/data/Makefile	2008-09-10 16:18:26.000000000 +0100
 @@ -25,7 +25,10 @@ BANNERS	=	\
  		secret \
  		standard \
@@ -583,8 +567,8 @@ diff -up cups-1.3.8/data/Makefile.lspp cups-1.3.8/data/Makefile
  CHARMAPS =	\
  		euc-cn.txt \
 diff -up /dev/null cups-1.3.8/data/mls
---- /dev/null	2008-07-28 15:45:57.127000670 +0100
-+++ cups-1.3.8/data/mls	2008-07-28 16:37:51.000000000 +0100
+--- /dev/null	2008-09-10 08:56:32.430063181 +0100
++++ cups-1.3.8/data/mls	2008-09-10 16:18:26.000000000 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -848,8 +832,8 @@ diff -up /dev/null cups-1.3.8/data/mls
 +%
 +%%EOF
 diff -up /dev/null cups-1.3.8/data/selinux
---- /dev/null	2008-07-28 15:45:57.127000670 +0100
-+++ cups-1.3.8/data/selinux	2008-07-28 16:37:51.000000000 +0100
+--- /dev/null	2008-09-10 08:56:32.430063181 +0100
++++ cups-1.3.8/data/selinux	2008-09-10 16:18:26.000000000 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -1113,8 +1097,8 @@ diff -up /dev/null cups-1.3.8/data/selinux
 +%
 +%%EOF
 diff -up /dev/null cups-1.3.8/data/te
---- /dev/null	2008-07-28 15:45:57.127000670 +0100
-+++ cups-1.3.8/data/te	2008-07-28 16:37:51.000000000 +0100
+--- /dev/null	2008-09-10 08:56:32.430063181 +0100
++++ cups-1.3.8/data/te	2008-09-10 16:18:26.000000000 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -1379,7 +1363,7 @@ diff -up /dev/null cups-1.3.8/data/te
 +%%EOF
 diff -up cups-1.3.8/filter/common.c.lspp cups-1.3.8/filter/common.c
 --- cups-1.3.8/filter/common.c.lspp	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/filter/common.c	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/filter/common.c	2008-09-10 16:18:26.000000000 +0100
 @@ -30,6 +30,12 @@
   * Include necessary headers...
   */
@@ -1550,7 +1534,7 @@ diff -up cups-1.3.8/filter/common.c.lspp cups-1.3.8/filter/common.c
  /*
 diff -up cups-1.3.8/Makedefs.in.lspp cups-1.3.8/Makedefs.in
 --- cups-1.3.8/Makedefs.in.lspp	2008-01-22 22:37:21.000000000 +0000
-+++ cups-1.3.8/Makedefs.in	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/Makedefs.in	2008-09-10 16:18:26.000000000 +0100
 @@ -134,7 +134,7 @@ LIBCUPSORDER	=	@LIBCUPSORDER@
  LIBCUPSIMAGEORDER =	@LIBCUPSIMAGEORDER@
  LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
@@ -1561,9 +1545,9 @@ diff -up cups-1.3.8/Makedefs.in.lspp cups-1.3.8/Makedefs.in
  OPTIONS		=
  PAMLIBS		=	@PAMLIBS@
 diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
---- cups-1.3.8/scheduler/client.c.lspp	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/scheduler/client.c	2008-07-28 16:37:51.000000000 +0100
-@@ -39,12 +39,14 @@
+--- cups-1.3.8/scheduler/client.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/client.c	2008-09-10 16:18:26.000000000 +0100
+@@ -40,12 +40,14 @@
   *   pipe_command()          - Pipe the output of a command to the remote client.
   *   write_file()            - Send a file via HTTP.
   *   write_pipe()            - Flag that data is available on the CGI pipe.
@@ -1578,7 +1562,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
  #include <cups/http-private.h>
  #include "cupsd.h"
  
-@@ -76,6 +78,12 @@ extern const char *cssmErrorString(int e
+@@ -77,6 +79,12 @@ extern const char *cssmErrorString(int e
  #  include <gnutls/x509.h>
  #endif /* HAVE_GNUTLS */
  
@@ -1591,7 +1575,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
  
  /*
   * Local functions...
-@@ -349,6 +357,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
+@@ -351,6 +359,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
      }
    }
  
@@ -1649,7 +1633,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
  #ifdef AF_INET6
    if (con->http.hostaddr->addr.sa_family == AF_INET6)
      cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: %d from %s:%d (IPv6)",
-@@ -731,6 +790,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+@@ -733,6 +792,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
    mime_type_t		*type;		/* MIME type of file */
    cupsd_printer_t	*p;		/* Printer */
    static unsigned	request_id = 0;	/* Request ID for temp files */
@@ -1663,7 +1647,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
  
  
    status = HTTP_CONTINUE;
-@@ -2016,6 +2082,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+@@ -2017,6 +2083,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
  	    fchmod(con->file, 0640);
  	    fchown(con->file, RunUser, Group);
              fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
@@ -1731,7 +1715,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
  	  }
  
  	  if (con->http.state != HTTP_POST_SEND)
-@@ -4255,6 +4382,50 @@ make_certificate(cupsd_client_t *con)	/*
+@@ -4288,6 +4415,50 @@ make_certificate(cupsd_client_t *con)	/*
  #endif /* HAVE_SSL */
  
  
@@ -1784,7 +1768,7 @@ diff -up cups-1.3.8/scheduler/client.c.lspp cups-1.3.8/scheduler/client.c
   */
 diff -up cups-1.3.8/scheduler/client.h.lspp cups-1.3.8/scheduler/client.h
 --- cups-1.3.8/scheduler/client.h.lspp	2007-10-22 19:52:13.000000000 +0100
-+++ cups-1.3.8/scheduler/client.h	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/scheduler/client.h	2008-09-10 16:18:26.000000000 +0100
 @@ -17,6 +17,13 @@
  #  include <Security/Authorization.h>
  #endif /* HAVE_AUTHORIZATION_H */
@@ -1821,9 +1805,9 @@ diff -up cups-1.3.8/scheduler/client.h.lspp cups-1.3.8/scheduler/client.h
  
  /*
 diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
---- cups-1.3.8/scheduler/conf.c.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/conf.c	2008-07-28 16:37:51.000000000 +0100
-@@ -26,6 +26,7 @@
+--- cups-1.3.8/scheduler/conf.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/conf.c	2008-09-10 16:18:26.000000000 +0100
+@@ -27,6 +27,7 @@
   *   read_configuration()     - Read a configuration file.
   *   read_location()          - Read a <Location path> definition.
   *   read_policy()            - Read a <Policy name> definition.
@@ -1831,7 +1815,7 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
   */
  
  /*
-@@ -47,6 +48,9 @@
+@@ -48,6 +49,9 @@
  #  define INADDR_NONE	0xffffffff
  #endif /* !INADDR_NONE */
  
@@ -1841,7 +1825,7 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
  
  /*
   * Configuration variable structure...
-@@ -160,6 +164,10 @@ static const cupsd_var_t	variables[] =
+@@ -161,6 +165,10 @@ static const cupsd_var_t	variables[] =
  #  if defined(HAVE_LIBSSL) || defined(HAVE_GNUTLS)
    { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_PATHNAME },
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
@@ -1852,7 +1836,7 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
  #endif /* HAVE_SSL */
    { "ServerName",		&ServerName,		CUPSD_VARTYPE_STRING },
    { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
-@@ -350,6 +358,9 @@ cupsdReadConfiguration(void)
+@@ -352,6 +360,9 @@ cupsdReadConfiguration(void)
  		*old_requestroot;	/* Old RequestRoot */
    const char	*tmpdir;		/* TMPDIR environment variable */
    struct stat	tmpinfo;		/* Temporary directory info */
@@ -1862,7 +1846,7 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
  
  
   /*
-@@ -611,6 +622,25 @@ cupsdReadConfiguration(void)
+@@ -614,6 +625,25 @@ cupsdReadConfiguration(void)
  
    RunUser = getuid();
  
@@ -1888,7 +1872,7 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
   /*
    * See if the ServerName is an IP address...
    */
-@@ -889,11 +919,23 @@ cupsdReadConfiguration(void)
+@@ -896,11 +926,23 @@ cupsdReadConfiguration(void)
    if (MaxActiveJobs > (MaxFDs / 3))
      MaxActiveJobs = MaxFDs / 3;
  
@@ -1913,8 +1897,8 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
  
   /*
    * Update the MaxClientsPerHost value, as needed...
-@@ -3360,6 +3402,18 @@ read_policy(cups_file_t *fp,		/* I - Con
-   return (0);
+@@ -3299,6 +3341,18 @@ read_location(cups_file_t *fp,		/* I - C
+   return ((FatalErrors & CUPSD_FATAL_CONFIG) ? 0 : linenum);
  }
  
 +#ifdef WITH_LSPP
@@ -1931,11 +1915,11 @@ diff -up cups-1.3.8/scheduler/conf.c.lspp cups-1.3.8/scheduler/conf.c
 +
  
  /*
-  * End of "$Id: conf.c 7648 2008-06-16 17:41:11Z mike $".
+  * 'read_policy()' - Read a <Policy name> definition.
 diff -up cups-1.3.8/scheduler/conf.h.lspp cups-1.3.8/scheduler/conf.h
---- cups-1.3.8/scheduler/conf.h.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/conf.h	2008-07-28 16:37:51.000000000 +0100
-@@ -193,6 +193,12 @@ VAR char		*ServerKey		VALUE(NULL);
+--- cups-1.3.8/scheduler/conf.h.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/conf.h	2008-09-10 16:18:26.000000000 +0100
+@@ -208,6 +208,12 @@ VAR char		*ServerKey		VALUE(NULL);
  					/* Server key file */
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
  #endif /* HAVE_SSL */
@@ -1948,7 +1932,7 @@ diff -up cups-1.3.8/scheduler/conf.h.lspp cups-1.3.8/scheduler/conf.h
  
  #ifdef HAVE_LAUNCHD
  VAR int			LaunchdTimeout		VALUE(DEFAULT_TIMEOUT);
-@@ -211,6 +217,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
+@@ -226,6 +232,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
  					/* System group auth key */
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -1959,8 +1943,8 @@ diff -up cups-1.3.8/scheduler/conf.h.lspp cups-1.3.8/scheduler/conf.h
  /*
   * Prototypes...
 diff -up cups-1.3.8/scheduler/ipp.c.lspp cups-1.3.8/scheduler/ipp.c
---- cups-1.3.8/scheduler/ipp.c.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/ipp.c	2008-07-28 16:39:08.000000000 +0100
+--- cups-1.3.8/scheduler/ipp.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/ipp.c	2008-09-10 16:18:26.000000000 +0100
 @@ -36,6 +36,7 @@
   *   cancel_all_jobs()           - Cancel all print jobs.
   *   cancel_job()                - Cancel a print job.
@@ -2553,8 +2537,8 @@ diff -up cups-1.3.8/scheduler/ipp.c.lspp cups-1.3.8/scheduler/ipp.c
    * Check the username against the owner...
    */
 diff -up cups-1.3.8/scheduler/job.c.lspp cups-1.3.8/scheduler/job.c
---- cups-1.3.8/scheduler/job.c.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/job.c	2008-07-28 16:37:51.000000000 +0100
+--- cups-1.3.8/scheduler/job.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/job.c	2008-09-10 16:18:26.000000000 +0100
 @@ -60,6 +60,9 @@
   *   update_job_attrs()         - Update the job-printer-* attributes.
   */
@@ -2913,7 +2897,7 @@ diff -up cups-1.3.8/scheduler/job.c.lspp cups-1.3.8/scheduler/job.c
      if ((attr = ippFindAttribute(job->attrs, "job-sheets",
 diff -up cups-1.3.8/scheduler/job.h.lspp cups-1.3.8/scheduler/job.h
 --- cups-1.3.8/scheduler/job.h.lspp	2008-01-16 22:20:33.000000000 +0000
-+++ cups-1.3.8/scheduler/job.h	2008-07-28 16:37:51.000000000 +0100
++++ cups-1.3.8/scheduler/job.h	2008-09-10 16:18:26.000000000 +0100
 @@ -13,6 +13,13 @@
   *   file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -2940,8 +2924,8 @@ diff -up cups-1.3.8/scheduler/job.h.lspp cups-1.3.8/scheduler/job.h
  
  
 diff -up cups-1.3.8/scheduler/main.c.lspp cups-1.3.8/scheduler/main.c
---- cups-1.3.8/scheduler/main.c.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/main.c	2008-07-28 16:37:51.000000000 +0100
+--- cups-1.3.8/scheduler/main.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/main.c	2008-09-10 16:18:26.000000000 +0100
 @@ -35,6 +35,8 @@
   *   usage()                   - Show scheduler usage.
   */
@@ -3010,8 +2994,8 @@ diff -up cups-1.3.8/scheduler/main.c.lspp cups-1.3.8/scheduler/main.c
  }
  
 diff -up cups-1.3.8/scheduler/printers.c.lspp cups-1.3.8/scheduler/printers.c
---- cups-1.3.8/scheduler/printers.c.lspp	2008-07-28 16:37:51.000000000 +0100
-+++ cups-1.3.8/scheduler/printers.c	2008-07-28 16:37:51.000000000 +0100
+--- cups-1.3.8/scheduler/printers.c.lspp	2008-09-10 16:18:26.000000000 +0100
++++ cups-1.3.8/scheduler/printers.c	2008-09-10 16:18:26.000000000 +0100
 @@ -51,6 +51,8 @@
   *                                 printing desktop tools.
   */
