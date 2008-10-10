@@ -6,8 +6,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.8
-Release: 6%{?svn:.svn%{svn}}%{?dist}
+Version: 1.3.9
+Release: 1%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -47,10 +47,8 @@ Patch19: cups-strict-ppd-line-length.patch
 Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-getnameddest.patch
-Patch23: cups-str2892.patch
-Patch24: cups-str2101.patch
-Patch25: cups-res_init.patch
-Patch26: cups-str2536.patch
+Patch23: cups-str2101.patch
+Patch24: cups-str2536.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -186,10 +184,8 @@ module.
 %patch20 -p1 -b .logrotate
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .getnameddest
-%patch23 -p1 -b .str2892
-%patch24 -p1 -b .str2101
-%patch25 -p1 -b .res_init
-%patch26 -p1 -b .str2536
+%patch23 -p1 -b .str2101
+%patch24 -p1 -b .str2536
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -481,6 +477,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Fri Oct 10 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.9-1
+- 1.3.9, including fixes for CVE-2008-3639 (STR #2918, bug #464710),
+  CVE-2008-3640 (STR #2919, bug #464713) and CVE-2008-3641 (STR #2911,
+  bug #464716).
+- No longer need str2892 or res_init patches.
+
 * Wed Sep 10 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.8-6
 - Backported patch for FatalErrors configuration directive
   (bug #314941, STR #2536).

@@ -1,6 +1,6 @@
-diff -up cups-1.3.8/berkeley/lpr.c.getnameddest cups-1.3.8/berkeley/lpr.c
---- cups-1.3.8/berkeley/lpr.c.getnameddest	2008-07-28 16:28:24.000000000 +0100
-+++ cups-1.3.8/berkeley/lpr.c	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/berkeley/lpr.c.getnameddest cups-1.3.9/berkeley/lpr.c
+--- cups-1.3.9/berkeley/lpr.c.getnameddest	2008-10-10 09:35:05.000000000 +0100
++++ cups-1.3.9/berkeley/lpr.c	2008-10-10 09:35:05.000000000 +0100
 @@ -92,9 +92,7 @@ main(int  argc,				/* I - Number of comm
    int		num_copies;		/* Number of copies per file */
    int		num_files;		/* Number of files to print */
@@ -55,9 +55,9 @@ diff -up cups-1.3.8/berkeley/lpr.c.getnameddest cups-1.3.8/berkeley/lpr.c
        _cupsLangPrintf(stderr,
                        _("%s: Error - %s environment variable names "
  		        "non-existent destination \"%s\"!\n"),
-diff -up cups-1.3.8/cups/cups.h.getnameddest cups-1.3.8/cups/cups.h
---- cups-1.3.8/cups/cups.h.getnameddest	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/cups/cups.h	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/cups/cups.h.getnameddest cups-1.3.9/cups/cups.h
+--- cups-1.3.9/cups/cups.h.getnameddest	2008-07-23 01:06:46.000000000 +0100
++++ cups-1.3.9/cups/cups.h	2008-10-10 09:35:05.000000000 +0100
 @@ -248,6 +248,9 @@ extern void		cupsSetDefaultDest(const ch
  					   int num_dests,
  					   cups_dest_t *dests);
@@ -68,9 +68,9 @@ diff -up cups-1.3.8/cups/cups.h.getnameddest cups-1.3.8/cups/cups.h
  
  #  ifdef __cplusplus
  }
-diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
---- cups-1.3.8/cups/dest.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/cups/dest.c	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/cups/dest.c.getnameddest cups-1.3.9/cups/dest.c
+--- cups-1.3.9/cups/dest.c.getnameddest	2008-09-17 00:37:56.000000000 +0100
++++ cups-1.3.9/cups/dest.c	2008-10-10 09:36:02.000000000 +0100
 @@ -25,6 +25,7 @@
   *                              server.
   *   cupsGetDests2()          - Get the list of destinations from the
@@ -128,18 +128,19 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
    return (num_dests);
  }
-@@ -330,8 +333,8 @@ cupsGetDests2(http_t      *http,	/* I - 
+@@ -330,9 +333,9 @@ cupsGetDests2(http_t      *http,	/* I - 
    * Grab the printers and classes...
    */
  
 -  num_dests = cups_get_sdests(http, CUPS_GET_PRINTERS, num_dests, dests);
--  num_dests = cups_get_sdests(http, CUPS_GET_CLASSES, num_dests, dests);
 +  num_dests = cups_get_sdests(http, CUPS_GET_PRINTERS, NULL, num_dests, dests);
-+  num_dests = cups_get_sdests(http, CUPS_GET_CLASSES, NULL, num_dests, dests);
+   if (cupsLastError() < IPP_REDIRECTION_OTHER_SITE)
+-    num_dests = cups_get_sdests(http, CUPS_GET_CLASSES, num_dests, dests);
++    num_dests = cups_get_sdests(http, CUPS_GET_CLASSES, NULL, num_dests, dests);
  
-  /*
-   * Make a copy of the "real" queues for a later sanity check...
-@@ -390,7 +393,7 @@ cupsGetDests2(http_t      *http,	/* I - 
+   if (cupsLastError() >= IPP_REDIRECTION_OTHER_SITE)
+   {
+@@ -398,7 +401,7 @@ cupsGetDests2(http_t      *http,	/* I - 
    */
  
    snprintf(filename, sizeof(filename), "%s/lpoptions", cg->cups_serverroot);
@@ -148,7 +149,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
    if ((home = getenv("HOME")) != NULL)
    {
-@@ -398,7 +401,7 @@ cupsGetDests2(http_t      *http,	/* I - 
+@@ -406,7 +409,7 @@ cupsGetDests2(http_t      *http,	/* I - 
      if (access(filename, 0))
        snprintf(filename, sizeof(filename), "%s/.lpoptions", home);
  
@@ -157,7 +158,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
    }
  
   /*
-@@ -452,6 +455,136 @@ cupsGetDests2(http_t      *http,	/* I - 
+@@ -460,6 +463,136 @@ cupsGetDests2(http_t      *http,	/* I - 
  
  
  /*
@@ -294,7 +295,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
   * 'cupsRemoveDest()' - Remove a destination from the destination list.
   *
   * Removing a destination/instance does not delete the class or printer
-@@ -548,19 +681,17 @@ void
+@@ -556,19 +689,17 @@ void
  cupsSetDests(int         num_dests,	/* I - Number of destinations */
               cups_dest_t *dests)	/* I - Destinations */
  {
@@ -318,7 +319,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  }
  
  
-@@ -606,8 +737,8 @@ cupsSetDests2(http_t      *http,	/* I - 
+@@ -614,8 +745,8 @@ cupsSetDests2(http_t      *http,	/* I - 
    * Get the server destinations...
    */
  
@@ -329,7 +330,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
   /*
    * Figure out which file to write to...
-@@ -622,7 +753,7 @@ cupsSetDests2(http_t      *http,	/* I - 
+@@ -630,7 +761,7 @@ cupsSetDests2(http_t      *http,	/* I - 
      * Merge in server defaults...
      */
  
@@ -338,7 +339,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
     /*
      * Point to user defaults...
-@@ -789,24 +920,88 @@ cupsSetDests2(http_t      *http,	/* I - 
+@@ -797,24 +928,88 @@ cupsSetDests2(http_t      *http,	/* I - 
  
  
  /*
@@ -428,7 +429,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
   /*
    * Check environment variables...
    */
-@@ -816,12 +1011,8 @@ cups_get_dests(const char  *filename,	/*
+@@ -824,12 +1019,8 @@ cups_get_dests(const char  *filename,	/*
        if (strcmp(printer, "lp") == 0)
          printer = NULL;
  
@@ -443,7 +444,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
   /*
    * Read each printer; each line looks like:
-@@ -830,28 +1021,22 @@ cups_get_dests(const char  *filename,	/*
+@@ -838,28 +1029,22 @@ cups_get_dests(const char  *filename,	/*
    *    Default name[/instance] options
    */
  
@@ -481,7 +482,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
      name = lineptr;
  
-@@ -862,9 +1047,6 @@ cups_get_dests(const char  *filename,	/*
+@@ -870,9 +1055,6 @@ cups_get_dests(const char  *filename,	/*
      while (!isspace(*lineptr & 255) && *lineptr && *lineptr != '/')
        lineptr ++;
  
@@ -491,7 +492,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
      if (*lineptr == '/')
      {
       /*
-@@ -884,30 +1066,49 @@ cups_get_dests(const char  *filename,	/*
+@@ -892,30 +1074,49 @@ cups_get_dests(const char  *filename,	/*
      else
        instance = NULL;
  
@@ -554,7 +555,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
      }
  
     /*
-@@ -918,11 +1119,20 @@ cups_get_dests(const char  *filename,	/*
+@@ -926,11 +1127,20 @@ cups_get_dests(const char  *filename,	/*
                                           &(dest->options));
  
     /*
@@ -576,7 +577,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
        for (i = 0; i < num_dests; i ++)
          (*dests)[i].is_default = 0;
  
-@@ -934,7 +1144,7 @@ cups_get_dests(const char  *filename,	/*
+@@ -942,7 +1152,7 @@ cups_get_dests(const char  *filename,	/*
    * Close the file and return...
    */
  
@@ -585,7 +586,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
    return (num_dests);
  }
-@@ -946,7 +1156,8 @@ cups_get_dests(const char  *filename,	/*
+@@ -954,7 +1164,8 @@ cups_get_dests(const char  *filename,	/*
  
  static int				/* O - Number of destinations */
  cups_get_sdests(http_t      *http,	/* I - HTTP connection */
@@ -595,7 +596,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
                  int         num_dests,	/* I - Number of destinations */
                  cups_dest_t **dests)	/* IO - Destinations */
  {
-@@ -963,8 +1174,9 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -971,8 +1182,9 @@ cups_get_sdests(http_t      *http,	/* I 
    const char	*info,			/* printer-info attribute */
  		*location,		/* printer-location attribute */
  		*make_model,		/* printer-make-and-model attribute */
@@ -607,7 +608,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  		auth_info_req[1024],	/* auth-info-required attribute */
  		reasons[1024];		/* printer-state-reasons attribute */
    int		num_options;		/* Number of options */
-@@ -1008,6 +1220,14 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1016,6 +1228,14 @@ cups_get_sdests(http_t      *http,	/* I 
    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
                 "requesting-user-name", NULL, cupsUser());
  
@@ -622,7 +623,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
   /*
    * Do the request and get back a response...
    */
-@@ -1030,17 +1250,17 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1038,17 +1258,17 @@ cups_get_sdests(http_t      *http,	/* I 
        * Pull the needed attributes from this printer...
        */
  
@@ -651,7 +652,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  
        auth_info_req[0] = '\0';
        job_sheets[0]    = '\0';
-@@ -1091,7 +1311,7 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1099,7 +1319,7 @@ cups_get_sdests(http_t      *http,	/* I 
  	  make_model = attr->values[0].string.text;
          else if (!strcmp(attr->name, "printer-name") &&
  	         attr->value_tag == IPP_TAG_NAME)
@@ -660,7 +661,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
  	else if (!strcmp(attr->name, "printer-state") &&
  	         attr->value_tag == IPP_TAG_ENUM)
            state = attr->values[0].integer;
-@@ -1196,7 +1416,7 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1204,7 +1424,7 @@ cups_get_sdests(http_t      *http,	/* I 
        * See if we have everything needed...
        */
  
@@ -669,7 +670,7 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
        {
          cupsFreeOptions(num_options, options);
  
-@@ -1206,9 +1426,9 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1214,9 +1434,9 @@ cups_get_sdests(http_t      *http,	/* I 
            continue;
        }
  
@@ -681,9 +682,9 @@ diff -up cups-1.3.8/cups/dest.c.getnameddest cups-1.3.8/cups/dest.c
        {
          dest->num_options = num_options;
  	dest->options     = options;
-diff -up cups-1.3.8/cups/libcups.exp.getnameddest cups-1.3.8/cups/libcups.exp
---- cups-1.3.8/cups/libcups.exp.getnameddest	2008-04-09 04:39:40.000000000 +0100
-+++ cups-1.3.8/cups/libcups.exp	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/cups/libcups.exp.getnameddest cups-1.3.9/cups/libcups.exp
+--- cups-1.3.9/cups/libcups.exp.getnameddest	2008-04-09 04:39:40.000000000 +0100
++++ cups-1.3.9/cups/libcups.exp	2008-10-10 09:35:05.000000000 +0100
 @@ -114,6 +114,7 @@ _cupsGetFd
  _cupsGetFile
  _cupsGetJobs
@@ -692,9 +693,9 @@ diff -up cups-1.3.8/cups/libcups.exp.getnameddest cups-1.3.8/cups/libcups.exp
  _cupsGetOption
  _cupsGetPassword
  _cupsGetPPD
-diff -up cups-1.3.8/cups/Makefile.getnameddest cups-1.3.8/cups/Makefile
---- cups-1.3.8/cups/Makefile.getnameddest	2008-02-20 20:18:33.000000000 +0000
-+++ cups-1.3.8/cups/Makefile	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/cups/Makefile.getnameddest cups-1.3.9/cups/Makefile
+--- cups-1.3.9/cups/Makefile.getnameddest	2008-09-06 01:30:39.000000000 +0100
++++ cups-1.3.9/cups/Makefile	2008-10-10 09:35:05.000000000 +0100
 @@ -263,7 +263,7 @@ libcups.so.2 libcups.sl.2:	$(LIBOBJS)
  # libcups.2.dylib
  #
@@ -704,9 +705,9 @@ diff -up cups-1.3.8/cups/Makefile.getnameddest cups-1.3.8/cups/Makefile
  	echo Linking $@...
  	$(DSO) $(ARCHFLAGS) $(DSOFLAGS) -o $@ \
  		-install_name $(libdir)/$@ \
-diff -up cups-1.3.8/cups/testcups.c.getnameddest cups-1.3.8/cups/testcups.c
---- cups-1.3.8/cups/testcups.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/cups/testcups.c	2008-07-28 16:37:24.000000000 +0100
+diff -up cups-1.3.9/cups/testcups.c.getnameddest cups-1.3.9/cups/testcups.c
+--- cups-1.3.9/cups/testcups.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.9/cups/testcups.c	2008-10-10 09:35:05.000000000 +0100
 @@ -16,7 +16,8 @@
   *
   * Contents:
@@ -947,9 +948,9 @@ diff -up cups-1.3.8/cups/testcups.c.getnameddest cups-1.3.8/cups/testcups.c
 +/*
   * End of "$Id: testcups.c 7721 2008-07-11 22:48:49Z mike $".
   */
-diff -up cups-1.3.8/systemv/lp.c.getnameddest cups-1.3.8/systemv/lp.c
---- cups-1.3.8/systemv/lp.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
-+++ cups-1.3.8/systemv/lp.c	2008-07-28 16:28:24.000000000 +0100
+diff -up cups-1.3.9/systemv/lp.c.getnameddest cups-1.3.9/systemv/lp.c
+--- cups-1.3.9/systemv/lp.c.getnameddest	2008-07-11 23:48:49.000000000 +0100
++++ cups-1.3.9/systemv/lp.c	2008-10-10 09:35:05.000000000 +0100
 @@ -73,9 +73,7 @@ main(int  argc,				/* I - Number of comm
    int		num_copies;		/* Number of copies per file */
    int		num_files;		/* Number of files to print */
