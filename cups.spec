@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.3.9
-Release: 1%{?svn:.svn%{svn}}%{?dist}
+Release: 2%{?svn:.svn%{svn}}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
@@ -477,6 +477,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Oct 21 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.9-2
+- Fixed textonly filter to send FF correctly.
+
 * Fri Oct 10 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.9-1
 - 1.3.9, including fixes for CVE-2008-3639 (STR #2918, bug #464710),
   CVE-2008-3640 (STR #2919, bug #464713) and CVE-2008-3641 (STR #2911,
