@@ -1532,6 +1532,163 @@ diff -up cups-1.3.8/filter/common.c.lspp cups-1.3.8/filter/common.c
  
  
  /*
+--- cups-1.3.9/filter/pstops.c.lspp	2008-10-30 13:29:33.000000000 +0000
++++ cups-1.3.9/filter/pstops.c	2008-10-30 13:31:06.000000000 +0000
+@@ -3233,6 +3233,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
+ {
+   const char	*classification;	/* CLASSIFICATION environment variable */
+   const char	*ptr;			/* Temporary string pointer */
++#ifdef WITH_LSPP
++  int           i,                      /* counter */
++                n,                      /* counter */
++                lines,                  /* number of lines needed */
++                line_len,               /* index into tmp_label */
++                label_len,              /* length of the label in characters */
++                label_index,            /* index into the label */
++                longest,                /* length of the longest line */
++                longest_line,           /* index to the longest line */
++                max_width;              /* maximum width in characters */
++  char          **wrapped_label;        /* label with line breaks */
++#endif /* WITH_LSPP */
+ 
+ 
+  /*
+@@ -3255,6 +3267,124 @@ write_label_prolog(pstops_doc_t *doc,	/*
+     return;
+   }
+ 
++#ifdef WITH_LSPP
++  if (strncmp(classification, "LSPP:", 5) == 0 && label == NULL)
++  {
++   /*
++    * Based on the 12pt fixed width font below determine the max_width
++    */
++    max_width = width / 8;
++    longest_line = 0;
++    longest = 0;
++    classification += 5; // Skip the "LSPP:"
++    label_len = strlen(classification);
++
++    if (label_len > max_width)
++    {
++      lines = 1 + (int)(label_len / max_width);
++      line_len = (int)(label_len / lines);
++      wrapped_label = malloc(sizeof(wrapped_label) * lines);
++      label_index = i = n = 0;
++      while (classification[label_index])
++      {
++        if ((label_index + line_len) > label_len)
++          break;
++        switch (classification[label_index + line_len + i])
++        {
++          case ':':
++          case ',':
++          case '-':
++            i++;
++            wrapped_label[n++] = strndup(&classification[label_index], (line_len + i));
++            label_index += line_len + i;
++            i = 0;
++            break;
++          default:
++            i++;
++            break;
++        }
++        if ((i + line_len) == max_width)
++        {
++          wrapped_label[n++] = strndup(&(classification[label_index]), (line_len + i));
++          label_index = label_index + line_len + i;
++          i = 0;
++        }
++      }
++      wrapped_label[n] = strndup(&classification[label_index], label_len - label_index);
++    }
++    else
++    {
++      lines = 1;
++      wrapped_label = malloc(sizeof(wrapped_label));
++      wrapped_label[0] = (char*)classification;
++    }
++
++    for (n = 0; n < lines; n++ )
++    {
++      printf("userdict/ESPp%c(", ('a' + n));
++      for (ptr = wrapped_label[n], i = 0; *ptr; ptr ++, i++)
++        if (*ptr < 32 || *ptr > 126)
++          printf("\\%03o", *ptr);
++        else
++        {
++          if (*ptr == '(' || *ptr == ')' || *ptr == '\\')
++            putchar('\\');
++
++          printf("%c", *ptr);
++        }
++      if (i > longest)
++      {
++        longest = i;
++        longest_line = n;
++      }
++      printf(")put\n");
++    }
++
++   /*
++    * For LSPP use a fixed width font so that line wrapping can be calculated
++    */
++
++    puts("userdict/ESPlf /Nimbus-Mono findfont 12 scalefont put");
++
++   /*
++    * Finally, the procedure to write the labels on the page...
++    */
++
++    printf("userdict/ESPwl{\n"
++           "  ESPlf setfont\n");
++    printf("  ESPp%c stringwidth pop dup 12 add exch -0.5 mul %.0f add\n ",
++           'a' + longest_line, width * 0.5f);
++    for (n = 1; n < lines; n++)
++      printf(" dup");
++    printf("\n  1 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    printf("  0 setgray\n");
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
++    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
++           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++    for (n = 0; n < lines; n ++)
++    {
++      printf("  dup %.0f moveto ESPp%c show\n",
++             bottom + 6.0 + ((lines - (n+1)) * 16.0), 'a' + n);
++      printf("  %.0f moveto ESPp%c show\n", top + 2.0 - ((n + 1) * 16.0), 'a' + n);
++    }
++    printf("  pop\n"
++           "}bind put\n");
++
++   /*
++    * Do some clean up at the end of the LSPP special case
++    */
++    free(wrapped_label);
++
++  }
++  else
++  {
++#endif /* !WITH_LSPP */
++
+  /*
+   * Set the classification + page label string...
+   */
+@@ -3333,7 +3463,10 @@ write_label_prolog(pstops_doc_t *doc,	/*
+   doc_printf(doc, "  %.0f moveto ESPpl show\n", top - 14.0);
+   doc_puts(doc, "pop\n");
+   doc_puts(doc, "}bind put\n");
++  }
++#ifdef WITH_LSPP
+ }
++#endif /* WITH_LSPP */
+ 
+ 
+ /*
 diff -up cups-1.3.8/Makedefs.in.lspp cups-1.3.8/Makedefs.in
 --- cups-1.3.8/Makedefs.in.lspp	2008-01-22 22:37:21.000000000 +0000
 +++ cups-1.3.8/Makedefs.in	2008-09-10 16:18:26.000000000 +0100
