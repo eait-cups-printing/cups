@@ -1,8 +1,9 @@
---- cups-1.2.4/berkeley/lpr.c.lpr-help	2006-09-27 14:44:34.000000000 +0100
-+++ cups-1.2.4/berkeley/lpr.c	2006-09-27 14:59:16.000000000 +0100
-@@ -58,6 +58,30 @@
+diff -up cups-1.4b1/berkeley/lpr.c.lpr-help cups-1.4b1/berkeley/lpr.c
+--- cups-1.4b1/berkeley/lpr.c.lpr-help	2008-07-11 23:46:21.000000000 +0100
++++ cups-1.4b1/berkeley/lpr.c	2008-11-11 16:20:32.000000000 +0000
+@@ -30,6 +30,31 @@
+ #include <cups/i18n.h>
  
- char	tempfile[1024];		/* Temporary file for printing from stdin */
  
 +static void
 +usage (const char *name)
@@ -28,10 +29,19 @@
 +, name);
 +}
 +
- 
++
  /*
   * 'main()' - Parse options and send files for printing.
-@@ -324,6 +348,12 @@
+  */
+@@ -54,7 +79,6 @@ main(int  argc,				/* I - Number of comm
+   int		deletefile;		/* Delete file after print? */
+   char		buffer[8192];		/* Copy buffer */
+ 
+-
+   _cupsSetLocale(argv);
+ 
+   deletefile  = 0;
+@@ -282,6 +306,12 @@ main(int  argc,				/* I - Number of comm
  	    break;
  
  	default :

@@ -1,4 +1,4 @@
-#define svn 7370
+%define pre b1
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -6,11 +6,11 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.3.9
-Release: 3%{?svn:.svn%{svn}}%{?dist}
+Version: 1.4
+Release: 0.%{pre}.1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?svn:svn-r%{svn}}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: http://www.openprinting.org/download/printing/dnssd
@@ -22,14 +22,11 @@ Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
 Source12: cups.cron
-Source13: pdftops.conf
 Source14: textonly.filter
 Source15: textonly.ppd
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-ext.patch
-Patch5: cups-includeifexists.patch
 Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
@@ -39,16 +36,13 @@ Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
-Patch15: cups-foomatic-recommended.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
 Patch19: cups-strict-ppd-line-length.patch
 Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
-Patch22: cups-getnameddest.patch
-Patch23: cups-str2101.patch
-Patch24: cups-str2536.patch
+Patch22: cups-build.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -59,13 +53,16 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
 %endif
-%if %{?svn:1}%{!?svn:0}
 Requires: poppler-utils
-%endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
 Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr
+
+Obsoletes: cupsddk < 1.2.3-6
+Provides: cupsddk = 1.2.3-6
+Obsoletes: cupsddk-drivers < 1.2.3-6
+Provides: cupsddk-drivers = 1.2.3-6
 
 # kdelibs conflict for bug #192585.
 Conflicts: kdelibs < 6:3.5.2-6
@@ -80,6 +77,7 @@ BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-compat-libdns_sd-devel
+BuildRequires: poppler-utils
 
 %if %lspp
 BuildPrereq: libselinux-devel >= 1.23
@@ -113,6 +111,8 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
+Obsoletes: cupsddk-devel < 1.2.3-6
+Provides: cupsddk-devel = 1.2.3-6
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -130,6 +130,7 @@ Summary: Common Unix Printing System - php module
 Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: php-common
+
 
 %description
 The Common UNIX Printing System provides a portable printing layer for 
@@ -161,12 +162,10 @@ UNIX® operating systems. This is the package that provices a PHP
 module. 
 
 %prep
-%setup -q -n %{name}-%{version}%{?svn:svn-r%{svn}}
+%setup -q -n %{name}-%{version}%{?pre}
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
-%patch4 -p1 -b .ext
-%patch5 -p1 -b .includeifexists
 %patch6 -p1 -b .banners
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
@@ -176,16 +175,13 @@ module.
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
-%patch15 -p1 -b .foomatic-recommended
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
 %patch19 -p1 -b .strict-ppd-line-length
 %patch20 -p1 -b .logrotate
 %patch21 -p1 -b .usb-paperout
-%patch22 -p1 -b .getnameddest
-%patch23 -p1 -b .str2101
-%patch24 -p1 -b .str2536
+%patch22 -p1 -b .build
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -255,7 +251,6 @@ install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
-install -c -m 644 %{SOURCE13} $RPM_BUILD_ROOT%{_sysconfdir}/cups/pdftops.conf
 install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
 install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 
@@ -293,13 +288,6 @@ echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
-
-%if %{?svn:1}%{!?svn:0}
-rm -f $RPM_BUILD_ROOT%{_bindir}/ppd{c,html,i,merge,po}
-rm -f $RPM_BUILD_ROOT%{cups_serverbin}/filter/{command,raster}to{escpx,pclx}
-rm -f $RPM_BUILD_ROOT%{cups_serverbin}/driver/drv
-rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/ppdc
-%endif
 
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
@@ -372,12 +360,9 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
 %config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
 %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
-%config(noreplace) %attr(0644,root,lp) /etc/cups/pdftops.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
 %config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
 /etc/cups/interfaces
-%config(noreplace) /etc/cups/mime.types
-%config(noreplace) /etc/cups/mime.convs
 %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
@@ -388,20 +373,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/%{name}/www
 %config(noreplace) %{_datadir}/%{name}/www/favicon.*
 %config(noreplace) %{_datadir}/%{name}/www/images
-%if %{?svn:1}%{!?svn:0}
-%else
-%config(noreplace) %{_datadir}/%{name}/www/de
-%config(noreplace) %{_datadir}/%{name}/www/es
-%config(noreplace) %{_datadir}/%{name}/www/et
-%config(noreplace) %{_datadir}/%{name}/www/fr
-%config(noreplace) %{_datadir}/%{name}/www/he
-%config(noreplace) %{_datadir}/%{name}/www/id
-%config(noreplace) %{_datadir}/%{name}/www/it
-%config(noreplace) %{_datadir}/%{name}/www/ja
-%config(noreplace) %{_datadir}/%{name}/www/pl
-%config(noreplace) %{_datadir}/%{name}/www/sv
-%config(noreplace) %{_datadir}/%{name}/www/zh_TW
-%endif
 %config(noreplace) %{_datadir}/%{name}/www/*.css
 %config(noreplace) %doc %{_datadir}/%{name}/www/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/help
@@ -411,6 +382,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cupstestdsc
 %{_bindir}/cancel*
 %{_bindir}/lp*
+%{_bindir}/ppd*
 %dir %{cups_serverbin}
 %{cups_serverbin}/backend
 %{cups_serverbin}/cgi-bin
@@ -433,20 +405,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
-%dir %{_datadir}/cups/templates/de
-%dir %{_datadir}/cups/templates/es
-%dir %{_datadir}/cups/templates/et
-%dir %{_datadir}/cups/templates/fr
-%dir %{_datadir}/cups/templates/he
-%dir %{_datadir}/cups/templates/id
-%dir %{_datadir}/cups/templates/it
-%dir %{_datadir}/cups/templates/ja
-%dir %{_datadir}/cups/templates/pl
-%dir %{_datadir}/cups/templates/sv
-%dir %{_datadir}/cups/templates/zh_TW
 %config(noreplace) %{_datadir}/cups/templates/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/*/*.tmpl
-%{_datadir}/locale/*/*
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
 %dir %attr(0710,root,lp) /var/spool/cups
@@ -454,6 +413,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
 %{_sysconfdir}/dbus-1/system.d/cups.conf
+%{_datadir}/cups/drv
+%{_datadir}/cups/examples
+%dir %{_datadir}/cups/mime
+%config(noreplace) %{_datadir}/cups/mime/mime.types
+%config(noreplace) %{_datadir}/cups/mime/mime.convs
+%{_datadir}/cups/ppdc/*.defs
 
 %files libs
 %defattr(-,root,root)
@@ -464,6 +429,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
+%{_datadir}/cups/ppdc/*.h
 
 %files lpd
 %defattr(-,root,root)
@@ -477,6 +443,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Nov 11 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.1
+- 1.4b1.
+- No longer need ext, includeifexists, foomatic-recommended,
+  getnameddest, str2101, str2536 patches.
+- Require poppler-utils at runtime and for build.  No longer need
+  pdftops.conf.
+- Obsolete cupsddk.
+
 * Thu Oct 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.9-3
 - Fixed LSPP labels (bug #468442).
 

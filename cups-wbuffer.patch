@@ -1,11 +1,12 @@
---- cups-1.2.3/cups/http.c.wbuffer	2006-09-13 16:41:57.000000000 +0100
-+++ cups-1.2.3/cups/http.c	2006-09-13 16:42:23.000000000 +0100
-@@ -1886,7 +1886,7 @@
+diff -up cups-1.4b1/cups/http.c.wbuffer cups-1.4b1/cups/http.c
+--- cups-1.4b1/cups/http.c.wbuffer	2008-08-20 01:07:25.000000000 +0100
++++ cups-1.4b1/cups/http.c	2008-11-12 09:13:29.000000000 +0000
+@@ -2166,7 +2166,7 @@ httpWrite2(http_t     *http,		/* I - Con
  
    if (length > 0)
    {
 -    if (http->wused && (length + http->wused) > sizeof(http->wbuffer))
 +    if (http->wused && (length + http->wused) >= sizeof(http->wbuffer))
      {
-       DEBUG_printf(("    flushing buffer (wused=%d, length=%d)\n",
-                     http->wused, length));
+       DEBUG_printf(("httpWrite2: Flushing buffer (wused=%d, length="
+                     CUPS_LLFMT ")\n", http->wused, CUPS_LLCAST length));

@@ -1,7 +1,7 @@
-diff -up cups-1.3.7/backend/ipp.c.eggcups cups-1.3.7/backend/ipp.c
---- cups-1.3.7/backend/ipp.c.eggcups	2008-07-15 13:34:01.000000000 +0100
-+++ cups-1.3.7/backend/ipp.c	2008-07-15 13:34:01.000000000 +0100
-@@ -58,6 +58,70 @@ static char	pstmpname[1024] = "";	/* Tem
+diff -up cups-1.4b1/backend/ipp.c.eggcups cups-1.4b1/backend/ipp.c
+--- cups-1.4b1/backend/ipp.c.eggcups	2008-10-15 19:27:45.000000000 +0100
++++ cups-1.4b1/backend/ipp.c	2008-11-11 15:43:30.000000000 +0000
+@@ -51,6 +51,70 @@ static char	pstmpname[1024] = "";	/* Tem
  static char	tmpfilename[1024] = "";	/* Temporary spool file name */
  static int	job_cancelled = 0;	/* Job cancelled? */
  
@@ -72,7 +72,7 @@ diff -up cups-1.3.7/backend/ipp.c.eggcups cups-1.3.7/backend/ipp.c
  
  /*
   * Local functions...
-@@ -1004,6 +1068,15 @@ main(int  argc,				/* I - Number of comm
+@@ -1058,6 +1122,15 @@ main(int  argc,				/* I - Number of comm
                        job_id);
      }
  
@@ -88,22 +88,22 @@ diff -up cups-1.3.7/backend/ipp.c.eggcups cups-1.3.7/backend/ipp.c
      ippDelete(response);
  
      if (job_cancelled)
-diff -up cups-1.3.7/backend/Makefile.eggcups cups-1.3.7/backend/Makefile
---- cups-1.3.7/backend/Makefile.eggcups	2007-08-08 20:27:51.000000000 +0100
-+++ cups-1.3.7/backend/Makefile	2008-07-15 13:34:01.000000000 +0100
-@@ -131,7 +131,7 @@ ieee1394-linux.o:	ieee1394.h
+diff -up cups-1.4b1/backend/Makefile.eggcups cups-1.4b1/backend/Makefile
+--- cups-1.4b1/backend/Makefile.eggcups	2008-10-06 22:08:27.000000000 +0100
++++ cups-1.4b1/backend/Makefile	2008-11-11 15:45:31.000000000 +0000
+@@ -188,7 +188,7 @@ dnssd:	dnssd.o ../cups/$(LIBCUPS) libbac
  
- ipp:	ipp.o ../cups/$(LIBCUPS)
+ ipp:	ipp.o ../cups/$(LIBCUPS) libbackend.a
  	echo Linking $@...
--	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS)
-+	$(CC) $(LDFLAGS) -o ipp ipp.o $(LIBS) $(CUPSDLIBS)
+-	$(CC) $(LDFLAGS) -o ipp ipp.o libbackend.a $(LIBS)
++	$(CC) $(LDFLAGS) -o ipp ipp.o libbackend.a $(LIBS) $(CUPSDLIBS)
  	$(RM) http
  	$(LN) ipp http
  
-diff -up cups-1.3.7/scheduler/subscriptions.c.eggcups cups-1.3.7/scheduler/subscriptions.c
---- cups-1.3.7/scheduler/subscriptions.c.eggcups	2008-01-23 22:23:42.000000000 +0000
-+++ cups-1.3.7/scheduler/subscriptions.c	2008-07-15 13:34:01.000000000 +0100
-@@ -1295,13 +1295,13 @@ cupsd_send_dbus(cupsd_eventmask_t event,
+diff -up cups-1.4b1/scheduler/subscriptions.c.eggcups cups-1.4b1/scheduler/subscriptions.c
+--- cups-1.4b1/scheduler/subscriptions.c.eggcups	2008-08-01 22:11:55.000000000 +0100
++++ cups-1.4b1/scheduler/subscriptions.c	2008-11-11 15:43:30.000000000 +0000
+@@ -1302,13 +1302,13 @@ cupsd_send_dbus(cupsd_eventmask_t event,
      what = "PrinterAdded";
    else if (event & CUPSD_EVENT_PRINTER_DELETED)
      what = "PrinterRemoved";
@@ -119,7 +119,7 @@ diff -up cups-1.3.7/scheduler/subscriptions.c.eggcups cups-1.3.7/scheduler/subsc
    else
      return;
  
-@@ -1337,7 +1337,7 @@ cupsd_send_dbus(cupsd_eventmask_t event,
+@@ -1344,7 +1344,7 @@ cupsd_send_dbus(cupsd_eventmask_t event,
    dbus_message_append_iter_init(message, &iter);
    if (dest)
      dbus_message_iter_append_string(&iter, dest->name);
