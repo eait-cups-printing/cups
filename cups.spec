@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.1%{?dist}
+Release: 0.%{pre}.2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -443,7 +443,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
-* Tue Nov 11 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.1
+* Tue Nov 11 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.2
 - 1.4b1.
 - No longer need ext, includeifexists, foomatic-recommended,
   getnameddest, str2101, str2536 patches.
