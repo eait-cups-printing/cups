@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.3%{?dist}
+Release: 0.%{pre}.4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -418,6 +418,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/cups/mime
 %config(noreplace) %{_datadir}/cups/mime/mime.types
 %config(noreplace) %{_datadir}/cups/mime/mime.convs
+%dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.defs
 
 %files libs
@@ -429,6 +430,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
+%dir %{_datadir}/cups
+%dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.h
 
 %files lpd
@@ -443,6 +446,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Sun Nov 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.4
+- Own more directories (bug #473581).
+
 * Tue Nov 11 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.3
 - 1.4b1.
 - No longer need ext, includeifexists, foomatic-recommended,
