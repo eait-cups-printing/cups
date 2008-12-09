@@ -28,6 +28,7 @@ Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
 Patch4: cups-str2831.patch
+Patch5: cups-CVE-2008-5183.patch
 Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
@@ -168,6 +169,7 @@ module.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
 %patch4 -p1 -b .str2831
+%patch5 -p1 -b .CVE-2008-5183
 %patch6 -p1 -b .banners
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
@@ -449,6 +451,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  9 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.5
+- Applied patch to fix RSS subscription limiting (bug #473901,
+  CVE-2008-5183).
 - Attempt to unbreak the fix for STR #2831 (bug #474742).
 
 * Sun Nov 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.4
