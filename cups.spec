@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.4%{?dist}
+Release: 0.%{pre}.5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -27,6 +27,7 @@ Source15: textonly.ppd
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str2831.patch
 Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
@@ -166,6 +167,7 @@ module.
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
+%patch4 -p1 -b .str2831
 %patch6 -p1 -b .banners
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
@@ -446,6 +448,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Dec  9 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.5
+- Attempt to unbreak the fix for STR #2831 (bug #474742).
+
 * Sun Nov 30 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.4
 - Own more directories (bug #473581).
 
