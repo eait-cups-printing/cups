@@ -1,4 +1,4 @@
-%define pre b1
+%define pre b2
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.6%{?dist}
+Release: 0.%{pre}.1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -28,7 +28,6 @@ Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
 Patch4: cups-str2831.patch
-Patch5: cups-CVE-2008-5183.patch
 Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
@@ -169,7 +168,6 @@ module.
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
 %patch4 -p1 -b .str2831
-%patch5 -p1 -b .CVE-2008-5183
 %patch6 -p1 -b .banners
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
@@ -410,6 +408,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
 %config(noreplace) %{_datadir}/cups/templates/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
+%{_datadir}/locale/*
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
 %dir %attr(0710,root,lp) /var/spool/cups
@@ -450,6 +450,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Dec 16 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.1
+- 1.4b2.
+- No longer need CVE-2008-5183 patch.
+
 * Sat Dec 13 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b1.6
 - Start cupsd at priority 25: after avahi-daemon but before haldaemon
   (bug #468709).
