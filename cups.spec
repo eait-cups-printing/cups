@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.2%{?dist}
+Release: 0.%{pre}.3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -38,6 +38,7 @@ Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
+Patch15: cups-local-protocols.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
@@ -179,6 +180,7 @@ module.
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
+%patch15 -p1 -b .local-protocols
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
@@ -452,6 +454,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Jan 27 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.3
+- Fixed default BrowseLocalProtocols (bug #481505).
+
 * Tue Dec 16 2008 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.2
 - 1.4b2.
 - No longer need CVE-2008-5183 patch.
