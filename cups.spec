@@ -48,6 +48,7 @@ Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
 Patch23: cups-str3077.patch
 Patch24: cups-str3078.patch
+Patch25: cups-str3059.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -192,6 +193,7 @@ module.
 %patch22 -p1 -b .build
 %patch23 -p1 -b .str3077
 %patch24 -p1 -b .str3078
+%patch25 -p1 -b .str3059
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -458,6 +460,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Jan 28 2009 Tim Waugh <twaugh@redhat.com>
+- Load MIME type rules correctly (bug #426089, STR #3059).
+
 * Wed Jan 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.4
 - Fixed quotas (STR #3077, STR #3078).
 
