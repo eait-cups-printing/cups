@@ -106,9 +106,6 @@ Requires: tmpwatch
 # Require the package here so that we know /etc/portreserve/ exists.
 Requires: portreserve
 
-# The dnssd backend uses avahi-browse so require it (bug #458565).
-Requires: avahi-tools
-
 %package devel
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
@@ -460,7 +457,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
-* Wed Jan 28 2009 Tim Waugh <twaugh@redhat.com>
+* Tue Feb 10 2009 Tim Waugh <twaugh@redhat.com>
+- No longer require avahi-tools as the dnssd backend does not use the
+  command line tools any longer. (Work is still progressing on fixing
+  the dnssd backend to work with the native avahi API.)
 - Load MIME type rules correctly (bug #426089, STR #3059).
 
 * Wed Jan 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.4
