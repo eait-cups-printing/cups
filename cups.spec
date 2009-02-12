@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.4%{?dist}
+Release: 0.%{pre}.5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -49,6 +49,7 @@ Patch22: cups-build.patch
 Patch23: cups-str3077.patch
 Patch24: cups-str3078.patch
 Patch25: cups-str3059.patch
+Patch26: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -191,6 +192,7 @@ module.
 %patch23 -p1 -b .str3077
 %patch24 -p1 -b .str3078
 %patch25 -p1 -b .str3059
+%patch26 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -457,10 +459,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
-* Tue Feb 10 2009 Tim Waugh <twaugh@redhat.com>
+* Thu Feb 12 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.5
+- Beginnings of avahi support.  The dnssd backend should now work, but
+  the scheduler will not yet advertise DNS-SD services.
 - No longer require avahi-tools as the dnssd backend does not use the
-  command line tools any longer. (Work is still progressing on fixing
-  the dnssd backend to work with the native avahi API.)
+  command line tools any longer.
 - Load MIME type rules correctly (bug #426089, STR #3059).
 
 * Wed Jan 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.4
