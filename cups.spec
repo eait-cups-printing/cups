@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.5%{?dist}
+Release: 0.%{pre}.6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -459,7 +459,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
-* Thu Feb 12 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.5
+* Thu Feb 12 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.6
 - Beginnings of avahi support.  The dnssd backend should now work, but
   the scheduler will not yet advertise DNS-SD services.
 - No longer require avahi-tools as the dnssd backend does not use the
