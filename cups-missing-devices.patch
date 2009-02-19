@@ -1,0 +1,27 @@
+diff -up cups-1.4b2/backend/dnssd.c.missing-devices cups-1.4b2/backend/dnssd.c
+--- cups-1.4b2/backend/dnssd.c.missing-devices	2009-02-19 18:24:07.000000000 +0000
++++ cups-1.4b2/backend/dnssd.c	2009-02-19 18:25:06.000000000 +0000
+@@ -437,6 +437,11 @@ main(int  argc,				/* I - Number of comm
+ 	                      best->name, NULL, NULL);
+ 	    best->sent = 1;
+ 	    best       = device;
++
++#ifdef HAVE_AVAHI
++	    /* Hack so that cups-deviced doesn't miss anything (STR #3108). */
++	    sleep (1);
++#endif
+ 	  }
+ 	  else if (best->priority > device->priority ||
+ 	           (best->priority == device->priority &&
+@@ -458,6 +463,11 @@ main(int  argc,				/* I - Number of comm
+ 	cupsBackendReport("network", device_uri, best->make_and_model,
+ 			  best->name, NULL, NULL);
+ 	best->sent = 1;
++
++#ifdef HAVE_AVAHI
++	/* Hack so that cups-deviced doesn't miss anything (STR #3108). */
++	sleep (1);
++#endif
+       }
+     }
+   }

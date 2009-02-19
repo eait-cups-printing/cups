@@ -7,13 +7,12 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.6%{?dist}
+Release: 0.%{pre}.7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
-Source3: http://www.openprinting.org/download/printing/dnssd
 Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
@@ -50,6 +49,7 @@ Patch23: cups-str3077.patch
 Patch24: cups-str3078.patch
 Patch25: cups-str3059.patch
 Patch26: cups-avahi.patch
+Patch27: cups-missing-devices.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -83,7 +83,7 @@ BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
-BuildRequires: avahi-compat-libdns_sd-devel
+BuildRequires: avahi-devel
 BuildRequires: poppler-utils
 
 %if %lspp
@@ -193,6 +193,7 @@ module.
 %patch24 -p1 -b .str3078
 %patch25 -p1 -b .str3059
 %patch26 -p1 -b .avahi
+%patch27 -p1 -b .missing-devices
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -206,6 +207,10 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
+# Rebuild configure script for --enable-avahi.
+aclocal -I config-scripts
+autoconf -I config-scripts
+
 %build
 export CFLAGS="-DLDAP_DEPRECATED=1"
 %configure --with-docdir=%{_datadir}/%{name}/www \
@@ -215,7 +220,7 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
 	--enable-pdftops --with-dbusdir=%{_sysconfdir}/dbus-1 \
-	--with-php=/usr/bin/php-cgi \
+	--with-php=/usr/bin/php-cgi --enable-avahi \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -225,9 +230,6 @@ make
 rm -rf $RPM_BUILD_ROOT
 
 make BUILDROOT=$RPM_BUILD_ROOT install 
-
-# Include Till Kamppeter's dnssd backend.
-install -m 755 %{SOURCE3} $RPM_BUILD_ROOT%{cups_serverbin}/backend/dnssd
 
 # Serial backend needs to run as root (bug #212577).
 chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
@@ -459,6 +461,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu Feb 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.7
+- Prevent cups-deviced missing devices (STR #3108).
+- Actually drop the perl implementation of the dnssd backend and use
+  the avahi-aware one.
+
 * Thu Feb 12 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.6
 - Beginnings of avahi support.  The dnssd backend should now work, but
   the scheduler will not yet advertise DNS-SD services.
