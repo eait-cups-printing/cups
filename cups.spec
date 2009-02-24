@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.7%{?dist}
+Release: 0.%{pre}.7%{?dist}.1
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
@@ -461,6 +461,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.4-0.b2.7.1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Thu Feb 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.7
 - Prevent cups-deviced missing devices (STR #3108).
 - Actually drop the perl implementation of the dnssd backend and use
