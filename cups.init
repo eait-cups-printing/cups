@@ -35,6 +35,7 @@
 # Provides: cups
 # Required-Start: $syslog $local_fs
 # Required-Stop: $syslog $local_fs
+# Should-Start: portreserve
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6
 # Short-Description: The CUPS scheduler
