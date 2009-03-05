@@ -1,4 +1,5 @@
 %define pre b2
+%define svn -svn8404
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -7,10 +8,10 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.7%{?dist}.1
+Release: 0.%{pre}.8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}-source.tar.bz2
+Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source4: pstopdf
@@ -37,7 +38,6 @@ Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
-Patch15: cups-local-protocols.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
@@ -45,9 +45,6 @@ Patch19: cups-strict-ppd-line-length.patch
 Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
-Patch23: cups-str3077.patch
-Patch24: cups-str3078.patch
-Patch25: cups-str3059.patch
 Patch26: cups-avahi.patch
 Patch27: cups-missing-devices.patch
 Patch100: cups-lspp.patch
@@ -166,7 +163,7 @@ UNIX® operating systems. This is the package that provices a PHP
 module. 
 
 %prep
-%setup -q -n %{name}-%{version}%{?pre}
+%setup -q -n %{name}-%{version}%{?pre}%{?svn}
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
@@ -181,7 +178,6 @@ module.
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
-%patch15 -p1 -b .local-protocols
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
@@ -189,9 +185,6 @@ module.
 %patch20 -p1 -b .logrotate
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .build
-%patch23 -p1 -b .str3077
-%patch24 -p1 -b .str3078
-%patch25 -p1 -b .str3059
 %patch26 -p1 -b .avahi
 %patch27 -p1 -b .missing-devices
 
@@ -384,12 +377,20 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
+%dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/pl
+%dir %{_datadir}/%{name}/www/ru
 %config(noreplace) %{_datadir}/%{name}/www/favicon.*
 %config(noreplace) %{_datadir}/%{name}/www/images
 %config(noreplace) %{_datadir}/%{name}/www/*.css
 %config(noreplace) %doc %{_datadir}/%{name}/www/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/help
 %config(noreplace) %doc %{_datadir}/%{name}/www/robots.txt
+%config(noreplace) %doc %{_datadir}/%{name}/www/es/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
 %config(noreplace) %{initdir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
@@ -420,6 +421,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/cups/templates
 %config(noreplace) %{_datadir}/cups/templates/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/ru/*.tmpl
 %{_datadir}/locale/*
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
@@ -461,6 +465,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu Mar  5 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.8
+- Updated to svn8404.
+
 * Wed Feb 25 2009 Tim Waugh <twaugh@redhat.com>
 - Added 'Should-Start: portreserve' to the initscript (part of bug #487250).
 

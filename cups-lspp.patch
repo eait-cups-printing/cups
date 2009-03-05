@@ -1,7 +1,7 @@
-diff -up cups-1.4b2/config.h.in.lspp cups-1.4b2/config.h.in
---- cups-1.4b2/config.h.in.lspp	2008-09-08 23:03:01.000000000 +0100
-+++ cups-1.4b2/config.h.in	2009-01-28 17:09:48.000000000 +0000
-@@ -619,6 +619,13 @@
+diff -up cups-1.4b2-svn8404/config.h.in.lspp cups-1.4b2-svn8404/config.h.in
+--- cups-1.4b2-svn8404/config.h.in.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/config.h.in	2009-03-05 11:40:03.000000000 +0000
+@@ -626,6 +626,13 @@
  #undef HAVE_TCPD_H
  
  
@@ -15,9 +15,9 @@ diff -up cups-1.4b2/config.h.in.lspp cups-1.4b2/config.h.in
  #endif /* !_CUPS_CONFIG_H_ */
  
  /*
-diff -up /dev/null cups-1.4b2/config-scripts/cups-lspp.m4
---- /dev/null	2009-01-28 08:58:18.489189414 +0000
-+++ cups-1.4b2/config-scripts/cups-lspp.m4	2009-01-28 17:09:48.000000000 +0000
+diff -up /dev/null cups-1.4b2-svn8404/config-scripts/cups-lspp.m4
+--- /dev/null	2009-03-05 08:48:03.067001897 +0000
++++ cups-1.4b2-svn8404/config-scripts/cups-lspp.m4	2009-03-05 11:40:03.000000000 +0000
 @@ -0,0 +1,36 @@
 +dnl
 +dnl   LSPP code for the Common UNIX Printing System (CUPS).
@@ -55,9 +55,9 @@ diff -up /dev/null cups-1.4b2/config-scripts/cups-lspp.m4
 +            ;;
 +    esac
 +fi
-diff -up cups-1.4b2/configure.in.lspp cups-1.4b2/configure.in
---- cups-1.4b2/configure.in.lspp	2008-11-14 19:32:22.000000000 +0000
-+++ cups-1.4b2/configure.in	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/configure.in.lspp cups-1.4b2-svn8404/configure.in
+--- cups-1.4b2-svn8404/configure.in.lspp	2009-02-17 17:45:27.000000000 +0000
++++ cups-1.4b2-svn8404/configure.in	2009-03-05 11:40:03.000000000 +0000
 @@ -42,6 +42,8 @@ sinclude(config-scripts/cups-pap.m4)
  sinclude(config-scripts/cups-pdf.m4)
  sinclude(config-scripts/cups-scripting.m4)
@@ -67,510 +67,9 @@ diff -up cups-1.4b2/configure.in.lspp cups-1.4b2/configure.in
  INSTALL_LANGUAGES=""
  UNINSTALL_LANGUAGES=""
  LANGFILES=""
-diff -up cups-1.4b2/configure.lspp cups-1.4b2/configure
---- cups-1.4b2/configure.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/configure	2009-01-28 17:09:48.000000000 +0000
-@@ -829,6 +829,8 @@ PHP
- PHPCONFIG
- PHPDIR
- PYTHON
-+LIBAUDIT
-+LIBSELINUX
- INSTALL_LANGUAGES
- UNINSTALL_LANGUAGES
- LIBOBJS
-@@ -1459,6 +1461,7 @@ Optional Features:
-   --enable-texttops       build with default text filter, default=auto
-   --enable-pap            build with AppleTalk support, default=auto
-   --enable-pdftops        build pdftops filter, default=auto
-+  --enable-lspp           turn on auditing and label support, default=no
- 
- Optional Packages:
-   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-@@ -4651,7 +4654,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&
- else
-   ac_cv_header_stdc=no
- fi
--rm -f -r conftest*
-+rm -f conftest*
- 
- fi
- 
-@@ -4672,7 +4675,7 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&
- else
-   ac_cv_header_stdc=no
- fi
--rm -f -r conftest*
-+rm -f conftest*
- 
- fi
- 
-@@ -10327,10 +10330,10 @@ case "$uname" in
- 		;;
- 	Linux* | GNU*)
- 		# Linux and GNU Hurd
--		MAN1EXT=1.gz
--		MAN5EXT=5.gz
--		MAN7EXT=7.gz
--		MAN8EXT=8.gz
-+		MAN1EXT=1
-+		MAN5EXT=5
-+		MAN7EXT=7
-+		MAN8EXT=8
- 		MAN8DIR=8
- 		;;
- 	*)
-@@ -18309,7 +18312,7 @@ cat >>confdefs.h <<_ACEOF
- _ACEOF
- ;;
- esac
--rm -f -r conftest*
-+rm -f conftest*
-   if test $ac_cv_sys_file_offset_bits = unknown; then
-     { echo "$as_me:$LINENO: checking for _LARGE_FILES value needed for large files" >&5
- echo $ECHO_N "checking for _LARGE_FILES value needed for large files... $ECHO_C" >&6; }
-@@ -18430,7 +18433,7 @@ cat >>confdefs.h <<_ACEOF
- _ACEOF
- ;;
- esac
--rm -f -r conftest*
-+rm -f conftest*
-   fi
- fi
- 
-@@ -20495,6 +20498,412 @@ fi
- 
- 
- 
-+
-+# Check whether --enable-lspp was given.
-+if test "${enable_lspp+set}" = set; then
-+  enableval=$enable_lspp;
-+fi
-+
-+
-+if test x"$enable_lspp" != xno; then
-+    case "$uname" in
-+        Linux)
-+            { echo "$as_me:$LINENO: checking for audit_log_user_message in -laudit" >&5
-+echo $ECHO_N "checking for audit_log_user_message in -laudit... $ECHO_C" >&6; }
-+if test "${ac_cv_lib_audit_audit_log_user_message+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+else
-+  ac_check_lib_save_LIBS=$LIBS
-+LIBS="-laudit  $LIBS"
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+
-+/* Override any GCC internal prototype to avoid an error.
-+   Use char because int might match the return type of a GCC
-+   builtin and then its argument prototype would still apply.  */
-+#ifdef __cplusplus
-+extern "C"
-+#endif
-+char audit_log_user_message ();
-+int
-+main ()
-+{
-+return audit_log_user_message ();
-+  ;
-+  return 0;
-+}
-+_ACEOF
-+rm -f conftest.$ac_objext conftest$ac_exeext
-+if { (ac_try="$ac_link"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_link") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } && {
-+	 test -z "$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       } && test -s conftest$ac_exeext &&
-+       $as_test_x conftest$ac_exeext; then
-+  ac_cv_lib_audit_audit_log_user_message=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+	ac_cv_lib_audit_audit_log_user_message=no
-+fi
-+
-+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-+      conftest$ac_exeext conftest.$ac_ext
-+LIBS=$ac_check_lib_save_LIBS
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_lib_audit_audit_log_user_message" >&5
-+echo "${ECHO_T}$ac_cv_lib_audit_audit_log_user_message" >&6; }
-+if test $ac_cv_lib_audit_audit_log_user_message = yes; then
-+  LIBAUDIT="-laudit"
-+fi
-+
-+            if test "${ac_cv_header_libaudit_h+set}" = set; then
-+  { echo "$as_me:$LINENO: checking for libaudit.h" >&5
-+echo $ECHO_N "checking for libaudit.h... $ECHO_C" >&6; }
-+if test "${ac_cv_header_libaudit_h+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_header_libaudit_h" >&5
-+echo "${ECHO_T}$ac_cv_header_libaudit_h" >&6; }
-+else
-+  # Is the header compilable?
-+{ echo "$as_me:$LINENO: checking libaudit.h usability" >&5
-+echo $ECHO_N "checking libaudit.h usability... $ECHO_C" >&6; }
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+$ac_includes_default
-+#include <libaudit.h>
-+_ACEOF
-+rm -f conftest.$ac_objext
-+if { (ac_try="$ac_compile"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_compile") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } && {
-+	 test -z "$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       } && test -s conftest.$ac_objext; then
-+  ac_header_compiler=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+	ac_header_compiler=no
-+fi
-+
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-+{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
-+echo "${ECHO_T}$ac_header_compiler" >&6; }
-+
-+# Is the header present?
-+{ echo "$as_me:$LINENO: checking libaudit.h presence" >&5
-+echo $ECHO_N "checking libaudit.h presence... $ECHO_C" >&6; }
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+#include <libaudit.h>
-+_ACEOF
-+if { (ac_try="$ac_cpp conftest.$ac_ext"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } >/dev/null && {
-+	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       }; then
-+  ac_header_preproc=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+  ac_header_preproc=no
-+fi
-+
-+rm -f conftest.err conftest.$ac_ext
-+{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
-+echo "${ECHO_T}$ac_header_preproc" >&6; }
-+
-+# So?  What about this header?
-+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
-+  yes:no: )
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: accepted by the compiler, rejected by the preprocessor!" >&5
-+echo "$as_me: WARNING: libaudit.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: proceeding with the compiler's result" >&5
-+echo "$as_me: WARNING: libaudit.h: proceeding with the compiler's result" >&2;}
-+    ac_header_preproc=yes
-+    ;;
-+  no:yes:* )
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: present but cannot be compiled" >&5
-+echo "$as_me: WARNING: libaudit.h: present but cannot be compiled" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h:     check for missing prerequisite headers?" >&5
-+echo "$as_me: WARNING: libaudit.h:     check for missing prerequisite headers?" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: see the Autoconf documentation" >&5
-+echo "$as_me: WARNING: libaudit.h: see the Autoconf documentation" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h:     section \"Present But Cannot Be Compiled\"" >&5
-+echo "$as_me: WARNING: libaudit.h:     section \"Present But Cannot Be Compiled\"" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: proceeding with the preprocessor's result" >&5
-+echo "$as_me: WARNING: libaudit.h: proceeding with the preprocessor's result" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: libaudit.h: in the future, the compiler will take precedence" >&5
-+echo "$as_me: WARNING: libaudit.h: in the future, the compiler will take precedence" >&2;}
-+
-+    ;;
-+esac
-+{ echo "$as_me:$LINENO: checking for libaudit.h" >&5
-+echo $ECHO_N "checking for libaudit.h... $ECHO_C" >&6; }
-+if test "${ac_cv_header_libaudit_h+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+else
-+  ac_cv_header_libaudit_h=$ac_header_preproc
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_header_libaudit_h" >&5
-+echo "${ECHO_T}$ac_cv_header_libaudit_h" >&6; }
-+
-+fi
-+
-+
-+            { echo "$as_me:$LINENO: checking for getpeercon in -lselinux" >&5
-+echo $ECHO_N "checking for getpeercon in -lselinux... $ECHO_C" >&6; }
-+if test "${ac_cv_lib_selinux_getpeercon+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+else
-+  ac_check_lib_save_LIBS=$LIBS
-+LIBS="-lselinux  $LIBS"
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+
-+/* Override any GCC internal prototype to avoid an error.
-+   Use char because int might match the return type of a GCC
-+   builtin and then its argument prototype would still apply.  */
-+#ifdef __cplusplus
-+extern "C"
-+#endif
-+char getpeercon ();
-+int
-+main ()
-+{
-+return getpeercon ();
-+  ;
-+  return 0;
-+}
-+_ACEOF
-+rm -f conftest.$ac_objext conftest$ac_exeext
-+if { (ac_try="$ac_link"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_link") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } && {
-+	 test -z "$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       } && test -s conftest$ac_exeext &&
-+       $as_test_x conftest$ac_exeext; then
-+  ac_cv_lib_selinux_getpeercon=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+	ac_cv_lib_selinux_getpeercon=no
-+fi
-+
-+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-+      conftest$ac_exeext conftest.$ac_ext
-+LIBS=$ac_check_lib_save_LIBS
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_lib_selinux_getpeercon" >&5
-+echo "${ECHO_T}$ac_cv_lib_selinux_getpeercon" >&6; }
-+if test $ac_cv_lib_selinux_getpeercon = yes; then
-+  LIBSELINUX="-lselinux"
-+fi
-+
-+            if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
-+  { echo "$as_me:$LINENO: checking for selinux/selinux.h" >&5
-+echo $ECHO_N "checking for selinux/selinux.h... $ECHO_C" >&6; }
-+if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_header_selinux_selinux_h" >&5
-+echo "${ECHO_T}$ac_cv_header_selinux_selinux_h" >&6; }
-+else
-+  # Is the header compilable?
-+{ echo "$as_me:$LINENO: checking selinux/selinux.h usability" >&5
-+echo $ECHO_N "checking selinux/selinux.h usability... $ECHO_C" >&6; }
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+$ac_includes_default
-+#include <selinux/selinux.h>
-+_ACEOF
-+rm -f conftest.$ac_objext
-+if { (ac_try="$ac_compile"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_compile") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } && {
-+	 test -z "$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       } && test -s conftest.$ac_objext; then
-+  ac_header_compiler=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+	ac_header_compiler=no
-+fi
-+
-+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-+{ echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
-+echo "${ECHO_T}$ac_header_compiler" >&6; }
-+
-+# Is the header present?
-+{ echo "$as_me:$LINENO: checking selinux/selinux.h presence" >&5
-+echo $ECHO_N "checking selinux/selinux.h presence... $ECHO_C" >&6; }
-+cat >conftest.$ac_ext <<_ACEOF
-+/* confdefs.h.  */
-+_ACEOF
-+cat confdefs.h >>conftest.$ac_ext
-+cat >>conftest.$ac_ext <<_ACEOF
-+/* end confdefs.h.  */
-+#include <selinux/selinux.h>
-+_ACEOF
-+if { (ac_try="$ac_cpp conftest.$ac_ext"
-+case "(($ac_try" in
-+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-+  *) ac_try_echo=$ac_try;;
-+esac
-+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
-+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
-+  ac_status=$?
-+  grep -v '^ *+' conftest.er1 >conftest.err
-+  rm -f conftest.er1
-+  cat conftest.err >&5
-+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
-+  (exit $ac_status); } >/dev/null && {
-+	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
-+	 test ! -s conftest.err
-+       }; then
-+  ac_header_preproc=yes
-+else
-+  echo "$as_me: failed program was:" >&5
-+sed 's/^/| /' conftest.$ac_ext >&5
-+
-+  ac_header_preproc=no
-+fi
-+
-+rm -f conftest.err conftest.$ac_ext
-+{ echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
-+echo "${ECHO_T}$ac_header_preproc" >&6; }
-+
-+# So?  What about this header?
-+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
-+  yes:no: )
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: accepted by the compiler, rejected by the preprocessor!" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: proceeding with the compiler's result" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: proceeding with the compiler's result" >&2;}
-+    ac_header_preproc=yes
-+    ;;
-+  no:yes:* )
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: present but cannot be compiled" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: present but cannot be compiled" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h:     check for missing prerequisite headers?" >&5
-+echo "$as_me: WARNING: selinux/selinux.h:     check for missing prerequisite headers?" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: see the Autoconf documentation" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: see the Autoconf documentation" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h:     section \"Present But Cannot Be Compiled\"" >&5
-+echo "$as_me: WARNING: selinux/selinux.h:     section \"Present But Cannot Be Compiled\"" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: proceeding with the preprocessor's result" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: proceeding with the preprocessor's result" >&2;}
-+    { echo "$as_me:$LINENO: WARNING: selinux/selinux.h: in the future, the compiler will take precedence" >&5
-+echo "$as_me: WARNING: selinux/selinux.h: in the future, the compiler will take precedence" >&2;}
-+
-+    ;;
-+esac
-+{ echo "$as_me:$LINENO: checking for selinux/selinux.h" >&5
-+echo $ECHO_N "checking for selinux/selinux.h... $ECHO_C" >&6; }
-+if test "${ac_cv_header_selinux_selinux_h+set}" = set; then
-+  echo $ECHO_N "(cached) $ECHO_C" >&6
-+else
-+  ac_cv_header_selinux_selinux_h=$ac_header_preproc
-+fi
-+{ echo "$as_me:$LINENO: result: $ac_cv_header_selinux_selinux_h" >&5
-+echo "${ECHO_T}$ac_cv_header_selinux_selinux_h" >&6; }
-+
-+fi
-+
-+
-+            cat >>confdefs.h <<\_ACEOF
-+#define WITH_LSPP 1
-+_ACEOF
-+
-+            ;;
-+        *)
-+            # All others
-+            ;;
-+    esac
-+fi
-+
-+
- INSTALL_LANGUAGES=""
- UNINSTALL_LANGUAGES=""
- LANGFILES=""
-@@ -21455,13 +21864,15 @@ PHP!$PHP$ac_delim
- PHPCONFIG!$PHPCONFIG$ac_delim
- PHPDIR!$PHPDIR$ac_delim
- PYTHON!$PYTHON$ac_delim
-+LIBAUDIT!$LIBAUDIT$ac_delim
-+LIBSELINUX!$LIBSELINUX$ac_delim
- INSTALL_LANGUAGES!$INSTALL_LANGUAGES$ac_delim
- UNINSTALL_LANGUAGES!$UNINSTALL_LANGUAGES$ac_delim
- LIBOBJS!$LIBOBJS$ac_delim
- LTLIBOBJS!$LTLIBOBJS$ac_delim
- _ACEOF
- 
--  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 25; then
-+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 27; then
-     break
-   elif $ac_last_try; then
-     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
-diff -up cups-1.4b2/cups/cups.h.lspp cups-1.4b2/cups/cups.h
---- cups-1.4b2/cups/cups.h.lspp	2008-12-10 05:03:11.000000000 +0000
-+++ cups-1.4b2/cups/cups.h	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/cups/cups.h.lspp cups-1.4b2-svn8404/cups/cups.h
+--- cups-1.4b2-svn8404/cups/cups.h.lspp	2009-03-05 10:54:00.000000000 +0000
++++ cups-1.4b2-svn8404/cups/cups.h	2009-03-05 11:40:03.000000000 +0000
 @@ -15,6 +15,9 @@
   *   This file is subject to the Apple OS-Developed Software exception.
   */
@@ -594,9 +93,9 @@ diff -up cups-1.4b2/cups/cups.h.lspp cups-1.4b2/cups/cups.h
  /*
   * Types and structures...
   */
-diff -up cups-1.4b2/data/Makefile.lspp cups-1.4b2/data/Makefile
---- cups-1.4b2/data/Makefile.lspp	2008-11-12 19:30:57.000000000 +0000
-+++ cups-1.4b2/data/Makefile	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/data/Makefile.lspp cups-1.4b2-svn8404/data/Makefile
+--- cups-1.4b2-svn8404/data/Makefile.lspp	2009-02-17 17:45:27.000000000 +0000
++++ cups-1.4b2-svn8404/data/Makefile	2009-03-05 11:40:03.000000000 +0000
 @@ -25,7 +25,10 @@ BANNERS	=	\
  		secret \
  		standard \
@@ -609,9 +108,9 @@ diff -up cups-1.4b2/data/Makefile.lspp cups-1.4b2/data/Makefile
  
  CHARMAPS =	\
  		euc-cn.txt \
-diff -up /dev/null cups-1.4b2/data/mls
---- /dev/null	2009-01-28 08:58:18.489189414 +0000
-+++ cups-1.4b2/data/mls	2009-01-28 17:09:48.000000000 +0000
+diff -up /dev/null cups-1.4b2-svn8404/data/mls
+--- /dev/null	2009-03-05 08:48:03.067001897 +0000
++++ cups-1.4b2-svn8404/data/mls	2009-03-05 11:40:03.000000000 +0000
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -874,9 +373,9 @@ diff -up /dev/null cups-1.4b2/data/mls
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up /dev/null cups-1.4b2/data/selinux
---- /dev/null	2009-01-28 08:58:18.489189414 +0000
-+++ cups-1.4b2/data/selinux	2009-01-28 17:09:48.000000000 +0000
+diff -up /dev/null cups-1.4b2-svn8404/data/selinux
+--- /dev/null	2009-03-05 08:48:03.067001897 +0000
++++ cups-1.4b2-svn8404/data/selinux	2009-03-05 11:40:03.000000000 +0000
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -1139,9 +638,9 @@ diff -up /dev/null cups-1.4b2/data/selinux
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up /dev/null cups-1.4b2/data/te
---- /dev/null	2009-01-28 08:58:18.489189414 +0000
-+++ cups-1.4b2/data/te	2009-01-28 17:09:48.000000000 +0000
+diff -up /dev/null cups-1.4b2-svn8404/data/te
+--- /dev/null	2009-03-05 08:48:03.067001897 +0000
++++ cups-1.4b2-svn8404/data/te	2009-03-05 11:40:03.000000000 +0000
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -1404,9 +903,9 @@ diff -up /dev/null cups-1.4b2/data/te
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up cups-1.4b2/filter/common.c.lspp cups-1.4b2/filter/common.c
---- cups-1.4b2/filter/common.c.lspp	2007-07-11 22:46:42.000000000 +0100
-+++ cups-1.4b2/filter/common.c	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/filter/common.c.lspp cups-1.4b2-svn8404/filter/common.c
+--- cups-1.4b2-svn8404/filter/common.c.lspp	2008-12-03 15:39:53.000000000 +0000
++++ cups-1.4b2-svn8404/filter/common.c	2009-03-05 11:40:03.000000000 +0000
 @@ -30,6 +30,12 @@
   * Include necessary headers...
   */
@@ -1575,10 +1074,10 @@ diff -up cups-1.4b2/filter/common.c.lspp cups-1.4b2/filter/common.c
  
  
  /*
-diff -up cups-1.4b2/filter/pstops.c.lspp cups-1.4b2/filter/pstops.c
---- cups-1.4b2/filter/pstops.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/filter/pstops.c	2009-01-28 17:09:48.000000000 +0000
-@@ -3232,6 +3232,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
+diff -up cups-1.4b2-svn8404/filter/pstops.c.lspp cups-1.4b2-svn8404/filter/pstops.c
+--- cups-1.4b2-svn8404/filter/pstops.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/filter/pstops.c	2009-03-05 11:40:03.000000000 +0000
+@@ -3239,6 +3239,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
  {
    const char	*classification;	/* CLASSIFICATION environment variable */
    const char	*ptr;			/* Temporary string pointer */
@@ -1597,7 +1096,7 @@ diff -up cups-1.4b2/filter/pstops.c.lspp cups-1.4b2/filter/pstops.c
  
  
   /*
-@@ -3254,6 +3266,124 @@ write_label_prolog(pstops_doc_t *doc,	/*
+@@ -3261,6 +3273,124 @@ write_label_prolog(pstops_doc_t *doc,	/*
      return;
    }
  
@@ -1722,7 +1221,7 @@ diff -up cups-1.4b2/filter/pstops.c.lspp cups-1.4b2/filter/pstops.c
   /*
    * Set the classification + page label string...
    */
-@@ -3332,7 +3462,10 @@ write_label_prolog(pstops_doc_t *doc,	/*
+@@ -3339,7 +3469,10 @@ write_label_prolog(pstops_doc_t *doc,	/*
    doc_printf(doc, "  %.0f moveto ESPpl show\n", top - 14.0);
    doc_puts(doc, "pop\n");
    doc_puts(doc, "}bind put\n");
@@ -1733,12 +1232,12 @@ diff -up cups-1.4b2/filter/pstops.c.lspp cups-1.4b2/filter/pstops.c
  
  
  /*
-diff -up cups-1.4b2/Makedefs.in.lspp cups-1.4b2/Makedefs.in
---- cups-1.4b2/Makedefs.in.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/Makedefs.in	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/Makedefs.in.lspp cups-1.4b2-svn8404/Makedefs.in
+--- cups-1.4b2-svn8404/Makedefs.in.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/Makedefs.in	2009-03-05 11:40:03.000000000 +0000
 @@ -146,7 +146,7 @@ LIBCUPSORDER	=	@LIBCUPSORDER@
  LIBCUPSIMAGEORDER =	@LIBCUPSIMAGEORDER@
- LINKCUPS	=	@LINKCUPS@ $(SSLLIBS)
+ LINKCUPS	=	@LINKCUPS@ $(SSLLIBS) $(DNSSDLIBS)
  LINKCUPSIMAGE	=	@LINKCUPSIMAGE@
 -LIBS		=	$(LINKCUPS) $(COMMONLIBS)
 +LIBS		=	$(LINKCUPS) $(COMMONLIBS) @LIBAUDIT@ @LIBSELINUX@
@@ -1754,9 +1253,9 @@ diff -up cups-1.4b2/Makedefs.in.lspp cups-1.4b2/Makedefs.in
  .SUFFIXES:	.1 .1.gz .1m .1m.gz .3 .3.gz .5 .5.gz .7 .7.gz .8 .8.gz .a .c .cxx .h .man .o .32.o .64.o .gz
  
  .c.o:
-diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
---- cups-1.4b2/scheduler/client.c.lspp	2008-11-17 16:29:05.000000000 +0000
-+++ cups-1.4b2/scheduler/client.c	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/scheduler/client.c.lspp cups-1.4b2-svn8404/scheduler/client.c
+--- cups-1.4b2-svn8404/scheduler/client.c.lspp	2009-03-05 10:54:00.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/client.c	2009-03-05 11:40:03.000000000 +0000
 @@ -41,6 +41,7 @@
   *   pipe_command()          - Pipe the output of a command to the remote client.
   *   write_file()            - Send a file via HTTP.
@@ -1786,7 +1285,7 @@ diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
  
  /*
   * Local functions...
-@@ -402,6 +410,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
+@@ -381,6 +389,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
    }
  #endif /* HAVE_TCPD_H */
  
@@ -1844,7 +1343,7 @@ diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
  #ifdef AF_INET6
    if (con->http.hostaddr->addr.sa_family == AF_INET6)
      cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: %d from %s:%d (IPv6)",
-@@ -801,6 +860,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+@@ -772,6 +831,13 @@ cupsdReadClient(cupsd_client_t *con)	/* 
    mime_type_t		*type;		/* MIME type of file */
    cupsd_printer_t	*p;		/* Printer */
    static unsigned	request_id = 0;	/* Request ID for temp files */
@@ -1858,7 +1357,7 @@ diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
  
  
    status = HTTP_CONTINUE;
-@@ -2125,6 +2191,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
+@@ -2054,6 +2120,67 @@ cupsdReadClient(cupsd_client_t *con)	/* 
  	    fchmod(con->file, 0640);
  	    fchown(con->file, RunUser, Group);
              fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
@@ -1926,7 +1425,7 @@ diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
  	  }
  
  	  if (con->http.state != HTTP_POST_SEND)
-@@ -4436,6 +4563,50 @@ make_certificate(cupsd_client_t *con)	/*
+@@ -4330,6 +4457,50 @@ make_certificate(cupsd_client_t *con)	/*
  #endif /* HAVE_SSL */
  
  
@@ -1977,9 +1476,9 @@ diff -up cups-1.4b2/scheduler/client.c.lspp cups-1.4b2/scheduler/client.c
  /*
   * 'pipe_command()' - Pipe the output of a command to the remote client.
   */
-diff -up cups-1.4b2/scheduler/client.h.lspp cups-1.4b2/scheduler/client.h
---- cups-1.4b2/scheduler/client.h.lspp	2008-09-11 02:54:11.000000000 +0100
-+++ cups-1.4b2/scheduler/client.h	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/scheduler/client.h.lspp cups-1.4b2-svn8404/scheduler/client.h
+--- cups-1.4b2-svn8404/scheduler/client.h.lspp	2009-02-17 17:45:27.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/client.h	2009-03-05 11:40:03.000000000 +0000
 @@ -18,6 +18,13 @@
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -2005,7 +1504,7 @@ diff -up cups-1.4b2/scheduler/client.h.lspp cups-1.4b2/scheduler/client.h
  };
  
  #define HTTP(con) &((con)->http)
-@@ -132,6 +143,9 @@ extern void	cupsdStartListening(void);
+@@ -130,6 +141,9 @@ extern void	cupsdStartListening(void);
  extern void	cupsdStopListening(void);
  extern void	cupsdUpdateCGI(void);
  extern void	cupsdWriteClient(cupsd_client_t *con);
@@ -2015,9 +1514,9 @@ diff -up cups-1.4b2/scheduler/client.h.lspp cups-1.4b2/scheduler/client.h
  
  
  /*
-diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
---- cups-1.4b2/scheduler/conf.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/conf.c	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/scheduler/conf.c.lspp cups-1.4b2-svn8404/scheduler/conf.c
+--- cups-1.4b2-svn8404/scheduler/conf.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/conf.c	2009-03-05 11:40:03.000000000 +0000
 @@ -27,6 +27,7 @@
   *   read_configuration()     - Read a configuration file.
   *   read_location()          - Read a <Location path> definition.
@@ -2036,7 +1535,7 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
  
  /*
   * Configuration variable structure...
-@@ -168,6 +172,10 @@ static const cupsd_var_t	variables[] =
+@@ -169,6 +173,10 @@ static const cupsd_var_t	variables[] =
  #  if defined(HAVE_LIBSSL) || defined(HAVE_GNUTLS)
    { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_PATHNAME },
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
@@ -2047,7 +1546,7 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
  #endif /* HAVE_SSL */
    { "ServerName",		&ServerName,		CUPSD_VARTYPE_STRING },
    { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
-@@ -380,6 +388,9 @@ cupsdReadConfiguration(void)
+@@ -382,6 +390,9 @@ cupsdReadConfiguration(void)
    const char	*tmpdir;		/* TMPDIR environment variable */
    struct stat	tmpinfo;		/* Temporary directory info */
    cupsd_policy_t *p;			/* Policy */
@@ -2057,7 +1556,7 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
  
  
   /*
-@@ -659,6 +670,25 @@ cupsdReadConfiguration(void)
+@@ -665,6 +676,25 @@ cupsdReadConfiguration(void)
  
    RunUser = getuid();
  
@@ -2080,10 +1579,10 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
 +  }
 +#endif /* WITH_LSPP */
 +
-  /*
-   * See if the ServerName is an IP address...
-   */
-@@ -951,11 +981,23 @@ cupsdReadConfiguration(void)
+   cupsdLogMessage(CUPSD_LOG_INFO, "Remote access is %s.",
+                   RemoteAccessEnabled ? "enabled" : "disabled");
+ 
+@@ -981,11 +1011,23 @@ cupsdReadConfiguration(void)
    * Update classification setting as needed...
    */
  
@@ -2108,7 +1607,7 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
  
   /*
    * Check the MaxClients setting, and then allocate memory for it...
-@@ -3489,6 +3531,18 @@ read_location(cups_file_t *fp,		/* I - C
+@@ -3536,6 +3578,18 @@ read_location(cups_file_t *fp,		/* I - C
    return ((FatalErrors & CUPSD_FATAL_CONFIG) ? 0 : linenum);
  }
  
@@ -2127,10 +1626,10 @@ diff -up cups-1.4b2/scheduler/conf.c.lspp cups-1.4b2/scheduler/conf.c
  
  /*
   * 'read_policy()' - Read a <Policy name> definition.
-diff -up cups-1.4b2/scheduler/conf.h.lspp cups-1.4b2/scheduler/conf.h
---- cups-1.4b2/scheduler/conf.h.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/conf.h	2009-01-28 17:09:48.000000000 +0000
-@@ -233,6 +233,12 @@ VAR char		*ServerKey		VALUE(NULL);
+diff -up cups-1.4b2-svn8404/scheduler/conf.h.lspp cups-1.4b2-svn8404/scheduler/conf.h
+--- cups-1.4b2-svn8404/scheduler/conf.h.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/conf.h	2009-03-05 11:40:03.000000000 +0000
+@@ -246,6 +246,12 @@ VAR char		*ServerKey		VALUE(NULL);
  VAR int			SSLOptions		VALUE(CUPSD_SSL_NONE);
  					/* SSL/TLS options */
  #endif /* HAVE_SSL */
@@ -2143,7 +1642,7 @@ diff -up cups-1.4b2/scheduler/conf.h.lspp cups-1.4b2/scheduler/conf.h
  
  #ifdef HAVE_LAUNCHD
  VAR int			LaunchdTimeout		VALUE(DEFAULT_KEEPALIVE);
-@@ -251,6 +257,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
+@@ -264,6 +270,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
  					/* System group auth key */
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -2153,9 +1652,9 @@ diff -up cups-1.4b2/scheduler/conf.h.lspp cups-1.4b2/scheduler/conf.h
  
  /*
   * Prototypes...
-diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
---- cups-1.4b2/scheduler/ipp.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/ipp.c	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/scheduler/ipp.c.lspp cups-1.4b2-svn8404/scheduler/ipp.c
+--- cups-1.4b2-svn8404/scheduler/ipp.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/ipp.c	2009-03-05 11:40:03.000000000 +0000
 @@ -41,6 +41,7 @@
   *   cancel_all_jobs()           - Cancel all print jobs.
   *   cancel_job()                - Cancel a print job.
@@ -2164,7 +1663,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
   *   check_quotas()              - Check quotas for a printer and user.
   *   check_rss_recipient()       - Check that we do not have a duplicate RSS
   *                                 feed URI.
-@@ -101,6 +102,9 @@
+@@ -102,6 +103,9 @@
   *   validate_user()             - Validate the user for the request.
   */
  
@@ -2174,7 +1673,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  /*
   * Include necessary headers...
   */
-@@ -127,6 +131,14 @@ extern int mbr_check_membership_by_id(uu
+@@ -128,6 +132,14 @@ extern int mbr_check_membership_by_id(uu
  #  endif /* HAVE_MEMBERSHIPPRIV_H */
  #endif /* __APPLE__ */
  
@@ -2189,7 +1688,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
  /*
   * Local functions...
-@@ -160,6 +172,9 @@ static void	cancel_all_jobs(cupsd_client
+@@ -161,6 +173,9 @@ static void	cancel_all_jobs(cupsd_client
  static void	cancel_job(cupsd_client_t *con, ipp_attribute_t *uri);
  static void	cancel_subscription(cupsd_client_t *con, int id);
  static int	check_rss_recipient(const char *recipient);
@@ -2199,7 +1698,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  static int	check_quotas(cupsd_client_t *con, cupsd_printer_t *p);
  static ipp_attribute_t	*copy_attribute(ipp_t *to, ipp_attribute_t *attr,
  		                        int quickcopy);
-@@ -1311,6 +1326,21 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1334,6 +1349,21 @@ add_job(cupsd_client_t  *con,		/* I - Cl
    int		kbytes;			/* Size of print file */
    int		i;			/* Looping var */
    int		lowerpagerange;		/* Page range bound */
@@ -2221,7 +1720,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %p(%s), %p(%s/%s))",
-@@ -1527,6 +1557,104 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1550,6 +1580,104 @@ add_job(cupsd_client_t  *con,		/* I - Cl
      ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL,
                   title = "Untitled");
  
@@ -2326,7 +1825,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
    if ((job = cupsdAddJob(priority, printer->name)) == NULL)
    {
      send_ipp_status(con, IPP_INTERNAL_ERROR,
-@@ -1535,6 +1663,32 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1558,6 +1686,32 @@ add_job(cupsd_client_t  *con,		/* I - Cl
      return (NULL);
    }
  
@@ -2359,7 +1858,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
    job->dtype   = printer->type & (CUPS_PRINTER_CLASS | CUPS_PRINTER_IMPLICIT |
                                    CUPS_PRINTER_REMOTE);
    job->attrs   = con->request;
-@@ -1743,6 +1897,29 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1766,6 +1920,29 @@ add_job(cupsd_client_t  *con,		/* I - Cl
        attr->values[0].string.text = _cupsStrRetain(printer->job_sheets[0]);
        attr->values[1].string.text = _cupsStrRetain(printer->job_sheets[1]);
      }
@@ -2389,7 +1888,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
      job->job_sheets = attr;
  
-@@ -1773,6 +1950,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1796,6 +1973,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  	                		     "job-sheets=\"%s,none\", "
  					     "job-originating-user-name=\"%s\"",
  	              Classification, job->username);
@@ -2399,7 +1898,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  	}
  	else if (attr->num_values == 2 &&
  	         strcmp(attr->values[0].string.text,
-@@ -1791,6 +1971,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1814,6 +1994,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  					     "job-originating-user-name=\"%s\"",
  		      attr->values[0].string.text,
  		      attr->values[1].string.text, job->username);
@@ -2409,7 +1908,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  	}
  	else if (strcmp(attr->values[0].string.text, Classification) &&
  	         strcmp(attr->values[0].string.text, "none") &&
-@@ -1811,6 +1994,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1834,6 +2017,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  			"job-originating-user-name=\"%s\"",
  			attr->values[0].string.text,
  			attr->values[1].string.text, job->username);
@@ -2419,7 +1918,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
          }
        }
        else if (strcmp(attr->values[0].string.text, Classification) &&
-@@ -1851,8 +2037,52 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1874,8 +2060,52 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  		      "job-sheets=\"%s\", "
  		      "job-originating-user-name=\"%s\"",
  		      Classification, job->username);
@@ -2472,7 +1971,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
     /*
      * See if we need to add the starting sheet...
-@@ -4187,6 +4417,103 @@ check_rss_recipient(
+@@ -4202,6 +4432,103 @@ check_rss_recipient(
  }
  
  
@@ -2576,7 +2075,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  /*
   * 'check_quotas()' - Check quotas for a printer and user.
   */
-@@ -4736,6 +5063,15 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4753,6 +5080,15 @@ copy_banner(cupsd_client_t *con,	/* I - 
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
@@ -2592,7 +2091,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2,
-@@ -4771,6 +5107,82 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4788,6 +5124,82 @@ copy_banner(cupsd_client_t *con,	/* I - 
  
    fchmod(cupsFileNumber(out), 0640);
    fchown(cupsFileNumber(out), RunUser, Group);
@@ -2675,7 +2174,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
  
   /*
    * Try the localized banner file under the subdirectory...
-@@ -4865,6 +5277,24 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4882,6 +5294,24 @@ copy_banner(cupsd_client_t *con,	/* I - 
        else
          s = attrname;
  
@@ -2700,7 +2199,7 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -6782,6 +7212,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
+@@ -6802,6 +7232,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
      return;
    }
  
@@ -2723,19 +2222,19 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
   /*
    * Copy attributes...
    */
-@@ -6997,6 +7443,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
-     if (count > 0)
-       ippAddSeparator(con->response);
+@@ -7021,6 +7467,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
+     if (username[0] && strcasecmp(username, job->username))
+       continue;
  
 +#ifdef WITH_LSPP
 +    if (is_lspp_config() && check_context(con, job) != 1)
 +      continue;
 +#endif /* WITH_LSPP */
 +
-     count ++;
+     if (count > 0)
+       ippAddSeparator(con->response);
  
-     cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_jobs: count = %d", count);
-@@ -11314,6 +11765,11 @@ validate_user(cupsd_job_t    *job,	/* I 
+@@ -11454,6 +11905,11 @@ validate_user(cupsd_job_t    *job,	/* I 
  
    strlcpy(username, get_username(con), userlen);
  
@@ -2747,10 +2246,10 @@ diff -up cups-1.4b2/scheduler/ipp.c.lspp cups-1.4b2/scheduler/ipp.c
   /*
    * Check the username against the owner...
    */
-diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
---- cups-1.4b2/scheduler/job.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/job.c	2009-01-28 17:11:11.000000000 +0000
-@@ -62,6 +62,9 @@
+diff -up cups-1.4b2-svn8404/scheduler/job.c.lspp cups-1.4b2-svn8404/scheduler/job.c
+--- cups-1.4b2-svn8404/scheduler/job.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/job.c	2009-03-05 12:07:09.000000000 +0000
+@@ -65,6 +65,9 @@
   *   update_job_attrs()         - Update the job-printer-* attributes.
   */
  
@@ -2760,7 +2259,7 @@ diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
  /*
   * Include necessary headers...
   */
-@@ -71,6 +74,14 @@
+@@ -74,6 +77,14 @@
  #include <cups/backend.h>
  #include <cups/dir.h>
  
@@ -2774,268 +2273,23 @@ diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
 +#endif /* WITH_LSPP */
  
  /*
-  * Local globals...
-@@ -1156,6 +1167,20 @@ cupsdLoadJob(cupsd_job_t *job)		/* I - J
-     goto error;
-   }
- 
-+#ifdef WITH_LSPP
-+  if ((attr = ippFindAttribute(job->attrs, "security-context", IPP_TAG_NAME)) != NULL)
-+    cupsdSetString(&job->scon, attr->values[0].string.text);
-+  else if (is_lspp_config())
-+  {
-+   /*
-+    * There was no security context so delete the job
-+    */
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "LoadAllJobs: Missing or bad security-context attribute in control file \"%s\"!",
-+                    jobfile);
-+    goto error;
-+  }
-+#endif /* WITH_LSPP */
-+
-   job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
-                                      IPP_TAG_INTEGER);
-   job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
-@@ -1523,6 +1548,13 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
- {
-   char		filename[1024];		/* Job control filename */
-   cups_file_t	*fp;			/* Job file */
-+#ifdef WITH_LSPP
-+  security_context_t	spoolcon;	/* context of the job control file */
-+  context_t		jobcon;		/* contex_t container for job->scon */
-+  context_t		tmpcon;		/* Temp context to swap the level */
-+  char		*jobclearance;		/* SELinux low end clearance */
-+  char		*jobrange;		/* SELinux sensitivity range */
-+#endif /* WITH_LSPP */
- 
- 
-   cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p(%d)): job->attrs=%p",
-@@ -1541,6 +1573,76 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
-   fchmod(cupsFileNumber(fp), 0600);
-   fchown(cupsFileNumber(fp), RunUser, Group);
- 
-+#ifdef WITH_LSPP
-+  if (job->scon && strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
-+  {
-+    if (getfilecon(filename, &spoolcon) == -1)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "Unable to get context of job control file \"%s\" - %s.",
-+                      filename, strerror(errno));
-+      return;
-+    }
-+    jobcon = context_new(job->scon);
-+    tmpcon = context_new(spoolcon);
-+    freecon(spoolcon);
-+    if (!jobcon || !tmpcon)
-+    {
-+      if (jobcon)
-+        context_free(jobcon);
-+      if (tmpcon)
-+        context_free(tmpcon);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to get SELinux contexts");
-+      return;
-+    }
-+    jobrange = context_range_get(jobcon);
-+    if (jobrange)
-+    {
-+      jobrange = strdup(jobrange);
-+      if ((jobclearance = strtok(jobrange, "-")) != NULL)
-+      {
-+	if (context_range_set(tmpcon, jobclearance) == -1)
-+	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "Unable to set the range for job control file \"%s\" - %s.",
-+			  filename, strerror(errno));
-+	  free(jobrange);
-+	  context_free(tmpcon);
-+	  context_free(jobcon);
-+	  return;
-+	}
-+      }
-+      else
-+      {
-+	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
-+	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "Unable to set the range for job control file \"%s\" - %s.",
-+			  filename, strerror(errno));
-+	  free(jobrange);
-+	  context_free(tmpcon);
-+	  context_free(jobcon);
-+	  return;
-+	}
-+      }
-+      free(jobrange);
-+    }
-+    if (setfilecon(filename, context_str(tmpcon)) == -1)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "Unable to set context of job control file \"%s\" - %s.",
-+                      filename, strerror(errno));
-+      context_free(tmpcon);
-+      context_free(jobcon);
-+      return;
-+    }
-+    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p): new spool file context=%s",
-+                    job, context_str(tmpcon));
-+    context_free(tmpcon);
-+    context_free(jobcon);
-+  }
-+#endif /* WITH_LSPP */
-+
-   job->attrs->state = IPP_IDLE;
- 
-   if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
-@@ -2531,6 +2633,21 @@ start_job(cupsd_job_t     *job,		/* I - 
+  * Design Notes for Job Management
+@@ -478,6 +489,14 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
+ 					/* PRINTER env variable */
+ 			rip_max_cache[255];
  					/* RIP_MAX_CACHE env variable */
-   static char		*options = NULL;/* Full list of options */
-   static int		optlength = 0;	/* Length of option buffer */
 +#ifdef WITH_LSPP
-+  const char		*mls_label = NULL;	/* SL to put in classification env var */
-+  char			*label_template = NULL;	/* SL to put in classification env var */
 +  char			*audit_message = NULL;	/* Audit message string */
-+  char			*printerfile = NULL;	/* Device file pointed to by the printer */
 +  context_t		jobcon;		/* SELinux context of the job */
-+  security_id_t		clisid;		/* SELinux SID for the client */
-+  security_id_t		psid;		/* SELinux SID for the printer */
-+  context_t		printercon;	/* Printer's context string */
-+  struct stat		printerstat;	/* Printer's stat buffer */
-+  security_context_t	devcon;		/* Printer's SELinux context */
-+  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
-+  security_class_t	tclass;		/* Object class for the SELinux check */
-+  access_vector_t	avr;		/* Access method being requested */
++  char			*label_template = NULL;	/* SL to put in classification
++						   env var */
++  const char		*mls_label = NULL;	/* SL to put in classification
++						   env var */
 +#endif /* WITH_LSPP */
  
  
-   cupsdLogJob(job, CUPSD_LOG_DEBUG2, "start_job: file = %d/%d",
-@@ -2803,6 +2920,106 @@ start_job(cupsd_job_t     *job,		/* I - 
-           fcntl(job->side_pipes[1], F_GETFL) | O_NONBLOCK);
-   }
- 
-+#ifdef WITH_LSPP
-+  if (is_lspp_config())
-+  {
-+   /*
-+    * Perform an access check before printing, but only if the printer starts with /dev/
-+    */
-+    printerfile = strstr(printer->device_uri, "/dev/");
-+    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = strdup(printer->device_uri + strlen("file:/"));
-+
-+    if (printerfile != NULL)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_DEBUG,
-+                      "StartJob: Attempting to check access on printer device %s", printerfile);
-+      if (lstat(printerfile, &printerstat) < 0)
-+      {
-+	if (errno != ENOENT)
-+	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to stat the printer");
-+	  cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+	  return ;
-+	}
-+	/*
-+	 * The printer does not exist, so for now assume it's a FileDevice
-+	 */
-+	tclass = SECCLASS_FILE;
-+	avr = FILE__WRITE;
-+      }
-+      else if (S_ISCHR(printerstat.st_mode))
-+      {
-+	tclass = SECCLASS_CHR_FILE;
-+	avr = CHR_FILE__WRITE;
-+      }
-+      else if (S_ISREG(printerstat.st_mode))
-+      {
-+	tclass = SECCLASS_FILE;
-+	avr = FILE__WRITE;
-+      }
-+      else
-+      {
-+	cupsdLogMessage(CUPSD_LOG_ERROR,
-+			"StartJob: Printer is not a character device or regular file");
-+	cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+	return ;
-+      }
-+      avc_init("cupsd_dequeue_", NULL, NULL, NULL, NULL);
-+      avc_entry_ref_init(&avcref);
-+      if (avc_context_to_sid(job->scon, &clisid) != 0)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR,
-+                        "StartJob: Unable to determine the SELinux sid for the job");
-+        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+        return ;
-+      }
-+      if (getfilecon(printerfile, &devcon) == -1)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to get the SELinux context of %s",
-+                        printerfile);
-+        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+        return ;
-+      }
-+      printercon = context_new(devcon);
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: printer context %s client context %s",
-+                      context_str(printercon), job->scon);
-+      context_free(printercon);
-+
-+      if (avc_context_to_sid(devcon, &psid) != 0)
-+      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR,
-+                        "StartJob: Unable to determine the SELinux sid for the printer");
-+        freecon(devcon);
-+        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+        return ;
-+      }
-+      freecon(devcon);
-+
-+      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
-+      {
-+       /*
-+        * The access check failed, so cancel the job and send an audit message
-+        */
-+        if (AuditLog != -1)
-+        {
-+          audit_message = NULL;
-+          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s canceled"
-+                                          " unable to access printer=%s", job->id,
-+                          job->auid, (job->username)?job->username:"?", job->scon, printer->name);
-+          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
-+                                 ServerName, NULL, NULL, 0);
-+          cupsdClearString(&audit_message);
-+        }
-+
-+        cupsdCancelJob(job, 0, IPP_JOB_ABORTED);
-+
-+        return ;
-+      }
-+    }
-+  }
-+#endif /* WITH_LSPP */
-+
-  /*
-   * Determine if we are printing a banner page or not...
-   */
-@@ -2940,6 +3157,18 @@ start_job(cupsd_job_t     *job,		/* I - 
- 	  banner_page)
-         continue;
- 
-+#ifdef WITH_LSPP
-+     /*
-+      * In LSPP mode refuse to honor the page-label
-+      */
-+      if (is_lspp_config() &&
-+          !strcmp(attr->name, "page-label"))
-+      {
-+        cupsdLogMessage(CUPSD_LOG_DEBUG, "Ignoring page-label option due to LSPP mode");
-+        continue;
-+      }
-+#endif /* WITH_LSPP */
-+
-      /*
-       * Otherwise add them to the list...
-       */
-@@ -3189,6 +3418,67 @@ start_job(cupsd_job_t     *job,		/* I - 
+   cupsdLogMessage(CUPSD_LOG_DEBUG2,
+@@ -898,6 +917,67 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
      }
    }
  
@@ -3048,7 +2302,7 @@ diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
 +      {
 +        audit_message = NULL;
 +        cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s",
-+                        job->id, job->auid, job->username, printer->name, title);
++                        job->id, job->auid, job->username, job->printer->name, title);
 +        audit_log_user_message(AuditLog, AUDIT_USER_UNLABELED_EXPORT, audit_message,
 +                               ServerName, NULL, NULL, 1);
 +        cupsdClearString(&audit_message);
@@ -3086,7 +2340,7 @@ diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
 +        audit_message = NULL;
 +        cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s printer=%s title=%s"
 +                        " obj=%s label=%s", job->id, job->auid, job->username,
-+                        printer->name, title, job->scon, mls_label?mls_label:"none");
++                        job->printer->name, title, job->scon, mls_label?mls_label:"none");
 +        audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
 +                               ServerName, NULL, NULL, 1);
 +        cupsdClearString(&audit_message);
@@ -3103,9 +2357,293 @@ diff -up cups-1.4b2/scheduler/job.c.lspp cups-1.4b2/scheduler/job.c
    if (Classification && !banner_page)
    {
      if ((attr = ippFindAttribute(job->attrs, "job-sheets",
-diff -up cups-1.4b2/scheduler/job.h.lspp cups-1.4b2/scheduler/job.h
---- cups-1.4b2/scheduler/job.h.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/job.h	2009-01-28 17:09:48.000000000 +0000
+@@ -1141,13 +1221,13 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
+       if (access(command, F_OK))
+ 	{
+ 	  snprintf(command, sizeof(command), "%s/backend/%s", ServerBin_compat,
+-		   method);
++		   scheme);
+ 	  if (!access(command, F_OK))
+ 	    {
+ 	      /* Not in the correct directory, but we found it in the compat
+ 	       * directory.  Issue a warning. */
+ 	      cupsdLogMessage(CUPSD_LOG_INFO,
+-			      "Backend '%s' not in %s/backend!", method,
++			      "Backend '%s' not in %s/backend!", scheme,
+ 			      ServerBin);
+ 	    }
+ 	  else
+@@ -1155,7 +1235,7 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
+ 	      /* Not in the compat directory either; make any error
+ 		 messages use the correct directory name then. */
+ 	      snprintf(command, sizeof(command), "%s/backend/%s", ServerBin,
+-		       method);
++		       scheme);
+ 	    }
+ 	}
+ #endif /* __x86_64__ */
+@@ -1561,6 +1641,20 @@ cupsdLoadJob(cupsd_job_t *job)		/* I - J
+     goto error;
+   }
+ 
++#ifdef WITH_LSPP
++  if ((attr = ippFindAttribute(job->attrs, "security-context", IPP_TAG_NAME)) != NULL)
++    cupsdSetString(&job->scon, attr->values[0].string.text);
++  else if (is_lspp_config())
++  {
++   /*
++    * There was no security context so delete the job
++    */
++    cupsdLogMessage(CUPSD_LOG_ERROR, "LoadAllJobs: Missing or bad security-context attribute in control file \"%s\"!",
++                    jobfile);
++    goto error;
++  }
++#endif /* WITH_LSPP */
++
+   job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
+                                      IPP_TAG_INTEGER);
+   job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
+@@ -1909,6 +2003,14 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
+ {
+   char		filename[1024];		/* Job control filename */
+   cups_file_t	*fp;			/* Job file */
++#ifdef WITH_LSPP
++  security_context_t	spoolcon;	/* context of the job control file */
++  context_t		jobcon;		/* contex_t container for job->scon */
++  context_t		tmpcon;		/* Temp context to swap the level */
++  char			*jobclearance;	/* SELinux low end clearance */
++  const char		*jobrange;	/* SELinux sensitivity range */
++  char			*jobrange_copy;	/* SELinux sensitivity range */
++#endif /* WITH_LSPP */
+ 
+ 
+   cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p(%d)): job->attrs=%p",
+@@ -1927,6 +2029,76 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
+   fchmod(cupsFileNumber(fp), 0600);
+   fchown(cupsFileNumber(fp), RunUser, Group);
+ 
++#ifdef WITH_LSPP
++  if (job->scon && strncmp(job->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
++  {
++    if (getfilecon(filename, &spoolcon) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to get context of job control file \"%s\" - %s.",
++                      filename, strerror(errno));
++      return;
++    }
++    jobcon = context_new(job->scon);
++    tmpcon = context_new(spoolcon);
++    freecon(spoolcon);
++    if (!jobcon || !tmpcon)
++    {
++      if (jobcon)
++        context_free(jobcon);
++      if (tmpcon)
++        context_free(tmpcon);
++      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to get SELinux contexts");
++      return;
++    }
++    jobrange = context_range_get(jobcon);
++    if (jobrange)
++    {
++      jobrange_copy = strdup(jobrange);
++      if ((jobclearance = strtok(jobrange_copy, "-")) != NULL)
++      {
++	if (context_range_set(tmpcon, jobclearance) == -1)
++	{
++	  cupsdLogMessage(CUPSD_LOG_ERROR,
++			  "Unable to set the range for job control file \"%s\" - %s.",
++			  filename, strerror(errno));
++	  free(jobrange_copy);
++	  context_free(tmpcon);
++	  context_free(jobcon);
++	  return;
++	}
++      }
++      else
++      {
++	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
++	{
++	  cupsdLogMessage(CUPSD_LOG_ERROR,
++			  "Unable to set the range for job control file \"%s\" - %s.",
++			  filename, strerror(errno));
++	  free(jobrange_copy);
++	  context_free(tmpcon);
++	  context_free(jobcon);
++	  return;
++	}
++      }
++      free(jobrange_copy);
++    }
++    if (setfilecon(filename, context_str(tmpcon)) == -1)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to set context of job control file \"%s\" - %s.",
++                      filename, strerror(errno));
++      context_free(tmpcon);
++      context_free(jobcon);
++      return;
++    }
++    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p): new spool file context=%s",
++                    job, context_str(tmpcon));
++    context_free(tmpcon);
++    context_free(jobcon);
++  }
++#endif /* WITH_LSPP */
++
+   job->attrs->state = IPP_IDLE;
+ 
+   if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
+@@ -2846,6 +3018,18 @@ get_options(cupsd_job_t *job,		/* I - Jo
+ 	  banner_page)
+         continue;
+ 
++#ifdef WITH_LSPP
++     /*
++      * In LSPP mode refuse to honor the page-label
++      */
++      if (is_lspp_config() &&
++          !strcmp(attr->name, "page-label"))
++      {
++        cupsdLogMessage(CUPSD_LOG_DEBUG, "Ignoring page-label option due to LSPP mode");
++        continue;
++      }
++#endif /* WITH_LSPP */
++
+      /*
+       * Otherwise add them to the list...
+       */
+@@ -3516,6 +3700,19 @@ static void
+ start_job(cupsd_job_t     *job,		/* I - Job ID */
+           cupsd_printer_t *printer)	/* I - Printer to print job */
+ {
++#ifdef WITH_LSPP
++  char			*audit_message = NULL;	/* Audit message string */
++  char			*printerfile = NULL;	/* Device file pointed to by the printer */
++  security_id_t		clisid;		/* SELinux SID for the client */
++  security_id_t		psid;		/* SELinux SID for the printer */
++  context_t		printercon;	/* Printer's context string */
++  struct stat		printerstat;	/* Printer's stat buffer */
++  security_context_t	devcon;		/* Printer's SELinux context */
++  struct avc_entry_ref	avcref;		/* Pointer to the access vector cache */
++  security_class_t	tclass;		/* Object class for the SELinux check */
++  access_vector_t	avr;		/* Access method being requested */
++#endif /* WITH_LSPP */
++
+   cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job(job=%p(%d), printer=%p(%s))",
+                   job, job->id, printer, printer->name);
+ 
+@@ -3629,6 +3826,106 @@ start_job(cupsd_job_t     *job,		/* I - 
+   fcntl(job->side_pipes[1], F_SETFL,
+ 	fcntl(job->side_pipes[1], F_GETFL) | O_NONBLOCK);
+ 
++#ifdef WITH_LSPP
++  if (is_lspp_config())
++  {
++   /*
++    * Perform an access check before printing, but only if the printer starts with /dev/
++    */
++    printerfile = strstr(printer->device_uri, "/dev/");
++    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
++      printerfile = strdup(printer->device_uri + strlen("file:/"));
++
++    if (printerfile != NULL)
++    {
++      cupsdLogMessage(CUPSD_LOG_DEBUG,
++                      "StartJob: Attempting to check access on printer device %s", printerfile);
++      if (lstat(printerfile, &printerstat) < 0)
++      {
++	if (errno != ENOENT)
++	{
++	  cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to stat the printer");
++	  cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++	  return ;
++	}
++	/*
++	 * The printer does not exist, so for now assume it's a FileDevice
++	 */
++	tclass = SECCLASS_FILE;
++	avr = FILE__WRITE;
++      }
++      else if (S_ISCHR(printerstat.st_mode))
++      {
++	tclass = SECCLASS_CHR_FILE;
++	avr = CHR_FILE__WRITE;
++      }
++      else if (S_ISREG(printerstat.st_mode))
++      {
++	tclass = SECCLASS_FILE;
++	avr = FILE__WRITE;
++      }
++      else
++      {
++	cupsdLogMessage(CUPSD_LOG_ERROR,
++			"StartJob: Printer is not a character device or regular file");
++	cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++	return ;
++      }
++      avc_init("cupsd_dequeue_", NULL, NULL, NULL, NULL);
++      avc_entry_ref_init(&avcref);
++      if (avc_context_to_sid(job->scon, &clisid) != 0)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "StartJob: Unable to determine the SELinux sid for the job");
++        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++        return ;
++      }
++      if (getfilecon(printerfile, &devcon) == -1)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to get the SELinux context of %s",
++                        printerfile);
++        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++        return ;
++      }
++      printercon = context_new(devcon);
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: printer context %s client context %s",
++                      context_str(printercon), job->scon);
++      context_free(printercon);
++
++      if (avc_context_to_sid(devcon, &psid) != 0)
++      {
++        cupsdLogMessage(CUPSD_LOG_ERROR,
++                        "StartJob: Unable to determine the SELinux sid for the printer");
++        freecon(devcon);
++        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++        return ;
++      }
++      freecon(devcon);
++
++      if (avc_has_perm(clisid, psid, tclass, avr, &avcref, NULL) != 0)
++      {
++       /*
++        * The access check failed, so cancel the job and send an audit message
++        */
++        if (AuditLog != -1)
++        {
++          audit_message = NULL;
++          cupsdSetStringf(&audit_message, "job=%d auid=%u acct=%s obj=%s canceled"
++                                          " unable to access printer=%s", job->id,
++                          job->auid, (job->username)?job->username:"?", job->scon, printer->name);
++          audit_log_user_message(AuditLog, AUDIT_USER_LABELED_EXPORT, audit_message,
++                                 ServerName, NULL, NULL, 0);
++          cupsdClearString(&audit_message);
++        }
++
++        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
++
++        return ;
++      }
++    }
++  }
++#endif /* WITH_LSPP */
++
+  /*
+   * Now start the first file in the job...
+   */
+diff -up cups-1.4b2-svn8404/scheduler/job.h.lspp cups-1.4b2-svn8404/scheduler/job.h
+--- cups-1.4b2-svn8404/scheduler/job.h.lspp	2009-03-05 10:54:00.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/job.h	2009-03-05 11:40:03.000000000 +0000
 @@ -13,6 +13,13 @@
   *   file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -3118,9 +2656,9 @@ diff -up cups-1.4b2/scheduler/job.h.lspp cups-1.4b2/scheduler/job.h
 +#endif /* WITH_LSPP */
 +
  /*
-  * Job request structure...
+  * Constants...
   */
-@@ -63,6 +70,10 @@ typedef struct cupsd_job_s
+@@ -80,6 +87,10 @@ typedef struct cupsd_job_s
    krb5_ccache		ccache;		/* Kerberos credential cache */
    char			*ccname;	/* KRB5CCNAME environment variable */
  #endif /* HAVE_GSSAPI */
@@ -3131,9 +2669,9 @@ diff -up cups-1.4b2/scheduler/job.h.lspp cups-1.4b2/scheduler/job.h
  } cupsd_job_t;
  
  
-diff -up cups-1.4b2/scheduler/main.c.lspp cups-1.4b2/scheduler/main.c
---- cups-1.4b2/scheduler/main.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/main.c	2009-01-28 17:09:48.000000000 +0000
+diff -up cups-1.4b2-svn8404/scheduler/main.c.lspp cups-1.4b2-svn8404/scheduler/main.c
+--- cups-1.4b2-svn8404/scheduler/main.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/main.c	2009-03-05 11:40:03.000000000 +0000
 @@ -35,6 +35,8 @@
   *   usage()                   - Show scheduler usage.
   */
@@ -3189,7 +2727,7 @@ diff -up cups-1.4b2/scheduler/main.c.lspp cups-1.4b2/scheduler/main.c
   /*
    * Set the timezone info...
    */
-@@ -1212,6 +1239,11 @@ main(int  argc,				/* I - Number of comm
+@@ -1206,6 +1233,11 @@ main(int  argc,				/* I - Number of comm
  
    cupsdStopSelect();
  
@@ -3201,11 +2739,11 @@ diff -up cups-1.4b2/scheduler/main.c.lspp cups-1.4b2/scheduler/main.c
    return (!stop_scheduler);
  }
  
-diff -up cups-1.4b2/scheduler/printers.c.lspp cups-1.4b2/scheduler/printers.c
---- cups-1.4b2/scheduler/printers.c.lspp	2009-01-28 17:09:48.000000000 +0000
-+++ cups-1.4b2/scheduler/printers.c	2009-01-28 17:09:48.000000000 +0000
-@@ -52,6 +52,8 @@
-  *   write_xml_string()          - Write a string with XML escaping.
+diff -up cups-1.4b2-svn8404/scheduler/printers.c.lspp cups-1.4b2-svn8404/scheduler/printers.c
+--- cups-1.4b2-svn8404/scheduler/printers.c.lspp	2009-03-05 11:40:03.000000000 +0000
++++ cups-1.4b2-svn8404/scheduler/printers.c	2009-03-05 11:40:03.000000000 +0000
+@@ -58,6 +58,8 @@
+  *   write_xml_string()         - Write a string with XML escaping.
   */
  
 +/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
@@ -3213,7 +2751,7 @@ diff -up cups-1.4b2/scheduler/printers.c.lspp cups-1.4b2/scheduler/printers.c
  /*
   * Include necessary headers...
   */
-@@ -79,6 +81,10 @@ static void	write_irix_state(cupsd_print
+@@ -86,6 +88,10 @@ static void	write_irix_state(cupsd_print
  #endif /* __sgi */
  static void	write_xml_string(cups_file_t *fp, const char *s);
  
@@ -3224,7 +2762,7 @@ diff -up cups-1.4b2/scheduler/printers.c.lspp cups-1.4b2/scheduler/printers.c
  
  /*
   * 'cupsdAddPrinter()' - Add a printer to the system.
-@@ -2115,6 +2121,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2168,6 +2174,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
  		{			/* No authentication */
  		  "none"
  		};
@@ -3238,7 +2776,7 @@ diff -up cups-1.4b2/scheduler/printers.c.lspp cups-1.4b2/scheduler/printers.c
  
  
    DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -2260,6 +2273,42 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2313,6 +2326,42 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
        attr->values[1].string.text = _cupsStrAlloc(Classification ?
  	                                   Classification : p->job_sheets[1]);
      }
@@ -3281,7 +2819,7 @@ diff -up cups-1.4b2/scheduler/printers.c.lspp cups-1.4b2/scheduler/printers.c
    }
  
    p->raw    = 0;
-@@ -4650,7 +4699,6 @@ write_irix_state(cupsd_printer_t *p)	/* 
+@@ -4865,7 +4914,6 @@ write_irix_state(cupsd_printer_t *p)	/* 
  }
  #endif /* __sgi */
  

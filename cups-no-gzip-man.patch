@@ -1,9 +1,10 @@
---- cups-1.2svn-r5102/config-scripts/cups-manpages.m4.no-gzip-man	2006-02-13 02:46:10.000000000 +0000
-+++ cups-1.2svn-r5102/config-scripts/cups-manpages.m4	2006-02-17 09:55:45.000000000 +0000
-@@ -80,10 +80,10 @@
+diff -up cups-1.4b2-svn8404/config-scripts/cups-manpages.m4.no-gzip-man cups-1.4b2-svn8404/config-scripts/cups-manpages.m4
+--- cups-1.4b2-svn8404/config-scripts/cups-manpages.m4.no-gzip-man	2009-01-16 08:58:42.000000000 +0000
++++ cups-1.4b2-svn8404/config-scripts/cups-manpages.m4	2009-03-05 11:11:12.000000000 +0000
+@@ -69,10 +69,10 @@ case "$uname" in
  		;;
- 	Linux* | GNU*)
- 		# Linux and GNU Hurd
+ 	Linux* | GNU* | Darwin*)
+ 		# Linux, GNU Hurd, and Mac OS X
 -		MAN1EXT=1.gz
 -		MAN5EXT=5.gz
 -		MAN7EXT=7.gz
