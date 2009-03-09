@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.8%{?dist}
+Release: 0.%{pre}.9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -290,6 +290,9 @@ ln -s ../../ppd $RPM_BUILD_ROOT%{_datadir}/cups/model/3-distribution
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/portreserve
 echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
 
+# Handle https:// device URIs (bug #478677, STR #3122).
+ln -s ipp $RPM_BUILD_ROOT%{cups_serverbin}/backend/https
+
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
@@ -465,6 +468,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Mon Mar  9 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.9
+- Handle https:// device URIs (bug #478677, STR #3122).
+
 * Thu Mar  5 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.8
 - Updated to svn8404.
 
