@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.9%{?dist}
+Release: 0.%{pre}.10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -38,6 +38,7 @@ Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
+Patch15: cups-str3124.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
@@ -178,6 +179,7 @@ module.
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
+%patch15 -p1 -b .str3124
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
@@ -468,6 +470,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Mar 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.10
+- Applied patch to fix ppd-natural-language attribute in PPD list
+  (STR #3124).
+
 * Mon Mar  9 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.9
 - Handle https:// device URIs (bug #478677, STR #3122).
 
