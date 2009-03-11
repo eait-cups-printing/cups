@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.10%{?dist}
+Release: 0.%{pre}.11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -64,10 +64,10 @@ Requires: poppler-utils
 Obsoletes: lpd lpr LPRng <= 3.8.15-3
 Provides: lpd lpr
 
-Obsoletes: cupsddk < 1.2.3-6
-Provides: cupsddk = 1.2.3-6
-Obsoletes: cupsddk-drivers < 1.2.3-6
-Provides: cupsddk-drivers = 1.2.3-6
+Obsoletes: cupsddk < 1.2.3-7
+Provides: cupsddk = 1.2.3-7
+Obsoletes: cupsddk-drivers < 1.2.3-7
+Provides: cupsddk-drivers = 1.2.3-7
 
 # kdelibs conflict for bug #192585.
 Conflicts: kdelibs < 6:3.5.2-6
@@ -113,8 +113,8 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
-Obsoletes: cupsddk-devel < 1.2.3-6
-Provides: cupsddk-devel = 1.2.3-6
+Obsoletes: cupsddk-devel < 1.2.3-7
+Provides: cupsddk-devel = 1.2.3-7
 
 %package libs
 Summary: Common Unix Printing System - libraries
@@ -470,6 +470,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Mar 11 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.11
+- Bumped cupsddk n-v-r for obsoletes/provides, as cupsddk was rebuilt.
+
 * Tue Mar 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.10
 - Applied patch to fix ppd-natural-language attribute in PPD list
   (STR #3124).
