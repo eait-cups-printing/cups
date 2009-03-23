@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.11%{?dist}
+Release: 0.%{pre}.12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -46,6 +46,7 @@ Patch19: cups-strict-ppd-line-length.patch
 Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
+Patch23: cups-res_init.patch
 Patch26: cups-avahi.patch
 Patch27: cups-missing-devices.patch
 Patch100: cups-lspp.patch
@@ -187,6 +188,7 @@ module.
 %patch20 -p1 -b .logrotate
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .build
+%patch23 -p1 -b .res_init
 %patch26 -p1 -b .avahi
 %patch27 -p1 -b .missing-devices
 
@@ -470,6 +472,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Mon Mar 23 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.12
+- If cups-polld gets EAI_AGAIN when looking up a hostname,
+  re-initialise the resolver (bug #490943).
+
 * Wed Mar 11 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.11
 - Bumped cupsddk n-v-r for obsoletes/provides, as cupsddk was rebuilt.
 
