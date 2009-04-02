@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.12%{?dist}
+Release: 0.%{pre}.13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -368,15 +368,15 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,root,lp) /etc/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
-%config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
 %attr(0640,root,lp) /etc/cups/cupsd.conf.default
-%config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
-%config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
-%config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
-%config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
-%config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
 /etc/cups/interfaces
-%config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
 /etc/cups/pstoraster.convs
@@ -472,6 +472,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu Apr  2 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.13
+- Don't verify MD5 sum, file size, or mtime for several config files:
+  cupsd.conf, client.conf, classes.conf, printers.conf, snmp.conf,
+  subscriptions.conf, lpoptions (bug #486287).
+
 * Mon Mar 23 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.12
 - If cups-polld gets EAI_AGAIN when looking up a hostname,
   re-initialise the resolver (bug #490943).
