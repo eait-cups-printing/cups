@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.13%{?dist}
+Release: 0.%{pre}.14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -49,6 +49,8 @@ Patch22: cups-build.patch
 Patch23: cups-res_init.patch
 Patch26: cups-avahi.patch
 Patch27: cups-missing-devices.patch
+Patch28: cups-CVE-2009-0163.patch
+Patch29: cups-CVE-2009-0164.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -191,6 +193,8 @@ module.
 %patch23 -p1 -b .res_init
 %patch26 -p1 -b .avahi
 %patch27 -p1 -b .missing-devices
+%patch28 -p1 -b .CVE-2009-0163
+%patch29 -p1 -b .CVE-2009-0164
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -472,6 +476,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Fri Apr 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.14
+- Applied patch to fix CVE-2009-0163 (bug #490596).
+- Applied patch to fix CVE-2009-0164 (bug #490597).
+
 * Thu Apr  2 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.13
 - Don't verify MD5 sum, file size, or mtime for several config files:
   cupsd.conf, client.conf, classes.conf, printers.conf, snmp.conf,
