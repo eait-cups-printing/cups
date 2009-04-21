@@ -61,7 +61,6 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Prereq: /usr/sbin/alternatives
 %endif
-Requires: poppler-utils
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
 Obsoletes: lpd lpr LPRng <= 3.8.15-3
@@ -107,6 +106,8 @@ Requires: tmpwatch
 # We use portreserve to prevent our TCP port being stolen.
 # Require the package here so that we know /etc/portreserve/ exists.
 Requires: portreserve
+
+Requires: poppler-utils
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -220,7 +221,8 @@ export CFLAGS="-DLDAP_DEPRECATED=1"
 	--enable-lspp \
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
-	--enable-pdftops --with-dbusdir=%{_sysconfdir}/dbus-1 \
+	--enable-pdftops --with-pdftops=pdftops \
+	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi --enable-avahi \
 	localedir=%{_datadir}/locale
 
@@ -476,6 +478,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Tue Apr 21 2009 Tim Waugh <twaugh@redhat.com>
+- Specify that we want poppler's pdftops (not ghostscript) for the
+  pdftops wrapper when calling configure.
+
 * Fri Apr 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.14
 - Applied patch to fix CVE-2009-0163 (bug #490596).
 - Applied patch to fix CVE-2009-0164 (bug #490597).
