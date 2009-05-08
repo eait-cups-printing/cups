@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.15%{?dist}
+Release: 0.%{pre}.16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -214,9 +214,9 @@ aclocal -I config-scripts
 autoconf -I config-scripts
 
 %build
-export CFLAGS="-DLDAP_DEPRECATED=1"
-%configure --with-docdir=%{_datadir}/%{name}/www \
-	--with-optim="$RPM_OPT_FLAGS $CFLAGS -fstack-protector-all" \
+export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
+# --enable-debug to avoid stripping binaries
+%configure --with-docdir=%{_datadir}/%{name}/www --enable-debug \
 %if %lspp
 	--enable-lspp \
 %endif
@@ -478,6 +478,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu May  7 2009 Ville Skyttä <ville.skytta at iki.fi> - 1:1.4-0.b2.16
+- Avoid stripping binaries before rpmbuild creates the -debuginfo subpackage.
+
 * Sun Apr 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.15
 - Accept "Host: ::1" (bug #497393).
 - Accept Host: fields set to the ServerName value (bug #497301).
