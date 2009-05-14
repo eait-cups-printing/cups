@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.16%{?dist}
+Release: 0.%{pre}.17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -51,6 +51,7 @@ Patch26: cups-avahi.patch
 Patch27: cups-missing-devices.patch
 Patch28: cups-CVE-2009-0163.patch
 Patch29: cups-CVE-2009-0164.patch
+Patch30: cups-str3197.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -196,6 +197,7 @@ module.
 %patch27 -p1 -b .missing-devices
 %patch28 -p1 -b .CVE-2009-0163
 %patch29 -p1 -b .CVE-2009-0164
+%patch30 -p1 -b .str3197
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -478,6 +480,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu May 14 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.17
+- Prevent cupsd crash when handling IPP_TAG_DELETEATTR requests
+  (STR #3197, bug #500859).
+
 * Thu May  7 2009 Ville Skyttä <ville.skytta at iki.fi> - 1:1.4-0.b2.16
 - Avoid stripping binaries before rpmbuild creates the -debuginfo subpackage.
 
