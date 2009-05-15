@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.17%{?dist}
+Release: 0.%{pre}.18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -480,6 +480,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Fri May 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.18
+- More complete fix for STR #3197 (bug #500859).
+
 * Thu May 14 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.17
 - Prevent cupsd crash when handling IPP_TAG_DELETEATTR requests
   (STR #3197, bug #500859).
