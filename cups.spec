@@ -1,5 +1,4 @@
-%define pre b2
-%define svn -svn8404
+%define pre rc1
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -8,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.18%{?dist}
+Release: 0.%{pre}.1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -33,12 +32,10 @@ Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
 Patch9: cups-paps.patch
-Patch10: cups-wbuffer.patch
 Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
-Patch15: cups-str3124.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
@@ -48,10 +45,6 @@ Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
 Patch23: cups-res_init.patch
 Patch26: cups-avahi.patch
-Patch27: cups-missing-devices.patch
-Patch28: cups-CVE-2009-0163.patch
-Patch29: cups-CVE-2009-0164.patch
-Patch30: cups-str3197.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -179,12 +172,10 @@ module.
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
 %patch9 -p1 -b .paps
-%patch10 -p1 -b .wbuffer
 %patch11 -p1 -b .direct-usb
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
-%patch15 -p1 -b .str3124
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
@@ -193,11 +184,7 @@ module.
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .build
 %patch23 -p1 -b .res_init
-%patch26 -p1 -b .avahi
-%patch27 -p1 -b .missing-devices
-%patch28 -p1 -b .CVE-2009-0163
-%patch29 -p1 -b .CVE-2009-0164
-%patch30 -p1 -b .str3197
+#%patch26 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -396,12 +383,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/pl
 %dir %{_datadir}/%{name}/www/ru
-%config(noreplace) %{_datadir}/%{name}/www/favicon.*
 %config(noreplace) %{_datadir}/%{name}/www/images
 %config(noreplace) %{_datadir}/%{name}/www/*.css
 %config(noreplace) %doc %{_datadir}/%{name}/www/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/help
 %config(noreplace) %doc %{_datadir}/%{name}/www/robots.txt
+%config(noreplace) %doc %{_datadir}/%{name}/www/de/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/es/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
@@ -435,6 +422,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
 %config(noreplace) %{_datadir}/cups/templates/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/de/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
@@ -480,6 +468,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Jun 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.1
+- 1.4rc1.  No longer need str3124, CVE-2009-0163, CVE-2009-0164,
+  str3197, missing-devices patches.
+- Disabled avahi patch for the time being.  More work is needed to
+  port this to rc1.
+- Removed wbuffer patch as it is not needed (see STR #1968).
+
 * Fri May 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.b2.18
 - More complete fix for STR #3197 (bug #500859).
 

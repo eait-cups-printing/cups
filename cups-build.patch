@@ -1,6 +1,6 @@
-diff -up cups-1.4b2/Makedefs.in.build cups-1.4b2/Makedefs.in
---- cups-1.4b2/Makedefs.in.build	2008-11-11 00:57:12.000000000 +0000
-+++ cups-1.4b2/Makedefs.in	2008-12-16 11:30:09.000000000 +0000
+diff -up cups-1.4rc1/Makedefs.in.build cups-1.4rc1/Makedefs.in
+--- cups-1.4rc1/Makedefs.in.build	2009-05-27 00:27:06.000000000 +0100
++++ cups-1.4rc1/Makedefs.in	2009-06-17 11:18:27.185443255 +0100
 @@ -124,7 +124,7 @@ ARFLAGS		=	@ARFLAGS@
  BACKLIBS	=	@BACKLIBS@
  BANNERTOPS	=	@BANNERTOPS@
@@ -10,10 +10,10 @@ diff -up cups-1.4b2/Makedefs.in.build cups-1.4b2/Makedefs.in
  CUPSDLIBS	=	@CUPSDLIBS@
  CXXFLAGS	=	@CPPFLAGS@ @CXXFLAGS@
  CXXLIBS		=	@CXXLIBS@
-diff -up cups-1.4b2/scheduler/dirsvc.c.build cups-1.4b2/scheduler/dirsvc.c
---- cups-1.4b2/scheduler/dirsvc.c.build	2008-10-08 05:26:38.000000000 +0100
-+++ cups-1.4b2/scheduler/dirsvc.c	2008-12-16 11:30:09.000000000 +0000
-@@ -1948,7 +1948,7 @@ cupsdUpdateDNSSDName(void)
+diff -up cups-1.4rc1/scheduler/dirsvc.c.build cups-1.4rc1/scheduler/dirsvc.c
+--- cups-1.4rc1/scheduler/dirsvc.c.build	2009-05-14 18:54:37.000000000 +0100
++++ cups-1.4rc1/scheduler/dirsvc.c	2009-06-17 11:23:23.366318546 +0100
+@@ -2042,7 +2042,7 @@ cupsdUpdateDNSSDName(void)
  
      WebIFRef = DNSSDRef;
      if ((error = DNSServiceRegister(&WebIFRef,
@@ -22,21 +22,21 @@ diff -up cups-1.4b2/scheduler/dirsvc.c.build cups-1.4b2/scheduler/dirsvc.c
  				    0, webif, "_http._tcp", NULL,
  				    NULL, htons(DNSSDPort), 7,
  				    "\006path=/", dnssdRegisterCallback,
-@@ -2622,7 +2622,7 @@ dnssdRegisterPrinter(cupsd_printer_t *p)
+@@ -2765,7 +2765,7 @@ dnssdRegisterPrinter(cupsd_printer_t *p)
      do
      {
        p->ipp_ref = DNSSDRef;
 -      if ((se = DNSServiceRegister(&p->ipp_ref, kDNSServiceFlagsShareConnection,
 +      if ((se = DNSServiceRegister(&p->ipp_ref, 0,
-                                    0, name, regtype, domain, NULL,
+                                    0, name, regtype, NULL, NULL,
  				   htons(DNSSDPort), ipp_len, ipp_txt,
  				   dnssdRegisterCallback,
-@@ -2693,7 +2693,7 @@ dnssdRegisterPrinter(cupsd_printer_t *p)
+@@ -2854,7 +2854,7 @@ dnssdRegisterPrinter(cupsd_printer_t *p)
  
        p->printer_ref = DNSSDRef;
        if ((se = DNSServiceRegister(&p->printer_ref,
 -                                   kDNSServiceFlagsShareConnection,
 +                                   0,
- 				   0, name, "_printer._tcp", domain, NULL,
+ 				   0, name, "_printer._tcp", NULL, NULL,
  				   htons(515), printer_len, printer_txt,
  				   dnssdRegisterCallback,
