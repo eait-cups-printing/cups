@@ -1,0 +1,24 @@
+diff -up cups-1.4rc1/templates/add-printer.tmpl.str3229 cups-1.4rc1/templates/add-printer.tmpl
+--- cups-1.4rc1/templates/add-printer.tmpl.str3229	2008-09-20 04:33:59.000000000 +0100
++++ cups-1.4rc1/templates/add-printer.tmpl	2009-06-17 15:58:21.927317253 +0100
+@@ -29,7 +29,7 @@
+ </TR>
+ <TR>
+ <TH CLASS="label">Sharing:</TH>
+-<TD><INPUT TYPE="CHECKBOX" NAME="PRINTER_IS_SHARED" {PRINTER_IS_SHARED=1?CHECKED:}">
++<TD><INPUT TYPE="CHECKBOX" NAME="PRINTER_IS_SHARED" {PRINTER_IS_SHARED=1?CHECKED:}>
+ Share This Printer</TD>
+ </TR>
+ <TR>
+diff -up cups-1.4rc1/templates/modify-printer.tmpl.str3229 cups-1.4rc1/templates/modify-printer.tmpl
+--- cups-1.4rc1/templates/modify-printer.tmpl.str3229	2008-09-20 04:33:59.000000000 +0100
++++ cups-1.4rc1/templates/modify-printer.tmpl	2009-06-17 15:58:21.928317580 +0100
+@@ -23,7 +23,7 @@
+ </TR>
+ <TR>
+ <TH CLASS="label">Sharing:</TH>
+-<TD><INPUT TYPE="CHECKBOX" NAME="PRINTER_IS_SHARED" {PRINTER_IS_SHARED=1?CHECKED:}">
++<TD><INPUT TYPE="CHECKBOX" NAME="PRINTER_IS_SHARED" {PRINTER_IS_SHARED=1?CHECKED:}>
+ Share This Printer</TD>
+ </TR>
+ <TR>
