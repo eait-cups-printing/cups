@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.1%{?dist}
+Release: 0.%{pre}.2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -44,6 +44,7 @@ Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
 Patch23: cups-res_init.patch
+Patch24: cups-str3229.patch
 Patch26: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -184,6 +185,7 @@ module.
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .build
 %patch23 -p1 -b .res_init
+%patch24 -p1 -b .str3229
 #%patch26 -p1 -b .avahi
 
 %if %lspp
@@ -230,7 +232,7 @@ rm -rf	$RPM_BUILD_ROOT%{initdir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
 mkdir -p $RPM_BUILD_ROOT%{initdir}
-install -m 755 $RPM_SOURCE_DIR/cups.init $RPM_BUILD_ROOT%{initdir}/cups
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{initdir}/cups
 
 find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -n9f
 
@@ -468,6 +470,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Jun 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.2
+- Don't use RPM_SOURCE_DIR macro.
+- Fixed add/modify-printer templates which had extra double-quote
+  characters, preventing the Continue button from appearing in certain
+  browsers (bug #506461, STR #3229).
+
 * Wed Jun 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.1
 - 1.4rc1.  No longer need str3124, CVE-2009-0163, CVE-2009-0164,
   str3197, missing-devices patches.
