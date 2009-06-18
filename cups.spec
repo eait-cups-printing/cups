@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.3%{?dist}
+Release: 0.%{pre}.4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -470,6 +470,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Thu Jun 18 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.4
+- More complete fix for STR #3229 (bug #506461).
+
 * Wed Jun 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.3
 - Don't use RPM_SOURCE_DIR macro.
 - Fixed add/modify-printer templates which had extra double-quote
