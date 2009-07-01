@@ -1,0 +1,204 @@
+diff -up cups-1.4rc1/templates/de/option-boolean.tmpl.str3244 cups-1.4rc1/templates/de/option-boolean.tmpl
+--- cups-1.4rc1/templates/de/option-boolean.tmpl.str3244	2009-04-03 16:55:28.000000000 +0100
++++ cups-1.4rc1/templates/de/option-boolean.tmpl	2009-07-01 14:07:00.333422971 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/de/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/de/option-pickmany.tmpl
+--- cups-1.4rc1/templates/de/option-pickmany.tmpl.str3244	2009-04-03 16:55:28.000000000 +0100
++++ cups-1.4rc1/templates/de/option-pickmany.tmpl	2009-07-01 14:07:00.333422971 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/de/option-pickone.tmpl.str3244 cups-1.4rc1/templates/de/option-pickone.tmpl
+--- cups-1.4rc1/templates/de/option-pickone.tmpl.str3244	2009-04-03 16:55:28.000000000 +0100
++++ cups-1.4rc1/templates/de/option-pickone.tmpl	2009-07-01 14:07:00.334423521 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>
+diff -up cups-1.4rc1/templates/es/option-boolean.tmpl.str3244 cups-1.4rc1/templates/es/option-boolean.tmpl
+--- cups-1.4rc1/templates/es/option-boolean.tmpl.str3244	2008-12-08 21:20:06.000000000 +0000
++++ cups-1.4rc1/templates/es/option-boolean.tmpl	2009-07-01 14:07:00.335423309 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/es/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/es/option-pickmany.tmpl
+--- cups-1.4rc1/templates/es/option-pickmany.tmpl.str3244	2008-12-08 21:20:06.000000000 +0000
++++ cups-1.4rc1/templates/es/option-pickmany.tmpl	2009-07-01 14:07:00.335423309 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/es/option-pickone.tmpl.str3244 cups-1.4rc1/templates/es/option-pickone.tmpl
+--- cups-1.4rc1/templates/es/option-pickone.tmpl.str3244	2008-12-08 21:20:06.000000000 +0000
++++ cups-1.4rc1/templates/es/option-pickone.tmpl	2009-07-01 14:07:00.336423193 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>
+diff -up cups-1.4rc1/templates/ja/option-boolean.tmpl.str3244 cups-1.4rc1/templates/ja/option-boolean.tmpl
+--- cups-1.4rc1/templates/ja/option-boolean.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ja/option-boolean.tmpl	2009-07-01 14:07:00.336423193 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/ja/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/ja/option-pickmany.tmpl
+--- cups-1.4rc1/templates/ja/option-pickmany.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ja/option-pickmany.tmpl	2009-07-01 14:07:00.337423282 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/ja/option-pickone.tmpl.str3244 cups-1.4rc1/templates/ja/option-pickone.tmpl
+--- cups-1.4rc1/templates/ja/option-pickone.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ja/option-pickone.tmpl	2009-07-01 14:07:00.337423282 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>
+diff -up cups-1.4rc1/templates/option-boolean.tmpl.str3244 cups-1.4rc1/templates/option-boolean.tmpl
+--- cups-1.4rc1/templates/option-boolean.tmpl.str3244	2008-10-04 16:34:08.000000000 +0100
++++ cups-1.4rc1/templates/option-boolean.tmpl	2009-07-01 14:07:00.338423040 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/option-pickmany.tmpl
+--- cups-1.4rc1/templates/option-pickmany.tmpl.str3244	2008-10-04 16:34:08.000000000 +0100
++++ cups-1.4rc1/templates/option-pickmany.tmpl	2009-07-01 14:07:00.338423040 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/option-pickone.tmpl.str3244 cups-1.4rc1/templates/option-pickone.tmpl
+--- cups-1.4rc1/templates/option-pickone.tmpl.str3244	2008-10-04 16:34:08.000000000 +0100
++++ cups-1.4rc1/templates/option-pickone.tmpl	2009-07-01 14:07:00.339298478 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>
+diff -up cups-1.4rc1/templates/pl/option-boolean.tmpl.str3244 cups-1.4rc1/templates/pl/option-boolean.tmpl
+--- cups-1.4rc1/templates/pl/option-boolean.tmpl.str3244	2009-02-25 16:48:35.000000000 +0000
++++ cups-1.4rc1/templates/pl/option-boolean.tmpl	2009-07-01 14:07:00.340298367 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/pl/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/pl/option-pickmany.tmpl
+--- cups-1.4rc1/templates/pl/option-pickmany.tmpl.str3244	2009-02-25 16:48:35.000000000 +0000
++++ cups-1.4rc1/templates/pl/option-pickmany.tmpl	2009-07-01 14:07:00.340298367 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/pl/option-pickone.tmpl.str3244 cups-1.4rc1/templates/pl/option-pickone.tmpl
+--- cups-1.4rc1/templates/pl/option-pickone.tmpl.str3244	2009-02-25 16:48:35.000000000 +0000
++++ cups-1.4rc1/templates/pl/option-pickone.tmpl	2009-07-01 14:07:00.344297815 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>
+diff -up cups-1.4rc1/templates/ru/option-boolean.tmpl.str3244 cups-1.4rc1/templates/ru/option-boolean.tmpl
+--- cups-1.4rc1/templates/ru/option-boolean.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ru/option-boolean.tmpl	2009-07-01 14:07:00.345423743 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD>
+-{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice}?CHECKED:} VALUE="{choices}">{text}}
++{[choices]<INPUT TYPE="RADIO" NAME="{keyword}" {choices={defchoice-1}?CHECKED:} VALUE="{choices}">{text}}
+ </TD>
+ </TR>
+diff -up cups-1.4rc1/templates/ru/option-pickmany.tmpl.str3244 cups-1.4rc1/templates/ru/option-pickmany.tmpl
+--- cups-1.4rc1/templates/ru/option-pickmany.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ru/option-pickmany.tmpl	2009-07-01 14:07:00.345423743 +0100
+@@ -1,6 +1,6 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" MULTIPLE SIZE="10">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT></TD>
+ </TR>
+diff -up cups-1.4rc1/templates/ru/option-pickone.tmpl.str3244 cups-1.4rc1/templates/ru/option-pickone.tmpl
+--- cups-1.4rc1/templates/ru/option-pickone.tmpl.str3244	2009-02-17 19:04:25.000000000 +0000
++++ cups-1.4rc1/templates/ru/option-pickone.tmpl	2009-07-01 14:07:00.346423150 +0100
+@@ -1,7 +1,7 @@
+ <TR>
+ <TH {conflicted=1?CLASS="conflict":CLASS="label"} WIDTH="50%"><A NAME="{keyword}">{keytext}</A>:</TH>
+ <TD><SELECT NAME="{keyword}" ID="select-{keyword}" ONCHANGE="update_paramtable('{keyword}')">
+-{[choices]<OPTION {choices={defchoice}?SELECTED:} VALUE="{choices}">{text}}
++{[choices]<OPTION {choices={defchoice-1}?SELECTED:} VALUE="{choices}">{text}}
+ </SELECT>
+ {iscustom=1?<TABLE NAME="paramtable" id="{keyword}-params">{[params]
+ <TR><TH CLASS="sublabel">{paramtext}:</TH>

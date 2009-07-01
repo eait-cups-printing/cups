@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.6%{?dist}
+Release: 0.%{pre}.7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -47,7 +47,8 @@ Patch23: cups-res_init.patch
 Patch24: cups-str3229.patch
 Patch25: cups-filter-debug.patch
 Patch26: cups-str3231.patch
-Patch27: cups-avahi.patch
+Patch27: cups-str3244.patch
+Patch28: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -190,7 +191,8 @@ module.
 %patch24 -p1 -b .str3229
 %patch25 -p1 -b .filter-debug
 %patch26 -p1 -b .str3231
-#%patch27 -p1 -b .avahi
+%patch27 -p1 -b .str3244
+#%patch28 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -474,6 +476,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Jul  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.7
+- Fixed template problem preventing current printer option defaults
+  from being shown in the web interface (bug #506794, STR #3244).
+
 * Wed Jul  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.6
 - Fixed lpadmin for remote 1.3.x servers (bug #506977, STR #3231).
 
