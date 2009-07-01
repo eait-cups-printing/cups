@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.4%{?dist}
+Release: 0.%{pre}.6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -45,7 +45,9 @@ Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
 Patch23: cups-res_init.patch
 Patch24: cups-str3229.patch
-Patch26: cups-avahi.patch
+Patch25: cups-filter-debug.patch
+Patch26: cups-str3231.patch
+Patch27: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -186,7 +188,9 @@ module.
 %patch22 -p1 -b .build
 %patch23 -p1 -b .res_init
 %patch24 -p1 -b .str3229
-#%patch26 -p1 -b .avahi
+%patch25 -p1 -b .filter-debug
+%patch26 -p1 -b .str3231
+#%patch27 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -470,6 +474,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Wed Jul  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.6
+- Fixed lpadmin for remote 1.3.x servers (bug #506977, STR #3231).
+
+* Tue Jun 23 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.5
+- Added more debugging output when constructing filter chain.
+
 * Thu Jun 18 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.4
 - More complete fix for STR #3229 (bug #506461).
 

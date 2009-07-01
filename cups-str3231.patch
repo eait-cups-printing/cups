@@ -1,0 +1,36 @@
+diff -up cups-1.4rc1/cups/request.c.str3231 cups-1.4rc1/cups/request.c
+--- cups-1.4rc1/cups/request.c.str3231	2009-06-29 10:07:23.568486428 +0100
++++ cups-1.4rc1/cups/request.c	2009-06-29 10:07:44.867219805 +0100
+@@ -266,9 +266,9 @@ cupsDoIORequest(http_t     *http,	/* I -
+ 
+     DEBUG_printf(("2cupsDoIORequest: status=%d", status));
+ 
+-    if (status == HTTP_FORBIDDEN || status == HTTP_ERROR ||
+-	status >= HTTP_SERVER_ERROR)
++    if (status == HTTP_FORBIDDEN || status >= HTTP_SERVER_ERROR)
+     {
++      httpFlush(http);
+       _cupsSetHTTPError(status);
+       break;
+     }
+diff -up cups-1.4rc1/cups/http.c.length cups-1.4rc1/cups/http.c
+--- cups-1.4rc1/cups/http.c.length	2009-07-01 12:00:16.591298309 +0100
++++ cups-1.4rc1/cups/http.c	2009-07-01 12:00:43.494298468 +0100
+@@ -3143,6 +3145,8 @@ http_upgrade(http_t *http)		/* I - Conne
+ 
+   DEBUG_printf(("7http_upgrade(%p)", http));
+ 
++  httpFlush(http);
++
+  /*
+   * Copy the HTTP data to a local variable so we can do the OPTIONS
+   * request without interfering with the existing request data...
+@@ -3170,8 +3174,6 @@ http_upgrade(http_t *http)		/* I - Conne
+     while (httpUpdate(http) == HTTP_CONTINUE);
+   }
+ 
+-  httpFlush(http);
+-
+  /*
+   * Restore the HTTP request data...
+   */
