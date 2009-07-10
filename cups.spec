@@ -7,7 +7,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.7%{?dist}
+Release: 0.%{pre}.8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -76,7 +76,7 @@ BuildPrereq: pam-devel pkgconfig
 BuildPrereq: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
-BuildRequires: php-devel, aspell-devel, pcre-devel
+BuildRequires: php-devel, pcre-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
@@ -476,6 +476,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/php/modules/*.so
 
 %changelog
+* Fri Jul 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.8
+- Build does not require aspell-devel (bug #510405).
+
 * Wed Jul  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.7
 - Fixed template problem preventing current printer option defaults
   from being shown in the web interface (bug #506794, STR #3244).
