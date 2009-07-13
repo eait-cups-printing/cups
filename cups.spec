@@ -1,3 +1,6 @@
+%define php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
+%global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
+
 %define pre rc1
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
@@ -7,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.8%{?dist}
+Release: 0.%{pre}.9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -133,7 +136,12 @@ Requires: xinetd
 Summary: Common Unix Printing System - php module
 Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: php-common
+%if 0%{?php_zend_api}
+Requires: php(zend-abi) = %{php_zend_api}
+Requires: php(api) = %{php_core_api}
+%else
+Requires: php-api = %{php_apiver}
+%endif
 
 
 %description
@@ -305,6 +313,14 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
+# Put the php config bit into place
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/php.d
+%{__cat} << __EOF__ > %{buildroot}%{_sysconfdir}/php.d/%{name}.ini
+; Enable %{name} extension module
+extension=phpcups.so
+__EOF__
+
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -473,9 +489,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files php
 %defattr(-,root,root)
-%{_libdir}/php/modules/*.so
+%config(noreplace) %{_sysconfdir}/php.d/%{name}.ini
+%{php_extdir}/phpcups.so
 
 %changelog
+* Mon Jul 13 2009 Remi Collet <Fedora@FamilleCollet.com> 1:1.4-0.rc1.9
+- rebuild for new PHP 5.3.0 ABI (20090626)
+- add PHP ABI check
+- use php_extdir
+- add php configuration file (/etc/php.d/cups.ini)
+
 * Fri Jul 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.8
 - Build does not require aspell-devel (bug #510405).
 
