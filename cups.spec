@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.9%{?dist}
+Release: 0.%{pre}.10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -51,7 +51,12 @@ Patch24: cups-str3229.patch
 Patch25: cups-filter-debug.patch
 Patch26: cups-str3231.patch
 Patch27: cups-str3244.patch
-Patch28: cups-avahi.patch
+Patch28: cups-str3258.patch
+Patch29: cups-str3259.patch
+Patch30: cups-uri-compat.patch
+Patch31: cups-str3254.patch
+Patch32: cups-str3253.patch
+Patch33: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -200,7 +205,12 @@ module.
 %patch25 -p1 -b .filter-debug
 %patch26 -p1 -b .str3231
 %patch27 -p1 -b .str3244
-#%patch28 -p1 -b .avahi
+%patch28 -p1 -b .str3258
+%patch29 -p1 -b .str3259
+%patch30 -p1 -b .uri-compat
+%patch31 -p1 -b .str3254
+%patch32 -p1 -b .str3253
+#%patch33 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -493,8 +503,18 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jul 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.10
+- Applied patch to prevent bad job control files crashing cupsd on
+  start-up (STR #3253, bug #509741).
+- Correctly handle CUPS-Get-PPDs requests for models with '+' in their
+  names (STR #3254, bug #509586).
+- Accept incorrect device URIs in the (non-libusb) usb backend for
+  compatibility with Fedora 11 before bug #507244 was fixed.
+- Applied patch to fix incorrect device URIs (STR #3259, bug #507244).
+- Applied patch to fix job-hold-until for remote queues (STR #3258,
+  bug #497376).
+
 * Mon Jul 13 2009 Remi Collet <Fedora@FamilleCollet.com> 1:1.4-0.rc1.9
-- rebuild for new PHP 5.3.0 ABI (20090626)
 - add PHP ABI check
 - use php_extdir
 - add php configuration file (/etc/php.d/cups.ini)

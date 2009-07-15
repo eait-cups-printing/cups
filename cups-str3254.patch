@@ -1,0 +1,12 @@
+diff -up cups-1.4rc1/scheduler/ipp.c.str3254 cups-1.4rc1/scheduler/ipp.c
+--- cups-1.4rc1/scheduler/ipp.c.str3254	2009-07-15 11:11:32.346008322 +0100
++++ cups-1.4rc1/scheduler/ipp.c	2009-07-15 11:12:14.411132519 +0100
+@@ -11170,7 +11170,7 @@ url_encode_string(const char *s,	/* I - 
+ 
+   while (*s && bufptr < bufend)
+   {
+-    if (*s == ' ' || *s == '%')
++    if (*s == ' ' || *s == '%' || *s == '+')
+     {
+       if (bufptr >= (bufend - 2))
+ 	break;

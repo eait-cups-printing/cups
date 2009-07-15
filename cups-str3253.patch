@@ -1,0 +1,47 @@
+diff -up cups-1.4rc1/scheduler/job.c.str3253 cups-1.4rc1/scheduler/job.c
+--- cups-1.4rc1/scheduler/job.c.str3253	2009-07-15 11:19:37.613132688 +0100
++++ cups-1.4rc1/scheduler/job.c	2009-07-15 11:51:42.073132844 +0100
+@@ -3443,11 +3443,8 @@ load_job_cache(const char *filename)	/* 
+     {
+       cupsArrayAdd(Jobs, job);
+ 
+-      if (job->state_value <= IPP_JOB_STOPPED)
+-      {
+-        cupsArrayAdd(ActiveJobs, job);
+-	cupsdLoadJob(job);
+-      }
++      if (job->state_value <= IPP_JOB_STOPPED && cupsdLoadJob(job))
++	cupsArrayAdd(ActiveJobs, job);
+ 
+       job = NULL;
+     }
+@@ -3699,18 +3696,19 @@ load_request_root(void)
+       * Load the job...
+       */
+ 
+-      cupsdLoadJob(job);
+-
+-     /*
+-      * Insert the job into the array, sorting by job priority and ID...
+-      */
++      if (cupsdLoadJob(job))
++      {
++       /*
++        * Insert the job into the array, sorting by job priority and ID...
++        */
+ 
+-      cupsArrayAdd(Jobs, job);
++	cupsArrayAdd(Jobs, job);
+ 
+-      if (job->state_value <= IPP_JOB_STOPPED)
+-        cupsArrayAdd(ActiveJobs, job);
+-      else
+-        unload_job(job);
++	if (job->state_value <= IPP_JOB_STOPPED)
++	  cupsArrayAdd(ActiveJobs, job);
++	else
++	  unload_job(job);
++      }
+     }
+ 
+   cupsDirClose(dir);

@@ -1,0 +1,18 @@
+diff -up cups-1.4rc1/backend/ieee1284.c.str3259 cups-1.4rc1/backend/ieee1284.c
+--- cups-1.4rc1/backend/ieee1284.c.str3259	2008-12-11 23:01:44.000000000 +0000
++++ cups-1.4rc1/backend/ieee1284.c	2009-07-15 10:08:13.147173947 +0100
+@@ -306,6 +306,14 @@ backendGetDeviceID(
+       mfg = temp;
+     }
+ 
++    if (!strncasecmp(mdl, mfg, strlen(mfg)))
++    {
++      mdl += strlen(mfg);
++
++      while (isspace(*mdl & 255))
++        mdl ++;
++    }
++
+    /*
+     * Generate the device URI from the manufacturer, make_model, and
+     * serial number strings.
