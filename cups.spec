@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.10%{?dist}
+Release: 0.%{pre}.11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -503,6 +503,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jul 24 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.11
+- Tell udevd to replay printer add events in the initscript.
+
 * Wed Jul 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.10
 - Applied patch to prevent bad job control files crashing cupsd on
   start-up (STR #3253, bug #509741).
