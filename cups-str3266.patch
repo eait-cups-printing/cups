@@ -1,0 +1,47 @@
+diff -up cups-1.4rc1/backend/ieee1284.c.device-id cups-1.4rc1/backend/ieee1284.c
+--- cups-1.4rc1/backend/ieee1284.c.device-id	2009-07-18 18:25:38.355769382 +0100
++++ cups-1.4rc1/backend/ieee1284.c	2009-07-18 18:25:43.844894365 +0100
+@@ -196,12 +196,19 @@ backendGetDeviceID(
+       * and then limit the length to the size of our buffer...
+       */
+ 
+-      if (length > (device_id_size - 2))
++      if (length > device_id_size)
+ 	length = (((unsigned)device_id[1] & 255) << 8) +
+ 		 ((unsigned)device_id[0] & 255);
+ 
+-      if (length > (device_id_size - 2))
+-	length = device_id_size - 2;
++      if (length > device_id_size)
++	length = device_id_size;
++
++     /*
++      * The length field counts the number of bytes in the string
++      * including the length field itself (2 bytes).
++      */
++
++      length -= 2;
+ 
+      /*
+       * Copy the device ID text to the beginning of the buffer and
+diff -up cups-1.4rc1/backend/usb-libusb.c.device-id cups-1.4rc1/backend/usb-libusb.c
+--- cups-1.4rc1/backend/usb-libusb.c.device-id	2009-01-14 19:46:43.000000000 +0000
++++ cups-1.4rc1/backend/usb-libusb.c	2009-07-18 18:25:43.845895048 +0100
+@@ -418,12 +418,14 @@ get_device_id(usb_printer_t *printer,	/*
+   * and then limit the length to the size of our buffer...
+   */
+ 
+-  if (length > (bufsize - 2))
++  if (length > bufsize)
+     length = (((unsigned)buffer[1] & 255) << 8) +
+ 	     ((unsigned)buffer[0] & 255);
+ 
+-  if (length > (bufsize - 2))
+-    length = bufsize - 2;
++  if (length > bufsize)
++    length = bufsize;
++
++  length -= 2;
+ 
+  /*
+   * Copy the device ID text to the beginning of the buffer and

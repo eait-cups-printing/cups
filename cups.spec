@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.11%{?dist}.1
+Release: 0.%{pre}.12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -56,7 +56,8 @@ Patch29: cups-str3259.patch
 Patch30: cups-uri-compat.patch
 Patch31: cups-str3254.patch
 Patch32: cups-str3253.patch
-Patch33: cups-avahi.patch
+Patch33: cups-str3266.patch
+Patch34: cups-avahi.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -210,7 +211,8 @@ module.
 %patch30 -p1 -b .uri-compat
 %patch31 -p1 -b .str3254
 %patch32 -p1 -b .str3253
-#%patch33 -p1 -b .avahi
+%patch33 -p1 -b .str3266
+#%patch34 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -503,6 +505,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jul 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.12
+- Fixed Device ID reporting in the usb backend (STR #3266).
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.4-0.rc1.11.1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
