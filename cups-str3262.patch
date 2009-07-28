@@ -1,0 +1,21 @@
+diff -up cups-1.4rc1/backend/ipp.c.str3262 cups-1.4rc1/backend/ipp.c
+--- cups-1.4rc1/backend/ipp.c.str3262	2009-07-28 13:12:55.021509189 +0100
++++ cups-1.4rc1/backend/ipp.c	2009-07-28 13:13:19.817508734 +0100
+@@ -1315,7 +1315,16 @@ main(int  argc,				/* I - Number of comm
+       if (response)
+       {
+ 	if ((job_state = ippFindAttribute(response, "job-state",
+-	                                  IPP_TAG_ENUM)) != NULL)
++	                                  IPP_TAG_ENUM)) == NULL)
++	{
++	  ippDelete(response);
++
++	  _cupsLangPrintf(stderr,
++			  _("ERROR: Unable to get job-state for job %d!\n"),
++			  job_id);
++	  break;
++	}
++	else
+ 	{
+ 	 /*
+           * Stop polling if the job is finished or pending-held...
