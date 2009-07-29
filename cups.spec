@@ -218,7 +218,7 @@ module.
 %patch34 -p1 -b .str3262
 %patch35 -p1 -b .cups-get-classes
 %patch36 -p1 -b .str3272
-#%patch37 -p1 -b .avahi
+%patch37 -p1 -b .avahi
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -512,6 +512,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Jul 29 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.12
+- Fixed Avahi support in the dnssd backend (bug #513888).
 - Fixed incorrect arguments to sigaction() in dnssd backend (STR #3272).
 - Cheaply restore compatibility with 1.1.x by having cups_get_sdests()
   perform a CUPS_GET_CLASSES request if it is not sure it is talking
