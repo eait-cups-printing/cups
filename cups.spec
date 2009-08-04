@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.12%{?dist}
+Release: 0.%{pre}.13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -61,6 +61,7 @@ Patch34: cups-str3262.patch
 Patch35: cups-cups-get-classes.patch
 Patch36: cups-str3272.patch
 Patch37: cups-avahi.patch
+Patch38: cups-str3277.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -219,6 +220,7 @@ module.
 %patch35 -p1 -b .cups-get-classes
 %patch36 -p1 -b .str3272
 %patch37 -p1 -b .avahi
+%patch38 -p1 -b .str3277
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -511,6 +513,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Aug  4 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.13
+- Fixed duplex test pages (bug #514898, STR #3277).
+
 * Wed Jul 29 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.12
 - Fixed Avahi support in the dnssd backend (bug #513888).
 - Fixed incorrect arguments to sigaction() in dnssd backend (STR #3272).
