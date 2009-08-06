@@ -16,6 +16,7 @@ Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
+Source3: cups-libusb.rules
 Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
@@ -119,6 +120,9 @@ Requires: tmpwatch
 Requires: portreserve
 
 Requires: poppler-utils
+
+# We ship udev rules.
+Requires: udev
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -340,6 +344,10 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 extension=phpcups.so
 __EOF__
 
+# Install the udev rules.
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
+install -m644 %{SOURCE3} \
+	%{buildroot}%{_sysconfdir}/udev/rules.d/70-cups-libusb.rules
 
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
@@ -404,6 +412,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
+%{_sysconfdir}/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) /etc/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
@@ -513,7 +522,8 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Tue Aug  4 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.13
+* Thu Aug  6 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.13
+- Ship udev rules to allow libusb to access printer devices.
 - Fixed duplex test pages (bug #514898, STR #3277).
 
 * Wed Jul 29 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.12
