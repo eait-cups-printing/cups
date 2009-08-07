@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.13%{?dist}
+Release: 0.%{pre}.14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -121,8 +121,9 @@ Requires: portreserve
 
 Requires: poppler-utils
 
-# We ship udev rules.
+# We ship udev rules which use setfacl.
 Requires: udev
+Requires: acl
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -522,6 +523,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug  7 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.14
+- Require acl.
+
 * Thu Aug  6 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.13
 - Ship udev rules to allow libusb to access printer devices.
 - Fixed duplex test pages (bug #514898, STR #3277).
