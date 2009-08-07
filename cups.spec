@@ -373,10 +373,7 @@ install -m644 %{SOURCE3} \
 	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz \
 	 --initscript cups
 %endif
-if [ $1 -eq 1 ]; then
-  # First install.  Build ppds.dat.
-  /sbin/service cups reload >/dev/null 2>&1 || :
-fi
+rm -f %{_localstatedir}/cache/cups/*
 exit 0
 
 %post libs -p /sbin/ldconfig
@@ -524,6 +521,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Aug  7 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.14
+- Clear out cache files on upgrade.
 - Require acl.
 
 * Thu Aug  6 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.13
