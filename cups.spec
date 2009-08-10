@@ -65,6 +65,7 @@ Patch37: cups-avahi.patch
 Patch38: cups-str3277.patch
 Patch39: cups-str3284.patch
 Patch40: cups-str3285.patch
+Patch41: cups-str3279.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -230,6 +231,7 @@ module.
 %patch38 -p1 -b .str3277
 %patch39 -p1 -b .str3284
 %patch40 -p1 -b .str3285
+%patch41 -p1 -b .str3279
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -525,6 +527,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Aug 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.14
+- Fixed ppds.dat handling of drv files (bug #515027, STR #3279).
 - Fixed udev rules file to avoid DEVTYPE warning messages.
 - Fixed cupsGetNamedDest() so it does not fall back to the default
   printer when a destination has been named (bug #516439, STR #3285).
