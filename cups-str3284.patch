@@ -1,0 +1,21 @@
+diff -up cups-1.4rc1/conf/mime.types.str3284 cups-1.4rc1/conf/mime.types
+--- cups-1.4rc1/conf/mime.types.str3284	2009-05-17 00:48:35.000000000 +0100
++++ cups-1.4rc1/conf/mime.types	2009-08-10 10:32:46.887840076 +0100
+@@ -95,7 +95,7 @@ application/vnd.hp-HPGL		hpgl \
+ 
+ image/gif			gif string(0,GIF87a) string(0,GIF89a)
+ image/png			png string(0,<89>PNG)
+-image/jpeg			jpeg jpg jpe string(0,<FFD8FF>) &&\
++image/jpeg			jpeg jpg jpe string(0,<FFD8FF>) +\
+ 				(char(3,0xe0) char(3,0xe1) char(3,0xe2) char(3,0xe3)\
+ 				 char(3,0xe4) char(3,0xe5) char(3,0xe6) char(3,0xe7)\
+ 				 char(3,0xe8) char(3,0xe9) char(3,0xea) char(3,0xeb)\
+@@ -114,7 +114,7 @@ image/x-sun-raster		ras string(0,<59a66a
+ 
+ #image/fpx			fpx
+ image/x-alias			pix short(8,8) short(8,24)
+-image/x-bitmap			bmp string(0,BM) && !printable(2,14)
++image/x-bitmap			bmp string(0,BM) + !printable(2,14)
+ image/x-icon			ico
+ 
+ ########################################################################
