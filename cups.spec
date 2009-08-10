@@ -525,6 +525,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Aug 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.14
+- Fixed udev rules file to avoid DEVTYPE warning messages.
 - Fixed cupsGetNamedDest() so it does not fall back to the default
   printer when a destination has been named (bug #516439, STR #3285).
 - Fixed MIME type rules for image/jpeg and image/x-bitmap
