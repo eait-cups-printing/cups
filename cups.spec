@@ -64,6 +64,7 @@ Patch36: cups-str3272.patch
 Patch37: cups-avahi.patch
 Patch38: cups-str3277.patch
 Patch39: cups-str3284.patch
+Patch40: cups-str3285.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -228,6 +229,7 @@ module.
 %patch37 -p1 -b .avahi
 %patch38 -p1 -b .str3277
 %patch39 -p1 -b .str3284
+%patch40 -p1 -b .str3285
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -523,6 +525,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Aug 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.14
+- Fixed cupsGetNamedDest() so it does not fall back to the default
+  printer when a destination has been named (bug #516439, STR #3285).
 - Fixed MIME type rules for image/jpeg and image/x-bitmap
   (bug #516438, STR #3284).
 - Clear out cache files on upgrade.
