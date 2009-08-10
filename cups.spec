@@ -373,7 +373,7 @@ install -m644 %{SOURCE3} \
 	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz \
 	 --initscript cups
 %endif
-rm -f %{_localstatedir}/cache/cups/*
+rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
 exit 0
 
 %post libs -p /sbin/ldconfig
