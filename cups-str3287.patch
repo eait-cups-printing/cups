@@ -1,0 +1,12 @@
+diff -up cups-1.4rc1/cups/adminutil.c.str3287 cups-1.4rc1/cups/adminutil.c
+--- cups-1.4rc1/cups/adminutil.c.str3287	2009-06-05 22:38:52.000000000 +0100
++++ cups-1.4rc1/cups/adminutil.c	2009-08-11 09:02:12.677703681 +0100
+@@ -1594,7 +1594,7 @@ _cupsAdminSetServerSettings(
+ 	  {
+ 	    cupsFilePuts(temp, "BrowseAddress @LOCAL\n");
+ 
+-	    if (!localp)
++	    if (!localp || localp[0] == '\0')
+ 	      localp = CUPS_DEFAULT_BROWSE_LOCAL_PROTOCOLS;
+ 
+ 	    cupsFilePrintf(temp, "BrowseLocalProtocols %s\n", localp);
