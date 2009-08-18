@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.15%{?dist}
+Release: 0.%{pre}.16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -528,6 +528,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Aug 18 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.16
+- Use 'exec' to invoke ghostscript in the pstoraster filter.  This
+  allows the SIGTERM signal to reach the correct process, as well as
+  conserving memory (part of bug #518026).
+
 * Tue Aug 11 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.15
 - Avoid empty BrowseLocalProtocols setting (bug #516460, STR #3287).
 

@@ -52,7 +52,7 @@ else
 fi
 
 # Now run Ghostscript...
-$bindir/gs $gsopts -sOUTPUTFILE="%stdout" $profile $ifile
+exec $bindir/gs $gsopts -sOUTPUTFILE="%stdout" $profile $ifile
 
 #
 # End of "$Id: pstoraster.in,v 1.3 2002/05/12 00:46:34 easysw Exp $".
