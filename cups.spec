@@ -67,6 +67,7 @@ Patch39: cups-str3284.patch
 Patch40: cups-str3285.patch
 Patch41: cups-str3279.patch
 Patch42: cups-str3287.patch
+Patch43: cups-str3292.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -234,6 +235,7 @@ module.
 %patch40 -p1 -b .str3285
 %patch41 -p1 -b .str3279
 %patch42 -p1 -b .str3287
+%patch43 -p1 -b .str3292
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -529,6 +531,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Aug 18 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.16
+- Fixed JobKillDelay handling for cancelled jobs (bug #518026,
+  STR #3292).
 - Use 'exec' to invoke ghostscript in the pstoraster filter.  This
   allows the SIGTERM signal to reach the correct process, as well as
   conserving memory (part of bug #518026).

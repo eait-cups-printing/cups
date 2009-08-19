@@ -1,0 +1,47 @@
+diff -up cups-1.4rc1/scheduler/job.c.cancel-job cups-1.4rc1/scheduler/job.c
+--- cups-1.4rc1/scheduler/job.c.cancel-job	2009-08-19 14:48:55.733825903 +0100
++++ cups-1.4rc1/scheduler/job.c	2009-08-19 14:49:01.813826101 +0100
+@@ -2359,19 +2359,21 @@ cupsdSetJobState(
+         break;
+ 
+     case IPP_JOB_ABORTED :
+-    case IPP_JOB_CANCELED :
+     case IPP_JOB_COMPLETED :
+        /*
+-        * Expire job subscriptions since the job is now "completed"...
++	* Remove the job from the active list...
+ 	*/
+ 
+-        cupsdExpireSubscriptions(NULL, job);
++	cupsArrayRemove(ActiveJobs, job);
++
++	/* fall through... */
+ 
++    case IPP_JOB_CANCELED :
+        /*
+-	* Remove the job from the active list...
++        * Expire job subscriptions since the job is now "completed"...
+ 	*/
+ 
+-	cupsArrayRemove(ActiveJobs, job);
++        cupsdExpireSubscriptions(NULL, job);
+ 
+ #ifdef __APPLE__
+        /*
+diff -up cups-1.4rc1/scheduler/main.c.cancel-job cups-1.4rc1/scheduler/main.c
+--- cups-1.4rc1/scheduler/main.c.cancel-job	2009-08-19 14:48:55.451701014 +0100
++++ cups-1.4rc1/scheduler/main.c	2009-08-19 14:49:01.817825841 +0100
+@@ -1803,6 +1803,13 @@ process_children(void)
+ 	    cupsdContinueJob(job);
+ 	  }
+ 	}
++	else if (job->state_value == IPP_JOB_CANCELED)
++	{
++	  for (i = 0; job->filters[i] < 0; i++);
++
++	  if (!job->filters[i] && job->backend < 0)
++	    cupsArrayRemove(ActiveJobs, job);
++	}
+       }
+     }
+ 
