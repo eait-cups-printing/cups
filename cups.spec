@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.16%{?dist}
+Release: 0.%{pre}.17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -332,12 +332,12 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/subscriptions.conf
 # This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 
-# LSB 3.2 printer driver directories
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
-ln -s ../../ppd $RPM_BUILD_ROOT%{_datadir}/cups/model/3-distribution
-
 # Tell portreserve which port we want it to protect.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/portreserve
+
+# LSB 3.2 printer driver directory
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
+
 echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
 
 # Handle https:// device URIs (bug #478677, STR #3122).
@@ -530,9 +530,12 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 21 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.17
+- Removed 3-distribution symlink (bug #514244).
+
 * Tue Aug 18 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.16
-- Fixed JobKillDelay handling for cancelled jobs (bug #518026,
-  STR #3292).
+- Fixed JobKillDelay handling for cancelled jobs (bug #518026, STR
+  #3292).
 - Use 'exec' to invoke ghostscript in the pstoraster filter.  This
   allows the SIGTERM signal to reach the correct process, as well as
   conserving memory (part of bug #518026).
