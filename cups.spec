@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.17%{?dist}
+Release: 0.%{pre}.17%{?dist}.1
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -530,6 +530,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 1:1.4-0.rc1.17.1
+- rebuilt with new audit
+
 * Fri Aug 21 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.17
 - Removed 3-distribution symlink (bug #514244).
 
