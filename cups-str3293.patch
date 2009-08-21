@@ -1,0 +1,12 @@
+diff -up cups-1.4rc1/ppdc/ppdc-source.cxx.ppdc-busy-loop cups-1.4rc1/ppdc/ppdc-source.cxx
+--- cups-1.4rc1/ppdc/ppdc-source.cxx.ppdc-busy-loop	2009-08-21 15:40:16.648189657 +0100
++++ cups-1.4rc1/ppdc/ppdc-source.cxx	2009-08-21 15:41:29.896188142 +0100
+@@ -1321,7 +1321,7 @@ ppdcSource::get_integer(const char *v)	/
+     while (*v && *v != ')')
+     {
+       // Skip leading whitespace...
+-      while (*v && isspace(*v & 255));
++      while (*v && isspace(*v & 255))
+         v ++;
+ 
+       if (!*v || *v == ')')

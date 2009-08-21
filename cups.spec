@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.17%{?dist}.1
+Release: 0.%{pre}.18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -68,6 +68,7 @@ Patch40: cups-str3285.patch
 Patch41: cups-str3279.patch
 Patch42: cups-str3287.patch
 Patch43: cups-str3292.patch
+Patch44: cups-str3293.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -236,6 +237,7 @@ module.
 %patch41 -p1 -b .str3279
 %patch42 -p1 -b .str3287
 %patch43 -p1 -b .str3292
+%patch44 -p1 -b .str3293
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -530,6 +532,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 21 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.18
+- Prevent infinite loop in ppdc (STR #3293).
+
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 1:1.4-0.rc1.17.1
 - rebuilt with new audit
 
