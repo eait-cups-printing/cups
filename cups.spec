@@ -532,7 +532,8 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Fri Aug 21 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.18
+* Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.18
+- Fixed buggy JobKillDelay handling fix (STR #3292).
 - Prevent infinite loop in ppdc (STR #3293).
 
 * Fri Aug 21 2009 Tomas Mraz <tmraz@redhat.com> - 1:1.4-0.rc1.17.1

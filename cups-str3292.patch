@@ -1,23 +1,25 @@
-diff -up cups-1.4rc1/scheduler/job.c.cancel-job cups-1.4rc1/scheduler/job.c
---- cups-1.4rc1/scheduler/job.c.cancel-job	2009-08-19 14:48:55.733825903 +0100
-+++ cups-1.4rc1/scheduler/job.c	2009-08-19 14:49:01.813826101 +0100
-@@ -2359,19 +2359,21 @@ cupsdSetJobState(
+diff -up cups-1.4rc1/scheduler/job.c.str3292 cups-1.4rc1/scheduler/job.c
+--- cups-1.4rc1/scheduler/job.c.str3292	2009-08-26 17:01:19.442314736 +0100
++++ cups-1.4rc1/scheduler/job.c	2009-08-26 17:03:51.993190253 +0100
+@@ -2359,19 +2359,23 @@ cupsdSetJobState(
          break;
  
      case IPP_JOB_ABORTED :
 -    case IPP_JOB_CANCELED :
      case IPP_JOB_COMPLETED :
++    case IPP_JOB_CANCELED :
         /*
 -        * Expire job subscriptions since the job is now "completed"...
-+	* Remove the job from the active list...
++	* Remove the job from the active list if there are no
++	* processes still running for it...
  	*/
  
 -        cupsdExpireSubscriptions(NULL, job);
-+	cupsArrayRemove(ActiveJobs, job);
-+
-+	/* fall through... */
++	for (i = 0; job->filters[i] < 0; i++);
++	if (newstate != IPP_JOB_CANCELED ||
++	    (!job->filters[i] && job->backend <= 0))
++	    cupsArrayRemove(ActiveJobs, job);
  
-+    case IPP_JOB_CANCELED :
         /*
 -	* Remove the job from the active list...
 +        * Expire job subscriptions since the job is now "completed"...
@@ -28,9 +30,9 @@ diff -up cups-1.4rc1/scheduler/job.c.cancel-job cups-1.4rc1/scheduler/job.c
  
  #ifdef __APPLE__
         /*
-diff -up cups-1.4rc1/scheduler/main.c.cancel-job cups-1.4rc1/scheduler/main.c
---- cups-1.4rc1/scheduler/main.c.cancel-job	2009-08-19 14:48:55.451701014 +0100
-+++ cups-1.4rc1/scheduler/main.c	2009-08-19 14:49:01.817825841 +0100
+diff -up cups-1.4rc1/scheduler/main.c.str3292 cups-1.4rc1/scheduler/main.c
+--- cups-1.4rc1/scheduler/main.c.str3292	2009-08-26 17:01:19.084319753 +0100
++++ cups-1.4rc1/scheduler/main.c	2009-08-26 17:03:52.005190304 +0100
 @@ -1803,6 +1803,13 @@ process_children(void)
  	    cupsdContinueJob(job);
  	  }
@@ -39,7 +41,7 @@ diff -up cups-1.4rc1/scheduler/main.c.cancel-job cups-1.4rc1/scheduler/main.c
 +	{
 +	  for (i = 0; job->filters[i] < 0; i++);
 +
-+	  if (!job->filters[i] && job->backend < 0)
++	  if (!job->filters[i] && job->backend <= 0)
 +	    cupsArrayRemove(ActiveJobs, job);
 +	}
        }
