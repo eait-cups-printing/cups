@@ -69,6 +69,7 @@ Patch41: cups-str3279.patch
 Patch42: cups-str3287.patch
 Patch43: cups-str3292.patch
 Patch44: cups-str3293.patch
+Patch45: cups-str3308.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -238,6 +239,7 @@ module.
 %patch42 -p1 -b .str3287
 %patch43 -p1 -b .str3292
 %patch44 -p1 -b .str3293
+%patch45 -p1 -b .str3308
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -533,6 +535,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.18
+- Fixed document-format-supported attribute when
+  application/octet-stream is enabled (bug #516507, STR #3308, patch
+  from Jiri Popelka).
 - Fixed buggy JobKillDelay handling fix (STR #3292).
 - Prevent infinite loop in ppdc (STR #3293).
 
