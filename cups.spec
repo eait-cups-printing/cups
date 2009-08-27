@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.18%{?dist}
+Release: 0.%{pre}.19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -536,7 +536,7 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.18
+* Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.19
 - Prevent infinite loop in cupsDoIORequest when processing HTTP
   errors (bug #518065, bug #519663, STR #3311).
 - Fixed document-format-supported attribute when
