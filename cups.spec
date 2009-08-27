@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.20%{?dist}
+Release: 0.%{pre}.21%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -538,6 +538,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Aug 27 2009 Warren Togami <wtogami@redhat.com> 1:1.4-0.rc1.21
+- rebuild
+
 * Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.20
 - Fixed admin.cgi crash when modifying a class (bug #519724,
   STR #3312, patch from Jiri Popelka).
