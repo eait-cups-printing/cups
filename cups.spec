@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4
-Release: 0.%{pre}.19%{?dist}
+Release: 0.%{pre}.20%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
@@ -71,6 +71,7 @@ Patch43: cups-str3292.patch
 Patch44: cups-str3293.patch
 Patch45: cups-str3308.patch
 Patch46: cups-str3311.patch
+Patch47: cups-str3312.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -242,6 +243,7 @@ module.
 %patch44 -p1 -b .str3293
 %patch45 -p1 -b .str3308
 %patch46 -p1 -b .str3311
+%patch47 -p1 -b .str3312
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -536,6 +538,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.20
+- Fixed admin.cgi crash when modifying a class (bug #519724,
+  STR #3312, patch from Jiri Popelka).
+
 * Wed Aug 26 2009 Tim Waugh <twaugh@redhat.com> 1:1.4-0.rc1.19
 - Prevent infinite loop in cupsDoIORequest when processing HTTP
   errors (bug #518065, bug #519663, STR #3311).
