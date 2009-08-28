@@ -1,7 +1,6 @@
 %define php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-%define pre rc1
 %define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
@@ -9,11 +8,11 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4
-Release: 0.%{pre}.21%{?dist}
+Version: 1.4.0
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: ftp://ftp.easysw.com/pub/cups/test//cups-%{version}%{?pre}%{?svn}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: cups-libusb.rules
@@ -48,21 +47,11 @@ Patch20: cups-logrotate.patch
 Patch21: cups-usb-paperout.patch
 Patch22: cups-build.patch
 Patch23: cups-res_init.patch
-Patch24: cups-str3229.patch
 Patch25: cups-filter-debug.patch
-Patch26: cups-str3231.patch
-Patch27: cups-str3244.patch
-Patch28: cups-str3258.patch
-Patch29: cups-str3259.patch
 Patch30: cups-uri-compat.patch
-Patch31: cups-str3254.patch
-Patch32: cups-str3253.patch
-Patch33: cups-str3266.patch
 Patch34: cups-str3262.patch
 Patch35: cups-cups-get-classes.patch
-Patch36: cups-str3272.patch
 Patch37: cups-avahi.patch
-Patch38: cups-str3277.patch
 Patch39: cups-str3284.patch
 Patch40: cups-str3285.patch
 Patch41: cups-str3279.patch
@@ -198,7 +187,7 @@ UNIX® operating systems. This is the package that provices a PHP
 module. 
 
 %prep
-%setup -q -n %{name}-%{version}%{?pre}%{?svn}
+%setup -q -n %{name}-%{version}
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
@@ -220,21 +209,11 @@ module.
 %patch21 -p1 -b .usb-paperout
 %patch22 -p1 -b .build
 %patch23 -p1 -b .res_init
-%patch24 -p1 -b .str3229
 %patch25 -p1 -b .filter-debug
-%patch26 -p1 -b .str3231
-%patch27 -p1 -b .str3244
-%patch28 -p1 -b .str3258
-%patch29 -p1 -b .str3259
 %patch30 -p1 -b .uri-compat
-%patch31 -p1 -b .str3254
-%patch32 -p1 -b .str3253
-%patch33 -p1 -b .str3266
 %patch34 -p1 -b .str3262
 %patch35 -p1 -b .cups-get-classes
-%patch36 -p1 -b .str3272
 %patch37 -p1 -b .avahi
-%patch38 -p1 -b .str3277
 %patch39 -p1 -b .str3284
 %patch40 -p1 -b .str3285
 %patch41 -p1 -b .str3279
@@ -449,6 +428,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/eu
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/pl
 %dir %{_datadir}/%{name}/www/ru
@@ -459,6 +439,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/robots.txt
 %config(noreplace) %doc %{_datadir}/%{name}/www/de/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/es/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/eu/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
@@ -493,6 +474,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/cups/templates/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/de/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/eu/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ru/*.tmpl
@@ -538,6 +520,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-1
+- 1.4.0.
+
 * Thu Aug 27 2009 Warren Togami <wtogami@redhat.com> 1:1.4-0.rc1.21
 - rebuild
 
