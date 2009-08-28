@@ -187,7 +187,7 @@ UNIX® operating systems. This is the package that provices a PHP
 module. 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
