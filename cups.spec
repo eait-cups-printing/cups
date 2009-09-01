@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -235,6 +235,9 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
+
+# Fix locale code for Norwegian (bug #520379).
+mv locale/cups_no.po locale/cups_nb.po
 
 # Rebuild configure script for --enable-avahi.
 aclocal -I config-scripts
@@ -520,6 +523,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Sep  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-2
+- Fix locale code for Norwegian (bug #520379).
+
 * Fri Aug 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-1
 - 1.4.0.
 
