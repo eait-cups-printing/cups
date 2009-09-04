@@ -523,7 +523,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Tue Sep  1 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-2
+* Fri Sep  4 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-2
+- Fixed the dnssd backend so that it only reports devices once avahi
+  resolution has completed.  This makes it report Device IDs
+  (bug #521110).
 - Fix locale code for Norwegian (bug #520379).
 
 * Fri Aug 28 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-1
