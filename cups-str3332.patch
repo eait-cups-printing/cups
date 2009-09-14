@@ -1,0 +1,12 @@
+diff -up cups-1.4.1/backend/usb-unix.c.function-decl cups-1.4.1/backend/usb-unix.c
+--- cups-1.4.1/backend/usb-unix.c.function-decl	2009-09-14 17:36:06.087996470 +0100
++++ cups-1.4.1/backend/usb-unix.c	2009-09-14 17:36:13.656996607 +0100
+@@ -605,7 +605,7 @@ open_device(const char *uri,		/* I - Dev
+  * 'side_cb()' - Handle side-channel requests...
+  */
+ 
+-static void
++static int
+ side_cb(int         print_fd,		/* I - Print file */
+         int         device_fd,		/* I - Device file */
+         int         snmp_fd,		/* I - SNMP socket (unused) */

@@ -8,8 +8,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.0
-Release: 2%{?dist}
+Version: 1.4.1
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -49,18 +49,9 @@ Patch22: cups-build.patch
 Patch23: cups-res_init.patch
 Patch25: cups-filter-debug.patch
 Patch30: cups-uri-compat.patch
-Patch34: cups-str3262.patch
 Patch35: cups-cups-get-classes.patch
 Patch37: cups-avahi.patch
-Patch39: cups-str3284.patch
-Patch40: cups-str3285.patch
-Patch41: cups-str3279.patch
-Patch42: cups-str3287.patch
-Patch43: cups-str3292.patch
-Patch44: cups-str3293.patch
-Patch45: cups-str3308.patch
-Patch46: cups-str3311.patch
-Patch47: cups-str3312.patch
+Patch38: cups-str3332.patch
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -211,18 +202,9 @@ module.
 %patch23 -p1 -b .res_init
 %patch25 -p1 -b .filter-debug
 %patch30 -p1 -b .uri-compat
-%patch34 -p1 -b .str3262
 %patch35 -p1 -b .cups-get-classes
 %patch37 -p1 -b .avahi
-%patch39 -p1 -b .str3284
-%patch40 -p1 -b .str3285
-%patch41 -p1 -b .str3279
-%patch42 -p1 -b .str3287
-%patch43 -p1 -b .str3292
-%patch44 -p1 -b .str3293
-%patch45 -p1 -b .str3308
-%patch46 -p1 -b .str3311
-%patch47 -p1 -b .str3312
+%patch38 -p1 -b .str3332
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -523,6 +505,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Sep 14 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-1
+- 1.4.1.
+
 * Fri Sep  4 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.0-2
 - Fixed the dnssd backend so that it only reports devices once avahi
   resolution has completed.  This makes it report Device IDs
