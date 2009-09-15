@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -505,6 +505,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Sep 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-2
+- Fixed 'service cups status' to check for correct subsys name
+  (bug #521641).
+
 * Mon Sep 14 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-1
 - 1.4.1.
 

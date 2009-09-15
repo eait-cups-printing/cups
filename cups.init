@@ -112,7 +112,7 @@ case $1 in
 		echo
 	;;
 	status)
-		status $DAEMON
+		status cups
 		RETVAL=$?
 	;;
 	restartlog)
