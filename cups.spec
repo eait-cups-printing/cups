@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -505,6 +505,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 16 2009 Tomas Mraz <tmraz@redhat.com> 1:1.4.1-3
+- Use password-auth common PAM configuration instead of system-auth
+  when available.
+
 * Tue Sep 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-2
 - Fixed 'service cups status' to check for correct subsys name
   (bug #521641).

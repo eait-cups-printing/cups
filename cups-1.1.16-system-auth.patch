@@ -1,12 +1,14 @@
 --- cups-1.2svn-r5238/conf/Makefile.system-auth	2006-03-07 09:34:20.000000000 +0000
 +++ cups-1.2svn-r5238/conf/Makefile	2006-03-07 09:45:41.000000000 +0000
-@@ -79,10 +79,14 @@
+@@ -79,10 +79,16 @@
  	done
  	-if test x$(PAMDIR) != x; then \
  		$(INSTALL_DIR) -m 755 $(BUILDROOT)$(PAMDIR); \
 -		if test -r $(BUILDROOT)$(PAMDIR)/cups/$(PAMFILE) ; then \
 -			$(INSTALL_DATA) $(PAMFILE) $(BUILDROOT)$(PAMDIR)/cups.N ; \
-+		if test -f /etc/pam.d/system-auth; then \
++		if test -f /etc/pam.d/password-auth; then \
++			$(INSTALL_DATA) cups.password-auth $(BUILDROOT)$(PAMDIR)/cups ; \
++		elif test -f /etc/pam.d/system-auth; then \
 +			$(INSTALL_DATA) cups.system-auth $(BUILDROOT)$(PAMDIR)/cups ; \
  		else \
 -			$(INSTALL_DATA) $(PAMFILE) $(BUILDROOT)$(PAMDIR)/cups ; \
@@ -24,3 +26,10 @@
 +#%PAM-1.0
 +auth	include		system-auth
 +account	include		system-auth
+--- /dev/null	2006-03-07 09:12:30.964372750 +0000
++++ cups-1.2svn-r5238/conf/cups.password-auth	2006-03-07 09:43:12.000000000 +0000
+@@ -0,0 +1,4 @@
++#%PAM-1.0
++# Use password-auth common PAM configuration for the daemon
++auth        include     password-auth
++account     include     password-auth
