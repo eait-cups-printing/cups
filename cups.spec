@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -505,6 +505,13 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Sep 21 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-4
+- Changed cups.init to be LSB compliant (bug #521641), i.e.
+  return code "2" (instead of "3") if invalid arguments
+  return code "4" if restarting service under nonprivileged user
+  return code "5" if cupsd not exist or is not executable
+  return code "6" if cupsd.conf not exist
+
 * Wed Sep 16 2009 Tomas Mraz <tmraz@redhat.com> 1:1.4.1-3
 - Use password-auth common PAM configuration instead of system-auth
   when available.

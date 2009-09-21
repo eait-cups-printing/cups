@@ -49,7 +49,18 @@ DAEMON=cupsd
 
 prog=cups
 
+check() {
+	# Check that we're a privileged user
+	[ `id -u` = 0 ] || exit 4
+	
+	# Check if cupsd is executable
+	[ -x /usr/sbin/cupsd ] || exit 5
+}
+
 start () {
+	check
+	[ -f /etc/cups/cupsd.conf ] || exit 6
+
 	echo -n $"Starting $prog: "
 
 	# tell portreserve to release the port
@@ -71,6 +82,8 @@ start () {
 }
 
 stop () {
+	check
+
 	# stop daemon
 	echo -n $"Stopping $prog: "
 	killproc $DAEMON
@@ -123,7 +136,7 @@ case $1 in
 	*)
 
 	echo $"Usage: $prog {start|stop|restart|condrestart|reload|status}"
-	exit 3
+	exit 2
 esac
 
 exit $RETVAL
