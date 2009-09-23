@@ -43,23 +43,25 @@
 ### END INIT INFO
 
 # Source function library.
-. /etc/init.d/functions
+. /etc/rc.d/init.d/functions
 
 DAEMON=cupsd
-
+exec=/usr/sbin/cupsd
 prog=cups
+config=/etc/cups/cupsd.conf
+lockfile=/var/lock/subsys/$DAEMON
 
 check() {
 	# Check that we're a privileged user
 	[ `id -u` = 0 ] || exit 4
 	
 	# Check if cupsd is executable
-	[ -x /usr/sbin/cupsd ] || exit 5
+	[ -x $exec ] || exit 5
 }
 
 start () {
 	check
-	[ -f /etc/cups/cupsd.conf ] || exit 6
+	[ -f $config ] || exit 6
 
 	echo -n $"Starting $prog: "
 
@@ -70,7 +72,7 @@ start () {
 	daemon $DAEMON
         RETVAL=$?
 	echo
-	[ $RETVAL = 0 ] && touch /var/lock/subsys/cups
+	[ $RETVAL = 0 ] && touch $lockfile
 
 	udevadm trigger --subsystem-match=usb	\
 		--attr-match=bInterfaceClass=07	\
@@ -89,7 +91,7 @@ stop () {
 	killproc $DAEMON
 	RETVAL=$?
 	echo
-	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/cups
+	[ $RETVAL = 0 ] && rm -f $lockfile
 	return 0
 }
 
@@ -109,7 +111,7 @@ case $1 in
 		restart
 	;;
 	condrestart|try-restart)
-		[ -f /var/lock/subsys/cups ] && restart || :
+		[ -f $lockfile ] && restart || :
 	;;	
 	reload)
 		echo -n $"Reloading $prog: "
@@ -125,7 +127,7 @@ case $1 in
 		echo
 	;;
 	status)
-		status cups
+		status $DAEMON
 		RETVAL=$?
 	;;
 	restartlog)
@@ -135,7 +137,7 @@ case $1 in
 	;;
 	*)
 
-	echo $"Usage: $prog {start|stop|restart|condrestart|reload|status}"
+	echo $"Usage: $prog {start|stop|restart|condrestart|try-restart|reload|force-reload|status}"
 	exit 2
 esac
 
