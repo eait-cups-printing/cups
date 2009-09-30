@@ -1,0 +1,13 @@
+diff -up cups-1.4.1/scheduler/printers.c.str3356 cups-1.4.1/scheduler/printers.c
+--- cups-1.4.1/scheduler/printers.c.str3356	2009-09-30 12:02:53.467761538 +0100
++++ cups-1.4.1/scheduler/printers.c	2009-09-30 12:03:28.489636706 +0100
+@@ -3993,7 +3993,8 @@ load_ppd(cupsd_printer_t *p)		/* I - Pri
+   ippDelete(p->ppd_attrs);
+   p->ppd_attrs = ippNew();
+ 
+-  if (cache_info.st_mtime >= ppd_info.st_mtime &&
++  if (ppd_info.st_mtime != 1 &&
++      cache_info.st_mtime >= ppd_info.st_mtime &&
+       (cache = cupsFileOpen(cache_name, "r")) != NULL)
+   {
+    /*
