@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -39,6 +39,7 @@ Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
 Patch14: cups-pid.patch
+Patch15: cups-page-label.patch
 Patch16: cups-eggcups.patch
 Patch17: cups-getpass.patch
 Patch18: cups-driverd-timeout.patch
@@ -193,6 +194,7 @@ module.
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
 %patch14 -p1 -b .pid
+%patch15 -p1 -b .page-label
 %patch16 -p1 -b .eggcups
 %patch17 -p1 -b .getpass
 %patch18 -p1 -b .driverd-timeout
@@ -507,6 +509,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Oct  2 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-7
+- Fixed orientation of page labels when printing text in landscape
+  mode (bug #520141, STR #3334).
+
 * Wed Sep 30 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-6
 - Don't use cached PPD for raw queue (bug #526405, STR #3356).
 
