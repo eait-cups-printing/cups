@@ -1,13 +1,101 @@
-diff -up cups-1.4.1/scheduler/printers.c.str3356 cups-1.4.1/scheduler/printers.c
---- cups-1.4.1/scheduler/printers.c.str3356	2009-09-30 12:02:53.467761538 +0100
-+++ cups-1.4.1/scheduler/printers.c	2009-09-30 12:03:28.489636706 +0100
-@@ -3993,7 +3993,8 @@ load_ppd(cupsd_printer_t *p)		/* I - Pri
-   ippDelete(p->ppd_attrs);
-   p->ppd_attrs = ippNew();
+diff -up cups-1.4.1/scheduler/ipp.c.str3356 cups-1.4.1/scheduler/ipp.c
+--- cups-1.4.1/scheduler/ipp.c.str3356	2009-10-07 17:26:27.504800579 +0100
++++ cups-1.4.1/scheduler/ipp.c	2009-10-07 17:26:31.311800539 +0100
+@@ -2324,8 +2324,9 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 		dstfile[1024];		/* Destination Script/PPD file */
+   int		modify;			/* Non-zero if we are modifying */
+   char		newname[IPP_MAX_NAME];	/* New printer name */
+-  int		need_restart_job;	/* Need to restart job? */
+-  int		set_device_uri,		/* Did we set the device URI? */
++  int		changed_driver,		/* Changed the PPD/interface script? */
++		need_restart_job,	/* Need to restart job? */
++		set_device_uri,		/* Did we set the device URI? */
+ 		set_port_monitor;	/* Did we set the port monitor? */
  
--  if (cache_info.st_mtime >= ppd_info.st_mtime &&
-+  if (ppd_info.st_mtime != 1 &&
-+      cache_info.st_mtime >= ppd_info.st_mtime &&
-       (cache = cupsFileOpen(cache_name, "r")) != NULL)
+ 
+@@ -2469,6 +2470,7 @@ add_printer(cupsd_client_t  *con,	/* I -
+   * Look for attributes and copy them over as needed...
+   */
+ 
++  changed_driver   = 0;
+   need_restart_job = 0;
+ 
+   if ((attr = ippFindAttribute(con->request, "printer-location",
+@@ -2731,6 +2733,7 @@ add_printer(cupsd_client_t  *con,	/* I -
+   if (con->filename)
    {
-    /*
+     need_restart_job = 1;
++    changed_driver   = 1;
+ 
+     strlcpy(srcfile, con->filename, sizeof(srcfile));
+ 
+@@ -2801,18 +2804,6 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 	cupsdLogMessage(CUPSD_LOG_DEBUG,
+ 			"Copied PPD file successfully!");
+ 	chmod(dstfile, 0644);
+-
+-#ifdef __APPLE__
+-       /*
+-        * (Re)register color profiles...
+-	*/
+-
+-        if (!RunUser)
+-	{
+-	  apple_unregister_profiles(printer);
+-	  apple_register_profiles(printer);
+-        }
+-#endif /* __APPLE__ */
+       }
+       else
+       {
+@@ -2829,6 +2820,7 @@ add_printer(cupsd_client_t  *con,	/* I -
+                                     IPP_TAG_NAME)) != NULL)
+   {
+     need_restart_job = 1;
++    changed_driver   = 1;
+ 
+     if (!strcmp(attr->values[0].string.text, "raw"))
+     {
+@@ -2866,19 +2858,33 @@ add_printer(cupsd_client_t  *con,	/* I -
+       cupsdLogMessage(CUPSD_LOG_DEBUG,
+ 		      "Copied PPD file successfully!");
+       chmod(dstfile, 0644);
++    }
++  }
++
++  if (changed_driver)
++  {
++   /*
++    * If we changed the PPD/interface script, then remove the printer's cache
++    * file...
++    */
++
++    char cache_name[1024];		/* Cache filename for printer attrs */
++
++    snprintf(cache_name, sizeof(cache_name), "%s/%s.ipp", CacheDir,
++             printer->name);
++    unlink(cache_name);
+ 
+ #ifdef __APPLE__
+-     /*
+-      * (Re)register color profiles...
+-      */
++   /*
++    * (Re)register color profiles...
++    */
+ 
+-      if (!RunUser)
+-      {
+-	apple_unregister_profiles(printer);
+-	apple_register_profiles(printer);
+-      }
+-#endif /* __APPLE__ */
++    if (!RunUser)
++    {
++      apple_unregister_profiles(printer);
++      apple_register_profiles(printer);
+     }
++#endif /* __APPLE__ */
+   }
+ 
+  /*
