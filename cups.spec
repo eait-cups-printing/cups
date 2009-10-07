@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -509,6 +509,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Oct  7 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-8
+- Use upstream patch for STR #3356 (bug #526405).
+
 * Fri Oct  2 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-7
 - Fixed orientation of page labels when printing text in landscape
   mode (bug #520141, STR #3334).
