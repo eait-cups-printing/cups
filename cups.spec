@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -26,6 +26,7 @@ Source10: ncp.backend
 Source12: cups.cron
 Source14: textonly.filter
 Source15: textonly.ppd
+Patch0: cups-generic-ps.patch
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
@@ -181,6 +182,10 @@ module.
 
 %prep
 %setup -q
+gunzip -c %{SOURCE8} > postscript.ppd
+%patch0 -p0 -b .generic-ps
+gzip -n postscript.ppd
+
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
@@ -296,7 +301,7 @@ install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
 # Ship a generic postscript PPD file (#73061)
-install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_datadir}/cups/model
+install -c -m 644 postscript.ppd.gz $RPM_BUILD_ROOT%{_datadir}/cups/model
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -509,6 +514,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Oct  8 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-9
+- Fixed naming of 'Generic PostScript Printer' entry.
+
 * Wed Oct  7 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-8
 - Use upstream patch for STR #3356 (bug #526405).
 
