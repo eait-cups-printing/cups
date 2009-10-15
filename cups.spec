@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -18,8 +18,6 @@ Source2: cupsprinter.png
 Source3: cups-libusb.rules
 Source4: pstopdf
 Source5: cups-lpd
-Source6: pstoraster
-Source7: pstoraster.convs
 Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
@@ -296,10 +294,6 @@ install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
 
-# Ship pstoraster (bug #69573).
-install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
-install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
-
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 postscript.ppd.gz $RPM_BUILD_ROOT%{_datadir}/cups/model
 
@@ -416,7 +410,6 @@ rm -rf $RPM_BUILD_ROOT
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
-/etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
@@ -514,6 +507,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Oct 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-10
+- Don't ship pstoraster -- it is now provided by the ghostscript-cups
+  package.
+
 * Thu Oct  8 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-9
 - Fixed naming of 'Generic PostScript Printer' entry.
 
