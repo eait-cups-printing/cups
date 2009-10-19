@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -36,6 +36,7 @@ Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
 Patch9: cups-paps.patch
+Patch10: cups-str3380.patch
 Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
@@ -195,6 +196,7 @@ gzip -n postscript.ppd
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
 %patch9 -p1 -b .paps
+%patch10 -p1 -b .str3380
 %patch11 -p1 -b .direct-usb
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
@@ -514,6 +516,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Oct 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-10
+- Fixed German translation (bug #529575, STR #3380).
+
 * Thu Oct  8 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-9
 - Fixed naming of 'Generic PostScript Printer' entry.
 
