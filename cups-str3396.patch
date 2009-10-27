@@ -1,0 +1,11 @@
+diff -up cups-1.4.1/templates/de/set-printer-options-header.tmpl.str3396 cups-1.4.1/templates/de/set-printer-options-header.tmpl
+--- cups-1.4.1/templates/de/set-printer-options-header.tmpl.str3396	2009-04-03 17:55:28.000000000 +0200
++++ cups-1.4.1/templates/de/set-printer-options-header.tmpl	2009-10-27 15:17:53.000000000 +0100
+@@ -1,6 +1,6 @@
+ <DIV CLASS="indent">
+ 
+-<H2 CLASS="title">Standardeinstellungen f%uuml;r {printer_name} festlegen</H2>
++<H2 CLASS="title">Standardeinstellungen f&uuml;r {printer_name} festlegen</H2>
+ 
+ <FORM METHOD="POST" ACTION="/admin">
+ <INPUT TYPE="HIDDEN" NAME="PRINTER_NAME" VALUE="{printer_name}">

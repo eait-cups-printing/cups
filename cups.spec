@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -55,6 +55,11 @@ Patch37: cups-avahi.patch
 Patch38: cups-str3332.patch
 Patch39: cups-str3356.patch
 Patch40: cups-str3382.patch
+Patch41: cups-str3285_v2.patch
+Patch42: cups-str3390.patch
+Patch43: cups-str3391.patch
+Patch44: cups-str3396.patch
+
 Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
@@ -216,6 +221,10 @@ gzip -n postscript.ppd
 %patch38 -p1 -b .str3332
 %patch39 -p1 -b .str3356
 %patch40 -p1 -b .str3382
+%patch41 -p1 -b .str3285_v2
+%patch42 -p1 -b .str3390
+%patch43 -p1 -b .str3391
+%patch44 -p1 -b .str3396
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -511,6 +520,12 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Oct 27 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-13
+- Fix incorrectly applied patch from #STR3285 (bug #531108).
+- Set the PRINTER_IS_SHARED variable for admin.cgi (bug #529634, #STR3390).
+- Pass through serial parameters correctly in web interface (bug #529635, #STR3391).
+- Fixed German translation (bug #531144, #STR3396).
+
 * Tue Oct 20 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-12
 - Fix cups-lpd to create unique temporary data files (bug #529838).
 
