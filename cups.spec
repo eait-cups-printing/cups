@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -30,7 +30,6 @@ Patch0: cups-generic-ps.patch
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str2831.patch
 Patch5: cups-serial.patch
 Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
@@ -196,7 +195,6 @@ gzip -n postscript.ppd
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
-%patch4 -p1 -b .str2831
 %patch5 -p1 -b .serial
 %patch6 -p1 -b .banners
 %patch7 -p1 -b .serverbin-compat
@@ -527,6 +525,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-13
+- Removed stale patch from STR #2831 which was causing problems with
+  number-up (bug #532516).
+
 * Tue Oct 27 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-12
 - Fix incorrectly applied patch from #STR3285 (bug #531108).
 - Set the PRINTER_IS_SHARED variable for admin.cgi (bug #529634, #STR3390).
