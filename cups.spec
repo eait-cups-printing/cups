@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 13.1%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
@@ -18,8 +18,6 @@ Source2: cupsprinter.png
 Source3: cups-libusb.rules
 Source4: pstopdf
 Source5: cups-lpd
-Source6: pstoraster
-Source7: pstoraster.convs
 Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
@@ -307,10 +305,6 @@ install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
 
-# Ship pstoraster (bug #69573).
-install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
-install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
-
 # Ship a generic postscript PPD file (#73061)
 install -c -m 644 postscript.ppd.gz $RPM_BUILD_ROOT%{_datadir}/cups/model
 
@@ -427,7 +421,6 @@ rm -rf $RPM_BUILD_ROOT
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
 %dir %attr(0755,root,lp) /etc/cups/ppd
 %dir %attr(0700,root,lp) /etc/cups/ssl
-/etc/cups/pstoraster.convs
 %config(noreplace) /etc/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
@@ -525,21 +518,25 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-13
+* Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-14
 - Removed stale patch from STR #2831 which was causing problems with
   number-up (bug #532516).
 
-* Tue Oct 27 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-12
+* Tue Oct 27 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-13
 - Fix incorrectly applied patch from #STR3285 (bug #531108).
 - Set the PRINTER_IS_SHARED variable for admin.cgi (bug #529634, #STR3390).
 - Pass through serial parameters correctly in web interface (bug #529635, #STR3391).
 - Fixed German translation (bug #531144, #STR3396).
 
-* Tue Oct 20 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-11
+* Tue Oct 20 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.1-12
 - Fix cups-lpd to create unique temporary data files (bug #529838).
 
-* Mon Oct 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-10
+* Mon Oct 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-11
 - Fixed German translation (bug #529575, STR #3380).
+
+* Thu Oct 15 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-10
+- Don't ship pstoraster -- it is now provided by the ghostscript-cups
+  package.
 
 * Thu Oct  8 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-9
 - Fixed naming of 'Generic PostScript Printer' entry.
