@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.1
-Release: 13%{?dist}
+Release: 13.1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
