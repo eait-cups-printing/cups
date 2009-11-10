@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -139,6 +139,7 @@ License: LGPLv2
 Summary: Common Unix Printing System - lpd emulation
 Group: System Environment/Daemons
 Requires: %{name} = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: xinetd
 
 %package php
@@ -505,6 +506,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-2
+- Added explicit version dependency on cups-libs to cups-lpd
+  (bug #502205).
+
 * Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-1
 - 1.4.2.  No longer need str3380, str3332, str3356, str3396 patches.
 - Removed postscript.ppd.gz (bug #533371).
