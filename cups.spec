@@ -8,23 +8,21 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.1
-Release: 14%{?dist}
+Version: 1.4.2
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: cups-libusb.rules
 Source4: pstopdf
 Source5: cups-lpd
-Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
 Source12: cups.cron
 Source14: textonly.filter
 Source15: textonly.ppd
-Patch0: cups-generic-ps.patch
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
@@ -33,7 +31,6 @@ Patch6: cups-banners.patch
 Patch7: cups-serverbin-compat.patch
 Patch8: cups-no-export-ssllibs.patch
 Patch9: cups-paps.patch
-Patch10: cups-str3380.patch
 Patch11: cups-direct-usb.patch
 Patch12: cups-lpr-help.patch
 Patch13: cups-peercred.patch
@@ -51,13 +48,10 @@ Patch25: cups-filter-debug.patch
 Patch30: cups-uri-compat.patch
 Patch35: cups-cups-get-classes.patch
 Patch37: cups-avahi.patch
-Patch38: cups-str3332.patch
-Patch39: cups-str3356.patch
 Patch40: cups-str3382.patch
 Patch41: cups-str3285_v2.patch
 Patch42: cups-str3390.patch
 Patch43: cups-str3391.patch
-Patch44: cups-str3396.patch
 
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -186,10 +180,6 @@ module.
 
 %prep
 %setup -q
-gunzip -c %{SOURCE8} > postscript.ppd
-%patch0 -p0 -b .generic-ps
-gzip -n postscript.ppd
-
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
@@ -198,7 +188,6 @@ gzip -n postscript.ppd
 %patch7 -p1 -b .serverbin-compat
 %patch8 -p1 -b .no-export-ssllibs
 %patch9 -p1 -b .paps
-%patch10 -p1 -b .str3380
 %patch11 -p1 -b .direct-usb
 %patch12 -p1 -b .lpr-help
 %patch13 -p1 -b .peercred
@@ -216,13 +205,10 @@ gzip -n postscript.ppd
 %patch30 -p1 -b .uri-compat
 %patch35 -p1 -b .cups-get-classes
 %patch37 -p1 -b .avahi
-%patch38 -p1 -b .str3332
-%patch39 -p1 -b .str3356
 %patch40 -p1 -b .str3382
 %patch41 -p1 -b .str3285_v2
 %patch42 -p1 -b .str3390
 %patch43 -p1 -b .str3391
-%patch44 -p1 -b .str3396
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -304,9 +290,6 @@ install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 %if %lspp
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
-
-# Ship a generic postscript PPD file (#73061)
-install -c -m 644 postscript.ppd.gz $RPM_BUILD_ROOT%{_datadir}/cups/model
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -518,6 +501,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-1
+- 1.4.2.  No longer need str3380, str3332, str3356, str3396 patches.
+- Removed postscript.ppd.gz (bug #533371).
+
 * Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-14
 - Removed stale patch from STR #2831 which was causing problems with
   number-up (bug #532516).
