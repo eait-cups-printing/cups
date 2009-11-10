@@ -20,13 +20,11 @@ Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
-Source8: postscript.ppd.gz
 Source9: cups.logrotate
 Source10: ncp.backend
 Source12: cups.cron
 Source14: textonly.filter
 Source15: textonly.ppd
-Patch0: cups-generic-ps.patch
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
@@ -188,10 +186,6 @@ module.
 
 %prep
 %setup -q
-gunzip -c %{SOURCE8} > postscript.ppd
-%patch0 -p0 -b .generic-ps
-gzip -n postscript.ppd
-
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
@@ -310,9 +304,6 @@ install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 # Ship pstoraster (bug #69573).
 install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
-
-# Ship a generic postscript PPD file (#73061)
-install -c -m 644 postscript.ppd.gz $RPM_BUILD_ROOT%{_datadir}/cups/model
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -525,6 +516,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com>
+- Removed postscript.ppd.gz (bug #533371).
+
 * Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-13
 - Removed stale patch from STR #2831 which was causing problems with
   number-up (bug #532516).
