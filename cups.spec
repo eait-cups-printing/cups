@@ -8,11 +8,11 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.1
-Release: 13%{?dist}
+Version: 1.4.2
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: http://ftp.easysw.com/pub/cups/1.4.0/cups-%{version}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 Source1: cups.init
 Source2: cupsprinter.png
 Source3: cups-libusb.rules
@@ -20,44 +20,40 @@ Source4: pstopdf
 Source5: cups-lpd
 Source6: pstoraster
 Source7: pstoraster.convs
-Source9: cups.logrotate
-Source10: ncp.backend
-Source12: cups.cron
-Source14: textonly.filter
-Source15: textonly.ppd
+Source8: cups.logrotate
+Source9: ncp.backend
+Source10: cups.cron
+Source11: textonly.filter
+Source12: textonly.ppd
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
-Patch5: cups-serial.patch
-Patch6: cups-banners.patch
-Patch7: cups-serverbin-compat.patch
-Patch8: cups-no-export-ssllibs.patch
-Patch9: cups-paps.patch
-Patch10: cups-str3380.patch
-Patch11: cups-direct-usb.patch
-Patch12: cups-lpr-help.patch
-Patch13: cups-peercred.patch
-Patch14: cups-pid.patch
-Patch15: cups-page-label.patch
-Patch16: cups-eggcups.patch
-Patch17: cups-getpass.patch
-Patch18: cups-driverd-timeout.patch
-Patch19: cups-strict-ppd-line-length.patch
-Patch20: cups-logrotate.patch
-Patch21: cups-usb-paperout.patch
-Patch22: cups-build.patch
-Patch23: cups-res_init.patch
-Patch25: cups-filter-debug.patch
-Patch30: cups-uri-compat.patch
-Patch35: cups-cups-get-classes.patch
-Patch37: cups-avahi.patch
-Patch38: cups-str3332.patch
-Patch39: cups-str3356.patch
-Patch40: cups-str3382.patch
-Patch41: cups-str3285_v2.patch
-Patch42: cups-str3390.patch
-Patch43: cups-str3391.patch
-Patch44: cups-str3396.patch
+Patch4: cups-serial.patch
+Patch5: cups-banners.patch
+Patch6: cups-serverbin-compat.patch
+Patch7: cups-no-export-ssllibs.patch
+Patch8: cups-paps.patch
+Patch9: cups-direct-usb.patch
+Patch10: cups-lpr-help.patch
+Patch11: cups-peercred.patch
+Patch12: cups-pid.patch
+Patch13: cups-page-label.patch
+Patch14: cups-eggcups.patch
+Patch15: cups-getpass.patch
+Patch16: cups-driverd-timeout.patch
+Patch17: cups-strict-ppd-line-length.patch
+Patch18: cups-logrotate.patch
+Patch19: cups-usb-paperout.patch
+Patch20: cups-build.patch
+Patch21: cups-res_init.patch
+Patch22: cups-filter-debug.patch
+Patch23: cups-uri-compat.patch
+Patch24: cups-cups-get-classes.patch
+Patch25: cups-avahi.patch
+Patch26: cups-str3382.patch
+Patch27: cups-str3285_v2.patch
+Patch28: cups-str3390.patch
+Patch29: cups-str3391.patch
 
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -189,36 +185,32 @@ module.
 %patch1 -p1 -b .no-gzip-man
 %patch2 -p1 -b .system-auth
 %patch3 -p1 -b .multilib
-%patch5 -p1 -b .serial
-%patch6 -p1 -b .banners
-%patch7 -p1 -b .serverbin-compat
-%patch8 -p1 -b .no-export-ssllibs
-%patch9 -p1 -b .paps
-%patch10 -p1 -b .str3380
-%patch11 -p1 -b .direct-usb
-%patch12 -p1 -b .lpr-help
-%patch13 -p1 -b .peercred
-%patch14 -p1 -b .pid
-%patch15 -p1 -b .page-label
-%patch16 -p1 -b .eggcups
-%patch17 -p1 -b .getpass
-%patch18 -p1 -b .driverd-timeout
-%patch19 -p1 -b .strict-ppd-line-length
-%patch20 -p1 -b .logrotate
-%patch21 -p1 -b .usb-paperout
-%patch22 -p1 -b .build
-%patch23 -p1 -b .res_init
-%patch25 -p1 -b .filter-debug
-%patch30 -p1 -b .uri-compat
-%patch35 -p1 -b .cups-get-classes
-%patch37 -p1 -b .avahi
-%patch38 -p1 -b .str3332
-%patch39 -p1 -b .str3356
-%patch40 -p1 -b .str3382
-%patch41 -p1 -b .str3285_v2
-%patch42 -p1 -b .str3390
-%patch43 -p1 -b .str3391
-%patch44 -p1 -b .str3396
+%patch4 -p1 -b .serial
+%patch5 -p1 -b .banners
+%patch6 -p1 -b .serverbin-compat
+%patch7 -p1 -b .no-export-ssllibs
+%patch8 -p1 -b .paps
+%patch9 -p1 -b .direct-usb
+%patch10 -p1 -b .lpr-help
+%patch11 -p1 -b .peercred
+%patch12 -p1 -b .pid
+%patch13 -p1 -b .page-label
+%patch14 -p1 -b .eggcups
+%patch15 -p1 -b .getpass
+%patch16 -p1 -b .driverd-timeout
+%patch17 -p1 -b .strict-ppd-line-length
+%patch18 -p1 -b .logrotate
+%patch19 -p1 -b .usb-paperout
+%patch20 -p1 -b .build
+%patch21 -p1 -b .res_init
+%patch22 -p1 -b .filter-debug
+%patch23 -p1 -b .uri-compat
+%patch24 -p1 -b .cups-get-classes
+%patch25 -p1 -b .avahi
+%patch26 -p1 -b .str3382
+%patch27 -p1 -b .str3285_v2
+%patch28 -p1 -b .str3390
+%patch29 -p1 -b .str3391
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -290,11 +282,11 @@ popd
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
-install -c -m 644 %{SOURCE9} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
-install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
-install -c -m 755 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
-install -c -m 755 %{SOURCE14} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
-install -c -m 644 %{SOURCE15} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
+install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
+install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
+install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
+install -c -m 755 %{SOURCE11} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
+install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 
 # Ship pstopdf for LSPP systems to deal with malicious postscript
 %if %lspp
@@ -516,8 +508,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com>
+* Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-1
+- 1.4.2.  No longer need str3380, str3332, str3356, str3396 patches.
 - Removed postscript.ppd.gz (bug #533371).
+- Renumbered patches and sources.
 
 * Tue Nov  3 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.1-13
 - Removed stale patch from STR #2831 which was causing problems with
