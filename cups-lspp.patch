@@ -1740,7 +1740,7 @@ diff -up cups-1.4.1/scheduler/ipp.c.lspp cups-1.4.1/scheduler/ipp.c
 +
 +    printerfile = strstr(printer->device_uri, "/dev/");
 +    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = strdup(printer->device_uri + strlen("file:/"));
++      printerfile = printer->device_uri + strlen("file:");
 +
 +    if (printerfile != NULL)
 +    {
@@ -2546,7 +2546,7 @@ diff -up cups-1.4.1/scheduler/job.c.lspp cups-1.4.1/scheduler/job.c
 +    */
 +    printerfile = strstr(printer->device_uri, "/dev/");
 +    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = strdup(printer->device_uri + strlen("file:/"));
++      printerfile = printer->device_uri + strlen("file:");
 +
 +    if (printerfile != NULL)
 +    {
@@ -2776,7 +2776,7 @@ diff -up cups-1.4.1/scheduler/printers.c.lspp cups-1.4.1/scheduler/printers.c
  
  
    DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -2296,6 +2309,42 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2296,6 +2309,45 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
        attr->values[1].string.text = _cupsStrAlloc(Classification ?
  	                                   Classification : p->job_sheets[1]);
      }
@@ -2788,12 +2788,15 @@ diff -up cups-1.4.1/scheduler/printers.c.lspp cups-1.4.1/scheduler/printers.c
 +      printercon = 0;
 +      printerfile = strstr(p->device_uri, "/dev/");
 +      if (printerfile == NULL && (strncmp(p->device_uri, "file:/", 6) == 0))
-+        printerfile = strdup(p->device_uri + strlen("file:/"));
++        printerfile = p->device_uri + strlen("file:");
 +
 +      if (printerfile != NULL)
 +      {
 +        if (getfilecon(printerfile, &devcon) == -1)
-+          cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdSetPrinterAttrs: Unable to get printer context");
++        {
++          if(is_selinux_enabled())
++            cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdSetPrinterAttrs: Unable to get printer context");
++        }
 +        else
 +        {
 +          printercon = context_new(devcon);
