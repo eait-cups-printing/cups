@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -506,6 +506,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Nov 11 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-3
+- Fixed lspp-patch to avoid memory leak (bug #536741).
+
 * Tue Nov 10 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-2
 - Added explicit version dependency on cups-libs to cups-lpd
   (bug #502205).
