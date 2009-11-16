@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -52,6 +52,7 @@ Patch26: cups-str3382.patch
 Patch27: cups-str3285_v2.patch
 Patch28: cups-str3390.patch
 Patch29: cups-str3391.patch
+Patch30: cups-str3381.patch
 
 Patch100: cups-lspp.patch
 
@@ -214,6 +215,7 @@ module.
 %patch27 -p1 -b .str3285_v2
 %patch28 -p1 -b .str3390
 %patch29 -p1 -b .str3391
+%patch30 -p1 -b .str3381
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -506,6 +508,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Nov 16 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-4
+- Upstream fix for GNU TLS error handling bug (STR #3381).
+
 * Wed Nov 11 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-3
 - Fixed lspp-patch to avoid memory leak (bug #536741).
 
