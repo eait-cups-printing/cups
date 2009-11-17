@@ -58,6 +58,7 @@ Patch30: cups-str3381.patch
 Patch31: cups-str3399.patch
 Patch32: cups-str3403.patch
 Patch33: cups-str3407.patch
+Patch34: cups-str3418.patch
 
 Patch100: cups-lspp.patch
 Epoch: 1
@@ -220,6 +221,7 @@ module.
 %patch31 -p1 -b .str3399
 %patch32 -p1 -b .str3403
 %patch33 -p1 -b .str3407
+%patch34 -p1 -b .str3418
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -518,6 +520,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Nov 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-6
+- Fixed display of current driver (bug #537182, STR #3418).
 - Fixed out-of-memory handling when loading jobs (bug #538054,
   STR #3407).
 
