@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -55,6 +55,7 @@ Patch29: cups-str3391.patch
 Patch30: cups-str3381.patch
 Patch31: cups-str3399.patch
 Patch32: cups-str3403.patch
+Patch33: cups-str3407.patch
 
 Patch100: cups-lspp.patch
 
@@ -220,6 +221,7 @@ module.
 %patch30 -p1 -b .str3381
 %patch31 -p1 -b .str3399
 %patch32 -p1 -b .str3403
+%patch33 -p1 -b .str3407
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -512,6 +514,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Nov 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-6
+- Fixed out-of-memory handling when loading jobs (bug #538054,
+  STR #3407).
+
 * Mon Nov 16 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-5
 - Fixed typo in admin web template (bug #537884, STR #3403).
 - Reset SIGPIPE handler for child processes (bug #537886, STR #3399).
