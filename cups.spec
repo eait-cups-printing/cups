@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -59,8 +59,13 @@ Patch31: cups-str3399.patch
 Patch32: cups-str3403.patch
 Patch33: cups-str3407.patch
 Patch34: cups-str3418.patch
+Patch35: cups-CVE-2009-3553.patch
 
 Patch100: cups-lspp.patch
+
+## SECURITY PATCHES:
+
+
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -222,10 +227,14 @@ module.
 %patch32 -p1 -b .str3403
 %patch33 -p1 -b .str3407
 %patch34 -p1 -b .str3418
+%patch35 -p1 -b .CVE-2009-3553
 
 %if %lspp
 %patch100 -p1 -b .lspp
 %endif
+
+# SECURITY PATCHES:
+
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -519,6 +528,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Nov 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-7
+- Applied patch to fix CVE-2009-3553 (bug #530111, STR #3200).
+
 * Tue Nov 17 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-6
 - Fixed display of current driver (bug #537182, STR #3418).
 - Fixed out-of-memory handling when loading jobs (bug #538054,
