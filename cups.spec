@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -60,6 +60,7 @@ Patch32: cups-str3403.patch
 Patch33: cups-str3407.patch
 Patch34: cups-str3418.patch
 Patch35: cups-CVE-2009-3553.patch
+Patch36: cups-str3422.patch
 
 Patch100: cups-lspp.patch
 
@@ -228,6 +229,7 @@ module.
 %patch33 -p1 -b .str3407
 %patch34 -p1 -b .str3418
 %patch35 -p1 -b .CVE-2009-3553
+%patch36 -p1 -b .str3422
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -528,6 +530,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Nov 20 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-8
+- Do not translate russian links showing completed jobs (bug #539354, STR #3422).
+
 * Thu Nov 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-7
 - Applied patch to fix CVE-2009-3553 (bug #530111, STR #3200).
 
