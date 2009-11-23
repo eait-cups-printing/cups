@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -520,8 +520,12 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Nov 23 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-9
+- Fixed small typos introduced in fix for bug #536741.
+
 * Fri Nov 20 2009 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-8
-- Do not translate russian links showing completed jobs (bug #539354, STR #3422).
+- Do not translate russian links showing completed jobs
+  (bug #539354, STR #3422).
 
 * Thu Nov 19 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-7
 - Applied patch to fix CVE-2009-3553 (bug #530111, STR #3200).
