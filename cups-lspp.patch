@@ -1740,7 +1740,7 @@ diff -up cups-1.4.1/scheduler/ipp.c.lspp cups-1.4.1/scheduler/ipp.c
 +
 +    printerfile = strstr(printer->device_uri, "/dev/");
 +    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = printer->device_uri + strlen("file:/");
++      printerfile = printer->device_uri + strlen("file:");
 +
 +    if (printerfile != NULL)
 +    {
@@ -2546,7 +2546,7 @@ diff -up cups-1.4.1/scheduler/job.c.lspp cups-1.4.1/scheduler/job.c
 +    */
 +    printerfile = strstr(printer->device_uri, "/dev/");
 +    if (printerfile == NULL && (strncmp(printer->device_uri, "file:/", 6) == 0))
-+      printerfile = printer->device_uri + strlen("file:/");
++      printerfile = printer->device_uri + strlen("file:");
 +
 +    if (printerfile != NULL)
 +    {
@@ -2788,7 +2788,7 @@ diff -up cups-1.4.1/scheduler/printers.c.lspp cups-1.4.1/scheduler/printers.c
 +      printercon = 0;
 +      printerfile = strstr(p->device_uri, "/dev/");
 +      if (printerfile == NULL && (strncmp(p->device_uri, "file:/", 6) == 0))
-+        printerfile = p->device_uri + strlen("file:/");
++        printerfile = p->device_uri + strlen("file:");
 +
 +      if (printerfile != NULL)
 +      {
