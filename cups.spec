@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -61,6 +61,7 @@ Patch33: cups-str3407.patch
 Patch34: cups-str3418.patch
 Patch35: cups-CVE-2009-3553.patch
 Patch36: cups-str3422.patch
+Patch37: cups-str3413.patch
 
 Patch100: cups-lspp.patch
 
@@ -230,6 +231,7 @@ module.
 %patch34 -p1 -b .str3418
 %patch35 -p1 -b .CVE-2009-3553
 %patch36 -p1 -b .str3422
+%patch37 -p1 -b .str3413
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -530,6 +532,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Dec  3 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-11
+- Fixes for SNMP scanning with Lexmark printers (bug #542857, STR #3413).
+
 * Mon Nov 23 2009 Tim Waugh <twaugh@redhat.com> 1:1.4.2-10
 - Undo last change as it was incorrect.
 
