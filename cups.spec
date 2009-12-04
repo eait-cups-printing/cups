@@ -62,7 +62,7 @@ Patch34: cups-str3418.patch
 Patch35: cups-CVE-2009-3553.patch
 Patch36: cups-str3422.patch
 Patch37: cups-str3413.patch
-Patch38: cups-conflicts.patch
+Patch38: cups-str3439.patch
 
 Patch100: cups-lspp.patch
 
