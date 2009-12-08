@@ -66,6 +66,7 @@ Patch39: cups-str3440.patch
 Patch40: cups-str3442.patch
 Patch41: cups-negative-snmp-string-length.patch
 Patch42: cups-sidechannel-intrs.patch
+Patch43: cups-media-empty-warning.patch
 
 Patch100: cups-lspp.patch
 
@@ -237,6 +238,7 @@ module.
 %patch40 -p1 -b .str3442
 %patch41 -p1 -b .negative-snmp-string-length
 %patch42 -p1 -b .sidechannel-intrs
+%patch43 -p1 -b .media-empty-warning
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -536,6 +538,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- Use upstream patch to stop the network backends incorrectly clearing
+  the media-empty-warning state (rev 8896).
 - Use upstream patch to fix interrupt handling in the side-channel
   APIs (rev 8896).
 - Use upstream patch to handle negative SNMP string lengths (rev 8896).
