@@ -1,6 +1,6 @@
 diff -up cups-1.4.2/backend/network.c.negative-snmp-string-length cups-1.4.2/backend/network.c
 --- cups-1.4.2/backend/network.c.negative-snmp-string-length	2009-08-31 19:45:43.000000000 +0100
-+++ cups-1.4.2/backend/network.c	2009-12-08 11:03:05.728413423 +0000
++++ cups-1.4.2/backend/network.c	2009-12-08 11:14:45.010363459 +0000
 @@ -170,9 +170,13 @@ backendNetworkSideCB(
  
  	        case CUPS_ASN1_BIT_STRING :
@@ -16,4 +16,16 @@ diff -up cups-1.4.2/backend/network.c.negative-snmp-string-length cups-1.4.2/bac
 +		      i = (int)(sizeof(data) - (dataptr - data));
  
  		    memcpy(dataptr, packet.object_value.string.bytes, i);
+ 
+diff -up cups-1.4.2/backend/snmp-supplies.c.negative-snmp-string-length cups-1.4.2/backend/snmp-supplies.c
+--- cups-1.4.2/backend/snmp-supplies.c.negative-snmp-string-length	2009-08-31 17:34:06.000000000 +0100
++++ cups-1.4.2/backend/snmp-supplies.c	2009-12-08 11:15:05.505362685 +0000
+@@ -232,6 +232,8 @@ backendSNMPSupplies(
+     if (packet.object_value.string.num_bytes == 2)
+       new_state = (packet.object_value.string.bytes[0] << 8) |
+ 		  packet.object_value.string.bytes[1];
++    else if (packet.object_value.string.num_bytes == 1)
++      new_state = (packet.object_value.string.bytes[0] << 8);
+     else
+       new_state = 0;
  
