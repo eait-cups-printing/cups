@@ -67,6 +67,7 @@ Patch42: cups-sidechannel-intrs.patch
 Patch43: cups-media-empty-warning.patch
 Patch44: cups-str3435.patch
 Patch45: cups-str3436.patch
+Patch46: cups-str3425.patch
 
 Patch100: cups-lspp.patch
 
@@ -241,6 +242,7 @@ module.
 %patch43 -p1 -b .media-empty-warning
 %patch44 -p1 -b .str3435
 %patch45 -p1 -b .str3436
+%patch46 -p1 -b .str3425
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -532,6 +534,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- The scheduler did not clean out completed jobs when
+  PreserveJobHistory was turned off (STR #3425).
 - The web interface did not show completed jobs (STR #3436).
 - Authenticated printing did not always work when printing directly to
   a remote server (STR #3435).
