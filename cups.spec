@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -497,6 +497,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/cups/mime/mime.convs
 %dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.defs
+%{_datadir}/cups/ppdc/*.h
 
 %files libs
 %defattr(-,root,root)
@@ -507,9 +508,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
-%dir %{_datadir}/cups
-%dir %{_datadir}/cups/ppdc
-%{_datadir}/cups/ppdc/*.h
 
 %files lpd
 %defattr(-,root,root)
@@ -524,6 +522,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- Moved %%{_datadir}/cups/ppdc/*.h to the main package (bug #545348).
+
 * Fri Dec  4 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-13
 - The web interface prevented conflicting options from being adjusted
   (bug #533426, STR #3439).
