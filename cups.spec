@@ -30,7 +30,6 @@ Patch4: cups-serial.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
-Patch8: cups-paps.patch
 Patch9: cups-direct-usb.patch
 Patch10: cups-lpr-help.patch
 Patch11: cups-peercred.patch
@@ -111,9 +110,6 @@ BuildRequires: gcc >= 4.0.1
 
 BuildPrereq: dbus-devel >= 0.90
 Requires: dbus >= 0.90
-
-# The paps package uses pango to render UTF-8 text to PostScript.
-Requires: paps >= 0.6.6-9
 
 # Requires tmpwatch for the cron.daily script (bug #218901).
 Requires: tmpwatch
@@ -201,7 +197,6 @@ module.
 %patch5 -p1 -b .banners
 %patch6 -p1 -b .serverbin-compat
 %patch7 -p1 -b .no-export-ssllibs
-%patch8 -p1 -b .paps
 %patch9 -p1 -b .direct-usb
 %patch10 -p1 -b .lpr-help
 %patch11 -p1 -b .peercred
@@ -523,6 +518,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- No longer requires paps.  The texttopaps filter MIME conversion file
+  is now provided by the paps package (bug #545036).
 - Moved %%{_datadir}/cups/ppdc/*.h to the main package (bug #545348).
 
 * Fri Dec  4 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-13
