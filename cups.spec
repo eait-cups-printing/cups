@@ -522,6 +522,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- Use upstream fix for SNMP detection (bug #542857, STR #3413).
 - Use the text filter for text/css files (bug #545026, STR #3442).
 - Show conflicting option values in web UI (bug #544326, STR #3440).
 - Use upstream fix for adjustment of conflicting options

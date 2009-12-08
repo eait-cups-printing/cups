@@ -1,6 +1,6 @@
 diff -up cups-1.4.2/backend/snmp.c.str3413 cups-1.4.2/backend/snmp.c
 --- cups-1.4.2/backend/snmp.c.str3413	2009-01-14 22:40:58.000000000 +0000
-+++ cups-1.4.2/backend/snmp.c	2009-12-03 10:01:27.933335209 +0000
++++ cups-1.4.2/backend/snmp.c	2009-12-08 10:54:11.798515550 +0000
 @@ -999,7 +999,7 @@ read_snmp_response(int fd)		/* I - SNMP 
  		       DEVICE_PRODUCT, LexmarkProductOID2);
  	_cupsSNMPWrite(fd, &(packet.address), CUPS_SNMP_VERSION_1,
@@ -10,33 +10,24 @@ diff -up cups-1.4.2/backend/snmp.c.str3413 cups-1.4.2/backend/snmp.c
  	_cupsSNMPWrite(fd, &(packet.address), CUPS_SNMP_VERSION_1,
  	               packet.community, CUPS_ASN1_GET_REQUEST,
  		       DEVICE_PRODUCT, XeroxProductOID);
-@@ -1064,7 +1064,19 @@ read_snmp_response(int fd)		/* I - SNMP 
+@@ -1054,7 +1054,9 @@ read_snmp_response(int fd)		/* I - SNMP 
+ 	break;
  
- 
- 	  if (device->id)
-+	  {
-+	    if (strlen (device->id) >
-+		strlen ((char *)packet.object_value.string.bytes))
-+	    {
-+	     /*
-+	      * The Device ID we already saw was more complete.
-+	      */
-+
-+	      break;
-+	    }
-+
- 	    free(device->id);
-+	  }
- 
- 	  device->id = strdup((char *)packet.object_value.string.bytes);
- 
-@@ -1107,7 +1119,8 @@ read_snmp_response(int fd)		/* I - SNMP 
+     case DEVICE_ID :
+-	if (device && packet.object_type == CUPS_ASN1_OCTET_STRING)
++	if (device && packet.object_type == CUPS_ASN1_OCTET_STRING &&
++	    (!device->id ||
++	     strlen(device->id) < packet.object_value.string.num_bytes))
+ 	{
+ 	 /*
+ 	  * Update an existing cache entry...
+@@ -1107,7 +1109,7 @@ read_snmp_response(int fd)		/* I - SNMP 
  
      case DEVICE_URI :
  	if (device && packet.object_type == CUPS_ASN1_OCTET_STRING &&
 -	    !device->uri)
-+	    !device->uri &&
-+	    (char *)packet.object_value.string.bytes[0] != '\0')
++	    !device->uri && packet.object_value.string.num_bytes > 0)
  	{
  	 /*
  	  * Update an existing cache entry...
+diff -up cups-1.4.2/CHANGES-1.4.txt.str3413 cups-1.4.2/CHANGES-1.4.txt
