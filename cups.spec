@@ -71,6 +71,7 @@ Patch44: cups-str3435.patch
 Patch45: cups-str3436.patch
 Patch46: cups-str3425.patch
 Patch47: cups-str3428.patch
+Patch48: cups-str3431.patch
 
 Patch100: cups-lspp.patch
 
@@ -247,6 +248,7 @@ module.
 %patch45 -p1 -b .str3436
 %patch46 -p1 -b .str3425
 %patch47 -p1 -b .str3428
+%patch48 -p1 -b .str3431
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -546,6 +548,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- The scheduler did not use the Get-Job-Attributes policy for a
+  printer (STR #3431).
 - The scheduler added two job-name attributes to each job object
   (STR #3428).
 - The scheduler did not clean out completed jobs when
