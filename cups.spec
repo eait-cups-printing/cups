@@ -60,6 +60,7 @@ Patch35: cups-CVE-2009-3553.patch
 Patch36: cups-str3422.patch
 Patch37: cups-str3413.patch
 Patch38: cups-str3439.patch
+Patch39: cups-str3440.patch
 
 Patch100: cups-lspp.patch
 
@@ -227,6 +228,7 @@ module.
 %patch36 -p1 -b .str3422
 %patch37 -p1 -b .str3413
 %patch38 -p1 -b .str3439
+%patch39 -p1 -b .str3440
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -518,6 +520,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- Show conflicting option values in web UI (bug #544326, STR #3440).
 - Use upstream fix for adjustment of conflicting options
   (bug #533426, STR #3439).
 - No longer requires paps.  The texttopaps filter MIME conversion file
