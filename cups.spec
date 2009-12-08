@@ -528,6 +528,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
+- Use upstream fix for adjustment of conflicting options
+  (bug #533426, STR #3439).
 - No longer requires paps.  The texttopaps filter MIME conversion file
   is now provided by the paps package (bug #545036).
 
