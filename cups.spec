@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,6 +72,7 @@ Patch45: cups-str3436.patch
 Patch46: cups-str3425.patch
 Patch47: cups-str3428.patch
 Patch48: cups-str3431.patch
+Patch49: cups-delete-active-printer.patch
 
 Patch100: cups-lspp.patch
 
@@ -249,6 +250,7 @@ module.
 %patch46 -p1 -b .str3425
 %patch47 -p1 -b .str3428
 %patch48 -p1 -b .str3431
+%patch49 -p1 -b .delete-active-printer
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -547,6 +549,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Dec  9 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-15
+- Use upstream patch to fix scheduler crash when an active printer was
+  deleted (rev 8914).
+
 * Tue Dec  8 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-14
 - The scheduler did not use the Get-Job-Attributes policy for a
   printer (STR #3431).
