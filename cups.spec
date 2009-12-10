@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -30,6 +30,7 @@ Patch4: cups-serial.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
+Patch8: cups-str3448.patch
 Patch9: cups-direct-usb.patch
 Patch10: cups-lpr-help.patch
 Patch11: cups-peercred.patch
@@ -208,6 +209,7 @@ module.
 %patch5 -p1 -b .banners
 %patch6 -p1 -b .serverbin-compat
 %patch7 -p1 -b .no-export-ssllibs
+%patch8 -p1 -b .str3448
 %patch9 -p1 -b .direct-usb
 %patch10 -p1 -b .lpr-help
 %patch11 -p1 -b .peercred
@@ -539,6 +541,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Dec 10 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-16
+- Fixed invalid read in cupsAddDest (bug #547460).
+
 * Wed Dec  9 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-15
 - Use upstream patch to fix scheduler crash when an active printer was
   deleted (rev 8914).
