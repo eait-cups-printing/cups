@@ -552,7 +552,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Dec 10 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-16
-- Fixed invalid read in cupsAddDest (bug #547460).
+- Fixed invalid read in cupsAddDest (bug #537460).
 
 * Wed Dec  9 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-15
 - Use upstream patch to fix scheduler crash when an active printer was
