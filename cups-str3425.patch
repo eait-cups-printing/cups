@@ -1,7 +1,16 @@
 diff -up cups-1.4.2/scheduler/job.c.str3425 cups-1.4.2/scheduler/job.c
---- cups-1.4.2/scheduler/job.c.str3425	2009-12-08 12:23:15.694500898 +0000
-+++ cups-1.4.2/scheduler/job.c	2009-12-08 12:23:35.005500733 +0000
-@@ -444,11 +444,11 @@ cupsdCleanJobs(void)
+--- cups-1.4.2/scheduler/job.c.str3425	2009-12-19 12:12:18.346037032 +0000
++++ cups-1.4.2/scheduler/job.c	2009-12-19 12:12:35.806163016 +0000
+@@ -253,7 +253,7 @@ cupsdCancelJobs(const char *dest,	/* I -
+       if (purge)
+ 	cupsdSetJobState(job, IPP_JOB_CANCELED, CUPSD_JOB_PURGE,
+ 	                 "Job purged by user.");
+-      else
++      else if (job->state_value < IPP_JOB_CANCELED)
+ 	cupsdSetJobState(job, IPP_JOB_CANCELED, CUPSD_JOB_DEFAULT,
+ 			 "Job canceled by user.");
+     }
+@@ -433,11 +433,11 @@ cupsdCleanJobs(void)
    cupsd_job_t	*job;			/* Current job */
  
  
@@ -15,7 +24,7 @@ diff -up cups-1.4.2/scheduler/job.c.str3425 cups-1.4.2/scheduler/job.c
         job = (cupsd_job_t *)cupsArrayNext(Jobs))
      if (job->state_value >= IPP_JOB_CANCELED && !job->printer)
        cupsdDeleteJob(job, CUPSD_JOB_PURGE);
-@@ -2670,8 +2670,6 @@ cupsdSetJobState(
+@@ -2498,8 +2498,6 @@ cupsdSetJobState(
  	  job->dirty = 1;
  	  cupsdMarkDirty(CUPSD_DIRTY_JOBS);
  	}
@@ -25,9 +34,9 @@ diff -up cups-1.4.2/scheduler/job.c.str3425 cups-1.4.2/scheduler/job.c
    }
  
 diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
---- cups-1.4.2/scheduler/main.c.str3425	2009-12-08 12:23:15.695501397 +0000
-+++ cups-1.4.2/scheduler/main.c	2009-12-08 12:23:35.007501250 +0000
-@@ -397,7 +397,7 @@ main(int  argc,				/* I - Number of comm
+--- cups-1.4.2/scheduler/main.c.str3425	2009-12-19 12:12:18.221037105 +0000
++++ cups-1.4.2/scheduler/main.c	2009-12-19 12:12:18.434038283 +0000
+@@ -389,7 +389,7 @@ main(int  argc,				/* I - Number of comm
      * parent's file descriptors to be blocking.  This is a workaround for a
      * limitation of userland libpthread on OpenBSD.
      */
@@ -36,7 +45,7 @@ diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
      _thread_sys_closefrom(0);
  #endif /* __OpenBSD__ */
  
-@@ -844,8 +844,8 @@ main(int  argc,				/* I - Number of comm
+@@ -817,8 +817,8 @@ main(int  argc,				/* I - Number of comm
  
      if (timeout == 86400 && Launchd && LaunchdTimeout && !NumPolled &&
          !cupsArrayCount(ActiveJobs) &&
@@ -47,7 +56,7 @@ diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
  	  (!NumBrowsers || !BrowseLocalProtocols ||
  	   cupsArrayCount(Printers) == 0))))
      {
-@@ -1073,6 +1073,7 @@ main(int  argc,				/* I - Number of comm
+@@ -1046,6 +1046,7 @@ main(int  argc,				/* I - Number of comm
      if ((current_time - senddoc_time) >= 10)
      {
        cupsdCheckJobs();
@@ -55,7 +64,7 @@ diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
        senddoc_time = current_time;
      }
  
-@@ -1231,8 +1232,8 @@ main(int  argc,				/* I - Number of comm
+@@ -1204,8 +1205,8 @@ main(int  argc,				/* I - Number of comm
  #endif /* HAVE_GSSAPI */
  
  #if defined(__APPLE__) && defined(HAVE_DLFCN_H)
@@ -66,7 +75,7 @@ diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
    */
  
    PSQUpdateQuotaProc = NULL;
-@@ -1594,13 +1595,13 @@ launchd_checkin(void)
+@@ -1562,13 +1563,13 @@ launchd_checkin(void)
  
  	if (lis)
  	{
@@ -82,7 +91,7 @@ diff -up cups-1.4.2/scheduler/main.c.str3425 cups-1.4.2/scheduler/main.c
  		  "launchd_checkin: Adding new listener %s with fd %d...",
  		  httpAddrString(&addr, s, sizeof(s)), fd);
  
-@@ -1654,12 +1655,12 @@ launchd_checkout(void)
+@@ -1622,12 +1623,12 @@ launchd_checkout(void)
  
   /*
    * Create or remove the launchd KeepAlive file based on whether
