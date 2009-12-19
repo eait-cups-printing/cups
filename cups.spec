@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -541,6 +541,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Sat Dec 19 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-18
+- Fixed patch for STR #3425 by adding in back-ported change from svn
+  revision 8936 (bug #548904).
+
 * Thu Dec 10 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-17
 - Fixed invalid read in cupsAddDest (bug #537460).
 
