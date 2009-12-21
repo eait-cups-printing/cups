@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,6 +72,7 @@ Patch46: cups-str3425.patch
 Patch47: cups-str3428.patch
 Patch48: cups-str3431.patch
 Patch49: cups-delete-active-printer.patch
+Patch50: cups-gnutls-gcrypt-threads.patch
 
 Patch100: cups-lspp.patch
 
@@ -251,6 +252,7 @@ module.
 %patch47 -p1 -b .str3428
 %patch48 -p1 -b .str3431
 %patch49 -p1 -b .delete-active-printer
+%patch50 -p1 -b .gnutls-gcrypt-threads
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -541,6 +543,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Dec 21 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-19
+- Ensure proper thread-safety in gnutls's use of libgcrypt
+  (bug #544619).
+
 * Sat Dec 19 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-18
 - Fixed patch for STR #3425 by adding in back-ported change from svn
   revision 8936 (bug #548904).
