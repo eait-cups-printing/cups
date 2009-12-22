@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -75,6 +75,7 @@ Patch47: cups-str3428.patch
 Patch48: cups-str3431.patch
 Patch49: cups-delete-active-printer.patch
 Patch50: cups-gnutls-gcrypt-threads.patch
+Patch51: cups-str3458.patch
 
 Patch100: cups-lspp.patch
 
@@ -255,6 +256,7 @@ module.
 %patch48 -p1 -b .str3431
 %patch49 -p1 -b .delete-active-printer
 %patch50 -p1 -b .gnutls-gcrypt-threads
+%patch51 -p1 -b .str3458
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -553,6 +555,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Dec 22 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-19
+- Fixed ipp authentication for servers requiring authentication for
+  IPP-Get-Printer-Attributes (bug #548873, STR #3458).
+
 * Mon Dec 21 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-18
 - Ensure proper thread-safety in gnutls's use of libgcrypt
   (bug #544619).
