@@ -9,7 +9,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 21%{?dist}
+Release: 22%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -82,16 +82,16 @@ Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-PreReq: /sbin/chkconfig /sbin/service
+Requires: /sbin/chkconfig /sbin/service
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
-Prereq: /usr/sbin/alternatives
+Requires: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd lpr LPRng <= 3.8.15-3
-Provides: lpd lpr
+Obsoletes: lpd <= 3.8.15, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
+Provides: lpd = 3.8.15-4, lpr = 3.8.15-4
 
 Obsoletes: cupsddk < 1.2.3-7
 Provides: cupsddk = 1.2.3-7
@@ -101,8 +101,8 @@ Provides: cupsddk-drivers = 1.2.3-7
 # kdelibs conflict for bug #192585.
 Conflicts: kdelibs < 6:3.5.2-6
 
-BuildPrereq: pam-devel pkgconfig
-BuildPrereq: gnutls-devel libacl-devel
+BuildRequires: pam-devel pkgconfig
+BuildRequires: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, pcre-devel
@@ -114,14 +114,14 @@ BuildRequires: avahi-devel
 BuildRequires: poppler-utils
 
 %if %lspp
-BuildPrereq: libselinux-devel >= 1.23
-BuildPrereq: audit-libs-devel >= 1.1
+BuildRequires: libselinux-devel >= 1.23
+BuildRequires: audit-libs-devel >= 1.1
 %endif
 
 # -fstack-protector-all requires GCC 4.0.1
 BuildRequires: gcc >= 4.0.1
 
-BuildPrereq: dbus-devel >= 0.90
+BuildRequires: dbus-devel >= 0.90
 Requires: dbus >= 0.90
 
 # Requires tmpwatch for the cron.daily script (bug #218901).
@@ -408,7 +408,7 @@ if [ "$1" = "0" ]; then
 	/sbin/service cups stop > /dev/null 2>&1
 	/sbin/chkconfig --del cups
 %if %use_alternatives
-        /usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
+	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
 %endif
 fi
 exit 0
@@ -543,6 +543,12 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Dec 24 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-22
+- Removed use of prereq and buildprereq.
+- Fixed use of '%%' in changelog.
+- Versioned explicit obsoletes/provides.
+- Use tabs throughout.
+
 * Wed Dec 23 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-21
 - Fixed patch for STR #3425 again by adding in back-ported change from
   svn revision 8929 (bug #549899).  No longer need
@@ -2048,7 +2054,7 @@ rm -rf $RPM_BUILD_ROOT
 - Start cupsd before nfs server processes (bug #97767).
 
 * Tue Jun 17 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-7
-- Add some %if %use_dbus / %endif's to make it compile without dbus
+- Add some %%if %%use_dbus / %%endif's to make it compile without dbus
   (bug #97397).  Patch from Jos Vos.
 
 * Mon Jun 16 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-6
@@ -2267,8 +2273,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Thu Feb 28 2002 Bill Nottingham <notting@redhat.com> 1.1.14-7
 - lpc man page is alternative too
-- run ldconfig in -libs %post/%postun, not main
-- remove alternatives in %preun
+- run ldconfig in -libs %%post/%%postun, not main
+- remove alternatives in %%preun
 
 * Wed Feb 27 2002 Bill Nottingham <notting@redhat.com> 1.1.14-6
 - don't source /etc/sysconfig/network in cups.init, we don't use any
@@ -2360,7 +2366,7 @@ rm -rf $RPM_BUILD_ROOT
 - rebuilt against libpng-1.0.8
 
 * Tue Aug 01 2000 Than Ngo <than@redhat.de>
-- fix permission, add missing ldconfig in %post and %postun (Bug #14963)
+- fix permission, add missing ldconfig in %%post and %%postun (Bug #14963)
 
 * Sat Jul 29 2000 Bernhard Rosenkraenzer <bero@redhat.com>
 - 1.1.1 (this has some major bugfixes)
