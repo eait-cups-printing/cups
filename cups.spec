@@ -1,7 +1,6 @@
 %define php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-%define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
@@ -9,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 22%{?dist}
+Release: 23%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -73,6 +72,7 @@ Patch47: cups-str3428.patch
 Patch48: cups-str3431.patch
 Patch49: cups-gnutls-gcrypt-threads.patch
 Patch50: cups-str3458.patch
+Patch51: cups-0755.patch
 
 Patch100: cups-lspp.patch
 
@@ -90,7 +90,7 @@ Requires: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd <= 3.8.15, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
+Obsoletes: lpd <= 3.8.15-3, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
 Provides: lpd = 3.8.15-4, lpr = 3.8.15-4
 
 Obsoletes: cupsddk < 1.2.3-7
@@ -253,6 +253,7 @@ module.
 %patch48 -p1 -b .str3431
 %patch49 -p1 -b .gnutls-gcrypt-threads
 %patch50 -p1 -b .str3458
+%patch51 -p1 -b .0755
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -287,7 +288,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -297,13 +298,13 @@ make BUILDROOT=$RPM_BUILD_ROOT install
 # Serial backend needs to run as root (bug #212577).
 chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 
-rm -rf	$RPM_BUILD_ROOT%{initdir} \
+rm -rf	$RPM_BUILD_ROOT%{_initddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
-mkdir -p $RPM_BUILD_ROOT%{initdir}
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{initdir}/cups
+mkdir -p $RPM_BUILD_ROOT%{_initddir}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initddir}/cups
 
-find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -n9f
+find $RPM_BUILD_ROOT%{_datadir}/cups/model -name "*.ppd" |xargs gzip -n9f
 
 %if %use_alternatives
 pushd $RPM_BUILD_ROOT%{_bindir}
@@ -378,7 +379,7 @@ install -m644 %{SOURCE3} \
 /sbin/chkconfig --add cups || true
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
-/bin/rm -rf /etc/cups/certs
+/bin/rm -rf %{_sysconfdir}/cups/certs
 %if %use_alternatives
 /usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
 	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
@@ -434,21 +435,21 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
 %{_sysconfdir}/udev/rules.d/70-cups-libusb.rules
-%dir %attr(0755,root,lp) /etc/cups
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
-%attr(0640,root,lp) /etc/cups/cupsd.conf.default
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
-/etc/cups/interfaces
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
-%dir %attr(0755,root,lp) /etc/cups/ppd
-%dir %attr(0700,root,lp) /etc/cups/ssl
-%config(noreplace) /etc/pam.d/cups
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/printers.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/subscriptions.conf
+%{_sysconfdir}/cups/interfaces
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
+%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
+%config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
@@ -468,12 +469,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
-%config(noreplace) %{initdir}/cups
-%{_bindir}/cupstestppd
-%{_bindir}/cupstestdsc
-%{_bindir}/cancel*
-%{_bindir}/lp*
-%{_bindir}/ppd*
+%config(noreplace) %{_initddir}/cups
+%attr(0755,root,root) %{_bindir}/cupstestppd
+%attr(0755,root,root) %{_bindir}/cupstestdsc
+%attr(0755,root,root) %{_bindir}/cancel*
+%attr(0755,root,root) %{_bindir}/lp*
+%attr(0755,root,root) %{_bindir}/ppd*
 %dir %{cups_serverbin}
 %{cups_serverbin}/backend
 %{cups_serverbin}/cgi-bin
@@ -543,6 +544,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jan 13 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-23
+- Use %%{_initddir}, %%{_sysconfdir} and SMP make flags.
+- Use mode 0755 for binaries and libraries where appropriate.
+- Fix lpd obsoletes tag.
+
 * Thu Dec 24 2009 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-22
 - Removed use of prereq and buildprereq.
 - Fixed use of '%%' in changelog.
