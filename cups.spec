@@ -370,9 +370,9 @@ extension=phpcups.so
 __EOF__
 
 # Install the udev rules.
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/udev/rules.d
+%{__mkdir_p} %{buildroot}/lib/udev/rules.d
 install -m644 %{SOURCE3} \
-	%{buildroot}%{_sysconfdir}/udev/rules.d/70-cups-libusb.rules
+	%{buildroot}/lib/udev/rules.d/70-cups-libusb.rules
 
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
@@ -434,7 +434,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
-%{_sysconfdir}/udev/rules.d/70-cups-libusb.rules
+/lib/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
@@ -545,6 +545,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Jan 14 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
+- Install udev rules in correct place (bug #530378).
 - Don't mark initscript as config file.
 
 * Wed Jan 13 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-23
