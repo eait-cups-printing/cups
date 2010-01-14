@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 23%{?dist}
+Release: 24%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -469,7 +469,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
-%config(noreplace) %{_initddir}/cups
+%{_initddir}/cups
 %attr(0755,root,root) %{_bindir}/cupstestppd
 %attr(0755,root,root) %{_bindir}/cupstestdsc
 %attr(0755,root,root) %{_bindir}/cancel*
@@ -544,6 +544,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jan 14 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
+- Don't mark initscript as config file.
+
 * Wed Jan 13 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-23
 - Use %%{_initddir}, %%{_sysconfdir} and SMP make flags.
 - Use mode 0755 for binaries and libraries where appropriate.
