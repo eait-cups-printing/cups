@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -255,6 +255,7 @@ module.
 %patch49 -p1 -b .gnutls-gcrypt-threads
 %patch50 -p1 -b .str3458
 %patch51 -p1 -b .0755
+%patch52 -p1 -b .str3460
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -545,7 +546,7 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-25
+* Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-26
 - Reset status after successful ipp job (bug #548219, STR #3460).
 
 * Thu Jan 14 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
