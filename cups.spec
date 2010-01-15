@@ -472,11 +472,11 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
 %{_initddir}/cups
-%attr(0755,root,root) %{_bindir}/cupstestppd
-%attr(0755,root,root) %{_bindir}/cupstestdsc
-%attr(0755,root,root) %{_bindir}/cancel*
-%attr(0755,root,root) %{_bindir}/lp*
-%attr(0755,root,root) %{_bindir}/ppd*
+%{_bindir}/cupstestppd
+%{_bindir}/cupstestdsc
+%{_bindir}/cancel*
+%{_bindir}/lp*
+%{_bindir}/ppd*
 %dir %{cups_serverbin}
 %{cups_serverbin}/backend
 %{cups_serverbin}/cgi-bin
