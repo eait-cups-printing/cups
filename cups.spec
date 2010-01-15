@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -73,6 +73,7 @@ Patch48: cups-str3431.patch
 Patch49: cups-gnutls-gcrypt-threads.patch
 Patch50: cups-str3458.patch
 Patch51: cups-0755.patch
+Patch52: cups-str3460.patch
 
 Patch100: cups-lspp.patch
 
@@ -544,6 +545,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-25
+- Reset status after successful ipp job (bug #548219, STR #3460).
+
 * Thu Jan 14 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
 - Install udev rules in correct place (bug #530378).
 - Don't mark initscript as config file.
