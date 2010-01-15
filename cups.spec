@@ -1,7 +1,6 @@
 %define php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-%define initdir /etc/rc.d/init.d
 %define use_alternatives 1
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
@@ -75,7 +74,8 @@ Patch47: cups-str3428.patch
 Patch48: cups-str3431.patch
 Patch49: cups-gnutls-gcrypt-threads.patch
 Patch50: cups-str3458.patch
-Patch51: cups-str3460.patch
+Patch51: cups-0755.patch
+Patch52: cups-str3460.patch
 
 Patch100: cups-lspp.patch
 
@@ -85,16 +85,16 @@ Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-PreReq: /sbin/chkconfig /sbin/service
+Requires: /sbin/chkconfig /sbin/service
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
-Prereq: /usr/sbin/alternatives
+Requires: /usr/sbin/alternatives
 %endif
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd lpr LPRng <= 3.8.15-3
-Provides: lpd lpr
+Obsoletes: lpd <= 3.8.15-3, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
+Provides: lpd = 3.8.15-4, lpr = 3.8.15-4
 
 Obsoletes: cupsddk < 1.2.3-7
 Provides: cupsddk = 1.2.3-7
@@ -104,8 +104,8 @@ Provides: cupsddk-drivers = 1.2.3-7
 # kdelibs conflict for bug #192585.
 Conflicts: kdelibs < 6:3.5.2-6
 
-BuildPrereq: pam-devel pkgconfig
-BuildPrereq: gnutls-devel libacl-devel
+BuildRequires: pam-devel pkgconfig
+BuildRequires: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, pcre-devel
@@ -117,14 +117,14 @@ BuildRequires: avahi-devel
 BuildRequires: poppler-utils
 
 %if %lspp
-BuildPrereq: libselinux-devel >= 1.23
-BuildPrereq: audit-libs-devel >= 1.1
+BuildRequires: libselinux-devel >= 1.23
+BuildRequires: audit-libs-devel >= 1.1
 %endif
 
 # -fstack-protector-all requires GCC 4.0.1
 BuildRequires: gcc >= 4.0.1
 
-BuildPrereq: dbus-devel >= 0.90
+BuildRequires: dbus-devel >= 0.90
 Requires: dbus >= 0.90
 
 # Requires tmpwatch for the cron.daily script (bug #218901).
@@ -256,7 +256,8 @@ module.
 %patch48 -p1 -b .str3431
 %patch49 -p1 -b .gnutls-gcrypt-threads
 %patch50 -p1 -b .str3458
-%patch51 -p1 -b .str3460
+%patch51 -p1 -b .0755
+%patch52 -p1 -b .str3460
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -294,7 +295,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -304,13 +305,13 @@ make BUILDROOT=$RPM_BUILD_ROOT install
 # Serial backend needs to run as root (bug #212577).
 chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 
-rm -rf	$RPM_BUILD_ROOT%{initdir} \
+rm -rf	$RPM_BUILD_ROOT%{_initddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
-mkdir -p $RPM_BUILD_ROOT%{initdir}
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{initdir}/cups
+mkdir -p $RPM_BUILD_ROOT%{_initddir}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initddir}/cups
 
-find $RPM_BUILD_ROOT/usr/share/cups/model -name "*.ppd" |xargs gzip -n9f
+find $RPM_BUILD_ROOT%{_datadir}/cups/model -name "*.ppd" |xargs gzip -n9f
 
 %if %use_alternatives
 pushd $RPM_BUILD_ROOT%{_bindir}
@@ -389,7 +390,7 @@ install -m644 %{SOURCE3} \
 /sbin/chkconfig --add cups || true
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
-/bin/rm -rf /etc/cups/certs
+/bin/rm -rf %{_sysconfdir}/cups/certs
 %if %use_alternatives
 /usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
 	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
@@ -419,7 +420,7 @@ if [ "$1" = "0" ]; then
 	/sbin/service cups stop > /dev/null 2>&1
 	/sbin/chkconfig --del cups
 %if %use_alternatives
-        /usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
+	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
 %endif
 fi
 exit 0
@@ -445,22 +446,22 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
 /lib/udev/rules.d/70-cups-libusb.rules
-%dir %attr(0755,root,lp) /etc/cups
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) /etc/cups/cupsd.conf
-%attr(0640,root,lp) /etc/cups/cupsd.conf.default
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/client.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/classes.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) /etc/cups/printers.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/snmp.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/subscriptions.conf
-/etc/cups/interfaces
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) /etc/cups/lpoptions
-%dir %attr(0755,root,lp) /etc/cups/ppd
-%dir %attr(0700,root,lp) /etc/cups/ssl
-/etc/cups/pstoraster.convs
-%config(noreplace) /etc/pam.d/cups
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/printers.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/subscriptions.conf
+%{_sysconfdir}/cups/interfaces
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
+%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
+%{_sysconfdir}/cups/pstoraster.convs
+%config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
@@ -480,7 +481,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
-%config(noreplace) %{initdir}/cups
+%{_initddir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
 %{_bindir}/cancel*
@@ -556,6 +557,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-22
+- Don't mark initscript as config file.
+- Use %%{_initddir}, %%{_sysconfdir} and SMP make flags.
+- Use mode 0755 for binaries and libraries where appropriate.
+- Removed use of prereq and buildprereq.
+- Fixed use of '%%' in changelog.
+- Versioned explicit obsoletes/provides.
+- Use tabs throughout.
 - Reset status after successful ipp job (bug #548219, STR #3460).
 
 * Thu Jan 14 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-21
@@ -2064,7 +2072,7 @@ rm -rf $RPM_BUILD_ROOT
 - Start cupsd before nfs server processes (bug #97767).
 
 * Tue Jun 17 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-7
-- Add some %if %use_dbus / %endif's to make it compile without dbus
+- Add some %%if %%use_dbus / %%endif's to make it compile without dbus
   (bug #97397).  Patch from Jos Vos.
 
 * Mon Jun 16 2003 Tim Waugh <twaugh@redhat.com> 1:1.1.19-6
@@ -2283,8 +2291,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Thu Feb 28 2002 Bill Nottingham <notting@redhat.com> 1.1.14-7
 - lpc man page is alternative too
-- run ldconfig in -libs %post/%postun, not main
-- remove alternatives in %preun
+- run ldconfig in -libs %%post/%%postun, not main
+- remove alternatives in %%preun
 
 * Wed Feb 27 2002 Bill Nottingham <notting@redhat.com> 1.1.14-6
 - don't source /etc/sysconfig/network in cups.init, we don't use any
@@ -2376,7 +2384,7 @@ rm -rf $RPM_BUILD_ROOT
 - rebuilt against libpng-1.0.8
 
 * Tue Aug 01 2000 Than Ngo <than@redhat.de>
-- fix permission, add missing ldconfig in %post and %postun (Bug #14963)
+- fix permission, add missing ldconfig in %%post and %%postun (Bug #14963)
 
 * Sat Jul 29 2000 Bernhard Rosenkraenzer <bero@redhat.com>
 - 1.1.1 (this has some major bugfixes)
