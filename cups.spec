@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 26%{?dist}
+Release: 27%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -137,6 +137,9 @@ Requires: poppler-utils
 # We ship udev rules which use setfacl.
 Requires: udev
 Requires: acl
+
+# Make sure we have some filters for converting to raster format.
+Requires: ghostscript-cups
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -546,6 +549,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jan 22 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-27
+- Make sure we have some filters for converting to raster format.
+
 * Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-26
 - Reset status after successful ipp job (bug #548219, STR #3460).
 
