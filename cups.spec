@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 27%{?dist}
+Release: 28%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -113,6 +113,9 @@ BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
 BuildRequires: poppler-utils
+
+# Make sure we get postscriptdriver tags.
+BuildRequires: pycups
 
 %if %lspp
 BuildRequires: libselinux-devel >= 1.23
@@ -549,6 +552,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Feb  4 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-28
+- Rebuild for postscriptdriver tags.
+
 * Fri Jan 22 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-27
 - Make sure we have some filters for converting to raster format.
 
