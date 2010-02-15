@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 28%{?dist}
+Release: 29%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -552,6 +552,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Feb 15 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-29
+- Improve cups-gnutls-gcrypt-threads.patch (#564841, STR #3461).
+
 * Thu Feb  4 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-28
 - Rebuild for postscriptdriver tags.
 
