@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 23%{?dist}
+Release: 24%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -76,6 +76,7 @@ Patch49: cups-gnutls-gcrypt-threads.patch
 Patch50: cups-str3458.patch
 Patch51: cups-0755.patch
 Patch52: cups-str3460.patch
+Patch53: cups-EAI_AGAIN.patch
 
 Patch100: cups-lspp.patch
 
@@ -258,6 +259,7 @@ module.
 %patch50 -p1 -b .str3458
 %patch51 -p1 -b .0755
 %patch52 -p1 -b .str3460
+%patch53 -p1 -b .EAI_AGAIN
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -556,6 +558,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Feb 23 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
+- Re-initialize the resolver if getnameinfo() returns EAI_AGAIN
+  (bug #567353).
+
 * Fri Jan 15 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-23
 - Don't mark initscript as config file.
 - Use %%{_initddir}, %%{_sysconfdir} and SMP make flags.
