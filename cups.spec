@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -77,6 +77,7 @@ Patch50: cups-str3458.patch
 Patch51: cups-0755.patch
 Patch52: cups-str3460.patch
 Patch53: cups-EAI_AGAIN.patch
+Patch54: cups-str3505.patch
 
 Patch100: cups-lspp.patch
 
@@ -260,6 +261,7 @@ module.
 %patch51 -p1 -b .0755
 %patch52 -p1 -b .str3460
 %patch53 -p1 -b .EAI_AGAIN
+%patch54 -p1 -b .str3505
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -558,6 +560,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Feb 23 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-25
+- Update classes.conf when a class member printer is deleted
+  (bug #565878, STR #3505).
+
 * Tue Feb 23 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-24
 - Re-initialize the resolver if getnameinfo() returns EAI_AGAIN
   (bug #567353).
