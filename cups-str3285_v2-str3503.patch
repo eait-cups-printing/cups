@@ -6,7 +6,7 @@ diff -up cups-1.4.1/cups/dest.c.str3285 cups-1.4.1/cups/dest.c
    if (!cups_get_sdests(http, op, name, 0, &dest))
    {
 -    if (op == CUPS_GET_DEFAULT)
-+    if (op == CUPS_GET_DEFAULT || name)
++    if (op == CUPS_GET_DEFAULT || (name && !set_as_default))
        return (NULL);
  
     /*
