@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 31%{?dist}
+Release: 32%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -48,7 +48,7 @@ Patch23: cups-uri-compat.patch
 Patch24: cups-cups-get-classes.patch
 Patch25: cups-avahi.patch
 Patch26: cups-str3382.patch
-Patch27: cups-str3285_v2.patch
+Patch27: cups-str3285_v2-str3503.patch
 Patch28: cups-str3390.patch
 Patch29: cups-str3391.patch
 Patch30: cups-str3381.patch
@@ -238,7 +238,7 @@ module.
 %patch24 -p1 -b .cups-get-classes
 %patch25 -p1 -b .avahi
 %patch26 -p1 -b .str3382
-%patch27 -p1 -b .str3285_v2
+%patch27 -p1 -b .str3285_v2-str3503
 %patch28 -p1 -b .str3390
 %patch29 -p1 -b .str3391
 %patch30 -p1 -b .str3381
@@ -556,6 +556,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Feb 24 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-32
+- Fixed cupsGetNamedDest() so it falls back to the real default
+  printer when a default from configuration file does not exist (bug #565569, STR #3503).
+
 * Tue Feb 23 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-31
 - Update classes.conf when a class member printer is deleted
   (bug #565878, STR #3505).
