@@ -12,14 +12,23 @@ Release: 33%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
+# Our initscript
 Source1: cups.init
+# Pixmap for desktop file
 Source2: cupsprinter.png
+# udev rules for libusb devices
 Source3: cups-libusb.rules
+# LSPP-required ps->pdf filter
 Source4: pstopdf
+# xinetd config file for cups-lpd service
 Source5: cups-lpd
+# Logrotate configuration
 Source6: cups.logrotate
+# Backend for NCP protocol
 Source7: ncp.backend
+# Cron-based tmpwatch for /var/spool/cups/tmp
 Source8: cups.cron
+# Filter and PPD for textonly printing
 Source9: textonly.filter
 Source10: textonly.ppd
 Patch1: cups-no-gzip-man.patch
@@ -212,59 +221,113 @@ module.
 
 %prep
 %setup -q
+# Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
+# Use the system pam configuration.
 %patch2 -p1 -b .system-auth
+# Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Fix compilation of serial backend.
 %patch4 -p1 -b .serial
+# Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
+# Use compatibility fallback path for ServerBin.
 %patch6 -p1 -b .serverbin-compat
+# Don't export SSLLIBS to cups-config.
 %patch7 -p1 -b .no-export-ssllibs
+# Avoid use-after-free in cupsAddDest.
 %patch8 -p1 -b .str3448
+# Allow file-based usb device URIs.
 %patch9 -p1 -b .direct-usb
+# Add --help option to lpr.
 %patch10 -p1 -b .lpr-help
+# Fix compilation of peer credentials support.
 %patch11 -p1 -b .peercred
+# Maintain a cupsd.pid file.
 %patch12 -p1 -b .pid
+# Fix orientation of page labels.
 %patch13 -p1 -b .page-label
+# Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch14 -p1 -b .eggcups
+# More sophisticated implementation of cupsGetPassword than getpass.
 %patch15 -p1 -b .getpass
+# Increase driverd timeout to 70s to accommodate foomatic.
 %patch16 -p1 -b .driverd-timeout
+# Only enforce maximum PPD line length when in strict mode.
 %patch17 -p1 -b .strict-ppd-line-length
+# Re-open the log if it has been logrotated under us.
 %patch18 -p1 -b .logrotate
+# Support for errno==ENOSPACE-based USB paper-out reporting.
 %patch19 -p1 -b .usb-paperout
+# Simplify the DNSSD parts so they can build using the compat library.
 %patch20 -p1 -b .build
+# Re-initialise the resolver on failure in httpAddrGetList().
 %patch21 -p1 -b .res_init
+# Log extra debugging information if no filters are available.
 %patch22 -p1 -b .filter-debug
+# Allow the usb backend to understand old-style URI formats.
 %patch23 -p1 -b .uri-compat
+# Fix support for older CUPS servers in cupsGetDests.
 %patch24 -p1 -b .cups-get-classes
+# Avahi support in the dnssd backend.
 %patch25 -p1 -b .avahi
+# Fix temporary filename creation.
 %patch26 -p1 -b .str3382
+# Fix cupsGetNamedDest() when a name is specified.
 %patch27 -p1 -b .str3285_v2-str3503
+# Set the PRINTER_IS_SHARED CGI variable.
 %patch28 -p1 -b .str3390
+# Set the CGI variables required by the serial backend.
 %patch29 -p1 -b .str3391
+# Fix signal handling when using gnutls.
 %patch30 -p1 -b .str3381
+# Reset SIGPIPE handler before starting child processes.
 %patch31 -p1 -b .str3399
+# Fixed typo in Russian translation of admin CGI page.
 %patch32 -p1 -b .str3403
+# Handle out-of-memory more gracefully when loading jobs.
 %patch33 -p1 -b .str3407
+# Set PPD_MAKE CGI variable.
 %patch34 -p1 -b .str3418
+# Fix use-after-free in select.c.
 %patch35 -p1 -b .CVE-2009-3553
+# Fix Russian translations of CGI pages.
 %patch36 -p1 -b .str3422
+# Fix SNMP handling.
 %patch37 -p1 -b .str3413
+# Fix adjustment of conflicting options in web interface.
 %patch38 -p1 -b .str3439
+# Show which option conflicts in web interface.
 %patch39 -p1 -b .str3440
+# Provide filter path for text/css.
 %patch40 -p1 -b .str3442
+# Fix SNMP handling with negative string lengths.
 %patch41 -p1 -b .negative-snmp-string-length
+# Fix signal handling in the sidechannel API.
 %patch42 -p1 -b .sidechannel-intrs
+# Stop network backends incorrectly clearing media-empty-warning.
 %patch43 -p1 -b .media-empty-warning
+# Fixed authentication bug in cupsPrintFiles2.
 %patch44 -p1 -b .str3435
+# Set PRINTER_NAME and PRINTER_URI_SUPPORTED CGI variables.
 %patch45 -p1 -b .str3436
+# Clean out completed jobs when PreserveJobHistory is off.
 %patch46 -p1 -b .str3425
+# Don't add two job-name attributes to each job object.
 %patch47 -p1 -b .str3428
+# Use the Get-Job-Attributes policy for a printer.
 %patch48 -p1 -b .str3431
 #%patch49 -p1 -b .gnutls-gcrypt-threads
+# Fix IPP authentication for servers requiring auth for
+# IPP-Get-Printer-Attributes.
 %patch50 -p1 -b .str3458
+# Use mode 0755 for binaries and libraries where appropriate.
 %patch51 -p1 -b .0755
+# Clear printer status after successful IPP job.
 %patch52 -p1 -b .str3460
+# Re-initialise the resolver on failure in httpAddrLookup().
 %patch53 -p1 -b .EAI_AGAIN
+# Update classes.conf when a class member printer is deleted
 %patch54 -p1 -b .str3505
 
 %if %lspp
@@ -556,6 +619,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com>
+- Added comments for all sources and patches.
+
 * Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-33
 - Don't own filesystem locale directories (bug #569403).
 - Don't apply gcrypt threading patch (bug #553834).
