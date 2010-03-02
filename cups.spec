@@ -520,7 +520,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ru/*.tmpl
-%{_datadir}/locale/*
+%{_datadir}/locale/*/*.po
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
 %dir %attr(0710,root,lp) /var/spool/cups
@@ -561,6 +561,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-27
+- Don't own filesystem locale directories (bug #569403).
 - Don't apply gcrypt threading patch (bug #553834).
 - Don't treat SIGPIPE as an error (bug #569770).
 
