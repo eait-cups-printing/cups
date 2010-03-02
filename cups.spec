@@ -256,7 +256,7 @@ module.
 %patch46 -p1 -b .str3425
 %patch47 -p1 -b .str3428
 %patch48 -p1 -b .str3431
-%patch49 -p1 -b .gnutls-gcrypt-threads
+#%patch49 -p1 -b .gnutls-gcrypt-threads
 %patch50 -p1 -b .str3458
 %patch51 -p1 -b .0755
 %patch52 -p1 -b .str3460
@@ -561,6 +561,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-27
+- Don't apply gcrypt threading patch (bug #553834).
 - Don't treat SIGPIPE as an error (bug #569770).
 
 * Wed Feb 24 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-26
