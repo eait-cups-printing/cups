@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 32%{?dist}
+Release: 33%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -556,6 +556,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-33
+- Don't treat SIGPIPE as an error (bug #569770).
+
 * Wed Feb 24 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-32
 - Fixed cupsGetNamedDest() so it falls back to the real default
   printer when a default from configuration file does not exist (bug #565569, STR #3503).
