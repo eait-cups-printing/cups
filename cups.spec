@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 33%{?dist}
+Release: 34%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -85,6 +85,7 @@ Patch51: cups-0755.patch
 Patch52: cups-str3460.patch
 Patch53: cups-EAI_AGAIN.patch
 Patch54: cups-str3505.patch
+Patch55: cups-CVE-2010-0302.patch
 
 Patch100: cups-lspp.patch
 
@@ -329,8 +330,12 @@ module.
 %patch53 -p1 -b .EAI_AGAIN
 # Update classes.conf when a class member printer is deleted
 %patch54 -p1 -b .str3505
+# Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
+# bug #557775).
+%patch55 -p1 -b .CVE-2010-0302
 
 %if %lspp
+# LSPP support.
 %patch100 -p1 -b .lspp
 %endif
 
@@ -619,7 +624,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com>
+* Fri Mar  5 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-34
+- Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
+  bug #557775).
 - Added comments for all sources and patches.
 
 * Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-33
