@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 27%{?dist}
+Release: 28%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -82,6 +82,7 @@ Patch54: cups-str3505.patch
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
+Patch200: cups-CVE-2010-0302.patch
 
 
 Epoch: 1
@@ -268,6 +269,7 @@ module.
 %endif
 
 # SECURITY PATCHES:
+%patch200 -p1 -b .CVE-2010-0302
 
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
@@ -560,6 +562,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Mar  5 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-28
+- Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
+  bug #557775).
+
 * Tue Mar  2 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-27
 - Don't own filesystem locale directories (bug #569403).
 - Don't apply gcrypt threading patch (bug #553834).
