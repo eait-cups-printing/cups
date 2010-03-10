@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 28%{?dist}
+Release: 29%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -562,6 +562,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Mar 10 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-29
+- Fixed (for the third time) patch for STR #3425 to correctly
+  remove job info files in /var/spool/cups (bug #571830).
+
 * Fri Mar  5 2010 Tim Waugh <twaugh@redhat.com> - 1:1.4.2-28
 - Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
   bug #557775).
