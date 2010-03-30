@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.2
-Release: 29%{?dist}
+Release: 30%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -78,6 +78,7 @@ Patch51: cups-0755.patch
 Patch52: cups-str3460.patch
 Patch53: cups-EAI_AGAIN.patch
 Patch54: cups-str3505.patch
+Patch55: cups-str3541.patch
 
 Patch100: cups-lspp.patch
 
@@ -263,6 +264,7 @@ module.
 %patch52 -p1 -b .str3460
 %patch53 -p1 -b .EAI_AGAIN
 %patch54 -p1 -b .str3505
+%patch55 -p1 -b .str3541
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -562,6 +564,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Mar 30 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-30
+- Fixed lpstat to adhere to -o option (bug #577901, STR #3541).
+
 * Wed Mar 10 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-29
 - Fixed (for the third time) patch for STR #3425 to correctly
   remove job info files in /var/spool/cups (bug #571830).
