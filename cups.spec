@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.2
-Release: 36%{?dist}
+Version: 1.4.3
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -38,60 +38,36 @@ Patch4: cups-serial.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
-Patch8: cups-str3448.patch
-Patch9: cups-direct-usb.patch
-Patch10: cups-lpr-help.patch
-Patch11: cups-peercred.patch
-Patch12: cups-pid.patch
-Patch13: cups-page-label.patch
-Patch14: cups-eggcups.patch
-Patch15: cups-getpass.patch
-Patch16: cups-driverd-timeout.patch
-Patch17: cups-strict-ppd-line-length.patch
-Patch18: cups-logrotate.patch
-Patch19: cups-usb-paperout.patch
-Patch20: cups-build.patch
-Patch21: cups-res_init.patch
-Patch22: cups-filter-debug.patch
-Patch23: cups-uri-compat.patch
-Patch24: cups-cups-get-classes.patch
-Patch25: cups-avahi.patch
-Patch26: cups-str3382.patch
-Patch27: cups-str3285_v2-str3503.patch
-Patch28: cups-str3390.patch
-Patch29: cups-str3391.patch
-Patch30: cups-str3381.patch
-Patch31: cups-str3399.patch
-Patch32: cups-str3403.patch
-Patch33: cups-str3407.patch
-Patch34: cups-str3418.patch
-Patch35: cups-CVE-2009-3553.patch
-Patch36: cups-str3422.patch
-Patch37: cups-str3413.patch
-Patch38: cups-str3439.patch
-Patch39: cups-str3440.patch
-Patch40: cups-str3442.patch
-Patch41: cups-negative-snmp-string-length.patch
-Patch42: cups-sidechannel-intrs.patch
-Patch43: cups-media-empty-warning.patch
-Patch44: cups-str3435.patch
-Patch45: cups-str3436.patch
-Patch46: cups-str3425.patch
-Patch47: cups-str3428.patch
-Patch48: cups-str3431.patch
-Patch49: cups-gnutls-gcrypt-threads.patch
-Patch50: cups-str3458.patch
-Patch51: cups-0755.patch
-Patch52: cups-str3460.patch
-Patch53: cups-EAI_AGAIN.patch
-Patch54: cups-str3505.patch
-Patch55: cups-CVE-2010-0302.patch
-Patch56: cups-str3541.patch
+Patch8: cups-direct-usb.patch
+Patch9: cups-lpr-help.patch
+Patch10: cups-peercred.patch
+Patch11: cups-pid.patch
+Patch12: cups-page-label.patch
+Patch13: cups-eggcups.patch
+Patch14: cups-getpass.patch
+Patch15: cups-driverd-timeout.patch
+Patch16: cups-strict-ppd-line-length.patch
+Patch17: cups-logrotate.patch
+Patch18: cups-usb-paperout.patch
+Patch19: cups-build.patch
+Patch20: cups-res_init.patch
+Patch21: cups-filter-debug.patch
+Patch22: cups-uri-compat.patch
+Patch23: cups-cups-get-classes.patch
+Patch24: cups-avahi.patch
+Patch25: cups-str3382.patch
+Patch26: cups-str3503.patch
+Patch27: cups-str3399.patch
+Patch28: cups-gnutls-gcrypt-threads.patch
+Patch29: cups-0755.patch
+Patch30: cups-EAI_AGAIN.patch
+Patch31: cups-str3505.patch
+Patch32: cups-str3541.patch
 
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
-
+Patch200: cups-CVE-2010-0302.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -237,110 +213,65 @@ module.
 %patch6 -p1 -b .serverbin-compat
 # Don't export SSLLIBS to cups-config.
 %patch7 -p1 -b .no-export-ssllibs
-# Avoid use-after-free in cupsAddDest.
-%patch8 -p1 -b .str3448
 # Allow file-based usb device URIs.
-%patch9 -p1 -b .direct-usb
+%patch8 -p1 -b .direct-usb
 # Add --help option to lpr.
-%patch10 -p1 -b .lpr-help
+%patch9 -p1 -b .lpr-help
 # Fix compilation of peer credentials support.
-%patch11 -p1 -b .peercred
+%patch10 -p1 -b .peercred
 # Maintain a cupsd.pid file.
-%patch12 -p1 -b .pid
+%patch11 -p1 -b .pid
 # Fix orientation of page labels.
-%patch13 -p1 -b .page-label
+%patch12 -p1 -b .page-label
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
-%patch14 -p1 -b .eggcups
+%patch13 -p1 -b .eggcups
 # More sophisticated implementation of cupsGetPassword than getpass.
-%patch15 -p1 -b .getpass
+%patch14 -p1 -b .getpass
 # Increase driverd timeout to 70s to accommodate foomatic.
-%patch16 -p1 -b .driverd-timeout
+%patch15 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
-%patch17 -p1 -b .strict-ppd-line-length
+%patch16 -p1 -b .strict-ppd-line-length
 # Re-open the log if it has been logrotated under us.
-%patch18 -p1 -b .logrotate
+%patch17 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch19 -p1 -b .usb-paperout
+%patch18 -p1 -b .usb-paperout
 # Simplify the DNSSD parts so they can build using the compat library.
-%patch20 -p1 -b .build
+%patch19 -p1 -b .build
 # Re-initialise the resolver on failure in httpAddrGetList().
-%patch21 -p1 -b .res_init
+%patch20 -p1 -b .res_init
 # Log extra debugging information if no filters are available.
-%patch22 -p1 -b .filter-debug
+%patch21 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
-%patch23 -p1 -b .uri-compat
+%patch22 -p1 -b .uri-compat
 # Fix support for older CUPS servers in cupsGetDests.
-%patch24 -p1 -b .cups-get-classes
+%patch23 -p1 -b .cups-get-classes
 # Avahi support in the dnssd backend.
-%patch25 -p1 -b .avahi
+%patch24 -p1 -b .avahi
 # Fix temporary filename creation.
-%patch26 -p1 -b .str3382
+%patch25 -p1 -b .str3382
 # Fix cupsGetNamedDest() when a name is specified.
-%patch27 -p1 -b .str3285_v2-str3503
-# Set the PRINTER_IS_SHARED CGI variable.
-%patch28 -p1 -b .str3390
-# Set the CGI variables required by the serial backend.
-%patch29 -p1 -b .str3391
-# Fix signal handling when using gnutls.
-%patch30 -p1 -b .str3381
-# Reset SIGPIPE handler before starting child processes.
-%patch31 -p1 -b .str3399
-# Fixed typo in Russian translation of admin CGI page.
-%patch32 -p1 -b .str3403
-# Handle out-of-memory more gracefully when loading jobs.
-%patch33 -p1 -b .str3407
-# Set PPD_MAKE CGI variable.
-%patch34 -p1 -b .str3418
-# Fix use-after-free in select.c.
-%patch35 -p1 -b .CVE-2009-3553
-# Fix Russian translations of CGI pages.
-%patch36 -p1 -b .str3422
-# Fix SNMP handling.
-%patch37 -p1 -b .str3413
-# Fix adjustment of conflicting options in web interface.
-%patch38 -p1 -b .str3439
-# Show which option conflicts in web interface.
-%patch39 -p1 -b .str3440
-# Provide filter path for text/css.
-%patch40 -p1 -b .str3442
-# Fix SNMP handling with negative string lengths.
-%patch41 -p1 -b .negative-snmp-string-length
-# Fix signal handling in the sidechannel API.
-%patch42 -p1 -b .sidechannel-intrs
-# Stop network backends incorrectly clearing media-empty-warning.
-%patch43 -p1 -b .media-empty-warning
-# Fixed authentication bug in cupsPrintFiles2.
-%patch44 -p1 -b .str3435
-# Set PRINTER_NAME and PRINTER_URI_SUPPORTED CGI variables.
-%patch45 -p1 -b .str3436
-# Clean out completed jobs when PreserveJobHistory is off.
-%patch46 -p1 -b .str3425
-# Don't add two job-name attributes to each job object.
-%patch47 -p1 -b .str3428
-# Use the Get-Job-Attributes policy for a printer.
-%patch48 -p1 -b .str3431
-#%patch49 -p1 -b .gnutls-gcrypt-threads
-# Fix IPP authentication for servers requiring auth for
-# IPP-Get-Printer-Attributes.
-%patch50 -p1 -b .str3458
+%patch26 -p1 -b .str3503
+# Don't treat SIGPIPE as an error.
+%patch27 -p1 -b .str3399
+#%patch28 -p1 -b .gnutls-gcrypt-threads
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch51 -p1 -b .0755
-# Clear printer status after successful IPP job.
-%patch52 -p1 -b .str3460
+%patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
-%patch53 -p1 -b .EAI_AGAIN
+%patch30 -p1 -b .EAI_AGAIN
 # Update classes.conf when a class member printer is deleted
-%patch54 -p1 -b .str3505
-# Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
-# bug #557775).
-%patch55 -p1 -b .CVE-2010-0302
+%patch31 -p1 -b .str3505
 # Fix lpstat to adhere to -o option.
-%patch56 -p1 -b .str3541
+%patch32 -p1 -b .str3541
 
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
+
+# SECURITY PATCHES:
+# Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
+# bug #557775).
+%patch200 -p1 -b .CVE-2010-0302
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -549,6 +480,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %doc %{_datadir}/%{name}/www/de/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/es/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/eu/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/id/index.html
+%config(noreplace) %doc %{_datadir}/%{name}/www/it/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
 %config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
@@ -584,6 +517,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_datadir}/cups/templates/de/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/eu/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/id/*.tmpl
+%config(noreplace) %{_datadir}/cups/templates/it/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
 %config(noreplace) %{_datadir}/cups/templates/ru/*.tmpl
@@ -627,6 +562,14 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Mar 31 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-1
+- 1.4.3.
+- No longer need CVE-2009-3553, str3381, str3390, str3391,
+  str3403, str3407, str3413, str3418, str3422, str3425,
+  str3428, str3431, str3435, str3436, str3439, str3440,
+  str3442, str3448, str3458, str3460, cups-sidechannel-intrs,
+  negative-snmp-string-length, cups-media-empty-warning patches.
+
 * Tue Mar 30 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.2-36
 - Fixed lpstat to adhere to -o option (bug #577901, STR #3541).
 
