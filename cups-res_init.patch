@@ -6,7 +6,7 @@ diff -up cups-1.4b2-svn8404/cups/http-addrlist.c.res_init cups-1.4b2-svn8404/cup
        freeaddrinfo(results);
      }
 -    else if (error == EAI_FAIL)
-+    else if (error == EAI_FAIL || error == EAI_AGAIN)
++    else if (error == EAI_FAIL || error == EAI_AGAIN || error == EAI_NODATA)
        cg->need_res_init = 1;
  
  #else
