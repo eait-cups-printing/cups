@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -562,6 +562,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Mar 31 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-2
+- Another BrowsePoll fix: handle EAI_NODATA as well (bug #567353).
+
 * Wed Mar 31 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-1
 - 1.4.3.
 - No longer need CVE-2009-3553, str3381, str3390, str3391,

@@ -6,7 +6,7 @@ diff -up cups-1.4.2/cups/http-addr.c.EAI_AGAIN cups-1.4.2/cups/http-addr.c
      if (error)
      {
 -      if (error == EAI_FAIL)
-+      if (error == EAI_FAIL || error == EAI_AGAIN)
++      if (error == EAI_FAIL || error == EAI_AGAIN || error == EAI_NODATA)
          cg->need_res_init = 1;
  
        return (httpAddrString(addr, name, namelen));
