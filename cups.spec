@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -64,6 +64,7 @@ Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-str3505.patch
 Patch32: cups-str3541.patch
 Patch33: cups-snmp-quirks.patch
+Patch34: cups-hp-deviceid-oid.patch
 
 Patch100: cups-lspp.patch
 
@@ -263,7 +264,10 @@ module.
 %patch31 -p1 -b .str3505
 # Fix lpstat to adhere to -o option.
 %patch32 -p1 -b .str3541
+# Handle SNMP supply level quirks (bug #581825).
 %patch33 -p1 -b .snmp-quirks
+# Add an SNMP query for HP's device ID OID (STR #3552).
+%patch34 -p1 -b .hp-deviceid-oid
 
 %if %lspp
 # LSPP support.
@@ -564,6 +568,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Apr 13 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-4
+- Add an SNMP query for HP's device ID OID (STR #3552).
+
 * Tue Apr 13 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-3
 - Handle SNMP supply level quirks (bug #581825).
 
