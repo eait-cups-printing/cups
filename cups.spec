@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -568,6 +568,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Apr 16 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-5
+- Fixed str3541.patch
+
 * Tue Apr 13 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-4
 - Add an SNMP query for HP's device ID OID (STR #3552).
 
