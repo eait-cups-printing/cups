@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -116,6 +116,9 @@ Requires: tmpwatch
 Requires: portreserve
 
 Requires: poppler-utils
+
+# pstoraster requires gs
+Requires: ghostscript
 
 # We ship udev rules which use setfacl.
 Requires: udev
@@ -523,6 +526,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Apr 16 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-4
+- Fixed str3541.patch
+- Added Require: ghostscript (bug #572701)
+
 * Tue Apr 13 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-3
 - Handle SNMP supply level quirks (bug #581825).
 
