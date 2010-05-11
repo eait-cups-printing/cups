@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -66,6 +66,7 @@ Patch32: cups-str3541.patch
 Patch33: cups-snmp-quirks.patch
 Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
+Patch36: cups-ricoh-deviceid-oid.patch
 
 Patch100: cups-lspp.patch
 
@@ -271,6 +272,8 @@ module.
 %patch34 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
 %patch35 -p1 -b .dnssd-deviceid
+# Add an SNMP query for Ricoh's device ID OID (STR #3552).
+%patch36 -p1 -b .ricoh-deviceid-oid
 
 %if %lspp
 # LSPP support.
@@ -571,6 +574,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue May 11 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-7
+- Add an SNMP query for Ricoh's device ID OID (STR #3552).
+
 * Fri Apr 16 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-6
 - Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
 
