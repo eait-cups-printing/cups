@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch33: cups-snmp-quirks.patch
 Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
+Patch37: cups-texttops-rotate-page.patch
 
 Patch100: cups-lspp.patch
 
@@ -274,6 +275,10 @@ module.
 %patch35 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch36 -p1 -b .ricoh-deviceid-oid
+# Adjust texttops output to be in natural orientation (STR #3563).
+# This fixes page-label orientation when texttops is used in the
+# filter chain (bug #572338).
+%patch37 -p1 -b .texttops-rotate-page
 
 %if %lspp
 # LSPP support.
@@ -574,6 +579,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue May 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-9
+- Adjust texttops output to be in natural orientation (STR #3563).
+  This fixes page-label orientation when texttops is used in the
+  filter chain (bug #572338).
+
 * Thu May 13 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-8
 - Fixed Ricoh Device ID OID (STR #3552).
 
