@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -58,6 +58,7 @@ Patch31: cups-str3505.patch
 Patch32: cups-str3541.patch
 Patch33: cups-snmp-quirks.patch
 Patch34: cups-hostnamelookups.patch
+Patch35: cups-texttops-rotate-page.patch
 
 Patch100: cups-lspp.patch
 
@@ -225,6 +226,7 @@ module.
 %patch32 -p1 -b .str3541
 %patch33 -p1 -b .snmp-quirks
 %patch34 -p1 -b .hostnamelookups
+%patch35 -p1 -b .texttops-rotate-page
 
 %if %lspp
 %patch100 -p1 -b .lspp
@@ -528,6 +530,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue May 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-6
+- Adjust texttops output to be in natural orientation (STR #3563).
+  This fixes page-label orientation when texttops is used in the
+  filter chain (bug #572338).
+
 * Thu May  6 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-5
 - Use numeric addresses for interfaces unless HostNameLookups are
   turned on (bug #583054).
