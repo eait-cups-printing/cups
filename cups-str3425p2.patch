@@ -1,0 +1,49 @@
+diff -up cups-1.4.3/scheduler/job.c.str3425p2 cups-1.4.3/scheduler/job.c
+--- cups-1.4.3/scheduler/job.c.str3425p2	2010-06-01 17:16:46.000000000 +0200
++++ cups-1.4.3/scheduler/job.c	2010-06-01 17:19:10.000000000 +0200
+@@ -2286,12 +2286,14 @@ cupsdSetJobState(
+   if (!cupsdLoadJob(job))
+     return;
+ 
+- /*
+-  * Don't do anything if the state is unchanged...
+-  */
+-
+-  if (newstate == (oldstate = job->state_value))
+-    return;
++  /*
++   * Don't do anything if the state is unchanged and we aren't purging the
++   * job...
++   */
++
++   oldstate = job->state_value;
++   if (newstate == oldstate && action != CUPSD_JOB_PURGE)
++     return;
+ 
+  /*
+   * Stop any processes that are working on the current job...
+@@ -2498,6 +2500,15 @@ cupsdSetJobState(
+ 	  job->dirty = 1;
+ 	  cupsdMarkDirty(CUPSD_DIRTY_JOBS);
+ 	}
++	else if (!job->printer)
++	{
++	 /*
++	  * Delete the job immediately if not actively printing...
++	  */
++
++	  cupsdDeleteJob(job, CUPSD_JOB_PURGE);
++	  job = NULL;
++	}
+ 	break;
+   }
+ 
+@@ -2505,7 +2516,7 @@ cupsdSetJobState(
+   * Finalize the job immediately if we forced things...
+   */
+ 
+-  if (action >= CUPSD_JOB_FORCE && job->printer)
++  if (action >= CUPSD_JOB_FORCE && job && job->printer)
+     finalize_job(job, 0);
+ 
+  /*

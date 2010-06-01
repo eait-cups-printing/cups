@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -68,6 +68,7 @@ Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
+Patch38: cups-str3425p2.patch
 
 Patch100: cups-lspp.patch
 
@@ -279,6 +280,8 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch37 -p1 -b .texttops-rotate-page
+# Delete job files in /var/spool/cups (STR #3425)
+%patch38 -p1 -b .str3425p2
 
 %if %lspp
 # LSPP support.
@@ -579,6 +582,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 01 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-10
+- Added back still useful str3425.patch.
+  Second part of STR #3425 is still not fixed in 1.4.3
+
 * Tue May 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-9
 - Adjust texttops output to be in natural orientation (STR #3563).
   This fixes page-label orientation when texttops is used in the
