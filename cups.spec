@@ -58,7 +58,6 @@ Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
 Patch26: cups-str3503.patch
 Patch27: cups-str3399.patch
-Patch28: cups-gnutls-gcrypt-threads.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-str3505.patch
@@ -195,12 +194,12 @@ natively, without needing the lp/lpr commands.
 
 %description lpd
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. This is the package that provices standard 
+UNIX® operating systems. This is the package that provides standard 
 lpd emulation.
 
 %description php
 The Common UNIX Printing System provides a portable printing layer for
-UNIX® operating systems. This is the package that provices a PHP
+UNIX® operating systems. This is the package that provides a PHP
 module. 
 
 %prep
@@ -259,7 +258,6 @@ module.
 %patch26 -p1 -b .str3503
 # Don't treat SIGPIPE as an error.
 %patch27 -p1 -b .str3399
-#%patch28 -p1 -b .gnutls-gcrypt-threads
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
@@ -582,6 +580,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jun 10 2010 Tim Waugh <twaugh@redhat.com>
+- Removed unapplied gnutls-gcrypt-threads patch.  Fixed typos in
+  descriptions for lpd and php sub-packages.
+
 * Wed Jun  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-11
 - Use upstream method of handling SNMP quirks in PPDs (STR #3551,
   bug #581825).
