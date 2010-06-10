@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.3
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -582,6 +582,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jun  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-11
+- Use upstream method of handling SNMP quirks in PPDs (STR #3551,
+  bug #581825).
+
 * Tue Jun 01 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.3-10
 - Added back still useful str3425.patch.
   Second part of STR #3425 is still not fixed in 1.4.3
