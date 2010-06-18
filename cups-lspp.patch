@@ -1,7 +1,7 @@
-diff -up cups-1.4.3/config.h.in.lspp cups-1.4.3/config.h.in
---- cups-1.4.3/config.h.in.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/config.h.in	2010-03-31 14:08:57.000000000 +0200
-@@ -633,6 +633,13 @@
+diff -up cups-1.4.4/config.h.in.lspp cups-1.4.4/config.h.in
+--- cups-1.4.4/config.h.in.lspp	2010-06-18 09:38:22.645104842 +0100
++++ cups-1.4.4/config.h.in	2010-06-18 09:38:22.681104733 +0100
+@@ -646,6 +646,13 @@
  #undef HAVE_TCPD_H
  
  
@@ -15,9 +15,9 @@ diff -up cups-1.4.3/config.h.in.lspp cups-1.4.3/config.h.in
  #endif /* !_CUPS_CONFIG_H_ */
  
  /*
-diff -up cups-1.4.3/config-scripts/cups-lspp.m4.lspp cups-1.4.3/config-scripts/cups-lspp.m4
---- cups-1.4.3/config-scripts/cups-lspp.m4.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/config-scripts/cups-lspp.m4	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/config-scripts/cups-lspp.m4.lspp cups-1.4.4/config-scripts/cups-lspp.m4
+--- cups-1.4.4/config-scripts/cups-lspp.m4.lspp	2010-06-18 09:38:22.681104733 +0100
++++ cups-1.4.4/config-scripts/cups-lspp.m4	2010-06-18 09:38:22.681104733 +0100
 @@ -0,0 +1,36 @@
 +dnl
 +dnl   LSPP code for the Common UNIX Printing System (CUPS).
@@ -55,9 +55,9 @@ diff -up cups-1.4.3/config-scripts/cups-lspp.m4.lspp cups-1.4.3/config-scripts/c
 +            ;;
 +    esac
 +fi
-diff -up cups-1.4.3/configure.in.lspp cups-1.4.3/configure.in
---- cups-1.4.3/configure.in.lspp	2008-11-14 20:32:22.000000000 +0100
-+++ cups-1.4.3/configure.in	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/configure.in.lspp cups-1.4.4/configure.in
+--- cups-1.4.4/configure.in.lspp	2010-06-16 01:39:16.000000000 +0100
++++ cups-1.4.4/configure.in	2010-06-18 09:38:22.682104565 +0100
 @@ -42,6 +42,8 @@ sinclude(config-scripts/cups-pap.m4)
  sinclude(config-scripts/cups-pdf.m4)
  sinclude(config-scripts/cups-scripting.m4)
@@ -67,9 +67,9 @@ diff -up cups-1.4.3/configure.in.lspp cups-1.4.3/configure.in
  INSTALL_LANGUAGES=""
  UNINSTALL_LANGUAGES=""
  LANGFILES=""
-diff -up cups-1.4.3/cups/cups.h.lspp cups-1.4.3/cups/cups.h
---- cups-1.4.3/cups/cups.h.lspp	2009-11-16 18:11:56.000000000 +0100
-+++ cups-1.4.3/cups/cups.h	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/cups/cups.h.lspp cups-1.4.4/cups/cups.h
+--- cups-1.4.4/cups/cups.h.lspp	2010-04-23 19:56:34.000000000 +0100
++++ cups-1.4.4/cups/cups.h	2010-06-18 09:38:22.682104565 +0100
 @@ -15,6 +15,9 @@
   *   This file is subject to the Apple OS-Developed Software exception.
   */
@@ -80,7 +80,7 @@ diff -up cups-1.4.3/cups/cups.h.lspp cups-1.4.3/cups/cups.h
  #ifndef _CUPS_CUPS_H_
  #  define _CUPS_CUPS_H_
  
-@@ -84,6 +87,12 @@ extern "C" {
+@@ -86,6 +89,12 @@ extern "C" {
  #  define CUPS_WHICHJOBS_COMPLETED 1
  
  
@@ -93,9 +93,9 @@ diff -up cups-1.4.3/cups/cups.h.lspp cups-1.4.3/cups/cups.h
  /*
   * Types and structures...
   */
-diff -up cups-1.4.3/data/Makefile.lspp cups-1.4.3/data/Makefile
---- cups-1.4.3/data/Makefile.lspp	2008-11-12 20:30:57.000000000 +0100
-+++ cups-1.4.3/data/Makefile	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/data/Makefile.lspp cups-1.4.4/data/Makefile
+--- cups-1.4.4/data/Makefile.lspp	2008-11-12 19:30:57.000000000 +0000
++++ cups-1.4.4/data/Makefile	2010-06-18 09:38:22.686104153 +0100
 @@ -25,7 +25,10 @@ BANNERS	=	\
  		secret \
  		standard \
@@ -108,9 +108,9 @@ diff -up cups-1.4.3/data/Makefile.lspp cups-1.4.3/data/Makefile
  
  CHARMAPS =	\
  		euc-cn.txt \
-diff -up cups-1.4.3/data/mls.lspp cups-1.4.3/data/mls
---- cups-1.4.3/data/mls.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/data/mls	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/data/mls.lspp cups-1.4.4/data/mls
+--- cups-1.4.4/data/mls.lspp	2010-06-18 09:38:22.686104153 +0100
++++ cups-1.4.4/data/mls	2010-06-18 09:38:22.687104566 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -373,9 +373,9 @@ diff -up cups-1.4.3/data/mls.lspp cups-1.4.3/data/mls
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up cups-1.4.3/data/selinux.lspp cups-1.4.3/data/selinux
---- cups-1.4.3/data/selinux.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/data/selinux	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/data/selinux.lspp cups-1.4.4/data/selinux
+--- cups-1.4.4/data/selinux.lspp	2010-06-18 09:38:22.687104566 +0100
++++ cups-1.4.4/data/selinux	2010-06-18 09:38:22.687104566 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -638,9 +638,9 @@ diff -up cups-1.4.3/data/selinux.lspp cups-1.4.3/data/selinux
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up cups-1.4.3/data/te.lspp cups-1.4.3/data/te
---- cups-1.4.3/data/te.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/data/te	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/data/te.lspp cups-1.4.4/data/te
+--- cups-1.4.4/data/te.lspp	2010-06-18 09:38:22.688105441 +0100
++++ cups-1.4.4/data/te	2010-06-18 09:38:22.688105441 +0100
 @@ -0,0 +1,261 @@
 +%!PS-Adobe-3.0
 +%%BoundingBox: 0 0 612 792
@@ -903,9 +903,9 @@ diff -up cups-1.4.3/data/te.lspp cups-1.4.3/data/te
 +% End of "$Id: mls_template,v 1.1 2005/06/27 18:44:46 colmo Exp $".
 +%
 +%%EOF
-diff -up cups-1.4.3/filter/common.c.lspp cups-1.4.3/filter/common.c
---- cups-1.4.3/filter/common.c.lspp	2007-07-11 23:46:42.000000000 +0200
-+++ cups-1.4.3/filter/common.c	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/filter/common.c.lspp cups-1.4.4/filter/common.c
+--- cups-1.4.4/filter/common.c.lspp	2007-07-11 22:46:42.000000000 +0100
++++ cups-1.4.4/filter/common.c	2010-06-18 09:38:22.689104687 +0100
 @@ -30,6 +30,12 @@
   * Include necessary headers...
   */
@@ -1074,10 +1074,10 @@ diff -up cups-1.4.3/filter/common.c.lspp cups-1.4.3/filter/common.c
  
  
  /*
-diff -up cups-1.4.3/filter/pstops.c.lspp cups-1.4.3/filter/pstops.c
---- cups-1.4.3/filter/pstops.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/filter/pstops.c	2010-03-31 14:08:57.000000000 +0200
-@@ -3275,6 +3275,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
+diff -up cups-1.4.4/filter/pstops.c.lspp cups-1.4.4/filter/pstops.c
+--- cups-1.4.4/filter/pstops.c.lspp	2010-06-18 09:38:22.579980230 +0100
++++ cups-1.4.4/filter/pstops.c	2010-06-18 09:38:22.693979174 +0100
+@@ -3314,6 +3314,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
  {
    const char	*classification;	/* CLASSIFICATION environment variable */
    const char	*ptr;			/* Temporary string pointer */
@@ -1096,7 +1096,7 @@ diff -up cups-1.4.3/filter/pstops.c.lspp cups-1.4.3/filter/pstops.c
  
  
   /*
-@@ -3297,6 +3309,124 @@ write_label_prolog(pstops_doc_t *doc,	/*
+@@ -3336,6 +3348,124 @@ write_label_prolog(pstops_doc_t *doc,	/*
      return;
    }
  
@@ -1221,7 +1221,7 @@ diff -up cups-1.4.3/filter/pstops.c.lspp cups-1.4.3/filter/pstops.c
   /*
    * Set the classification + page label string...
    */
-@@ -3375,7 +3505,10 @@ write_label_prolog(pstops_doc_t *doc,	/*
+@@ -3414,7 +3544,10 @@ write_label_prolog(pstops_doc_t *doc,	/*
    doc_printf(doc, "  %.0f moveto ESPpl show\n", top - 14.0);
    doc_puts(doc, "pop\n");
    doc_puts(doc, "}bind put\n");
@@ -1232,9 +1232,9 @@ diff -up cups-1.4.3/filter/pstops.c.lspp cups-1.4.3/filter/pstops.c
  
  
  /*
-diff -up cups-1.4.3/Makedefs.in.lspp cups-1.4.3/Makedefs.in
---- cups-1.4.3/Makedefs.in.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/Makedefs.in	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/Makedefs.in.lspp cups-1.4.4/Makedefs.in
+--- cups-1.4.4/Makedefs.in.lspp	2010-06-18 09:38:22.654104605 +0100
++++ cups-1.4.4/Makedefs.in	2010-06-18 09:38:22.698980378 +0100
 @@ -146,7 +146,7 @@ LIBCUPSORDER	=	@LIBCUPSORDER@
  LIBCUPSIMAGEORDER =	@LIBCUPSIMAGEORDER@
  LINKCUPS	=	@LINKCUPS@ $(SSLLIBS) $(DNSSDLIBS)
@@ -1253,9 +1253,9 @@ diff -up cups-1.4.3/Makedefs.in.lspp cups-1.4.3/Makedefs.in
  .SUFFIXES:	.1 .1.gz .1m .1m.gz .3 .3.gz .5 .5.gz .7 .7.gz .8 .8.gz .a .c .cxx .h .man .o .32.o .64.o .gz
  
  .c.o:
-diff -up cups-1.4.3/scheduler/client.c.lspp cups-1.4.3/scheduler/client.c
---- cups-1.4.3/scheduler/client.c.lspp	2009-07-15 01:02:05.000000000 +0200
-+++ cups-1.4.3/scheduler/client.c	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/scheduler/client.c.lspp cups-1.4.4/scheduler/client.c
+--- cups-1.4.4/scheduler/client.c.lspp	2010-04-23 19:56:34.000000000 +0100
++++ cups-1.4.4/scheduler/client.c	2010-06-18 09:38:22.705980063 +0100
 @@ -44,6 +44,7 @@
   *   valid_host()           - Is the Host: field valid?
   *   write_file()           - Send a file via HTTP.
@@ -1425,7 +1425,7 @@ diff -up cups-1.4.3/scheduler/client.c.lspp cups-1.4.3/scheduler/client.c
  	  }
  
  	  if (con->http.state != HTTP_POST_SEND)
-@@ -4472,6 +4599,50 @@ make_certificate(cupsd_client_t *con)	/*
+@@ -4481,6 +4608,50 @@ make_certificate(cupsd_client_t *con)	/*
  #endif /* HAVE_SSL */
  
  
@@ -1476,9 +1476,9 @@ diff -up cups-1.4.3/scheduler/client.c.lspp cups-1.4.3/scheduler/client.c
  /*
   * 'pipe_command()' - Pipe the output of a command to the remote client.
   */
-diff -up cups-1.4.3/scheduler/client.h.lspp cups-1.4.3/scheduler/client.h
---- cups-1.4.3/scheduler/client.h.lspp	2009-05-27 00:01:23.000000000 +0200
-+++ cups-1.4.3/scheduler/client.h	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/scheduler/client.h.lspp cups-1.4.4/scheduler/client.h
+--- cups-1.4.4/scheduler/client.h.lspp	2009-05-26 23:01:23.000000000 +0100
++++ cups-1.4.4/scheduler/client.h	2010-06-18 09:38:22.711104323 +0100
 @@ -18,6 +18,13 @@
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -1514,9 +1514,9 @@ diff -up cups-1.4.3/scheduler/client.h.lspp cups-1.4.3/scheduler/client.h
  
  
  /*
-diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
---- cups-1.4.3/scheduler/conf.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/conf.c	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/scheduler/conf.c.lspp cups-1.4.4/scheduler/conf.c
+--- cups-1.4.4/scheduler/conf.c.lspp	2010-06-18 09:38:22.526979999 +0100
++++ cups-1.4.4/scheduler/conf.c	2010-06-18 09:38:22.713979624 +0100
 @@ -29,6 +29,7 @@
   *   read_configuration()     - Read a configuration file.
   *   read_location()          - Read a <Location path> definition.
@@ -1535,7 +1535,7 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
  
  /*
   * Configuration variable structure...
-@@ -174,6 +178,10 @@ static const cupsd_var_t	variables[] =
+@@ -172,6 +176,10 @@ static const cupsd_var_t	variables[] =
  #  if defined(HAVE_LIBSSL) || defined(HAVE_GNUTLS)
    { "ServerKey",		&ServerKey,		CUPSD_VARTYPE_PATHNAME },
  #  endif /* HAVE_LIBSSL || HAVE_GNUTLS */
@@ -1546,7 +1546,7 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
  #endif /* HAVE_SSL */
    { "ServerName",		&ServerName,		CUPSD_VARTYPE_STRING },
    { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
-@@ -432,6 +440,9 @@ cupsdReadConfiguration(void)
+@@ -430,6 +438,9 @@ cupsdReadConfiguration(void)
    const char	*tmpdir;		/* TMPDIR environment variable */
    struct stat	tmpinfo;		/* Temporary directory info */
    cupsd_policy_t *p;			/* Policy */
@@ -1556,7 +1556,7 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
  
  
   /*
-@@ -718,6 +729,25 @@ cupsdReadConfiguration(void)
+@@ -713,6 +724,25 @@ cupsdReadConfiguration(void)
  
    RunUser = getuid();
  
@@ -1582,7 +1582,7 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
    cupsdLogMessage(CUPSD_LOG_INFO, "Remote access is %s.",
                    RemotePort ? "enabled" : "disabled");
  
-@@ -1083,11 +1113,23 @@ cupsdReadConfiguration(void)
+@@ -1081,11 +1111,23 @@ cupsdReadConfiguration(void)
    * Update classification setting as needed...
    */
  
@@ -1607,7 +1607,7 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
  
   /*
    * Check the MaxClients setting, and then allocate memory for it...
-@@ -3646,6 +3688,18 @@ read_location(cups_file_t *fp,		/* I - C
+@@ -3644,6 +3686,18 @@ read_location(cups_file_t *fp,		/* I - C
    return ((FatalErrors & CUPSD_FATAL_CONFIG) ? 0 : linenum);
  }
  
@@ -1626,10 +1626,10 @@ diff -up cups-1.4.3/scheduler/conf.c.lspp cups-1.4.3/scheduler/conf.c
  
  /*
   * 'read_policy()' - Read a <Policy name> definition.
-diff -up cups-1.4.3/scheduler/conf.h.lspp cups-1.4.3/scheduler/conf.h
---- cups-1.4.3/scheduler/conf.h.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/conf.h	2010-03-31 14:08:57.000000000 +0200
-@@ -253,6 +253,12 @@ VAR char		*ServerKey		VALUE(NULL);
+diff -up cups-1.4.4/scheduler/conf.h.lspp cups-1.4.4/scheduler/conf.h
+--- cups-1.4.4/scheduler/conf.h.lspp	2010-06-18 09:38:22.527979881 +0100
++++ cups-1.4.4/scheduler/conf.h	2010-06-18 09:38:22.715979172 +0100
+@@ -250,6 +250,12 @@ VAR char		*ServerKey		VALUE(NULL);
  VAR int			SSLOptions		VALUE(CUPSD_SSL_NONE);
  					/* SSL/TLS options */
  #endif /* HAVE_SSL */
@@ -1642,7 +1642,7 @@ diff -up cups-1.4.3/scheduler/conf.h.lspp cups-1.4.3/scheduler/conf.h
  
  #ifdef HAVE_LAUNCHD
  VAR int			LaunchdTimeout		VALUE(DEFAULT_KEEPALIVE);
-@@ -271,6 +277,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
+@@ -266,6 +272,9 @@ VAR char		*SystemGroupAuthKey	VALUE(NULL
  					/* System group auth key */
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -1652,9 +1652,9 @@ diff -up cups-1.4.3/scheduler/conf.h.lspp cups-1.4.3/scheduler/conf.h
  
  /*
   * Prototypes...
-diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
---- cups-1.4.3/scheduler/ipp.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/ipp.c	2010-03-31 14:11:37.000000000 +0200
+diff -up cups-1.4.4/scheduler/ipp.c.lspp cups-1.4.4/scheduler/ipp.c
+--- cups-1.4.4/scheduler/ipp.c.lspp	2010-06-18 09:38:22.599103898 +0100
++++ cups-1.4.4/scheduler/ipp.c	2010-06-18 09:39:08.308979874 +0100
 @@ -41,6 +41,7 @@
   *   cancel_all_jobs()           - Cancel all print jobs.
   *   cancel_job()                - Cancel a print job.
@@ -1698,10 +1698,10 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  static int	check_quotas(cupsd_client_t *con, cupsd_printer_t *p);
  static ipp_attribute_t	*copy_attribute(ipp_t *to, ipp_attribute_t *attr,
  		                        int quickcopy);
-@@ -1337,6 +1352,21 @@ add_job(cupsd_client_t  *con,		/* I - Cl
-   int		kbytes;			/* Size of print file */
-   int		i;			/* Looping var */
-   int		lowerpagerange;		/* Page range bound */
+@@ -1355,6 +1370,21 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+   ipp_attribute_t *media_col,		/* media-col attribute */
+ 		*media_margin;		/* media-*-margin attribute */
+   ipp_t		*unsup_col;		/* media-col in unsupported response */
 +#ifdef WITH_LSPP
 +  char		*audit_message;		/* Audit message string */
 +  char		*printerfile;		/* device file pointed to by the printer */
@@ -1720,7 +1720,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "add_job(%p[%d], %p(%s), %p(%s/%s))",
-@@ -1550,6 +1580,104 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1625,6 +1655,104 @@ add_job(cupsd_client_t  *con,		/* I - Cl
      ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL,
                   "Untitled");
  
@@ -1825,7 +1825,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
    if ((job = cupsdAddJob(priority, printer->name)) == NULL)
    {
      send_ipp_status(con, IPP_INTERNAL_ERROR,
-@@ -1558,6 +1686,32 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1633,6 +1761,32 @@ add_job(cupsd_client_t  *con,		/* I - Cl
      return (NULL);
    }
  
@@ -1858,7 +1858,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
    job->dtype   = printer->type & (CUPS_PRINTER_CLASS | CUPS_PRINTER_IMPLICIT |
                                    CUPS_PRINTER_REMOTE);
    job->attrs   = con->request;
-@@ -1763,6 +1917,29 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1838,6 +1992,29 @@ add_job(cupsd_client_t  *con,		/* I - Cl
        attr->values[0].string.text = _cupsStrRetain(printer->job_sheets[0]);
        attr->values[1].string.text = _cupsStrRetain(printer->job_sheets[1]);
      }
@@ -1888,7 +1888,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  
      job->job_sheets = attr;
  
-@@ -1793,6 +1970,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1868,6 +2045,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  	                		     "job-sheets=\"%s,none\", "
  					     "job-originating-user-name=\"%s\"",
  	              Classification, job->username);
@@ -1898,7 +1898,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  	}
  	else if (attr->num_values == 2 &&
  	         strcmp(attr->values[0].string.text,
-@@ -1811,6 +1991,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1886,6 +2066,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  					     "job-originating-user-name=\"%s\"",
  		      attr->values[0].string.text,
  		      attr->values[1].string.text, job->username);
@@ -1908,7 +1908,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  	}
  	else if (strcmp(attr->values[0].string.text, Classification) &&
  	         strcmp(attr->values[0].string.text, "none") &&
-@@ -1831,6 +2014,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1906,6 +2089,9 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  			"job-originating-user-name=\"%s\"",
  			attr->values[0].string.text,
  			attr->values[1].string.text, job->username);
@@ -1918,7 +1918,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
          }
        }
        else if (strcmp(attr->values[0].string.text, Classification) &&
-@@ -1871,8 +2057,52 @@ add_job(cupsd_client_t  *con,		/* I - Cl
+@@ -1946,8 +2132,52 @@ add_job(cupsd_client_t  *con,		/* I - Cl
  		      "job-sheets=\"%s\", "
  		      "job-originating-user-name=\"%s\"",
  		      Classification, job->username);
@@ -1971,7 +1971,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  
     /*
      * See if we need to add the starting sheet...
-@@ -4210,6 +4440,103 @@ check_rss_recipient(
+@@ -4300,6 +4530,103 @@ check_rss_recipient(
  }
  
  
@@ -2075,7 +2075,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  /*
   * 'check_quotas()' - Check quotas for a printer and user.
   */
-@@ -4761,6 +5088,15 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4853,6 +5180,15 @@ copy_banner(cupsd_client_t *con,	/* I - 
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
@@ -2091,7 +2091,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2,
-@@ -4796,6 +5132,82 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4888,6 +5224,82 @@ copy_banner(cupsd_client_t *con,	/* I - 
  
    fchmod(cupsFileNumber(out), 0640);
    fchown(cupsFileNumber(out), RunUser, Group);
@@ -2174,7 +2174,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
  
   /*
    * Try the localized banner file under the subdirectory...
-@@ -4890,6 +5302,24 @@ copy_banner(cupsd_client_t *con,	/* I - 
+@@ -4982,6 +5394,24 @@ copy_banner(cupsd_client_t *con,	/* I - 
        else
          s = attrname;
  
@@ -2199,7 +2199,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -6844,6 +7274,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
+@@ -6940,6 +7370,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
      return;
    }
  
@@ -2222,7 +2222,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
   /*
    * Copy attributes...
    */
-@@ -7074,6 +7520,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
+@@ -7170,6 +7616,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
      if (username[0] && strcasecmp(username, job->username))
        continue;
  
@@ -2234,7 +2234,7 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
      if (count > 0)
        ippAddSeparator(con->response);
  
-@@ -11460,6 +11911,11 @@ validate_user(cupsd_job_t    *job,	/* I 
+@@ -11572,6 +12023,11 @@ validate_user(cupsd_job_t    *job,	/* I 
  
    strlcpy(username, get_username(con), userlen);
  
@@ -2246,9 +2246,9 @@ diff -up cups-1.4.3/scheduler/ipp.c.lspp cups-1.4.3/scheduler/ipp.c
   /*
    * Check the username against the owner...
    */
-diff -up cups-1.4.3/scheduler/job.c.lspp cups-1.4.3/scheduler/job.c
---- cups-1.4.3/scheduler/job.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/job.c	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/scheduler/job.c.lspp cups-1.4.4/scheduler/job.c
+--- cups-1.4.4/scheduler/job.c.lspp	2010-06-18 09:38:22.629104109 +0100
++++ cups-1.4.4/scheduler/job.c	2010-06-18 09:38:22.734978722 +0100
 @@ -66,6 +66,9 @@
   *   update_job_attrs()         - Update the job-printer-* attributes.
   */
@@ -2495,7 +2495,7 @@ diff -up cups-1.4.3/scheduler/job.c.lspp cups-1.4.3/scheduler/job.c
    job->attrs->state = IPP_IDLE;
  
    if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
-@@ -3177,6 +3349,18 @@ get_options(cupsd_job_t *job,		/* I - Jo
+@@ -3188,6 +3360,18 @@ get_options(cupsd_job_t *job,		/* I - Jo
  	  banner_page)
          continue;
  
@@ -2514,7 +2514,7 @@ diff -up cups-1.4.3/scheduler/job.c.lspp cups-1.4.3/scheduler/job.c
       /*
        * Otherwise add them to the list...
        */
-@@ -3849,6 +4033,19 @@ static void
+@@ -3860,6 +4044,19 @@ static void
  start_job(cupsd_job_t     *job,		/* I - Job ID */
            cupsd_printer_t *printer)	/* I - Printer to print job */
  {
@@ -2534,7 +2534,7 @@ diff -up cups-1.4.3/scheduler/job.c.lspp cups-1.4.3/scheduler/job.c
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "start_job(job=%p(%d), printer=%p(%s))",
                    job, job->id, printer, printer->name);
  
-@@ -3971,6 +4168,106 @@ start_job(cupsd_job_t     *job,		/* I - 
+@@ -3982,6 +4179,106 @@ start_job(cupsd_job_t     *job,		/* I - 
    fcntl(job->side_pipes[1], F_SETFD,
  	fcntl(job->side_pipes[1], F_GETFD) | FD_CLOEXEC);
  
@@ -2641,9 +2641,9 @@ diff -up cups-1.4.3/scheduler/job.c.lspp cups-1.4.3/scheduler/job.c
   /*
    * Now start the first file in the job...
    */
-diff -up cups-1.4.3/scheduler/job.h.lspp cups-1.4.3/scheduler/job.h
---- cups-1.4.3/scheduler/job.h.lspp	2009-05-12 00:46:01.000000000 +0200
-+++ cups-1.4.3/scheduler/job.h	2010-03-31 14:08:57.000000000 +0200
+diff -up cups-1.4.4/scheduler/job.h.lspp cups-1.4.4/scheduler/job.h
+--- cups-1.4.4/scheduler/job.h.lspp	2009-05-11 23:46:01.000000000 +0100
++++ cups-1.4.4/scheduler/job.h	2010-06-18 09:38:22.734978722 +0100
 @@ -13,6 +13,13 @@
   *   file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -2669,11 +2669,11 @@ diff -up cups-1.4.3/scheduler/job.h.lspp cups-1.4.3/scheduler/job.h
  };
  
  typedef struct cupsd_joblog_s		/**** Job log message ****/
-diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
---- cups-1.4.3/scheduler/main.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/main.c	2010-03-31 14:08:57.000000000 +0200
-@@ -35,6 +35,8 @@
-  *   usage()                   - Show scheduler usage.
+diff -up cups-1.4.4/scheduler/main.c.lspp cups-1.4.4/scheduler/main.c
+--- cups-1.4.4/scheduler/main.c.lspp	2010-06-18 09:38:22.574980424 +0100
++++ cups-1.4.4/scheduler/main.c	2010-06-18 09:39:26.548103442 +0100
+@@ -37,6 +37,8 @@
+  *   usage()               - Show scheduler usage.
   */
  
 +/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
@@ -2681,7 +2681,7 @@ diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
  /*
   * Include necessary headers...
   */
-@@ -73,6 +75,9 @@
+@@ -76,6 +78,9 @@
  #  include <dlfcn.h>
  #endif /* __APPLE__ && HAVE_DLFCN_H */
  
@@ -2691,7 +2691,7 @@ diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
  
  /*
   * Local functions...
-@@ -156,6 +161,9 @@ main(int  argc,				/* I - Number of comm
+@@ -161,6 +166,9 @@ main(int  argc,				/* I - Number of comm
    int			launchd_idle_exit;
  					/* Idle exit on select timeout? */
  #endif	/* HAVE_LAUNCHD */
@@ -2701,7 +2701,7 @@ diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
  
  
  #ifdef HAVE_GETEUID
-@@ -465,6 +473,25 @@ main(int  argc,				/* I - Number of comm
+@@ -470,6 +478,25 @@ main(int  argc,				/* I - Number of comm
  #endif /* DEBUG */
    }
  
@@ -2727,7 +2727,7 @@ diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
   /*
    * Set the timezone info...
    */
-@@ -1235,6 +1262,11 @@ main(int  argc,				/* I - Number of comm
+@@ -1214,6 +1241,11 @@ main(int  argc,				/* I - Number of comm
  
    cupsdStopSelect();
  
@@ -2739,10 +2739,10 @@ diff -up cups-1.4.3/scheduler/main.c.lspp cups-1.4.3/scheduler/main.c
    return (!stop_scheduler);
  }
  
-diff -up cups-1.4.3/scheduler/printers.c.lspp cups-1.4.3/scheduler/printers.c
---- cups-1.4.3/scheduler/printers.c.lspp	2010-03-31 14:08:57.000000000 +0200
-+++ cups-1.4.3/scheduler/printers.c	2010-03-31 14:08:57.000000000 +0200
-@@ -58,6 +58,8 @@
+diff -up cups-1.4.4/scheduler/printers.c.lspp cups-1.4.4/scheduler/printers.c
+--- cups-1.4.4/scheduler/printers.c.lspp	2010-06-18 09:38:22.556104527 +0100
++++ cups-1.4.4/scheduler/printers.c	2010-06-18 09:38:22.740980299 +0100
+@@ -59,6 +59,8 @@
   *   write_xml_string()         - Write a string with XML escaping.
   */
  
@@ -2751,7 +2751,7 @@ diff -up cups-1.4.3/scheduler/printers.c.lspp cups-1.4.3/scheduler/printers.c
  /*
   * Include necessary headers...
   */
-@@ -86,6 +88,10 @@ static void	write_irix_state(cupsd_print
+@@ -88,6 +90,10 @@ static void	write_irix_state(cupsd_print
  #endif /* __sgi */
  static void	write_xml_string(cups_file_t *fp, const char *s);
  
@@ -2762,7 +2762,7 @@ diff -up cups-1.4.3/scheduler/printers.c.lspp cups-1.4.3/scheduler/printers.c
  
  /*
   * 'cupsdAddPrinter()' - Add a printer to the system.
-@@ -2173,6 +2179,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2211,6 +2217,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
  		  "username",
  		  "password"
  		};
@@ -2776,7 +2776,7 @@ diff -up cups-1.4.3/scheduler/printers.c.lspp cups-1.4.3/scheduler/printers.c
  
  
    DEBUG_printf(("cupsdSetPrinterAttrs: entering name = %s, type = %x\n", p->name,
-@@ -2303,6 +2316,45 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2341,6 +2354,45 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
        attr->values[1].string.text = _cupsStrAlloc(Classification ?
  	                                   Classification : p->job_sheets[1]);
      }
@@ -2822,7 +2822,7 @@ diff -up cups-1.4.3/scheduler/printers.c.lspp cups-1.4.3/scheduler/printers.c
    }
  
    p->raw    = 0;
-@@ -4834,7 +4886,6 @@ write_irix_state(cupsd_printer_t *p)	/* 
+@@ -5320,7 +5372,6 @@ write_irix_state(cupsd_printer_t *p)	/* 
  }
  #endif /* __sgi */
  

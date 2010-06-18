@@ -7,23 +7,33 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.3
-Release: 8%{?dist}
+Version: 1.4.4
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
+# Our initscript
 Source1: cups.init
+# Pixmap for desktop file
 Source2: cupsprinter.png
+# udev rules for libusb devices
 Source3: cups-libusb.rules
+# LSPP-required ps->pdf filter
 Source4: pstopdf
+# xinetd config file for cups-lpd service
 Source5: cups-lpd
-Source6: pstoraster
-Source7: pstoraster.convs
-Source8: cups.logrotate
-Source9: ncp.backend
-Source10: cups.cron
-Source11: textonly.filter
-Source12: textonly.ppd
+# Logrotate configuration
+Source6: cups.logrotate
+# Backend for NCP protocol
+Source7: ncp.backend
+# Cron-based tmpwatch for /var/spool/cups/tmp
+Source8: cups.cron
+# Filter and PPD for textonly printing
+Source9: textonly.filter
+Source10: textonly.ppd
+# pstoraster filter from ghostscript.
+Source11: pstoraster
+Source12: pstoraster.convs
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
@@ -49,22 +59,18 @@ Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
 Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
-Patch26: cups-str3503.patch
-Patch27: cups-str3399.patch
-Patch28: cups-gnutls-gcrypt-threads.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
-Patch31: cups-str3505.patch
-Patch32: cups-str3541.patch
+Patch31: cups-hostnamelookups.patch
 Patch33: cups-snmp-quirks.patch
-Patch34: cups-hostnamelookups.patch
-Patch35: cups-texttops-rotate-page.patch
-Patch36: cups-str3425p2.patch
+Patch34: cups-hp-deviceid-oid.patch
+Patch35: cups-dnssd-deviceid.patch
+Patch36: cups-ricoh-deviceid-oid.patch
+Patch37: cups-texttops-rotate-page.patch
 
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
-Patch200: cups-CVE-2010-0302.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -100,6 +106,9 @@ BuildRequires: krb5-devel
 BuildRequires: avahi-devel
 BuildRequires: poppler-utils
 
+# Make sure we get postscriptdriver tags.
+BuildRequires: pycups
+
 %if %lspp
 BuildRequires: libselinux-devel >= 1.23
 BuildRequires: audit-libs-devel >= 1.1
@@ -126,6 +135,9 @@ Requires: ghostscript
 # We ship udev rules which use setfacl.
 Requires: udev
 Requires: acl
+
+# Make sure we have some filters for converting to raster format.
+Requires: ghostscript-cups
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -183,60 +195,92 @@ natively, without needing the lp/lpr commands.
 
 %description lpd
 The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. This is the package that provices standard 
+UNIX® operating systems. This is the package that provides standard 
 lpd emulation.
 
 %description php
 The Common UNIX Printing System provides a portable printing layer for
-UNIX® operating systems. This is the package that provices a PHP
+UNIX® operating systems. This is the package that provides a PHP
 module. 
 
 %prep
 %setup -q
+# Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
+# Use the system pam configuration.
 %patch2 -p1 -b .system-auth
+# Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Fix compilation of serial backend.
 %patch4 -p1 -b .serial
+# Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
+# Use compatibility fallback path for ServerBin.
 %patch6 -p1 -b .serverbin-compat
+# Don't export SSLLIBS to cups-config.
 %patch7 -p1 -b .no-export-ssllibs
+# Allow file-based usb device URIs.
 %patch8 -p1 -b .direct-usb
+# Add --help option to lpr.
 %patch9 -p1 -b .lpr-help
+# Fix compilation of peer credentials support.
 %patch10 -p1 -b .peercred
+# Maintain a cupsd.pid file.
 %patch11 -p1 -b .pid
+# Fix orientation of page labels.
 %patch12 -p1 -b .page-label
+# Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch13 -p1 -b .eggcups
+# More sophisticated implementation of cupsGetPassword than getpass.
 %patch14 -p1 -b .getpass
+# Increase driverd timeout to 70s to accommodate foomatic.
 %patch15 -p1 -b .driverd-timeout
+# Only enforce maximum PPD line length when in strict mode.
 %patch16 -p1 -b .strict-ppd-line-length
+# Re-open the log if it has been logrotated under us.
 %patch17 -p1 -b .logrotate
+# Support for errno==ENOSPACE-based USB paper-out reporting.
 %patch18 -p1 -b .usb-paperout
+# Simplify the DNSSD parts so they can build using the compat library.
 %patch19 -p1 -b .build
+# Re-initialise the resolver on failure in httpAddrGetList().
 %patch20 -p1 -b .res_init
+# Log extra debugging information if no filters are available.
 %patch21 -p1 -b .filter-debug
+# Allow the usb backend to understand old-style URI formats.
 %patch22 -p1 -b .uri-compat
+# Fix support for older CUPS servers in cupsGetDests.
 %patch23 -p1 -b .cups-get-classes
+# Avahi support in the dnssd backend.
 %patch24 -p1 -b .avahi
+# Fix temporary filename creation.
 %patch25 -p1 -b .str3382
-%patch26 -p1 -b .str3503
-%patch27 -p1 -b .str3399
-#%patch28 -p1 -b .gnutls-gcrypt-threads
+# Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
+# Re-initialise the resolver on failure in httpAddrLookup().
 %patch30 -p1 -b .EAI_AGAIN
-%patch31 -p1 -b .str3505
-%patch32 -p1 -b .str3541
+# Use numeric addresses for interfaces unless HostNameLookups are
+# turned on (bug #583054).
+%patch31 -p1 -b .hostnamelookups
+# Handle SNMP supply level quirks (bug #581825).
 %patch33 -p1 -b .snmp-quirks
-%patch34 -p1 -b .hostnamelookups
-%patch35 -p1 -b .texttops-rotate-page
-%patch36 -p1 -b .str3425p2
+# Add an SNMP query for HP's device ID OID (STR #3552).
+%patch34 -p1 -b .hp-deviceid-oid
+# Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
+%patch35 -p1 -b .dnssd-deviceid
+# Add an SNMP query for Ricoh's device ID OID (STR #3552).
+%patch36 -p1 -b .ricoh-deviceid-oid
+# Adjust texttops output to be in natural orientation (STR #3563).
+# This fixes page-label orientation when texttops is used in the
+# filter chain (bug #572338).
+%patch37 -p1 -b .texttops-rotate-page
 
 %if %lspp
+# LSPP support.
 %patch100 -p1 -b .lspp
 %endif
 
 # SECURITY PATCHES:
-%patch200 -p1 -b .CVE-2010-0302
-
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -304,11 +348,11 @@ popd
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
 install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
-install -c -m 644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
-install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
-install -c -m 755 %{SOURCE10} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
-install -c -m 755 %{SOURCE11} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
-install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
+install -c -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
+install -c -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
+install -c -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
+install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
+install -c -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 
 # Ship pstopdf for LSPP systems to deal with malicious postscript
 %if %lspp
@@ -316,8 +360,8 @@ install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
 
 # Ship pstoraster (bug #69573).
-install -c -m 755 %{SOURCE6} $RPM_BUILD_ROOT%{cups_serverbin}/filter
-install -c -m 644 %{SOURCE7} $RPM_BUILD_ROOT%{_sysconfdir}/cups
+install -c -m 755 %{SOURCE11} $RPM_BUILD_ROOT%{cups_serverbin}/filter
+install -c -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_sysconfdir}/cups
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -532,6 +576,20 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-1
+- 1.4.4.  Fixes several security vulnerabilities (bug #605399):
+  CVE-2010-0540, CVE-2010-0542, CVE-2010-1748.  No longer need str3503,
+  str3399, str3505, str3541, str3425p2 or CVE-2010-0302 patches.
+- Fix lpd provides.
+- Added comments for all sources and patches.
+- Reset status after successful ipp job (bug #548219, STR #3460).
+- Install udev rules in correct place (bug #530378).
+- Removed unapplied gnutls-gcrypt-threads patch.  Fixed typos in
+  descriptions for lpd and php sub-packages.
+- Add an SNMP query for Ricoh's device ID OID (STR #3552).
+- Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
+- Add an SNMP query for HP's device ID OID (STR #3552).
+
 * Wed Jun  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.3-8
 - Use upstream method of handling SNMP quirks in PPDs (STR #3551,
   bug #581825).
