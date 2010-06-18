@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -95,7 +95,7 @@ Provides: cupsddk-drivers = 1.2.3-7
 Conflicts: kdelibs < 6:3.5.2-6
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: gnutls-devel libacl-devel
+BuildRequires: openssl-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, pcre-devel
@@ -144,7 +144,7 @@ Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
-Requires: gnutls-devel
+Requires: openssl-devel
 Requires: krb5-devel
 Requires: zlib-devel
 Obsoletes: cupsddk-devel < 1.2.3-7
@@ -576,6 +576,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-2
+- Re-enabled SSL support by using OpenSSL instead of gnutls.
+
 * Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-1
 - 1.4.4.  Fixes several security vulnerabilities (bug #605399):
   CVE-2010-0540, CVE-2010-0542, CVE-2010-1748.  No longer need str3503,
