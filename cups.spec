@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.3
-Release: 11%{?dist}
+Version: 1.4.4
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -56,23 +56,17 @@ Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
 Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
-Patch26: cups-str3503.patch
-Patch27: cups-str3399.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
-Patch31: cups-str3505.patch
-Patch32: cups-str3541.patch
 Patch33: cups-snmp-quirks.patch
 Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
-Patch38: cups-str3425p2.patch
 
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
-Patch200: cups-CVE-2010-0302.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -254,18 +248,10 @@ module.
 %patch24 -p1 -b .avahi
 # Fix temporary filename creation.
 %patch25 -p1 -b .str3382
-# Fix cupsGetNamedDest() when a name is specified.
-%patch26 -p1 -b .str3503
-# Don't treat SIGPIPE as an error.
-%patch27 -p1 -b .str3399
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
 %patch30 -p1 -b .EAI_AGAIN
-# Update classes.conf when a class member printer is deleted
-%patch31 -p1 -b .str3505
-# Fix lpstat to adhere to -o option.
-%patch32 -p1 -b .str3541
 # Handle SNMP supply level quirks (bug #581825).
 %patch33 -p1 -b .snmp-quirks
 # Add an SNMP query for HP's device ID OID (STR #3552).
@@ -278,8 +264,6 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch37 -p1 -b .texttops-rotate-page
-# Delete job files in /var/spool/cups (STR #3425)
-%patch38 -p1 -b .str3425p2
 
 %if %lspp
 # LSPP support.
@@ -287,9 +271,6 @@ module.
 %endif
 
 # SECURITY PATCHES:
-# Applied patch for CVE-2010-0302 (incomplete fix for CVE-2009-3553,
-# bug #557775).
-%patch200 -p1 -b .CVE-2010-0302
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -580,6 +561,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-1
+- 1.4.4.  Fixes several security vulnerabilities (bug #605399):
+  CVE-2010-0540, CVE-2010-0542, CVE-2010-1748.  No longer need str3503,
+  str3399, str3505, str3541, str3425p2 or CVE-2010-0302 patches.
+
 * Thu Jun 10 2010 Tim Waugh <twaugh@redhat.com>
 - Removed unapplied gnutls-gcrypt-threads patch.  Fixed typos in
   descriptions for lpd and php sub-packages.
