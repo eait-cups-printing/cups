@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -135,9 +135,6 @@ Requires: ghostscript
 # We ship udev rules which use setfacl.
 Requires: udev
 Requires: acl
-
-# Make sure we have some filters for converting to raster format.
-Requires: ghostscript-cups
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -576,6 +573,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 22 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-3
+- Removed dependency on ghostscript-cups package.  The pstoraster
+  filter is not in that package until Fedora 13.
+
 * Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-2
 - Re-enabled SSL support by using OpenSSL instead of gnutls.
 
