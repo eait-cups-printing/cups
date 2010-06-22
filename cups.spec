@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -561,6 +561,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 22 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-3
+- Rebuilt to keep correct package n-v-r ordering between releases.
+
 * Fri Jun 18 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-2
 - Re-enabled SSL support by using OpenSSL instead of gnutls.
 
