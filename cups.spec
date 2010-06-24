@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -302,9 +302,10 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--enable-lspp \
 %endif
 	--with-log-file-perm=0600 --enable-pie --enable-relro \
-	--enable-pdftops --with-pdftops=pdftops \
+	--with-pdftops=pdftops \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi --enable-avahi \
+	--disable-threads --enable-gnutls \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -573,6 +574,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jun 24 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-4
+- Use gnutls again but disable threading (bug #607159).
+
 * Tue Jun 22 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-3
 - Removed dependency on ghostscript-cups package.  The pstoraster
   filter is not in that package until Fedora 13.
