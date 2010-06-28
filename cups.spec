@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -63,6 +63,7 @@ Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
+Patch38: cups-str3608.patch
 
 Patch100: cups-lspp.patch
 
@@ -264,6 +265,9 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch37 -p1 -b .texttops-rotate-page
+# Avoid empty notify-subscribed-event attributes (bug #606909, STR
+# #3608).
+%patch38 -p1 -b .str3608
 
 %if %lspp
 # LSPP support.
@@ -562,6 +566,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Jun 28 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-5
+- Avoid empty notify-subscribed-event attributes (bug #606909,
+  STR #3608).
+
 * Thu Jun 24 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-4
 - Use gnutls again but disable threading (bug #607159).
 
