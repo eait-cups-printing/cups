@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -451,7 +451,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc LICENSE.txt README.txt CREDITS.txt CHANGES.txt
+%doc README.txt CREDITS.txt CHANGES.txt
 /lib/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
@@ -545,6 +545,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files libs
 %defattr(-,root,root)
+%doc LICENSE.txt
 %{_libdir}/*.so.*
 
 %files devel
@@ -566,6 +567,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Jul 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-6
+- Moved LICENSE.txt to libs sub-package.
+
 * Mon Jun 28 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-5
 - Avoid empty notify-subscribed-event attributes (bug #606909,
   STR #3608).
