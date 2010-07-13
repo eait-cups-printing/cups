@@ -567,7 +567,7 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Mon Jul 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-7
+* Tue Jul 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-7
 - Added restartlog to initscript usage output (bug #612996).
 
 * Mon Jul 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-6
