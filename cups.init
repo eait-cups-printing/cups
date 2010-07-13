@@ -137,7 +137,7 @@ case $1 in
 	;;
 	*)
 
-	echo $"Usage: $prog {start|stop|restart|condrestart|try-restart|reload|force-reload|status}"
+	echo $"Usage: $prog {start|stop|restart|restartlog|condrestart|try-restart|reload|force-reload|status}"
 	exit 2
 esac
 

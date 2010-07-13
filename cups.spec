@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -567,6 +567,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jul 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-7
+- Added restartlog to initscript usage output (bug #612996).
+
 * Mon Jul 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-6
 - Moved LICENSE.txt to libs sub-package.
 
