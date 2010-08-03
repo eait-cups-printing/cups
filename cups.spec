@@ -96,7 +96,7 @@ Provides: cupsddk-drivers = 1.2.3-7
 Conflicts: kdelibs < 6:3.5.2-6
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: openssl-devel libacl-devel
+BuildRequires: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: make >= 1:3.80
 BuildRequires: php-devel, pcre-devel
@@ -142,7 +142,7 @@ Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
-Requires: openssl-devel
+Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
 Obsoletes: cupsddk-devel < 1.2.3-7
@@ -578,6 +578,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Aug  3 2010 Tim Waugh <twaugh@redhat.com>
+- Build requires gnutls-devel not openssl-devel.
+
 * Mon Jun 28 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-5
 - Avoid empty notify-subscribed-event attributes (bug #606909,
   STR #3608).
