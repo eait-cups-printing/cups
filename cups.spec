@@ -58,6 +58,7 @@ Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
+Patch31: cups-hostnamelookups.patch
 Patch33: cups-snmp-quirks.patch
 Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
@@ -253,6 +254,9 @@ module.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
 %patch30 -p1 -b .EAI_AGAIN
+# Use numeric addresses for interfaces unless HostNameLookups are
+# turned on (bug #583054).
+%patch31 -p1 -b .hostnamelookups
 # Handle SNMP supply level quirks (bug #581825).
 %patch33 -p1 -b .snmp-quirks
 # Add an SNMP query for HP's device ID OID (STR #3552).
@@ -567,6 +571,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Aug  3 2010 Tim Waugh <twaugh@redhat.com>
+- Merged F-12 change:
+  - Use numeric addresses for interfaces unless HostNameLookups are
+    turned on (bug #583054).
+
 * Tue Jul 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.4-7
 - Added restartlog to initscript usage output (bug #612996).
 
