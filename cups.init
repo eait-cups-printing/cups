@@ -74,11 +74,13 @@ start () {
 	echo
 	[ $RETVAL = 0 ] && touch $lockfile
 
-	udevadm trigger --subsystem-match=usb	\
-		--attr-match=bInterfaceClass=07	\
-		--attr-match=bInterfaceSubClass=01 &>/dev/null || :
-        udevadm trigger --subsystem-match=usb \
-		--property-match=DEVNAME="/dev/usb/lp*" &>/dev/null || :
+	udevadm trigger --subsystem-match=usb		\
+		--attr-match=bInterfaceClass=07		\
+		--attr-match=bInterfaceSubClass=01	\
+		--action=add &>/dev/null || :
+        udevadm trigger --subsystem-match=usb		\
+		--property-match=DEVNAME="/dev/usb/lp*" \
+		--action=add &>/dev/null || :
 
 	return 0
 }
