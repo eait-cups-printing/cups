@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -578,6 +578,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 20 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-7
+- Use better upstream fix for STR #3608 (bug #606909).
+
 * Tue Aug  3 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-6
 - Specify udevadm trigger action in initscript (bug #623959).
 - Build requires gnutls-devel not openssl-devel.
