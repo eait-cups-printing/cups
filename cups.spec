@@ -571,6 +571,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Aug 23 2010 Tim Waugh <twaugh@redhat.com>
+- Fixed SNMP quirks parsing.
+
 * Fri Aug 20 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-9
 - Use better upstream fix for STR #3608 (bug #606909).
 
