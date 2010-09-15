@@ -578,6 +578,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
+- Fixed serverbin-compat patch to avoid misleading "filter not
+  available" messages (bug #633779).
+
 * Fri Aug 20 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-7
 - Use better upstream fix for STR #3608 (bug #606909).
 
