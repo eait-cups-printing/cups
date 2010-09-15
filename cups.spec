@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -581,11 +581,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
+* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-8
 - Build with --enable-threads again (bug #607159).
 - Force the use of gnutls despite thread-safety concerns (bug #607159).
-
-* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
 - Fixed serverbin-compat patch to avoid misleading "filter not
   available" messages (bug #633779).
 
