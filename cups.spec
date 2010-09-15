@@ -59,6 +59,7 @@ Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
 Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
+Patch26: cups-force-gnutls.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-hostnamelookups.patch
@@ -253,6 +254,8 @@ module.
 %patch24 -p1 -b .avahi
 # Fix temporary filename creation.
 %patch25 -p1 -b .str3382
+# Force the use of gnutls despite thread-safety concerns (bug #607159).
+%patch26 -p1 -b .force-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
@@ -580,6 +583,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
 - Build with --enable-threads again (bug #607159).
+- Force the use of gnutls despite thread-safety concerns (bug #607159).
 
 * Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
 - Fixed serverbin-compat patch to avoid misleading "filter not
