@@ -309,7 +309,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-pdftops=pdftops \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi --enable-avahi \
-	--disable-threads --enable-gnutls \
+	--enable-threads --enable-gnutls \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -578,6 +578,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
+- Build with --enable-threads again (bug #607159).
+
 * Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
 - Fixed serverbin-compat patch to avoid misleading "filter not
   available" messages (bug #633779).
