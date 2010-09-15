@@ -571,6 +571,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
+- Fixed serverbin-compat patch to avoid misleading "filter not
+  available" messages (bug #633779).
+
 * Mon Aug 23 2010 Tim Waugh <twaugh@redhat.com>
 - Fixed SNMP quirks parsing.
 
