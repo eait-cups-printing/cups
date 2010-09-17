@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -56,6 +56,8 @@ Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
 Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
+Patch26: cups-force-gnutls.patch
+Patch27: cups-serialize-gnutls.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-hostnamelookups.patch
@@ -250,6 +252,11 @@ module.
 %patch24 -p1 -b .avahi
 # Fix temporary filename creation.
 %patch25 -p1 -b .str3382
+# Force the use of gnutls despite thread-safety concerns (bug #607159).
+%patch26 -p1 -b .force-gnutls
+# Perform locking for gnutls and avoid libgcrypt's broken
+# locking (bug #607159).
+%patch27 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
@@ -306,7 +313,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-pdftops=pdftops \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi --enable-avahi \
-	--disable-threads --enable-gnutls \
+	--enable-threads --enable-gnutls \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -571,6 +578,19 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Sep 17 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-10
+- Perform locking for gnutls and avoid libgcrypt's broken
+  locking (bug #607159).
+- Build with --enable-threads again (bug #607159).
+- Force the use of gnutls despite thread-safety concerns (bug #607159).
+
+* Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com>
+- Fixed serverbin-compat patch to avoid misleading "filter not
+  available" messages (bug #633779).
+
+* Mon Aug 23 2010 Tim Waugh <twaugh@redhat.com>
+- Fixed SNMP quirks parsing.
+
 * Fri Aug 20 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-9
 - Use better upstream fix for STR #3608 (bug #606909).
 
