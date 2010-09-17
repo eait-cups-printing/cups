@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -60,6 +60,7 @@ Patch23: cups-cups-get-classes.patch
 Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
 Patch26: cups-force-gnutls.patch
+Patch27: cups-serialize-gnutls.patch
 Patch29: cups-0755.patch
 Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-hostnamelookups.patch
@@ -256,6 +257,9 @@ module.
 %patch25 -p1 -b .str3382
 # Force the use of gnutls despite thread-safety concerns (bug #607159).
 %patch26 -p1 -b .force-gnutls
+# Perform locking for gnutls and avoid libgcrypt's broken
+# locking (bug #607159).
+%patch27 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
 # Re-initialise the resolver on failure in httpAddrLookup().
@@ -581,6 +585,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Sep 17 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-9
+- Perform locking for gnutls and avoid libgcrypt's broken
+  locking (bug #607159).
+
 * Wed Sep 15 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-8
 - Build with --enable-threads again (bug #607159).
 - Force the use of gnutls despite thread-safety concerns (bug #607159).
