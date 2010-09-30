@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 10%{?dist}
+Release: 10%{?dist}.1
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -578,6 +578,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 29 2010 jkeating - 1:1.4.4-10.1
+- Rebuilt for gcc bug 634757
+
 * Fri Sep 17 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-10
 - Perform locking for gnutls and avoid libgcrypt's broken
   locking (bug #607159).
