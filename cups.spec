@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -70,6 +70,7 @@ Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-str3608.patch
+Patch39: cups-autotype-crash.patch
 
 Patch100: cups-lspp.patch
 
@@ -282,6 +283,8 @@ module.
 # Avoid empty notify-subscribed-event attributes (bug #606909, STR
 # #3608).
 %patch38 -p1 -b .str3608
+# Don't crash when MIME database could not be loaded (bug #610088).
+%patch39 -p1 -b .autotype-crash
 
 %if %lspp
 # LSPP support.
@@ -585,6 +588,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Oct 15 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-10
+- Don't crash when MIME database could not be loaded (bug #610088).
+
 * Fri Sep 17 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-9
 - Perform locking for gnutls and avoid libgcrypt's broken
   locking (bug #607159).
