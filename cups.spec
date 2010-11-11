@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,10 +67,12 @@ Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-str3608.patch
+Patch39: cups-autotype-crash.patch
 
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
+Patch200: cups-CVE-2010-2941.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -279,6 +281,8 @@ module.
 # Avoid empty notify-subscribed-event attributes (bug #606909, STR
 # #3608).
 %patch38 -p1 -b .str3608
+# Don't crash when MIME database could not be loaded (bug #610088).
+%patch39 -p1 -b .autotype-crash
 
 %if %lspp
 # LSPP support.
@@ -286,6 +290,8 @@ module.
 %endif
 
 # SECURITY PATCHES:
+# Fix cupsd memory corruption vulnerability (CVE-2010-2941, bug #652161).
+%patch200 -p1 -b .CVE-2010-2941
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -578,6 +584,11 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Nov 11 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-12
+- Applied patch to fix cupsd memory corruption vulnerability
+  (CVE-2010-2941, bug #652161).
+- Don't crash when MIME database could not be loaded (bug #610088).
+
 * Wed Sep 29 2010 jkeating - 1:1.4.4-11
 - Rebuilt for gcc bug 634757
 
