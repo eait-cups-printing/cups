@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.4
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -75,6 +75,7 @@ Patch39: cups-autotype-crash.patch
 Patch100: cups-lspp.patch
 
 ## SECURITY PATCHES:
+Patch200: cups-CVE-2010-2941.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -292,6 +293,8 @@ module.
 %endif
 
 # SECURITY PATCHES:
+# Fix cupsd memory corruption vulnerability (CVE-2010-2941, bug #652161).
+%patch200 -p1 -b .CVE-2010-2941
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -588,6 +591,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Nov 11 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-11
+- Applied patch to fix cupsd memory corruption vulnerability
+  (CVE-2010-2941, bug #652161).
+
 * Fri Oct 15 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-10
 - Don't crash when MIME database could not be loaded (bug #610088).
 
