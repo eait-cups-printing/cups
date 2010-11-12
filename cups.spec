@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.4
-Release: 12%{?dist}
+Version: 1.4.5
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -66,13 +66,9 @@ Patch34: cups-hp-deviceid-oid.patch
 Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
-Patch38: cups-str3608.patch
-Patch39: cups-autotype-crash.patch
+Patch38: cups-autotype-crash.patch
 
 Patch100: cups-lspp.patch
-
-## SECURITY PATCHES:
-Patch200: cups-CVE-2010-2941.patch
 
 Epoch: 1
 Url: http://www.cups.org/
@@ -278,20 +274,13 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch37 -p1 -b .texttops-rotate-page
-# Avoid empty notify-subscribed-event attributes (bug #606909, STR
-# #3608).
-%patch38 -p1 -b .str3608
 # Don't crash when MIME database could not be loaded (bug #610088).
-%patch39 -p1 -b .autotype-crash
+%patch38 -p1 -b .autotype-crash
 
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
-
-# SECURITY PATCHES:
-# Fix cupsd memory corruption vulnerability (CVE-2010-2941, bug #652161).
-%patch200 -p1 -b .CVE-2010-2941
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -584,6 +573,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Nov 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-1
+- 1.4.5.
+- No longer need CVE-2010-2941, str3608
+
 * Thu Nov 11 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.4-12
 - Applied patch to fix cupsd memory corruption vulnerability
   (CVE-2010-2941, bug #652161).
