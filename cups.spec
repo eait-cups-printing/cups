@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -105,7 +105,7 @@ BuildRequires: avahi-devel
 BuildRequires: poppler-utils
 
 # Make sure we get postscriptdriver tags.
-BuildRequires: pycups
+BuildRequires: python-cups
 
 %if %lspp
 BuildRequires: libselinux-devel >= 1.23
@@ -584,6 +584,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Nov 26 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-3
+- BuildRequires python-cups instead of pycups.
+
 * Fri Nov 26 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-2
 - Added /etc/tmpfiles.d/cups.conf to enable /var/run/cups directory on tmpfs (#656566).
 
