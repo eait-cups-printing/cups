@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -120,6 +120,9 @@ Requires: dbus >= 0.90
 
 # Requires tmpwatch for the cron.daily script (bug #218901).
 Requires: tmpwatch
+
+# Requires /etc/tmpfiles.d (bug #656566)
+Requires: systemd-units >= 13
 
 # We use portreserve to prevent our TCP port being stolen.
 # Require the package here so that we know /etc/portreserve/ exists.
@@ -398,6 +401,13 @@ __EOF__
 install -m644 %{SOURCE3} \
 	%{buildroot}/lib/udev/rules.d/70-cups-libusb.rules
 
+# install /etc/tmpfiles.d/cups.conf (bug #656566)
+mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
+cat > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/cups.conf <<EOF
+d %{_localstatedir}/run/cups 0755 root lp -
+d %{_localstatedir}/run/cups/certs 0511 lp sys -
+EOF
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -462,6 +472,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
+%config(noreplace) %{_sysconfdir}/tmpfiles.d/cups.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
@@ -573,6 +584,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Nov 26 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-2
+- Added /etc/tmpfiles.d/cups.conf to enable /var/run/cups directory on tmpfs (#656566).
+
 * Fri Nov 12 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-1
 - 1.4.5.
 - No longer need CVE-2010-2941, str3608
