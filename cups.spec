@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -584,6 +584,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Dec 03 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-4
+- Changed subsystem lock file name in initscript
+  so the service is correctly stopped on reboot or halt (bug #659391).
+
 * Fri Nov 26 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-3
 - BuildRequires python-cups instead of pycups.
 
