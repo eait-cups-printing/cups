@@ -49,7 +49,7 @@ DAEMON=cupsd
 exec=/usr/sbin/cupsd
 prog=cups
 config=/etc/cups/cupsd.conf
-lockfile=/var/lock/subsys/$DAEMON
+lockfile=/var/lock/subsys/cups
 
 check() {
 	# Check that we're a privileged user
@@ -129,7 +129,7 @@ case $1 in
 		echo
 	;;
 	status)
-		status $DAEMON
+		status -l $(basename $lockfile) $DAEMON
 		RETVAL=$?
 	;;
 	restartlog)
