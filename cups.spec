@@ -493,19 +493,19 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/pl
 %dir %{_datadir}/%{name}/www/ru
-%config(noreplace) %{_datadir}/%{name}/www/images
-%config(noreplace) %{_datadir}/%{name}/www/*.css
-%config(noreplace) %doc %{_datadir}/%{name}/www/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/help
-%config(noreplace) %doc %{_datadir}/%{name}/www/robots.txt
-%config(noreplace) %doc %{_datadir}/%{name}/www/de/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/es/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/eu/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/id/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/it/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/ja/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/pl/index.html
-%config(noreplace) %doc %{_datadir}/%{name}/www/ru/index.html
+%{_datadir}/%{name}/www/images
+%{_datadir}/%{name}/www/*.css
+%doc %{_datadir}/%{name}/www/index.html
+%doc %{_datadir}/%{name}/www/help
+%doc %{_datadir}/%{name}/www/robots.txt
+%doc %{_datadir}/%{name}/www/de/index.html
+%doc %{_datadir}/%{name}/www/es/index.html
+%doc %{_datadir}/%{name}/www/eu/index.html
+%doc %{_datadir}/%{name}/www/id/index.html
+%doc %{_datadir}/%{name}/www/it/index.html
+%doc %{_datadir}/%{name}/www/ja/index.html
+%doc %{_datadir}/%{name}/www/pl/index.html
+%doc %{_datadir}/%{name}/www/ru/index.html
 %{_initddir}/cups
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
@@ -534,15 +534,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
-%config(noreplace) %{_datadir}/cups/templates/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/de/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/es/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/eu/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/id/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/it/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/ja/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/pl/*.tmpl
-%config(noreplace) %{_datadir}/cups/templates/ru/*.tmpl
+%{_datadir}/cups/templates/*.tmpl
+%{_datadir}/cups/templates/de/*.tmpl
+%{_datadir}/cups/templates/es/*.tmpl
+%{_datadir}/cups/templates/eu/*.tmpl
+%{_datadir}/cups/templates/id/*.tmpl
+%{_datadir}/cups/templates/it/*.tmpl
+%{_datadir}/cups/templates/ja/*.tmpl
+%{_datadir}/cups/templates/pl/*.tmpl
+%{_datadir}/cups/templates/ru/*.tmpl
 %{_datadir}/locale/*/*.po
 %{_datadir}/ppd
 %dir %attr(1770,root,lp) /var/spool/cups/tmp
@@ -585,6 +585,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Don't mark templates and www files as config files.  A better way to
+  provide local overrides is to use a different ServerRoot setting.
+  Note that a recent security fix required changed to template files.
 - Provide versioned LPRng symbol for rpmlint.
 
 * Mon Dec  6 2010 Tim Waugh <twaugh@redhat.com>
