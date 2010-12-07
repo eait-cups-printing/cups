@@ -554,8 +554,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/drv
 %{_datadir}/cups/examples
 %dir %{_datadir}/cups/mime
-%config(noreplace) %{_datadir}/cups/mime/mime.types
-%config(noreplace) %{_datadir}/cups/mime/mime.convs
+%{_datadir}/cups/mime/mime.types
+%{_datadir}/cups/mime/mime.convs
 %dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.defs
 %{_datadir}/cups/ppdc/*.h
@@ -585,6 +585,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Don't mark MIME types and convs files as config files.  Overrides
+  can be placed as new *.types/*.convs files in /etc/cups.
 - Don't mark banners as config files.  Better is to provide new
   banners.
 - Don't mark templates and www files as config files.  A better way to
