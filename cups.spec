@@ -550,7 +550,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0755,lp,sys) /var/log/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
-%{_sysconfdir}/dbus-1/system.d/cups.conf
+%config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
 %{_datadir}/cups/drv
 %{_datadir}/cups/examples
 %dir %{_datadir}/cups/mime
@@ -585,6 +585,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Mark D-Bus configuration file as config file.
 - Don't mark MIME types and convs files as config files.  Overrides
   can be placed as new *.types/*.convs files in /etc/cups.
 - Don't mark banners as config files.  Better is to provide new
