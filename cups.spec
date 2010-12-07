@@ -296,6 +296,11 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 # Fix locale code for Norwegian (bug #520379).
 mv locale/cups_no.po locale/cups_nb.po
 
+f=CREDITS.txt
+mv "$f" "$f"~
+iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
+rm "$f"~
+
 # Rebuild configure script for --enable-avahi.
 aclocal -I config-scripts
 autoconf -I config-scripts
@@ -585,6 +590,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Fixed character encoding in CREDITS.txt.
 - Mark D-Bus configuration file as config file.
 - Don't mark MIME types and convs files as config files.  Overrides
   can be placed as new *.types/*.convs files in /etc/cups.
