@@ -527,7 +527,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sbindir}/*
 %dir %{_datadir}/cups
 %dir %{_datadir}/cups/banners
-%config(noreplace) %{_datadir}/cups/banners/*
+%{_datadir}/cups/banners/*
 %{_datadir}/cups/charsets
 %{_datadir}/cups/charmaps
 %{_datadir}/cups/data
@@ -585,6 +585,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Don't mark banners as config files.  Better is to provide new
+  banners.
 - Don't mark templates and www files as config files.  A better way to
   provide local overrides is to use a different ServerRoot setting.
   Note that a recent security fix required changed to template files.
