@@ -82,7 +82,7 @@ Requires: /usr/sbin/alternatives
 
 # Unconditionally obsolete LPRng so that upgrades work properly.
 Obsoletes: lpd <= 3.8.15-3, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
-Provides: lpd = 3.8.15-4, lpr = 3.8.15-4
+Provides: lpd = 3.8.15-4, lpr = 3.8.15-4, LPRng = 3.8.15-4
 
 Obsoletes: cupsddk < 1.2.3-7
 Provides: cupsddk = 1.2.3-7
@@ -584,7 +584,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
-* Mon Dec  6 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+* Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
+- Provide versioned LPRng symbol for rpmlint.
+
+* Mon Dec  6 2010 Tim Waugh <twaugh@redhat.com>
 - /usr/sbin/cupsd should be mode 0755 (bug #546004).
 
 * Fri Dec 03 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-4
