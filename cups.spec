@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -164,6 +164,7 @@ Requires: xinetd
 Summary: Common Unix Printing System - php module
 Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 %if 0%{?php_zend_api}
 Requires: php(zend-abi) = %{php_zend_api}
 Requires: php(api) = %{php_core_api}
@@ -589,6 +590,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Dec  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-6
+- The php sub-package now explicitly requires the libs package with
+  the same version and release (bug #646814).
+
 * Tue Dec  7 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-5
 - Fixed character encoding in CREDITS.txt.
 - Mark D-Bus configuration file as config file.
