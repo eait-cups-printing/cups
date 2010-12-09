@@ -529,7 +529,11 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/filter
 %{cups_serverbin}/monitor
 %{cups_serverbin}/driver
-%{_mandir}/man?/*
+%{_mandir}/man1/cancel*
+%{_mandir}/man1/cupstest*
+%{_mandir}/man1/lp*
+%{_mandir}/man1/ppd*
+%{_mandir}/man[578]/*
 %{_sbindir}/*
 %dir %{_datadir}/cups
 %dir %{_datadir}/cups/banners
@@ -576,6 +580,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
+%{_mandir}/man1/cups-config.1*
 
 %files lpd
 %defattr(-,root,root)
@@ -591,6 +596,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Dec  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-6
+- The cups-config man page has been moved to the devel sub-package.
 - The php sub-package now explicitly requires the libs package with
   the same version and release (bug #646814).
 
