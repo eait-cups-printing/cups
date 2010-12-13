@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -573,6 +573,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Dec 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-3
+- Call avc_init() only once to not leak file descriptors (bug #654075).
+
 * Fri Dec 03 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-2
 - Changed subsystem lock file name in initscript
   so the service is correctly stopped on reboot or halt (bug #659391).
