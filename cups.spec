@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -595,6 +595,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Dec 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-7
+- Call avc_init() only once to not leak file descriptors (bug #654075).
+
 * Thu Dec  9 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-6
 - The cups-config man page has been moved to the devel sub-package.
 - The php sub-package now explicitly requires the libs package with
