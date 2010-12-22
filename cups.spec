@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch35: cups-dnssd-deviceid.patch
 Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-autotype-crash.patch
+Patch39: cups-str3754.patch
 
 Patch100: cups-lspp.patch
 
@@ -276,6 +277,8 @@ module.
 %patch37 -p1 -b .texttops-rotate-page
 # Don't crash when MIME database could not be loaded (bug #610088).
 %patch38 -p1 -b .autotype-crash
+# Don't crash when job queued for printer that times out (bug #660604).
+%patch39 -p1 -b .str3754
 
 %if %lspp
 # LSPP support.
@@ -573,6 +576,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Dec 22 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-4
+- Don't crash when job queued for browsed printer that times out
+  (bug #660604).
+
 * Mon Dec 13 2010 Jiri Popelka <jpopelka@redhat.com> 1:1.4.5-3
 - Call avc_init() only once to not leak file descriptors (bug #654075).
 
