@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.5
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -54,7 +54,6 @@ Patch20: cups-res_init.patch
 Patch21: cups-filter-debug.patch
 Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
-Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
 Patch26: cups-force-gnutls.patch
 Patch27: cups-serialize-gnutls.patch
@@ -68,6 +67,7 @@ Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-autotype-crash.patch
 Patch39: cups-str3754.patch
+Patch40: cups-avahi.patch
 
 Patch100: cups-lspp.patch
 
@@ -251,8 +251,6 @@ module.
 %patch22 -p1 -b .uri-compat
 # Fix support for older CUPS servers in cupsGetDests.
 %patch23 -p1 -b .cups-get-classes
-# Avahi support in the dnssd backend.
-%patch24 -p1 -b .avahi
 # Fix temporary filename creation.
 %patch25 -p1 -b .str3382
 # Force the use of gnutls despite thread-safety concerns (bug #607159).
@@ -283,6 +281,9 @@ module.
 %patch38 -p1 -b .autotype-crash
 # Don't crash when job queued for printer that times out (bug #660604).
 %patch39 -p1 -b .str3754
+
+# Avahi support in the dnssd backend.
+%patch40 -p1 -b .avahi
 
 %if %lspp
 # LSPP support.
@@ -598,6 +599,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Dec 24 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-9
+- Native Avahi support for announcing printers on the network.
+
 * Wed Dec 22 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-8
 - Don't crash when job queued for browsed printer that times out
   (bug #660604).
