@@ -1,0 +1,1741 @@
+diff -up cups-1.4.6/scheduler/ipp.c.icc cups-1.4.6/scheduler/ipp.c
+--- cups-1.4.6/scheduler/ipp.c.icc	2011-01-11 15:23:38.318062917 +0000
++++ cups-1.4.6/scheduler/ipp.c	2011-01-11 15:23:38.379057153 +0000
+@@ -32,10 +32,6 @@
+  *                                 based upon the printer state...
+  *   add_queued_job_count()      - Add the "queued-job-count" attribute for the
+  *                                 specified printer or class.
+- *   apple_init_profile()        - Initialize a color profile.
+- *   apple_register_profiles()   - Register color profiles for a printer.
+- *   apple_unregister_profiles() - Remove color profiles for the specified
+- *                                 printer.
+  *   apply_printer_defaults()    - Apply printer default options to a job.
+  *   authenticate_job()          - Set job authentication info.
+  *   cancel_all_jobs()           - Cancel all print jobs.
+@@ -107,11 +103,9 @@
+  */
+ 
+ #include "cupsd.h"
+-#include <cups/ppd-private.h>
+ 
+ #ifdef __APPLE__
+ #  include <ApplicationServices/ApplicationServices.h>
+-#  include <CoreFoundation/CoreFoundation.h>
+ #  ifdef HAVE_MEMBERSHIP_H
+ #    include <membership.h>
+ #  endif /* HAVE_MEMBERSHIP_H */
+@@ -142,14 +136,6 @@ static void	add_printer(cupsd_client_t *
+ static void	add_printer_state_reasons(cupsd_client_t *con,
+ 		                          cupsd_printer_t *p);
+ static void	add_queued_job_count(cupsd_client_t *con, cupsd_printer_t *p);
+-#ifdef __APPLE__
+-static void	apple_init_profile(ppd_file_t *ppd, cups_array_t *languages,
+-		                   CMDeviceProfileInfo *profile, unsigned id,
+-		                   const char *name, const char *text,
+-				   const char *iccfile);
+-static void	apple_register_profiles(cupsd_printer_t *p);
+-static void	apple_unregister_profiles(cupsd_printer_t *p);
+-#endif /* __APPLE__ */
+ static void	apply_printer_defaults(cupsd_printer_t *printer,
+ 				       cupsd_job_t *job);
+ static void	authenticate_job(cupsd_client_t *con, ipp_attribute_t *uri);
+@@ -2947,17 +2933,15 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 
+     cupsdSetPrinterReasons(printer, "none");
+ 
+-#ifdef __APPLE__
+    /*
+     * (Re)register color profiles...
+     */
+ 
+     if (!RunUser)
+     {
+-      apple_unregister_profiles(printer);
+-      apple_register_profiles(printer);
++      cupsdUnregisterColorProfiles(printer);
++      cupsdRegisterColorProfiles(printer);
+     }
+-#endif /* __APPLE__ */
+   }
+ 
+  /*
+@@ -3093,553 +3077,6 @@ add_queued_job_count(
+ }
+ 
+ 
+-#ifdef __APPLE__
+-/*
+- * 'apple_init_profile()' - Initialize a color profile.
+- */
+-
+-static void
+-apple_init_profile(
+-    ppd_file_t          *ppd,		/* I - PPD file */
+-    cups_array_t	*languages,	/* I - Languages in the PPD file */
+-    CMDeviceProfileInfo *profile,	/* I - Profile record */
+-    unsigned            id,		/* I - Profile ID */
+-    const char          *name,		/* I - Profile name */
+-    const char          *text,		/* I - Profile UI text */
+-    const char          *iccfile)	/* I - ICC filename */
+-{
+-  char			url[1024];	/* URL for profile filename */
+-  CFMutableDictionaryRef dict;		/* Dictionary for name */
+-  char			*language;	/* Current language */
+-  ppd_attr_t		*attr;		/* Profile attribute */
+-  CFStringRef		cflang,		/* Language string */
+-			cftext;		/* Localized text */
+-
+-
+- /*
+-  * Build the profile name dictionary...
+-  */
+-
+-  dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
+-				   &kCFTypeDictionaryKeyCallBacks,
+-				   &kCFTypeDictionaryValueCallBacks);
+-
+-  cftext = CFStringCreateWithCString(kCFAllocatorDefault, text,
+-				     kCFStringEncodingUTF8);
+-
+-  if (cftext)
+-  {
+-    CFDictionarySetValue(dict, CFSTR("en"), cftext);
+-    CFRelease(cftext);
+-  }
+-
+-  if (languages)
+-  {
+-   /*
+-    * Find localized names for the color profiles...
+-    */
+-
+-    cupsArraySave(ppd->sorted_attrs);
+-
+-    for (language = (char *)cupsArrayFirst(languages);
+-	 language;
+-	 language = (char *)cupsArrayNext(languages))
+-    {
+-      if (iccfile)
+-      {
+-        if ((attr = _ppdLocalizedAttr(ppd, "cupsICCProfile", name,
+-	                              language)) == NULL)
+-	  attr = _ppdLocalizedAttr(ppd, "APTiogaProfile", name, language);
+-      }
+-      else
+-        attr = _ppdLocalizedAttr(ppd, "ColorModel", name, language);
+-
+-      if (attr && attr->text[0])
+-      {
+-	cflang = CFStringCreateWithCString(kCFAllocatorDefault, language,
+-					   kCFStringEncodingUTF8);
+-	cftext = CFStringCreateWithCString(kCFAllocatorDefault, attr->text,
+-					   kCFStringEncodingUTF8);
+-
+-        if (cflang && cftext)
+-	  CFDictionarySetValue(dict, cflang, cftext);
+-
+-        if (cflang)
+-	  CFRelease(cflang);
+-
+-        if (cftext)
+-	  CFRelease(cftext);
+-      }
+-    }
+-
+-    cupsArrayRestore(ppd->sorted_attrs);
+-  }
+-
+- /*
+-  * Fill in the profile data...
+-  */
+-
+-  if (iccfile)
+-    httpAssembleURI(HTTP_URI_CODING_ALL, url, sizeof(url), "file", NULL, "", 0,
+-		    iccfile);
+-
+-  profile->dataVersion        = cmDeviceProfileInfoVersion1;
+-  profile->profileID          = id;
+-  profile->profileLoc.locType = iccfile ? cmPathBasedProfile : cmNoProfileBase;
+-  profile->profileName        = dict;
+-
+-  if (iccfile)
+-    strlcpy(profile->profileLoc.u.pathLoc.path, iccfile,
+-	    sizeof(profile->profileLoc.u.pathLoc.path));
+-}
+-
+-
+-/*
+- * 'apple_register_profiles()' - Register color profiles for a printer.
+- */
+-
+-static void
+-apple_register_profiles(
+-    cupsd_printer_t *p)			/* I - Printer */
+-{
+-  int			i;		/* Looping var */
+-  char			ppdfile[1024],	/* PPD filename */
+-			iccfile[1024],	/* ICC filename */
+-			selector[PPD_MAX_NAME];
+-					/* Profile selection string */
+-  ppd_file_t		*ppd;		/* PPD file */
+-  ppd_attr_t		*attr,		/* Profile attributes */
+-			*profileid_attr,/* cupsProfileID attribute */
+-			*q1_attr,	/* ColorModel (or other) qualifier */
+-			*q2_attr,	/* MediaType (or other) qualifier */
+-			*q3_attr;	/* Resolution (or other) qualifier */
+-  char			q_keyword[PPD_MAX_NAME];
+-					/* Qualifier keyword */
+-  const char		*q1_choice,	/* ColorModel (or other) choice */
+-			*q2_choice,	/* MediaType (or other) choice */
+-			*q3_choice;	/* Resolution (or other) choice */
+-  const char		*profile_key;	/* Profile keyword */
+-  ppd_option_t		*cm_option;	/* Color model option */
+-  ppd_choice_t		*cm_choice;	/* Color model choice */
+-  int			num_profiles;	/* Number of profiles */
+-  CMError		error;		/* Last error */
+-  unsigned		device_id,	/* Printer device ID */
+-			profile_id,	/* Profile ID */
+-			default_profile_id = 0;
+-					/* Default profile ID */
+-  CFMutableDictionaryRef device_name;	/* Printer device name dictionary */
+-  CFStringRef		printer_name;	/* Printer name string */
+-  CMDeviceScope		scope =		/* Scope of the registration */
+-			{
+-			  kCFPreferencesAnyUser,
+-			  kCFPreferencesCurrentHost
+-			};
+-  CMDeviceProfileArrayPtr profiles;	/* Profiles */
+-  CMDeviceProfileInfo	*profile;	/* Current profile */
+-  cups_array_t		*languages;	/* Languages array */
+-
+-
+- /*
+-  * Make sure ColorSync is available...
+-  */
+-
+-  if (CMRegisterColorDevice == NULL)
+-    return;
+-
+- /*
+-  * Try opening the PPD file for this printer...
+-  */
+-
+-  snprintf(ppdfile, sizeof(ppdfile), "%s/ppd/%s.ppd", ServerRoot, p->name);
+-  if ((ppd = ppdOpenFile(ppdfile)) == NULL)
+-    return;
+-
+- /*
+-  * See if we have any profiles...
+-  */
+-
+-  if ((attr = ppdFindAttr(ppd, "APTiogaProfile", NULL)) != NULL)
+-    profile_key = "APTiogaProfile";
+-  else
+-  {
+-    attr = ppdFindAttr(ppd, "cupsICCProfile", NULL);
+-    profile_key = "cupsICCProfile";
+-  }
+-
+-  for (num_profiles = 0; attr; attr = ppdFindNextAttr(ppd, profile_key, NULL))
+-    if (attr->spec[0] && attr->value && attr->value[0])
+-    {
+-      if (attr->value[0] != '/')
+-	snprintf(iccfile, sizeof(iccfile), "%s/profiles/%s", DataDir,
+-		 attr->value);
+-      else
+-	strlcpy(iccfile, attr->value, sizeof(iccfile));
+-
+-      if (access(iccfile, 0))
+-	continue;
+-
+-      num_profiles ++;
+-    }
+-
+-
+- /*
+-  * If we have profiles, add them...
+-  */
+-
+-  if (num_profiles > 0)
+-  {
+-    if (profile_key[0] == 'A')
+-    {
+-     /*
+-      * For Tioga PPDs, get the default profile using the DefaultAPTiogaProfile
+-      * attribute...
+-      */
+-
+-      if ((attr = ppdFindAttr(ppd, "DefaultAPTiogaProfile", NULL)) != NULL &&
+-	  attr->value)
+-        default_profile_id = atoi(attr->value);
+-
+-      q1_choice = q2_choice = q3_choice = NULL;
+-    }
+-    else
+-    {
+-     /*
+-      * For CUPS PPDs, figure out the default profile selector values...
+-      */
+-
+-      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier1", NULL)) != NULL &&
+-	  attr->value && attr->value[0])
+-      {
+-	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
+-	q1_attr = ppdFindAttr(ppd, q_keyword, NULL);
+-      }
+-      else if ((q1_attr = ppdFindAttr(ppd, "DefaultColorModel", NULL)) == NULL)
+-	q1_attr = ppdFindAttr(ppd, "DefaultColorSpace", NULL);
+-
+-      if (q1_attr && q1_attr->value && q1_attr->value[0])
+-	q1_choice = q1_attr->value;
+-      else
+-	q1_choice = "";
+-
+-      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier2", NULL)) != NULL &&
+-	  attr->value && attr->value[0])
+-      {
+-	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
+-	q2_attr = ppdFindAttr(ppd, q_keyword, NULL);
+-      }
+-      else
+-	q2_attr = ppdFindAttr(ppd, "DefaultMediaType", NULL);
+-
+-      if (q2_attr && q2_attr->value && q2_attr->value[0])
+-	q2_choice = q2_attr->value;
+-      else
+-	q2_choice = NULL;
+-
+-      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier3", NULL)) != NULL &&
+-	  attr->value && attr->value[0])
+-      {
+-	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
+-	q3_attr = ppdFindAttr(ppd, q_keyword, NULL);
+-      }
+-      else
+-	q3_attr = ppdFindAttr(ppd, "DefaultResolution", NULL);
+-
+-      if (q3_attr && q3_attr->value && q3_attr->value[0])
+-	q3_choice = q3_attr->value;
+-      else
+-	q3_choice = NULL;
+-    }
+-
+-   /*
+-    * Build the array of profiles...
+-    *
+-    * Note: This calloc actually requests slightly more memory than needed.
+-    */
+-
+-    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
+-    {
+-      cupsdLogMessage(CUPSD_LOG_ERROR,
+-                      "Unable to allocate memory for %d profiles!",
+-		      num_profiles);
+-      ppdClose(ppd);
+-      return;
+-    }
+-
+-    profiles->profileCount = num_profiles;
+-    languages              = _ppdGetLanguages(ppd);
+-
+-    for (profile = profiles->profiles,
+-             attr = ppdFindAttr(ppd, profile_key, NULL);
+-	 attr;
+-	 attr = ppdFindNextAttr(ppd, profile_key, NULL))
+-      if (attr->spec[0] && attr->value && attr->value[0])
+-      {
+-       /*
+-        * Add this profile...
+-	*/
+-
+-        if (attr->value[0] != '/')
+-	  snprintf(iccfile, sizeof(iccfile), "%s/profiles/%s", DataDir,
+-	           attr->value);
+-        else
+-	  strlcpy(iccfile, attr->value, sizeof(iccfile));
+-
+-        if (access(iccfile, 0))
+-	  continue;
+-
+-        if (profile_key[0] == 'c')
+-	{
+-	  cupsArraySave(ppd->sorted_attrs);
+-
+-	  if ((profileid_attr = ppdFindAttr(ppd, "cupsProfileID",
+-					    attr->spec)) != NULL &&
+-	      profileid_attr->value && isdigit(profileid_attr->value[0] & 255))
+-	    profile_id = (unsigned)strtoul(profileid_attr->value, NULL, 10);
+-	  else
+-	    profile_id = _ppdHashName(attr->spec);
+-
+-	  cupsArrayRestore(ppd->sorted_attrs);
+-        }
+-	else
+-	  profile_id = atoi(attr->spec);
+-
+-        apple_init_profile(ppd, languages, profile, profile_id, attr->spec,
+-	                   attr->text[0] ? attr->text : attr->spec, iccfile);
+-
+-	profile ++;
+-
+-       /*
+-        * See if this is the default profile...
+-	*/
+-
+-        if (!default_profile_id)
+-	{
+-	  if (q2_choice)
+-	  {
+-	    if (q3_choice)
+-	    {
+-	      snprintf(selector, sizeof(selector), "%s.%s.%s",
+-	               q1_choice, q2_choice, q3_choice);
+-              if (!strcmp(selector, attr->spec))
+-	        default_profile_id = profile_id;
+-            }
+-
+-            if (!default_profile_id)
+-	    {
+-	      snprintf(selector, sizeof(selector), "%s.%s.", q1_choice,
+-	               q2_choice);
+-              if (!strcmp(selector, attr->spec))
+-	        default_profile_id = profile_id;
+-	    }
+-          }
+-
+-          if (!default_profile_id && q3_choice)
+-	  {
+-	    snprintf(selector, sizeof(selector), "%s..%s", q1_choice,
+-	             q3_choice);
+-	    if (!strcmp(selector, attr->spec))
+-	      default_profile_id = profile_id;
+-	  }
+-
+-          if (!default_profile_id)
+-	  {
+-	    snprintf(selector, sizeof(selector), "%s..", q1_choice);
+-	    if (!strcmp(selector, attr->spec))
+-	      default_profile_id = profile_id;
+-	  }
+-	}
+-      }
+-
+-    _ppdFreeLanguages(languages);
+-  }
+-  else if ((cm_option = ppdFindOption(ppd, "ColorModel")) != NULL)
+-  {
+-   /*
+-    * Extract profiles from ColorModel option...
+-    */
+-
+-    const char *profile_name;		/* Name of generic profile */
+-
+-
+-    num_profiles = cm_option->num_choices;
+-
+-    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
+-    {
+-      cupsdLogMessage(CUPSD_LOG_ERROR,
+-                      "Unable to allocate memory for %d profiles!",
+-		      num_profiles);
+-      ppdClose(ppd);
+-      return;
+-    }
+-
+-    profiles->profileCount = num_profiles;
+-
+-    for (profile = profiles->profiles, i = cm_option->num_choices,
+-             cm_choice = cm_option->choices;
+-         i > 0;
+-	 i --, cm_choice ++, profile ++)
+-    {
+-      if (!strcmp(cm_choice->choice, "Gray") ||
+-          !strcmp(cm_choice->choice, "Black"))
+-        profile_name = "Gray";
+-      else if (!strcmp(cm_choice->choice, "RGB") ||
+-               !strcmp(cm_choice->choice, "CMY"))
+-        profile_name = "RGB";
+-      else if (!strcmp(cm_choice->choice, "CMYK") ||
+-               !strcmp(cm_choice->choice, "KCMY"))
+-        profile_name = "CMYK";
+-      else
+-        profile_name = "DeviceN";
+-
+-      snprintf(selector, sizeof(selector), "%s..", profile_name);
+-      profile_id = _ppdHashName(selector);
+-
+-      apple_init_profile(ppd, NULL, profile, profile_id, cm_choice->choice,
+-                         cm_choice->text, NULL);
+-
+-      if (cm_choice->marked)
+-        default_profile_id = profile_id;
+-    }
+-  }
+-  else
+-  {
+-   /*
+-    * Use the default colorspace...
+-    */
+-
+-    attr = ppdFindAttr(ppd, "DefaultColorSpace", NULL);
+-
+-    num_profiles = (attr && ppd->colorspace == PPD_CS_GRAY) ? 1 : 2;
+-
+-    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
+-    {
+-      cupsdLogMessage(CUPSD_LOG_ERROR,
+-                      "Unable to allocate memory for %d profiles!",
+-		      num_profiles);
+-      ppdClose(ppd);
+-      return;
+-    }
+-
+-    profiles->profileCount = num_profiles;
+-
+-    apple_init_profile(ppd, NULL, profiles->profiles, _ppdHashName("Gray.."),
+-                       "Gray", "Gray", NULL);
+-
+-    switch (ppd->colorspace)
+-    {
+-      case PPD_CS_RGB :
+-      case PPD_CS_CMY :
+-          apple_init_profile(ppd, NULL, profiles->profiles + 1,
+-	                     _ppdHashName("RGB.."), "RGB", "RGB", NULL);
+-          break;
+-      case PPD_CS_RGBK :
+-      case PPD_CS_CMYK :
+-          apple_init_profile(ppd, NULL, profiles->profiles + 1,
+-	                     _ppdHashName("CMYK.."), "CMYK", "CMYK", NULL);
+-          break;
+-
+-      case PPD_CS_GRAY :
+-          if (attr)
+-	    break;
+-
+-      case PPD_CS_N :
+-          apple_init_profile(ppd, NULL, profiles->profiles + 1,
+-	                     _ppdHashName("DeviceN.."), "DeviceN", "DeviceN",
+-			     NULL);
+-          break;
+-    }
+-  }
+-
+-  if (num_profiles > 0)
+-  {
+-   /*
+-    * Make sure we have a default profile ID...
+-    */
+-
+-    if (!default_profile_id)
+-      default_profile_id = profiles->profiles[num_profiles - 1].profileID;
+-
+-   /*
+-    * Get the device ID hash and pathelogical name dictionary.
+-    */
+-
+-    cupsdLogMessage(CUPSD_LOG_INFO, "Registering ICC color profiles for \"%s\"",
+-		    p->name);
+-
+-    device_id    = _ppdHashName(p->name);
+-    device_name  = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
+-					     &kCFTypeDictionaryKeyCallBacks,
+-					     &kCFTypeDictionaryValueCallBacks);
+-    printer_name = CFStringCreateWithCString(kCFAllocatorDefault,
+-                                             p->name, kCFStringEncodingUTF8);
+-
+-    if (device_name && printer_name)
+-    {
+-      CFDictionarySetValue(device_name, CFSTR("en"), printer_name);
+-
+-     /*
+-      * Register the device with ColorSync...
+-      */
+-
+-      error = CMRegisterColorDevice(cmPrinterDeviceClass, device_id,
+-                                    device_name, &scope);
+-
+-     /*
+-      * Register the profiles...
+-      */
+-
+-      if (error == noErr)
+-	error = CMSetDeviceFactoryProfiles(cmPrinterDeviceClass, device_id,
+-					   default_profile_id, profiles);
+-    }
+-    else
+-      error = 1000;
+-
+-   /*
+-    * Clean up...
+-    */
+-
+-    if (error != noErr)
+-      cupsdLogMessage(CUPSD_LOG_ERROR,
+-		      "Unable to register ICC color profiles for \"%s\" - %d",
+-		      p->name, (int)error);
+-
+-    for (profile = profiles->profiles;
+-	 num_profiles > 0;
+-	 profile ++, num_profiles --)
+-      CFRelease(profile->profileName);
+-
+-    free(profiles);
+-
+-    if (printer_name)
+-      CFRelease(printer_name);
+-
+-    if (device_name)
+-      CFRelease(device_name);
+-  }
+-
+-  ppdClose(ppd);
+-}
+-
+-
+-/*
+- * 'apple_unregister_profiles()' - Remove color profiles for the specified
+- *                                 printer.
+- */
+-
+-static void
+-apple_unregister_profiles(
+-    cupsd_printer_t *p)			/* I - Printer */
+-{
+- /*
+-  * Make sure ColorSync is available...
+-  */
+-
+-  if (CMUnregisterColorDevice != NULL)
+-    CMUnregisterColorDevice(cmPrinterDeviceClass, _ppdHashName(p->name));
+-}
+-#endif /* __APPLE__ */
+-
+ /*
+  * 'apply_printer_defaults()' - Apply printer default options to a job.
+  */
+@@ -6532,7 +5969,7 @@ delete_printer(cupsd_client_t  *con,	/* 
+   * Unregister color profiles...
+   */
+ 
+-  apple_unregister_profiles(printer);
++  cupsdUnregisterColorProfiles(printer);
+ #endif /* __APPLE__ */
+ 
+   if (dtype & CUPS_PRINTER_CLASS)
+diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
+--- cups-1.4.6/scheduler/printers.c.icc	2011-01-11 15:23:38.364058569 +0000
++++ cups-1.4.6/scheduler/printers.c	2011-01-11 15:23:38.389056205 +0000
+@@ -40,6 +40,14 @@
+  *   cupsdValidateDest()        - Validate a printer/class destination.
+  *   cupsdWritePrintcap()       - Write a pseudo-printcap file for older
+  *                                applications that need it...
++ *   apple_init_profile()       - Initialize a color profile.
++ *   dbus_create_profile()      - Initialise a color profile.
++ *   dbus_create_device()       - Initialise a color device.
++ *   cupsdRegisterColorProfiles()
++ *                              - Register color profiles for a printer.
++ *   cupsdUnregisterColorProfiles()
++ *                              - Remove color profiles for the specified
++ *                                printer.
+  *   add_printer_defaults()     - Add name-default attributes to the printer
+  *                                attributes.
+  *   add_printer_filter()       - Add a MIME filter for a printer.
+@@ -64,10 +72,14 @@
+  */
+ 
+ #include "cupsd.h"
++#include <cups/ppd-private.h>
+ #include <cups/dir.h>
+ #ifdef HAVE_APPLICATIONSERVICES_H
+ #  include <ApplicationServices/ApplicationServices.h>
+ #endif /* HAVE_APPLICATIONSERVICES_H */
++#ifdef __APPLE__
++#  include <CoreFoundation/CoreFoundation.h>
++#endif /* __APPLE__ */
+ #ifdef HAVE_SYS_MOUNT_H
+ #  include <sys/mount.h>
+ #endif /* HAVE_SYS_MOUNT_H */
+@@ -81,6 +93,16 @@
+ #  include <sys/vfs.h>
+ #endif /* HAVE_SYS_VFS_H */
+ 
++#ifdef HAVE_DBUS
++#  include <dbus/dbus.h>
++#  ifdef HAVE_DBUS_MESSAGE_ITER_INIT_APPEND
++#    define dbus_message_append_iter_init dbus_message_iter_init_append
++#    define dbus_message_iter_append_string(i,v) dbus_message_iter_append_basic(i, DBUS_TYPE_STRING, &(v))
++#    define dbus_message_iter_append_object_path(i,v) dbus_message_iter_append_basic(i, DBUS_TYPE_OBJECT_PATH, &(v))
++#    define dbus_message_iter_append_uint32(i,v) dbus_message_iter_append_basic(i, DBUS_TYPE_UINT32, &(v))
++#  endif /* HAVE_DBUS_MESSAGE_ITER_INIT_APPEND */
++#endif /* HAVE_DBUS */
++
+ 
+ /*
+  * Local functions...
+@@ -102,6 +124,12 @@ static void	write_irix_config(cupsd_prin
+ static void	write_irix_state(cupsd_printer_t *p);
+ #endif /* __sgi */
+ static void	write_xml_string(cups_file_t *fp, const char *s);
++#ifdef __APPLE__
++static void	apple_init_profile(ppd_file_t *ppd, cups_array_t *languages,
++		                   CMDeviceProfileInfo *profile, unsigned id,
++		                   const char *name, const char *text,
++				   const char *iccfile);
++#endif /* __APPLE__ */
+ 
+ 
+ /*
+@@ -786,6 +814,14 @@ cupsdDeletePrinter(
+                      update ? "Job stopped due to printer being deleted." :
+ 		              "Job stopped.");
+ 
++#ifdef HAVE_DBUS
++ /*
++  * Unregister the color profiles
++  */
++
++  cupsdUnregisterColorProfiles(p);
++#endif /* HAVE_DBUS */
++
+  /*
+   * If this printer is the next for browsing, point to the next one...
+   */
+@@ -1533,6 +1569,14 @@ cupsdRenamePrinter(
+   mimeDeleteType(MimeDatabase, p->prefiltertype);
+   p->prefiltertype = mimeAddType(MimeDatabase, "prefilter", name);
+ 
++#ifdef HAVE_DBUS
++ /*
++  * Unregister the color profiles
++  */
++
++  cupsdUnregisterColorProfiles(p);
++#endif /* HAVE_DBUS */
++
+  /*
+   * Rename the printer...
+   */
+@@ -2722,6 +2766,14 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+   write_irix_state(p);
+ #endif /* __sgi */
+ 
++#ifdef HAVE_DBUS
++ /*
++  * (Re-)register the color profiles
++  */
++  cupsdUnregisterColorProfiles(p);
++  cupsdRegisterColorProfiles(p);
++#endif /* HAVE_DBUS */
++
+  /*
+   * Let the browse protocols reflect the change
+   */
+@@ -5576,6 +5628,996 @@ write_xml_string(cups_file_t *fp,	/* I -
+ }
+ 
+ 
++#ifdef __APPLE__
++/*
++ * 'apple_init_profile()' - Initialize a color profile.
++ */
++
++static void
++apple_init_profile(
++    ppd_file_t          *ppd,		/* I - PPD file */
++    cups_array_t	*languages,	/* I - Languages in the PPD file */
++    CMDeviceProfileInfo *profile,	/* I - Profile record */
++    unsigned            id,		/* I - Profile ID */
++    const char          *name,		/* I - Profile name */
++    const char          *text,		/* I - Profile UI text */
++    const char          *iccfile)	/* I - ICC filename */
++{
++  char			url[1024];	/* URL for profile filename */
++  CFMutableDictionaryRef dict;		/* Dictionary for name */
++  char			*language;	/* Current language */
++  ppd_attr_t		*attr;		/* Profile attribute */
++  CFStringRef		cflang,		/* Language string */
++			cftext;		/* Localized text */
++
++
++ /*
++  * Build the profile name dictionary...
++  */
++
++  dict = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
++				   &kCFTypeDictionaryKeyCallBacks,
++				   &kCFTypeDictionaryValueCallBacks);
++
++  cftext = CFStringCreateWithCString(kCFAllocatorDefault, text,
++				     kCFStringEncodingUTF8);
++
++  if (cftext)
++  {
++    CFDictionarySetValue(dict, CFSTR("en"), cftext);
++    CFRelease(cftext);
++  }
++
++  if (languages)
++  {
++   /*
++    * Find localized names for the color profiles...
++    */
++
++    cupsArraySave(ppd->sorted_attrs);
++
++    for (language = (char *)cupsArrayFirst(languages);
++	 language;
++	 language = (char *)cupsArrayNext(languages))
++    {
++      if (iccfile)
++      {
++        if ((attr = _ppdLocalizedAttr(ppd, "cupsICCProfile", name,
++	                              language)) == NULL)
++	  attr = _ppdLocalizedAttr(ppd, "APTiogaProfile", name, language);
++      }
++      else
++        attr = _ppdLocalizedAttr(ppd, "ColorModel", name, language);
++
++      if (attr && attr->text[0])
++      {
++	cflang = CFStringCreateWithCString(kCFAllocatorDefault, language,
++					   kCFStringEncodingUTF8);
++	cftext = CFStringCreateWithCString(kCFAllocatorDefault, attr->text,
++					   kCFStringEncodingUTF8);
++
++        if (cflang && cftext)
++	  CFDictionarySetValue(dict, cflang, cftext);
++
++        if (cflang)
++	  CFRelease(cflang);
++
++        if (cftext)
++	  CFRelease(cftext);
++      }
++    }
++
++    cupsArrayRestore(ppd->sorted_attrs);
++  }
++
++ /*
++  * Fill in the profile data...
++  */
++
++  if (iccfile)
++    httpAssembleURI(HTTP_URI_CODING_ALL, url, sizeof(url), "file", NULL, "", 0,
++		    iccfile);
++
++  profile->dataVersion        = cmDeviceProfileInfoVersion1;
++  profile->profileID          = id;
++  profile->profileLoc.locType = iccfile ? cmPathBasedProfile : cmNoProfileBase;
++  profile->profileName        = dict;
++
++  if (iccfile)
++    strlcpy(profile->profileLoc.u.pathLoc.path, iccfile,
++	    sizeof(profile->profileLoc.u.pathLoc.path));
++}
++#endif /* __APPLE__ */
++
++
++#if !defined(__APPLE__) && defined(HAVE_DBUS)
++/*
++ * 'dbus_create_profile()' - Create a color profile for a printer.
++ */
++
++static void
++dbus_create_profile (cups_array_t *profiles,	/* I - Profiles array */
++		     DBusConnection *con,	/* I - D-Bus connection */
++		     const char *printer_name,	/* I - Printer name */
++		     const char *qualifier,	/* I - Profile qualifier */
++		     const char *iccfile)	/* I - ICC filename */
++{
++  DBusMessage		*message;	/* D-Bus message */
++  DBusMessageIter	args;		/* D-Bus method arguments */
++  DBusPendingCall	*pending;	/* D-Bus method call */
++  char			*path = NULL;	/* Profile path */
++  char			*idstr;		/* Profile ID string */
++  size_t		idstrlen;	/* Profile ID allocated length */
++  int			options = 1;	/* Options for CreateProfile */
++
++ /*
++  * Create the profile...
++  */
++
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 "/org/freedesktop/ColorManager",
++					 "org.freedesktop.ColorManager",
++					 "CreateProfile");
++
++  dbus_message_append_iter_init(message, &args);
++  idstrlen = strlen (printer_name) + 1 + strlen (qualifier) + 1;
++  idstr = malloc (idstrlen);
++  if (!idstr)
++      goto out;
++
++  snprintf (idstr, idstrlen, "%s-%s", printer_name, qualifier);
++  dbus_message_iter_append_string(&args, idstr);
++  dbus_message_iter_append_uint32(&args, options);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling CreateProfile(%s,%d)",
++		  idstr, options);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++//  dbus_pending_call_unref(pending); <-fixme
++
++  if (!message ||
++      !dbus_message_iter_init(message, &args) ||
++      dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH)
++    goto out;
++
++  dbus_message_iter_get_basic(&args, &path);
++  path = strdup(path);
++  cupsArrayAdd(profiles, strdup(path));
++
++ /*
++  * Set the qualifier...
++  */
++
++  dbus_message_unref(message);
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 path,
++					 "org.freedesktop.ColorManager.Profile",
++					 "SetQualifier");
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, qualifier);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling SetQualifier(%s)", qualifier);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++ /*
++  * If we know the ICC file for it, set that now...
++  */
++
++  if (!iccfile)
++    goto out;
++
++  dbus_message_unref(message);
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 path,
++					 "org.freedesktop.ColorManager.Profile",
++					 "SetFilename");
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, iccfile);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling SetFilename(%s)", iccfile);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++out:
++  free (path);
++  free (idstr);
++  dbus_message_unref(message);
++}
++
++
++/*
++ * 'dbus_create_device()' - Create a device and register profiles.
++ */
++
++static void
++dbus_create_device (DBusConnection *con,	/* I - D-Bus connection */
++		    const char *name,		/* I - Printer name */
++		    cups_array_t *profiles,	/* I - Profiles array */
++		    const char *default_profile_id) /* I - Default profile */
++{
++  DBusMessage		*message;	/* D-Bus message */
++  DBusMessageIter	args;		/* D-Bus method arguments */
++  DBusPendingCall	*pending;	/* D-Bus method call */
++  const char		*device_path_tmp;	/* Device path data */
++  char			*device_path = NULL;	/* Device path */
++  const char		*profile_path;	/* Profile path */
++  char			*default_profile_path = NULL;
++					/* Default profile path */
++  size_t		default_path_len;
++					/* Length of profile path */
++  int			options = 1;	/* Options for CreateDevice */
++
++ /*
++  * Create the device...
++  */
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 "/org/freedesktop/ColorManager",
++					 "org.freedesktop.ColorManager",
++					 "CreateDevice");
++
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, name);
++  dbus_message_iter_append_uint32(&args, options);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling CreateDevice(%s,%d)",
++		  name, options);
++  if (!dbus_connection_send_with_reply (con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++  if (!message ||
++      !dbus_message_iter_init(message, &args) ||
++      dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH)
++    goto out;
++
++  /* get device path, and duplicate so we can free the method */
++  dbus_message_iter_get_basic(&args, &device_path_tmp);
++  device_path = strdup (device_path_tmp);
++  dbus_message_unref(message);
++  for (profile_path = cupsArrayFirst(profiles);
++       profile_path;
++       profile_path = cupsArrayNext(profiles))
++  {
++    message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					   device_path,
++					   "org.freedesktop.ColorManager.Device",
++					   "AddProfile");
++
++    dbus_message_append_iter_init(message, &args);
++    dbus_message_iter_append_object_path(&args, profile_path);
++    cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling AddProfile(%s)", profile_path);
++    pending = NULL;
++    if (!dbus_connection_send_with_reply (con, message, &pending, -1))
++      goto out;
++
++    dbus_connection_flush(con);
++    dbus_message_unref(message);
++    dbus_pending_call_block(pending);
++//    message = dbus_pending_call_steal_reply(pending);
++    dbus_pending_call_unref(pending);
++  }
++
++ /*
++  * Set the default profile
++  */
++  default_path_len = strlen (name) + 1 + strlen (default_profile_id) + 1;
++  default_profile_path = malloc (default_path_len);
++  if (!default_profile_path)
++    goto out;
++
++  snprintf(default_profile_path, default_path_len, "%s-%s", name,
++	   default_profile_id);
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 device_path,
++					 "org.freedesktop.ColorManager.Device",
++					 "MakeProfileDefault");
++
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, default_profile_path);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling MakeProfileDefault(%s)",
++		  default_profile_path);
++  if (!dbus_connection_send_with_reply (con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++//  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++out:
++  free(default_profile_path);
++  free(device_path);
++//  dbus_message_unref(message);
++}
++
++
++/*
++ * 'dbus_delete_device_and_profiles()' - Delete previously registered
++ *                                       color device and profiles
++ */
++
++static void
++dbus_delete_device_and_profiles(cupsd_printer_t *p)	/* I - Printer */
++{
++  DBusConnection	*con;		/* System D-Bus connection */
++  DBusMessage		*message;	/* D-Bus message */
++  DBusMessageIter	args, array_args; /* D-Bus method arguments */
++  DBusPendingCall	*pending;	/* D-Bus method call */
++  const char		*device_path;	/* Device path */
++  const char		*options = "";	/* Options for GetProfilesForDevice */
++  cups_array_t		*profile_paths;	/* Profile paths array */
++  char			*profile_path;	/* Profile path */
++
++  con = dbus_bus_get (DBUS_BUS_SYSTEM, NULL);
++  if (!con)
++    return;
++
++ /*
++  * Get the device path
++  */
++
++  profile_paths = cupsArrayNew(NULL, NULL);
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 "/org/freedesktop/ColorManager",
++					 "org.freedesktop.ColorManager",
++					 "FindDeviceById");
++
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, p->name);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling FindDeviceById");
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++      goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++  if (!message ||
++      !dbus_message_iter_init(message, &args) ||
++      dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH)
++      goto out;
++
++  dbus_message_iter_get_basic(&args, &device_path);
++  device_path = strdup(device_path);
++
++ /*
++  * Get the profiles
++  */
++
++  dbus_message_unref(message);
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 "/org/freedesktop/ColorManager",
++					 "org.freedesktop.ColorManager",
++					 "GetProfilesForDevice");
++
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_object_path(&args, device_path);
++  dbus_message_iter_append_string(&args, options);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling GetProfilesForDevice(%s,\"\")",
++		  device_path);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_message_unref(message);
++  dbus_pending_call_block(pending);
++  message = dbus_pending_call_steal_reply(pending);
++  dbus_pending_call_unref(pending);
++
++  if (!message ||
++      !dbus_message_iter_init(message, &args) ||
++      dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_ARRAY)
++      goto out;
++
++  dbus_message_iter_recurse(&args, &array_args);
++  do
++  {
++    if (dbus_message_iter_get_arg_type(&array_args) == DBUS_TYPE_OBJECT_PATH)
++    {
++      dbus_message_iter_get_basic(&array_args, &profile_path);
++      cupsArrayAdd(profile_paths, strdup (profile_path));
++    }
++  } while (dbus_message_iter_next(&array_args));
++
++ /*
++  * Delete each profile.
++  */
++
++
++out:
++  for (profile_path = cupsArrayFirst(profile_paths);
++       profile_path;
++       profile_path = cupsArrayNext(profile_paths))
++    free (profile_path);
++
++  cupsArrayDelete(profile_paths);
++  dbus_message_unref(message);
++  dbus_connection_unref(con);
++}
++#endif /* !defined(__APPLE__) && defined(HAVE_DBUS) */
++
++
++/*
++ * 'cupsdRegisterColorProfiles()' - Register color profiles for a printer.
++ */
++
++void
++cupsdRegisterColorProfiles(
++    cupsd_printer_t *p)			/* I - Printer */
++{
++  int			i;		/* Looping var */
++  char			ppdfile[1024],	/* PPD filename */
++			iccfile[1024],	/* ICC filename */
++			selector[PPD_MAX_NAME];
++					/* Profile selection string */
++  ppd_file_t		*ppd;		/* PPD file */
++  ppd_attr_t		*attr,		/* Profile attributes */
++			*q1_attr,	/* ColorModel (or other) qualifier */
++			*q2_attr,	/* MediaType (or other) qualifier */
++			*q3_attr;	/* Resolution (or other) qualifier */
++  char			q_keyword[PPD_MAX_NAME];
++					/* Qualifier keyword */
++  const char		*q1_choice,	/* ColorModel (or other) choice */
++			*q2_choice,	/* MediaType (or other) choice */
++			*q3_choice;	/* Resolution (or other) choice */
++  const char		*profile_key;	/* Profile keyword */
++  ppd_option_t		*cm_option;	/* Color model option */
++  ppd_choice_t		*cm_choice;	/* Color model choice */
++  int			num_profiles;	/* Number of profiles */
++#ifdef __APPLE__
++  ppd_attr_t		*profileid_attr;/* cupsProfileID attribute */
++  unsigned		profile_id,	/* Profile ID */
++			default_profile_id = 0;
++					/* Default profile ID */
++  CMError		error;		/* Last error */
++  CFMutableDictionaryRef device_name;	/* Printer device name dictionary */
++  unsigned		device_id;	/* Printer device ID */
++  CFStringRef		printer_name;	/* Printer name string */
++  CMDeviceScope		scope =		/* Scope of the registration */
++			{
++			  kCFPreferencesAnyUser,
++			  kCFPreferencesCurrentHost
++			};
++  CMDeviceProfileArrayPtr profiles;	/* Profiles */
++  CMDeviceProfileInfo	*profile;	/* Current profile */
++  cups_array_t		*languages;	/* Languages array */
++#elif HAVE_DBUS
++  const char		*profile_id = NULL,
++					/* Profile ID */
++                        *default_profile_id = NULL;
++					/* Default profile ID */
++  DBusError		error;		/* Error, if any */
++  static DBusConnection	*con;		/* System D-Bus connection */
++  cups_array_t		*profiles;	/* Profile paths array */
++  char			*profile_path;	/* Profile path */
++#endif /* HAVE_DBUS */
++
++
++#ifdef __APPLE__
++ /*
++  * Make sure ColorSync is available...
++  */
++
++  if (CMRegisterColorDevice == NULL)
++    return;
++#elif defined(HAVE_DBUS)
++  if (con && !dbus_connection_get_is_connected(con))
++  {
++    dbus_connection_unref(con);
++    con = NULL;
++  }
++
++  if (!con)
++  {
++    dbus_error_init(&error);
++
++    con = dbus_bus_get (DBUS_BUS_SYSTEM, &error);
++    if (!con)
++    {
++      if (dbus_error_is_set(&error))
++	cupsdLogMessage(CUPSD_LOG_DEBUG,
++			"D-Bus connection error: %s", error.message);
++
++      dbus_error_free(&error);
++      return;
++    }
++  }
++
++  profiles = cupsArrayNew (NULL, NULL);
++#else /* defined(__APPLE__) || defined(HAVE_DBUS) */
++  return;
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++ /*
++  * Try opening the PPD file for this printer...
++  */
++
++  snprintf(ppdfile, sizeof(ppdfile), "%s/ppd/%s.ppd", ServerRoot, p->name);
++  if ((ppd = ppdOpenFile(ppdfile)) == NULL)
++    return;
++
++ /*
++  * See if we have any profiles...
++  */
++
++  if ((attr = ppdFindAttr(ppd, "APTiogaProfile", NULL)) != NULL)
++    profile_key = "APTiogaProfile";
++  else
++  {
++    attr = ppdFindAttr(ppd, "cupsICCProfile", NULL);
++    profile_key = "cupsICCProfile";
++  }
++
++  for (num_profiles = 0; attr; attr = ppdFindNextAttr(ppd, profile_key, NULL))
++    if (attr->spec[0] && attr->value && attr->value[0])
++    {
++      if (attr->value[0] != '/')
++	snprintf(iccfile, sizeof(iccfile), "%s/profiles/%s", DataDir,
++		 attr->value);
++      else
++	strlcpy(iccfile, attr->value, sizeof(iccfile));
++
++      if (access(iccfile, 0))
++	continue;
++
++      num_profiles ++;
++    }
++
++
++ /*
++  * If we have profiles, add them...
++  */
++
++  if (num_profiles > 0)
++  {
++    if (profile_key[0] == 'A')
++    {
++     /*
++      * For Tioga PPDs, get the default profile using the DefaultAPTiogaProfile
++      * attribute...
++      */
++
++      if ((attr = ppdFindAttr(ppd, "DefaultAPTiogaProfile", NULL)) != NULL &&
++	  attr->value)
++      {
++#ifdef __APPLE__
++        default_profile_id = atoi(attr->value);
++#elif HAVE_DBUS
++	default_profile_id = attr->value;
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++      }
++
++      q1_choice = q2_choice = q3_choice = NULL;
++    }
++    else
++    {
++     /*
++      * For CUPS PPDs, figure out the default profile selector values...
++      */
++
++      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier1", NULL)) != NULL &&
++	  attr->value && attr->value[0])
++      {
++	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
++	q1_attr = ppdFindAttr(ppd, q_keyword, NULL);
++      }
++      else if ((q1_attr = ppdFindAttr(ppd, "DefaultColorModel", NULL)) == NULL)
++	q1_attr = ppdFindAttr(ppd, "DefaultColorSpace", NULL);
++
++      if (q1_attr && q1_attr->value && q1_attr->value[0])
++	q1_choice = q1_attr->value;
++      else
++	q1_choice = "";
++
++      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier2", NULL)) != NULL &&
++	  attr->value && attr->value[0])
++      {
++	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
++	q2_attr = ppdFindAttr(ppd, q_keyword, NULL);
++      }
++      else
++	q2_attr = ppdFindAttr(ppd, "DefaultMediaType", NULL);
++
++      if (q2_attr && q2_attr->value && q2_attr->value[0])
++	q2_choice = q2_attr->value;
++      else
++	q2_choice = NULL;
++
++      if ((attr = ppdFindAttr(ppd, "cupsICCQualifier3", NULL)) != NULL &&
++	  attr->value && attr->value[0])
++      {
++	snprintf(q_keyword, sizeof(q_keyword), "Default%s", attr->value);
++	q3_attr = ppdFindAttr(ppd, q_keyword, NULL);
++      }
++      else
++	q3_attr = ppdFindAttr(ppd, "DefaultResolution", NULL);
++
++      if (q3_attr && q3_attr->value && q3_attr->value[0])
++	q3_choice = q3_attr->value;
++      else
++	q3_choice = NULL;
++    }
++
++#ifdef __APPLE__
++   /*
++    * Build the array of profiles...
++    *
++    * Note: This calloc actually requests slightly more memory than needed.
++    */
++
++    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to allocate memory for %d profiles!",
++		      num_profiles);
++      ppdClose(ppd);
++      return;
++    }
++
++    profiles->profileCount = num_profiles;
++    languages              = _ppdGetLanguages(ppd);
++    profile                = profiles->profiles;
++#endif /* __APPLE__ */
++
++    for (attr = ppdFindAttr(ppd, profile_key, NULL);
++	 attr;
++	 attr = ppdFindNextAttr(ppd, profile_key, NULL))
++      if (attr->spec[0] && attr->value && attr->value[0])
++      {
++       /*
++        * Add this profile...
++	*/
++
++        if (attr->value[0] != '/')
++	  snprintf(iccfile, sizeof(iccfile), "%s/profiles/%s", DataDir,
++	           attr->value);
++        else
++	  strlcpy(iccfile, attr->value, sizeof(iccfile));
++
++        if (access(iccfile, 0))
++	  continue;
++
++#ifdef __APPLE__
++        if (profile_key[0] == 'c')
++	{
++	  cupsArraySave(ppd->sorted_attrs);
++
++	  if ((profileid_attr = ppdFindAttr(ppd, "cupsProfileID",
++					    attr->spec)) != NULL &&
++	      profileid_attr->value && isdigit(profileid_attr->value[0] & 255))
++	    profile_id = (unsigned)strtoul(profileid_attr->value, NULL, 10);
++	  else
++	    profile_id = _ppdHashName(attr->spec);
++
++	  cupsArrayRestore(ppd->sorted_attrs);
++        }
++	else
++	  profile_id = atoi(attr->spec);
++
++        apple_init_profile(ppd, languages, profile, profile_id, attr->spec,
++	                   attr->text[0] ? attr->text : attr->spec, iccfile);
++	profile ++;
++#elif defined(HAVE_DBUS)
++	profile_id = attr->spec;
++	dbus_create_profile(profiles, con, p->name, attr->spec, iccfile);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++       /*
++        * See if this is the default profile...
++	*/
++
++        if (!default_profile_id)
++	{
++	  if (q2_choice)
++	  {
++	    if (q3_choice)
++	    {
++	      snprintf(selector, sizeof(selector), "%s.%s.%s",
++	               q1_choice, q2_choice, q3_choice);
++              if (!strcmp(selector, attr->spec))
++	        default_profile_id = profile_id;
++            }
++
++            if (!default_profile_id)
++	    {
++	      snprintf(selector, sizeof(selector), "%s.%s.", q1_choice,
++	               q2_choice);
++              if (!strcmp(selector, attr->spec))
++	        default_profile_id = profile_id;
++	    }
++          }
++
++          if (!default_profile_id && q3_choice)
++	  {
++	    snprintf(selector, sizeof(selector), "%s..%s", q1_choice,
++	             q3_choice);
++	    if (!strcmp(selector, attr->spec))
++	      default_profile_id = profile_id;
++	  }
++
++          if (!default_profile_id)
++	  {
++	    snprintf(selector, sizeof(selector), "%s..", q1_choice);
++	    if (!strcmp(selector, attr->spec))
++	      default_profile_id = profile_id;
++	  }
++	}
++      }
++
++#ifdef __APPLE__
++    _ppdFreeLanguages(languages);
++#endif /* __APPLE__ */
++  }
++  else if ((cm_option = ppdFindOption(ppd, "ColorModel")) != NULL)
++  {
++   /*
++    * Extract profiles from ColorModel option...
++    */
++
++    const char *profile_name;		/* Name of generic profile */
++
++
++    num_profiles = cm_option->num_choices;
++
++#ifdef __APPLE__
++    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to allocate memory for %d profiles!",
++		      num_profiles);
++      ppdClose(ppd);
++      return;
++    }
++
++    profiles->profileCount = num_profiles;
++    profile                = profiles->profiles;
++#endif /* __APPLE__ */
++
++    for (i = cm_option->num_choices, cm_choice = cm_option->choices;
++         i > 0;
++	 i --, cm_choice ++)
++    {
++      if (!strcmp(cm_choice->choice, "Gray") ||
++          !strcmp(cm_choice->choice, "Black"))
++        profile_name = "Gray";
++      else if (!strcmp(cm_choice->choice, "RGB") ||
++               !strcmp(cm_choice->choice, "CMY"))
++        profile_name = "RGB";
++      else if (!strcmp(cm_choice->choice, "CMYK") ||
++               !strcmp(cm_choice->choice, "KCMY"))
++        profile_name = "CMYK";
++      else
++        profile_name = "DeviceN";
++
++      snprintf(selector, sizeof(selector), "%s..", profile_name);
++
++#ifdef __APPLE__
++      profile_id = _ppdHashName(selector);
++      apple_init_profile(ppd, NULL, profile, profile_id, cm_choice->choice,
++                         cm_choice->text, NULL);
++      profile ++;
++#elif defined(HAVE_DBUS)
++      profile_id = selector;
++      dbus_create_profile(profiles, con, p->name, selector, NULL);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++      if (cm_choice->marked)
++        default_profile_id = profile_id;
++    }
++  }
++  else
++  {
++   /*
++    * Use the default colorspace...
++    */
++
++    attr = ppdFindAttr(ppd, "DefaultColorSpace", NULL);
++
++    num_profiles = (attr && ppd->colorspace == PPD_CS_GRAY) ? 1 : 2;
++
++#ifdef __APPLE__
++    if ((profiles = calloc(num_profiles, sizeof(CMDeviceProfileArray))) == NULL)
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++                      "Unable to allocate memory for %d profiles!",
++		      num_profiles);
++      ppdClose(ppd);
++      return;
++    }
++
++    profiles->profileCount = num_profiles;
++
++    apple_init_profile(ppd, NULL, profiles->profiles, _ppdHashName("Gray.."),
++                       "Gray", "Gray", NULL);
++#elif defined(HAVE_DBUS)
++    profile_id = "Gray..";
++    dbus_create_profile(profiles, con, p->name, profile_id, NULL);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++    switch (ppd->colorspace)
++    {
++      case PPD_CS_RGB :
++      case PPD_CS_CMY :
++#ifdef __APPLE__
++          apple_init_profile(ppd, NULL, profiles->profiles + 1,
++	                     _ppdHashName("RGB.."), "RGB", "RGB", NULL);
++#elif defined(HAVE_DBUS)
++	  profile_id = "RGB..";
++	  dbus_create_profile(profiles, con, p->name, profile_id, NULL);
++#endif /* HAVE_DBUS */
++          break;
++      case PPD_CS_RGBK :
++      case PPD_CS_CMYK :
++#ifdef __APPLE__
++          apple_init_profile(ppd, NULL, profiles->profiles + 1,
++	                     _ppdHashName("CMYK.."), "CMYK", "CMYK", NULL);
++#elif defined(HAVE_DBUS)
++	  profile_id = "CMYK..";
++	  dbus_create_profile(profiles, con, p->name, profile_id, NULL);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++          break;
++
++      case PPD_CS_GRAY :
++          if (attr)
++	    break;
++
++      case PPD_CS_N :
++#ifdef __APPLE__
++          apple_init_profile(ppd, NULL, profiles->profiles + 1,
++	                     _ppdHashName("DeviceN.."), "DeviceN", "DeviceN",
++			     NULL);
++#elif defined(HAVE_DBUS)
++	  profile_id = "DeviceN..";
++	  dbus_create_profile(profiles, con, p->name, profile_id, NULL);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++          break;
++    }
++  }
++
++  if (num_profiles > 0)
++  {
++   /*
++    * Make sure we have a default profile ID...
++    */
++
++    if (!default_profile_id)
++    {
++#ifdef __APPLE__
++      default_profile_id = profiles->profiles[num_profiles - 1].profileID;
++#elif HAVE_DBUS
++      default_profile_id = profile_id;
++#endif /* __APPLE__ */
++    }
++
++   /*
++    * Get the device ID hash and pathelogical name dictionary.
++    */
++
++    cupsdLogMessage(CUPSD_LOG_INFO, "Registering ICC color profiles for \"%s\"",
++		    p->name);
++
++#ifdef __APPLE__
++    device_id    = _ppdHashName(p->name);
++
++    device_name  = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
++					     &kCFTypeDictionaryKeyCallBacks,
++					     &kCFTypeDictionaryValueCallBacks);
++    printer_name = CFStringCreateWithCString(kCFAllocatorDefault,
++                                             p->name, kCFStringEncodingUTF8);
++
++    if (device_name && printer_name)
++    {
++      CFDictionarySetValue(device_name, CFSTR("en"), printer_name);
++
++     /*
++      * Register the device with ColorSync...
++      */
++
++      error = CMRegisterColorDevice(cmPrinterDeviceClass, device_id,
++                                    device_name, &scope);
++
++     /*
++      * Register the profiles...
++      */
++
++      if (error == noErr)
++	error = CMSetDeviceFactoryProfiles(cmPrinterDeviceClass, device_id,
++					   default_profile_id, profiles);
++    }
++    else
++      error = 1000;
++#elif defined(HAVE_DBUS)
++    dbus_create_device (con, p->name, profiles, default_profile_id);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++
++   /*
++    * Clean up...
++    */
++
++#ifdef __APPLE__
++    if (error != noErr)
++      cupsdLogMessage(CUPSD_LOG_ERROR,
++		      "Unable to register ICC color profiles for \"%s\" - %d",
++		      p->name, (int)error);
++
++    for (profile = profiles->profiles;
++	 num_profiles > 0;
++	 profile ++, num_profiles --)
++      CFRelease(profile->profileName);
++
++    free(profiles);
++
++    if (printer_name)
++      CFRelease(printer_name);
++
++    if (device_name)
++      CFRelease(device_name);
++#elif defined(HAVE_DBUS)
++    for (profile_path = cupsArrayFirst(profiles);
++	 profile_path;
++	 profile_path = cupsArrayNext(profiles))
++      free (profile_path);
++
++    cupsArrayDelete(profiles);
++    dbus_connection_flush(con);
++
++   /*
++    * Don't unref the connection but instead keep it around for future
++    * calls (it is a local static variable).  Once we disconnect from
++    * the bus all our devices and profiles will be gone.
++    */
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++  }
++
++  ppdClose(ppd);
++}
++
++
++/*
++ * 'cupsdUnregisterColorProfiles()' - Remove color profiles for the specified
++ *                                    printer.
++ */
++
++void
++cupsdUnregisterColorProfiles(
++    cupsd_printer_t *p)			/* I - Printer */
++{
++#ifdef __APPLE__
++ /*
++  * Make sure ColorSync is available...
++  */
++
++  if (CMUnregisterColorDevice != NULL)
++    CMUnregisterColorDevice(cmPrinterDeviceClass, _ppdHashName(p->name));
++#elif defined(HAVE_DBUS)
++  dbus_delete_device_and_profiles (p);
++#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
++}
++
++
+ /*
+  * End of "$Id: printers.c 9313 2010-09-22 18:35:07Z mike $".
+  */
+diff -up cups-1.4.6/scheduler/printers.h.icc cups-1.4.6/scheduler/printers.h
+--- cups-1.4.6/scheduler/printers.h.icc	2011-01-11 15:23:38.365058476 +0000
++++ cups-1.4.6/scheduler/printers.h	2011-01-11 15:23:38.389056205 +0000
+@@ -189,6 +189,8 @@ extern const char	*cupsdValidateDest(con
+ 			        	   cups_ptype_t *dtype,
+ 					   cupsd_printer_t **printer);
+ extern void		cupsdWritePrintcap(void);
++extern void		cupsdRegisterColorProfiles(cupsd_printer_t *printer);
++extern void		cupsdUnregisterColorProfiles(cupsd_printer_t *printer);
+ 
+ 
+ /*

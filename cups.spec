@@ -2,6 +2,7 @@
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
 %define use_alternatives 1
+%define icc 0
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
@@ -68,6 +69,7 @@ Patch38: cups-autotype-crash.patch
 Patch39: cups-str3754.patch
 Patch40: cups-avahi.patch
 Patch41: cups-usb-buffer-size.patch
+Patch42: cups-icc.patch
 
 Patch100: cups-lspp.patch
 
@@ -285,6 +287,10 @@ module.
 %patch40 -p1 -b .avahi
 # Use a smaller buffer when writing to USB devices (bug #617208).
 %patch41 -p1 -b .usb-buffer-size
+%if %icc
+# ICC support (work in progress).  Disable lspp for testing.
+%patch42 -p1 -b .icc
+%endif
 
 %if %lspp
 # LSPP support.
