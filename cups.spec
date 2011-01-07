@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.5
-Release: 10%{?dist}
+Version: 1.4.6
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -599,6 +599,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jan 07 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-1
+- 1.4.6.
+
 * Fri Dec 31 2010 Tim Waugh <twaugh@redhat.com> 1:1.4.5-10
 - Some Avahi support fixes from Till Kamppeter.
 
