@@ -67,6 +67,7 @@ Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-autotype-crash.patch
 Patch39: cups-str3754.patch
+Patch40: cups-usb-buffer-size.patch
 
 Patch100: cups-lspp.patch
 
@@ -276,6 +277,8 @@ module.
 %patch38 -p1 -b .autotype-crash
 # Don't crash when job queued for printer that times out (bug #660604).
 %patch39 -p1 -b .str3754
+# Use a smaller buffer when writing to USB devices (bug #617208).
+%patch40 -p1 -b .usb-buffer-size
 
 %if %lspp
 # LSPP support.
@@ -574,6 +577,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jan 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-2
+- Use a smaller buffer when writing to USB devices (bug #617208).
 - Handle EAI_NONAME when resolving hostnames (bug #617208).
 
 * Fri Jan 07 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-1
