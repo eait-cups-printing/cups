@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -59,7 +59,6 @@ Patch25: cups-str3382.patch
 Patch26: cups-force-gnutls.patch
 Patch27: cups-serialize-gnutls.patch
 Patch29: cups-0755.patch
-Patch30: cups-EAI_AGAIN.patch
 Patch31: cups-hostnamelookups.patch
 Patch33: cups-snmp-quirks.patch
 Patch34: cups-hp-deviceid-oid.patch
@@ -258,8 +257,6 @@ module.
 %patch27 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch29 -p1 -b .0755
-# Re-initialise the resolver on failure in httpAddrLookup().
-%patch30 -p1 -b .EAI_AGAIN
 # Use numeric addresses for interfaces unless HostNameLookups are
 # turned on (bug #583054).
 %patch31 -p1 -b .hostnamelookups
@@ -576,6 +573,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Jan 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-2
+- Handle EAI_NONAME when resolving hostnames (bug #617208).
+
 * Fri Jan 07 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-1
 - 1.4.6.
 
