@@ -1,6 +1,6 @@
-diff -up cups-1.4.4/scheduler/conf.c.serverbin-compat cups-1.4.4/scheduler/conf.c
---- cups-1.4.4/scheduler/conf.c.serverbin-compat	2010-04-23 19:56:34.000000000 +0100
-+++ cups-1.4.4/scheduler/conf.c	2010-09-15 13:20:41.339960335 +0100
+diff -up cups-1.4.6/scheduler/conf.c.serverbin-compat cups-1.4.6/scheduler/conf.c
+--- cups-1.4.6/scheduler/conf.c.serverbin-compat	2010-08-31 05:18:38.000000000 +0100
++++ cups-1.4.6/scheduler/conf.c	2011-01-12 16:28:47.233270999 +0000
 @@ -488,6 +488,9 @@ cupsdReadConfiguration(void)
    cupsdClearString(&ServerName);
    cupsdClearString(&ServerAdmin);
@@ -11,7 +11,7 @@ diff -up cups-1.4.4/scheduler/conf.c.serverbin-compat cups-1.4.4/scheduler/conf.
    cupsdSetString(&RequestRoot, CUPS_REQUESTS);
    cupsdSetString(&CacheDir, CUPS_CACHEDIR);
    cupsdSetString(&DataDir, CUPS_DATADIR);
-@@ -1318,7 +1321,12 @@ cupsdReadConfiguration(void)
+@@ -1331,7 +1334,12 @@ cupsdReadConfiguration(void)
      * Read the MIME type and conversion database...
      */
  
@@ -24,9 +24,9 @@ diff -up cups-1.4.4/scheduler/conf.c.serverbin-compat cups-1.4.4/scheduler/conf.
      snprintf(mimedir, sizeof(mimedir), "%s/mime", DataDir);
  
      MimeDatabase = mimeLoadTypes(NULL, mimedir);
-diff -up cups-1.4.4/scheduler/conf.h.serverbin-compat cups-1.4.4/scheduler/conf.h
---- cups-1.4.4/scheduler/conf.h.serverbin-compat	2010-04-23 19:56:34.000000000 +0100
-+++ cups-1.4.4/scheduler/conf.h	2010-09-15 13:20:41.340959464 +0100
+diff -up cups-1.4.6/scheduler/conf.h.serverbin-compat cups-1.4.6/scheduler/conf.h
+--- cups-1.4.6/scheduler/conf.h.serverbin-compat	2010-04-23 19:56:34.000000000 +0100
++++ cups-1.4.6/scheduler/conf.h	2011-01-12 16:28:47.233270999 +0000
 @@ -105,6 +105,10 @@ VAR char		*ConfigurationFile	VALUE(NULL)
  					/* Root directory for scheduler */
  			*ServerBin		VALUE(NULL),
@@ -38,9 +38,9 @@ diff -up cups-1.4.4/scheduler/conf.h.serverbin-compat cups-1.4.4/scheduler/conf.
  			*StateDir		VALUE(NULL),
  					/* Root directory for state data */
  			*RequestRoot		VALUE(NULL),
-diff -up cups-1.4.4/scheduler/env.c.serverbin-compat cups-1.4.4/scheduler/env.c
---- cups-1.4.4/scheduler/env.c.serverbin-compat	2009-06-15 18:13:52.000000000 +0100
-+++ cups-1.4.4/scheduler/env.c	2010-09-15 13:20:41.341959587 +0100
+diff -up cups-1.4.6/scheduler/env.c.serverbin-compat cups-1.4.6/scheduler/env.c
+--- cups-1.4.6/scheduler/env.c.serverbin-compat	2009-06-15 18:13:52.000000000 +0100
++++ cups-1.4.6/scheduler/env.c	2011-01-12 16:28:47.234270949 +0000
 @@ -87,8 +87,13 @@ cupsdInitEnv(void)
    cupsdSetEnv("LD_LIBRARY_PATH", NULL);
    cupsdSetEnv("LD_PRELOAD", NULL);
@@ -55,10 +55,10 @@ diff -up cups-1.4.4/scheduler/env.c.serverbin-compat cups-1.4.4/scheduler/env.c
    cupsdSetEnv("SERVER_ADMIN", ServerAdmin);
    cupsdSetEnv("SHLIB_PATH", NULL);
    cupsdSetEnv("SOFTWARE", CUPS_MINIMAL);
-diff -up cups-1.4.4/scheduler/ipp.c.serverbin-compat cups-1.4.4/scheduler/ipp.c
---- cups-1.4.4/scheduler/ipp.c.serverbin-compat	2010-04-23 19:56:34.000000000 +0100
-+++ cups-1.4.4/scheduler/ipp.c	2010-09-15 13:20:41.359835378 +0100
-@@ -2615,9 +2615,18 @@ add_printer(cupsd_client_t  *con,	/* I -
+diff -up cups-1.4.6/scheduler/ipp.c.serverbin-compat cups-1.4.6/scheduler/ipp.c
+--- cups-1.4.6/scheduler/ipp.c.serverbin-compat	2010-10-06 21:07:44.000000000 +0100
++++ cups-1.4.6/scheduler/ipp.c	2011-01-12 16:28:47.246270349 +0000
+@@ -2602,9 +2602,18 @@ add_printer(cupsd_client_t  *con,	/* I -
          * Could not find device in list!
  	*/
  
@@ -77,10 +77,10 @@ diff -up cups-1.4.4/scheduler/ipp.c.serverbin-compat cups-1.4.4/scheduler/ipp.c
        }
      }
  
-diff -up cups-1.4.4/scheduler/job.c.serverbin-compat cups-1.4.4/scheduler/job.c
---- cups-1.4.4/scheduler/job.c.serverbin-compat	2010-03-30 23:07:33.000000000 +0100
-+++ cups-1.4.4/scheduler/job.c	2010-09-15 13:20:41.366836134 +0100
-@@ -972,8 +972,32 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
+diff -up cups-1.4.6/scheduler/job.c.serverbin-compat cups-1.4.6/scheduler/job.c
+--- cups-1.4.6/scheduler/job.c.serverbin-compat	2010-11-30 22:35:02.000000000 +0000
++++ cups-1.4.6/scheduler/job.c	2011-01-12 16:31:43.515443755 +0000
+@@ -975,8 +975,32 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
         i ++, filter = (mime_filter_t *)cupsArrayNext(filters))
    {
      if (filter->filter[0] != '/')
@@ -115,7 +115,7 @@ diff -up cups-1.4.4/scheduler/job.c.serverbin-compat cups-1.4.4/scheduler/job.c
      else
        strlcpy(command, filter->filter, sizeof(command));
  
-@@ -1119,6 +1143,28 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
+@@ -1122,6 +1146,28 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
        cupsdClosePipe(job->print_pipes);
        cupsdClosePipe(job->back_pipes);
        cupsdClosePipe(job->side_pipes);
@@ -123,13 +123,13 @@ diff -up cups-1.4.4/scheduler/job.c.serverbin-compat cups-1.4.4/scheduler/job.c
 +      if (access(command, F_OK))
 +	{
 +	  snprintf(command, sizeof(command), "%s/backend/%s", ServerBin_compat,
-+		   method);
++		   scheme);
 +	  if (!access(command, F_OK))
 +	    {
 +	      /* Not in the correct directory, but we found it in the compat
 +	       * directory.  Issue a warning. */
 +	      cupsdLogMessage(CUPSD_LOG_INFO,
-+			      "Backend '%s' not in %s/backend!", method,
++			      "Backend '%s' not in %s/backend!", scheme,
 +			      ServerBin);
 +	    }
 +	  else
@@ -137,17 +137,17 @@ diff -up cups-1.4.4/scheduler/job.c.serverbin-compat cups-1.4.4/scheduler/job.c
 +	      /* Not in the compat directory either; make any error
 +		 messages use the correct directory name then. */
 +	      snprintf(command, sizeof(command), "%s/backend/%s", ServerBin,
-+		       method);
++		       scheme);
 +	    }
 +	}
 +#endif /* __x86_64__ */
  
        close(job->status_pipes[1]);
        job->status_pipes[1] = -1;
-diff -up cups-1.4.4/scheduler/printers.c.serverbin-compat cups-1.4.4/scheduler/printers.c
---- cups-1.4.4/scheduler/printers.c.serverbin-compat	2010-04-23 21:53:38.000000000 +0100
-+++ cups-1.4.4/scheduler/printers.c	2010-09-15 13:21:39.627960657 +0100
-@@ -1059,9 +1059,19 @@ cupsdLoadAllPrinters(void)
+diff -up cups-1.4.6/scheduler/printers.c.serverbin-compat cups-1.4.6/scheduler/printers.c
+--- cups-1.4.6/scheduler/printers.c.serverbin-compat	2010-09-22 19:35:07.000000000 +0100
++++ cups-1.4.6/scheduler/printers.c	2011-01-12 16:28:47.261269599 +0000
+@@ -1114,9 +1114,19 @@ cupsdLoadAllPrinters(void)
  	    * Backend does not exist, stop printer...
  	    */
  
@@ -167,7 +167,7 @@ diff -up cups-1.4.4/scheduler/printers.c.serverbin-compat cups-1.4.4/scheduler/p
  	  }
          }
  
-@@ -3603,6 +3613,14 @@ add_printer_filter(
+@@ -3658,6 +3668,14 @@ add_printer_filter(
  
      if (stat(filename, &fileinfo))
      {
@@ -182,7 +182,7 @@ diff -up cups-1.4.4/scheduler/printers.c.serverbin-compat cups-1.4.4/scheduler/p
        memset(&fileinfo, 0, sizeof(fileinfo));
  
        snprintf(p->state_message, sizeof(p->state_message),
-@@ -3611,6 +3629,9 @@ add_printer_filter(
+@@ -3666,6 +3684,9 @@ add_printer_filter(
        cupsdSetPrinterReasons(p, "+cups-missing-filter-warning");
  
        cupsdLogMessage(CUPSD_LOG_ERROR, "%s", p->state_message);
