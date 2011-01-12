@@ -1,6 +1,6 @@
 diff -up cups-1.4.6/scheduler/ipp.c.icc cups-1.4.6/scheduler/ipp.c
---- cups-1.4.6/scheduler/ipp.c.icc	2011-01-11 15:23:38.318062917 +0000
-+++ cups-1.4.6/scheduler/ipp.c	2011-01-11 15:23:38.379057153 +0000
+--- cups-1.4.6/scheduler/ipp.c.icc	2011-01-12 16:12:56.306371255 +0000
++++ cups-1.4.6/scheduler/ipp.c	2011-01-12 16:13:02.525066340 +0000
 @@ -32,10 +32,6 @@
   *                                 based upon the printer state...
   *   add_queued_job_count()      - Add the "queued-job-count" attribute for the
@@ -623,9 +623,17 @@ diff -up cups-1.4.6/scheduler/ipp.c.icc cups-1.4.6/scheduler/ipp.c
  
    if (dtype & CUPS_PRINTER_CLASS)
 diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
---- cups-1.4.6/scheduler/printers.c.icc	2011-01-11 15:23:38.364058569 +0000
-+++ cups-1.4.6/scheduler/printers.c	2011-01-11 15:23:38.389056205 +0000
-@@ -40,6 +40,14 @@
+--- cups-1.4.6/scheduler/printers.c.icc	2011-01-12 16:12:56.347369245 +0000
++++ cups-1.4.6/scheduler/printers.c	2011-01-12 16:13:02.535065850 +0000
+@@ -5,6 +5,7 @@
+  *
+  *   Copyright 2007-2010 by Apple Inc.
+  *   Copyright 1997-2007 by Easy Software Products, all rights reserved.
++ *   Copyright 2011 by Red Hat Inc.
+  *
+  *   These coded instructions, statements, and computer programs are the
+  *   property of Apple Inc. and are protected by Federal copyright
+@@ -40,6 +41,14 @@
   *   cupsdValidateDest()        - Validate a printer/class destination.
   *   cupsdWritePrintcap()       - Write a pseudo-printcap file for older
   *                                applications that need it...
@@ -640,7 +648,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   *   add_printer_defaults()     - Add name-default attributes to the printer
   *                                attributes.
   *   add_printer_filter()       - Add a MIME filter for a printer.
-@@ -64,10 +72,14 @@
+@@ -64,10 +73,14 @@
   */
  
  #include "cupsd.h"
@@ -655,7 +663,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
  #ifdef HAVE_SYS_MOUNT_H
  #  include <sys/mount.h>
  #endif /* HAVE_SYS_MOUNT_H */
-@@ -81,6 +93,16 @@
+@@ -81,6 +94,16 @@
  #  include <sys/vfs.h>
  #endif /* HAVE_SYS_VFS_H */
  
@@ -672,10 +680,10 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
  
  /*
   * Local functions...
-@@ -102,6 +124,12 @@ static void	write_irix_config(cupsd_prin
- static void	write_irix_state(cupsd_printer_t *p);
+@@ -103,6 +126,12 @@ static void	write_irix_state(cupsd_print
  #endif /* __sgi */
  static void	write_xml_string(cups_file_t *fp, const char *s);
+ 
 +#ifdef __APPLE__
 +static void	apple_init_profile(ppd_file_t *ppd, cups_array_t *languages,
 +		                   CMDeviceProfileInfo *profile, unsigned id,
@@ -683,9 +691,9 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +				   const char *iccfile);
 +#endif /* __APPLE__ */
  
- 
  /*
-@@ -786,6 +814,14 @@ cupsdDeletePrinter(
+  * 'cupsdAddPrinter()' - Add a printer to the system.
+@@ -786,6 +815,14 @@ cupsdDeletePrinter(
                       update ? "Job stopped due to printer being deleted." :
  		              "Job stopped.");
  
@@ -700,7 +708,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * If this printer is the next for browsing, point to the next one...
    */
-@@ -1533,6 +1569,14 @@ cupsdRenamePrinter(
+@@ -1533,6 +1570,14 @@ cupsdRenamePrinter(
    mimeDeleteType(MimeDatabase, p->prefiltertype);
    p->prefiltertype = mimeAddType(MimeDatabase, "prefilter", name);
  
@@ -715,7 +723,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * Rename the printer...
    */
-@@ -2722,6 +2766,14 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2722,6 +2767,14 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
    write_irix_state(p);
  #endif /* __sgi */
  
@@ -730,7 +738,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * Let the browse protocols reflect the change
    */
-@@ -5576,6 +5628,996 @@ write_xml_string(cups_file_t *fp,	/* I -
+@@ -5576,6 +5629,1031 @@ write_xml_string(cups_file_t *fp,	/* I -
  }
  
  
@@ -838,9 +846,72 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +
 +#if !defined(__APPLE__) && defined(HAVE_DBUS)
 +/*
++ * 'dbus_profile_profile_set_property()' - Set a property on a profile
++ */
++static void
++dbus_profile_profile_set_property (DBusConnection *con,		/* I - D-Bus connection */
++				   const char *object_path,	/* I - DBus path */
++				   const char *property_name,	/* I - Property name */
++				   const char *property_value)	/* I - Property value */
++{
++  DBusMessage		*message;		/* D-Bus message */
++  DBusPendingCall	*pending = NULL;	/* D-Bus method call */
++  DBusMessageIter	args;			/* D-Bus method arguments */
++
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 object_path,
++					 "org.freedesktop.ColorManager.Profile",
++					 "SetProperty");
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, property_name);
++  dbus_message_iter_append_string(&args, property_value);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling Profile %s SetProperty(%s=%s)",
++		  object_path, property_name, property_value);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_pending_call_block(pending);
++out:
++  dbus_pending_call_unref(pending);
++  dbus_message_unref(message);
++}
++
++/*
++ * 'dbus_profile_device_set_property()' - Set a property on a device
++ */
++static void
++dbus_profile_device_set_property (DBusConnection *con,		/* I - D-Bus connection */
++				  const char *object_path,	/* I - DBus path */
++				  const char *property_name,	/* I - Property name */
++				  const char *property_value)	/* I - Property value */
++{
++  DBusMessage		*message;		/* D-Bus message */
++  DBusPendingCall	*pending = NULL;	/* D-Bus method call */
++  DBusMessageIter	args;			/* D-Bus method arguments */
++
++  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
++					 object_path,
++					 "org.freedesktop.ColorManager.Device",
++					 "SetProperty");
++  dbus_message_append_iter_init(message, &args);
++  dbus_message_iter_append_string(&args, property_name);
++  dbus_message_iter_append_string(&args, property_value);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling Device %s SetProperty(%s=%s)",
++		  object_path, property_name, property_value);
++  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
++    goto out;
++
++  dbus_connection_flush(con);
++  dbus_pending_call_block(pending);
++out:
++  dbus_pending_call_unref(pending);
++  dbus_message_unref(message);
++}
++
++/*
 + * 'dbus_create_profile()' - Create a color profile for a printer.
 + */
-+
 +static void
 +dbus_create_profile (cups_array_t *profiles,	/* I - Profiles array */
 +		     DBusConnection *con,	/* I - D-Bus connection */
@@ -893,56 +964,21 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +  dbus_message_iter_get_basic(&args, &path);
 +  path = strdup(path);
 +  cupsArrayAdd(profiles, strdup(path));
++  dbus_message_unref(message);
 +
 + /*
 +  * Set the qualifier...
 +  */
-+
-+  dbus_message_unref(message);
-+  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
-+					 path,
-+					 "org.freedesktop.ColorManager.Profile",
-+					 "SetQualifier");
-+  dbus_message_append_iter_init(message, &args);
-+  dbus_message_iter_append_string(&args, qualifier);
-+  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling SetQualifier(%s)", qualifier);
-+  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
-+    goto out;
-+
-+  dbus_connection_flush(con);
-+  dbus_message_unref(message);
-+  dbus_pending_call_block(pending);
-+  message = dbus_pending_call_steal_reply(pending);
-+  dbus_pending_call_unref(pending);
++  dbus_profile_profile_set_property (con, path, "Qualifier", qualifier);
 +
 + /*
 +  * If we know the ICC file for it, set that now...
 +  */
-+
-+  if (!iccfile)
-+    goto out;
-+
-+  dbus_message_unref(message);
-+  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
-+					 path,
-+					 "org.freedesktop.ColorManager.Profile",
-+					 "SetFilename");
-+  dbus_message_append_iter_init(message, &args);
-+  dbus_message_iter_append_string(&args, iccfile);
-+  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling SetFilename(%s)", iccfile);
-+  if (!dbus_connection_send_with_reply(con, message, &pending, -1))
-+    goto out;
-+
-+  dbus_connection_flush(con);
-+  dbus_message_unref(message);
-+  dbus_pending_call_block(pending);
-+  message = dbus_pending_call_steal_reply(pending);
-+  dbus_pending_call_unref(pending);
-+
++  if (iccfile)
++    dbus_profile_profile_set_property (con, path, "Filename", iccfile);
 +out:
 +  free (path);
 +  free (idstr);
-+  dbus_message_unref(message);
 +}
 +
 +
@@ -952,7 +988,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +
 +static void
 +dbus_create_device (DBusConnection *con,	/* I - D-Bus connection */
-+		    const char *name,		/* I - Printer name */
++		    cupsd_printer_t *p,		/* I - Printer */
 +		    cups_array_t *profiles,	/* I - Profiles array */
 +		    const char *default_profile_id) /* I - Default profile */
 +{
@@ -977,10 +1013,10 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +					 "CreateDevice");
 +
 +  dbus_message_append_iter_init(message, &args);
-+  dbus_message_iter_append_string(&args, name);
++  dbus_message_iter_append_string(&args, p->name);
 +  dbus_message_iter_append_uint32(&args, options);
 +  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling CreateDevice(%s,%d)",
-+		  name, options);
++		  p->name, options);
 +  if (!dbus_connection_send_with_reply (con, message, &pending, -1))
 +    goto out;
 +
@@ -1025,12 +1061,12 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 + /*
 +  * Set the default profile
 +  */
-+  default_path_len = strlen (name) + 1 + strlen (default_profile_id) + 1;
++  default_path_len = strlen (p->name) + 1 + strlen (default_profile_id) + 1;
 +  default_profile_path = malloc (default_path_len);
 +  if (!default_profile_path)
 +    goto out;
 +
-+  snprintf(default_profile_path, default_path_len, "%s-%s", name,
++  snprintf(default_profile_path, default_path_len, "%s-%s", p->name,
 +	   default_profile_id);
 +  message = dbus_message_new_method_call("org.freedesktop.ColorManager",
 +					 device_path,
@@ -1049,6 +1085,13 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +  dbus_pending_call_block(pending);
 +//  message = dbus_pending_call_steal_reply(pending);
 +  dbus_pending_call_unref(pending);
++
++
++ /*
++  * Set other useful device attributes
++  */
++  dbus_profile_device_set_property (con, device_path, "Kind", "printer");
++  dbus_profile_device_set_property (con, device_path, "Model", p->make_model);
 +
 +out:
 +  free(default_profile_path);
@@ -1656,7 +1699,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
 +    else
 +      error = 1000;
 +#elif defined(HAVE_DBUS)
-+    dbus_create_device (con, p->name, profiles, default_profile_id);
++    dbus_create_device (con, p, profiles, default_profile_id);
 +#endif /* defined(__APPLE__) || defined(HAVE_DBUS) */
 +
 +   /*
@@ -1728,8 +1771,8 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   * End of "$Id: printers.c 9313 2010-09-22 18:35:07Z mike $".
   */
 diff -up cups-1.4.6/scheduler/printers.h.icc cups-1.4.6/scheduler/printers.h
---- cups-1.4.6/scheduler/printers.h.icc	2011-01-11 15:23:38.365058476 +0000
-+++ cups-1.4.6/scheduler/printers.h	2011-01-11 15:23:38.389056205 +0000
+--- cups-1.4.6/scheduler/printers.h.icc	2011-01-12 16:12:56.348369195 +0000
++++ cups-1.4.6/scheduler/printers.h	2011-01-12 16:13:02.536065801 +0000
 @@ -189,6 +189,8 @@ extern const char	*cupsdValidateDest(con
  			        	   cups_ptype_t *dtype,
  					   cupsd_printer_t **printer);
