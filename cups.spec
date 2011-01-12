@@ -608,6 +608,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Jan 12 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-4
 - Properly separated serverbin-compat and lspp patches.
+- Updated ICC patch (still not yet applied).
 
 * Tue Jan 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-3
 - Build requires automake for avahi support.

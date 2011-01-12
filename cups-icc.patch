@@ -1,6 +1,6 @@
 diff -up cups-1.4.6/scheduler/ipp.c.icc cups-1.4.6/scheduler/ipp.c
---- cups-1.4.6/scheduler/ipp.c.icc	2011-01-12 16:12:56.306371255 +0000
-+++ cups-1.4.6/scheduler/ipp.c	2011-01-12 16:13:02.525066340 +0000
+--- cups-1.4.6/scheduler/ipp.c.icc	2011-01-12 16:16:39.865382541 +0000
++++ cups-1.4.6/scheduler/ipp.c	2011-01-12 16:16:41.944280101 +0000
 @@ -32,10 +32,6 @@
   *                                 based upon the printer state...
   *   add_queued_job_count()      - Add the "queued-job-count" attribute for the
@@ -623,8 +623,8 @@ diff -up cups-1.4.6/scheduler/ipp.c.icc cups-1.4.6/scheduler/ipp.c
  
    if (dtype & CUPS_PRINTER_CLASS)
 diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
---- cups-1.4.6/scheduler/printers.c.icc	2011-01-12 16:12:56.347369245 +0000
-+++ cups-1.4.6/scheduler/printers.c	2011-01-12 16:13:02.535065850 +0000
+--- cups-1.4.6/scheduler/printers.c.icc	2011-01-12 16:16:39.908380422 +0000
++++ cups-1.4.6/scheduler/printers.c	2011-01-12 16:16:41.954279608 +0000
 @@ -5,6 +5,7 @@
   *
   *   Copyright 2007-2010 by Apple Inc.
@@ -680,10 +680,11 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
  
  /*
   * Local functions...
-@@ -103,6 +126,12 @@ static void	write_irix_state(cupsd_print
+@@ -102,7 +125,12 @@ static void	write_irix_config(cupsd_prin
+ static void	write_irix_state(cupsd_printer_t *p);
  #endif /* __sgi */
  static void	write_xml_string(cups_file_t *fp, const char *s);
- 
+-
 +#ifdef __APPLE__
 +static void	apple_init_profile(ppd_file_t *ppd, cups_array_t *languages,
 +		                   CMDeviceProfileInfo *profile, unsigned id,
@@ -693,7 +694,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
  
  /*
   * 'cupsdAddPrinter()' - Add a printer to the system.
-@@ -786,6 +815,14 @@ cupsdDeletePrinter(
+@@ -786,6 +814,14 @@ cupsdDeletePrinter(
                       update ? "Job stopped due to printer being deleted." :
  		              "Job stopped.");
  
@@ -708,7 +709,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * If this printer is the next for browsing, point to the next one...
    */
-@@ -1533,6 +1570,14 @@ cupsdRenamePrinter(
+@@ -1533,6 +1569,14 @@ cupsdRenamePrinter(
    mimeDeleteType(MimeDatabase, p->prefiltertype);
    p->prefiltertype = mimeAddType(MimeDatabase, "prefilter", name);
  
@@ -723,7 +724,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * Rename the printer...
    */
-@@ -2722,6 +2767,14 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
+@@ -2722,6 +2766,14 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
    write_irix_state(p);
  #endif /* __sgi */
  
@@ -738,7 +739,7 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   /*
    * Let the browse protocols reflect the change
    */
-@@ -5576,6 +5629,1031 @@ write_xml_string(cups_file_t *fp,	/* I -
+@@ -5576,6 +5628,1031 @@ write_xml_string(cups_file_t *fp,	/* I -
  }
  
  
@@ -1771,8 +1772,8 @@ diff -up cups-1.4.6/scheduler/printers.c.icc cups-1.4.6/scheduler/printers.c
   * End of "$Id: printers.c 9313 2010-09-22 18:35:07Z mike $".
   */
 diff -up cups-1.4.6/scheduler/printers.h.icc cups-1.4.6/scheduler/printers.h
---- cups-1.4.6/scheduler/printers.h.icc	2011-01-12 16:12:56.348369195 +0000
-+++ cups-1.4.6/scheduler/printers.h	2011-01-12 16:13:02.536065801 +0000
+--- cups-1.4.6/scheduler/printers.h.icc	2011-01-12 16:16:39.911380276 +0000
++++ cups-1.4.6/scheduler/printers.h	2011-01-12 16:16:41.956279504 +0000
 @@ -189,6 +189,8 @@ extern const char	*cupsdValidateDest(con
  			        	   cups_ptype_t *dtype,
  					   cupsd_printer_t **printer);
