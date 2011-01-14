@@ -2,14 +2,13 @@
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
 %define use_alternatives 1
-%define icc 0
 %define lspp 1
 %define cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -287,10 +286,8 @@ module.
 %patch40 -p1 -b .avahi
 # Use a smaller buffer when writing to USB devices (bug #617208).
 %patch41 -p1 -b .usb-buffer-size
-%if %icc
-# ICC support (work in progress).  Disable lspp for testing.
+# ICC colord support.
 %patch42 -p1 -b .icc
-%endif
 
 %if %lspp
 # LSPP support.
@@ -606,6 +603,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jan 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-5
+- ICC colord support.
+
 * Wed Jan 12 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-4
 - Properly separated serverbin-compat and lspp patches.
 - Updated ICC patch (still not yet applied).
