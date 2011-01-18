@@ -578,7 +578,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Jan 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-3
 - Don't use --enable-pie configure option as it has been removed and
-  is now assumed.
+  is now assumed.  See STR #3691.
 
 * Mon Jan 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-2
 - Use a smaller buffer when writing to USB devices (bug #617208).
