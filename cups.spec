@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -321,7 +321,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	--with-log-file-perm=0600 --enable-pie --enable-relro \
+	--with-log-file-perm=0600 --enable-relro \
 	--with-pdftops=pdftops \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi --enable-avahi \
@@ -603,6 +603,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jan 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-6
+- Don't use --enable-pie configure option as it has been removed and
+  is now assumed.  See STR #3691.
+
 * Fri Jan 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-5
 - ICC colord support.
 
