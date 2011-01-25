@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -603,6 +603,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jan 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-7
+- Some fixes for the AvahiClient callback (bug #672143).
+
 * Tue Jan 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-6
 - Don't use --enable-pie configure option as it has been removed and
   is now assumed.  See STR #3691.
