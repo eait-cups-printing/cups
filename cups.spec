@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -69,6 +69,7 @@ Patch39: cups-str3754.patch
 Patch40: cups-avahi.patch
 Patch41: cups-usb-buffer-size.patch
 Patch42: cups-icc.patch
+Patch43: cups-usb-parallel.patch
 
 Patch100: cups-lspp.patch
 
@@ -288,6 +289,8 @@ module.
 %patch41 -p1 -b .usb-buffer-size
 # ICC colord support.
 %patch42 -p1 -b .icc
+# Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
+%patch43 -p1 -b .usb-parallel
 
 %if %lspp
 # LSPP support.
@@ -603,6 +606,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Feb 01 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-8
+- Use Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
+
 * Tue Jan 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-7
 - Some fixes for the AvahiClient callback (bug #672143).
 
