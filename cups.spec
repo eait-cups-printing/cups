@@ -1,9 +1,14 @@
-%define php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
+%global php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
-%define use_alternatives 1
-%define lspp 1
-%define cups_serverbin %{_exec_prefix}/lib/cups
+%global use_alternatives 1
+%global lspp 1
+
+# {_exec_prefix}/lib/cups is correct, even on x86_64.
+# It is not used for shared objects but for executables.
+# It's more of a libexec-style ({_libexecdir}) usage,
+# but we use lib for compatibility with 3rd party drivers (at upstream request).
+%global cups_serverbin %{_exec_prefix}/lib/cups
 
 Summary: Common Unix Printing System
 Name: cups
