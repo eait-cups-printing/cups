@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,9 +72,8 @@ Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-autotype-crash.patch
 Patch39: cups-str3754.patch
 Patch40: cups-avahi.patch
-Patch41: cups-usb-buffer-size.patch
-Patch42: cups-icc.patch
-Patch43: cups-usb-parallel.patch
+Patch41: cups-icc.patch
+Patch42: cups-usb-parallel.patch
 
 Patch100: cups-lspp.patch
 
@@ -290,12 +289,10 @@ module.
 %patch39 -p1 -b .str3754
 # Avahi support in the dnssd backend.
 %patch40 -p1 -b .avahi
-# Use a smaller buffer when writing to USB devices (bug #617208).
-%patch41 -p1 -b .usb-buffer-size
 # ICC colord support.
-%patch42 -p1 -b .icc
+%patch41 -p1 -b .icc
 # Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
-%patch43 -p1 -b .usb-parallel
+%patch42 -p1 -b .usb-parallel
 
 %if %lspp
 # LSPP support.
@@ -611,6 +608,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Feb 10 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-10
+- Remove testing cups-usb-buffer-size.patch (bug #661814).
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.4.6-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
@@ -635,7 +635,7 @@ rm -rf $RPM_BUILD_ROOT
 - Build requires automake for avahi support.
 
 * Mon Jan 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-2
-- Use a smaller buffer when writing to USB devices (bug #617208).
+- Use a smaller buffer when writing to USB devices (bug #661814).
 - Handle EAI_NONAME when resolving hostnames (bug #617208).
 
 * Fri Jan 07 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-1
