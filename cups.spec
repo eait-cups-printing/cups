@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -175,12 +175,8 @@ Summary: Common Unix Printing System - php module
 Group: Development/Languages
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs = %{epoch}:%{version}-%{release}
-%if 0%{?php_zend_api}
 Requires: php(zend-abi) = %{php_zend_api}
 Requires: php(api) = %{php_core_api}
-%else
-Requires: php-api = %{php_apiver}
-%endif
 
 
 %description
@@ -611,6 +607,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-12
+- Fixed build failure due to php_zend_api macro type.
+
 * Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-11
 - Fixed dbus notifier support for job-state-changed.
 
