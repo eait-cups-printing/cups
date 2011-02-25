@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch36: cups-ricoh-deviceid-oid.patch
 Patch37: cups-texttops-rotate-page.patch
 Patch38: cups-autotype-crash.patch
 Patch39: cups-str3754.patch
+Patch40: cups-job-state-changed.patch
 
 Patch100: cups-lspp.patch
 
@@ -276,6 +277,8 @@ module.
 %patch38 -p1 -b .autotype-crash
 # Don't crash when job queued for printer that times out (bug #660604).
 %patch39 -p1 -b .str3754
+# Fixed dbus notifier support for job-state-changed.
+%patch40 -p1 -b .job-state-changed
 
 %if %lspp
 # LSPP support.
@@ -573,6 +576,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-5
+- Fixed dbus notifier support for job-state-changed.
+
 * Thu Feb 10 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-4
 - Remove testing cups-usb-buffer-size.patch (bug #661814).
 
