@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -74,6 +74,7 @@ Patch39: cups-str3754.patch
 Patch40: cups-avahi.patch
 Patch41: cups-icc.patch
 Patch42: cups-usb-parallel.patch
+Patch43: cups-job-state-changed.patch
 
 Patch100: cups-lspp.patch
 
@@ -293,6 +294,8 @@ module.
 %patch41 -p1 -b .icc
 # Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
 %patch42 -p1 -b .usb-parallel
+# Fixed dbus notifier support for job-state-changed.
+%patch43 -p1 -b .job-state-changed
 
 %if %lspp
 # LSPP support.
@@ -608,6 +611,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-11
+- Fixed dbus notifier support for job-state-changed.
+
 * Thu Feb 10 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-10
 - Remove testing cups-usb-buffer-size.patch (bug #661814).
 
