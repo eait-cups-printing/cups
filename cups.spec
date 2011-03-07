@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -146,6 +146,9 @@ Requires: acl
 
 # Make sure we have some filters for converting to raster format.
 Requires: ghostscript-cups
+
+# Make sure we register devices and profiles with colord.
+Requires: colord
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -607,6 +610,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Mon Mar 07 2011 Richard Hughes <rhughes@redhat.com> 1:1.4.6-13
+- Updated colord patch.
+
 * Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-12
 - Fixed build failure due to php_zend_api macro type.
 
