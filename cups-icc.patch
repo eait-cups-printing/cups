@@ -137,7 +137,7 @@ index 0000000..2fdf401
 +  DBusMessageIter       args;                   /* D-Bus method arguments */
 +  DBusMessageIter       dict;                   /* D-Bus method arguments */
 +  DBusError             error;                  /* D-Bus error */
-+  int                   options = 1;            /* Options for CreateDevice */
++  int                   options = 1;            /* Options for CreateProfile */
 +  char                  *idstr;                 /* Profile ID string */
 +  size_t                idstrlen;               /* Profile ID allocated length */
 +  const char            *profile_path;          /* Device object path */
