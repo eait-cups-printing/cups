@@ -402,8 +402,8 @@ index 0000000..2fdf401
 +                                                    &error);
 +  if (reply == NULL)
 +  {
-+        cupsdLogMessage(CUPSD_LOG_WARN,
-+                        "failed to CreateDevice: %s:%s",
++        cupsdLogMessage(CUPSD_LOG_DEBUG,
++                        "failed to DeleteDevice: %s:%s",
 +                        error.name, error.message);
 +        dbus_error_free(&error);
 +        goto out;
