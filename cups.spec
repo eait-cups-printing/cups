@@ -612,6 +612,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Mar 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-14
 - Fixed some typos in colord patch.
+- LSPP: only warn when unable to get printer context.
 
 * Mon Mar 07 2011 Richard Hughes <rhughes@redhat.com> 1:1.4.6-13
 - Updated colord patch.
