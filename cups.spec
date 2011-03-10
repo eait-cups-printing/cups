@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -572,6 +572,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Mar 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-7
+- LSPP: only warn when unable to get printer context.
+
 * Fri Feb 25 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-6
 - Fixed build failure due to php_zend_api macro type.
 

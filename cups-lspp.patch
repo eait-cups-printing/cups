@@ -2802,7 +2802,7 @@ diff -up cups-1.4.5/scheduler/printers.c.lspp cups-1.4.5/scheduler/printers.c
 +        if (getfilecon(printerfile, &devcon) == -1)
 +        {
 +          if(is_selinux_enabled())
-+            cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdSetPrinterAttrs: Unable to get printer context");
++            cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdSetPrinterAttrs: Unable to get printer context");
 +        }
 +        else
 +        {
