@@ -957,7 +957,7 @@ diff -urNp cups-1.4.6.old/filter/common.c cups-1.4.6/filter/common.c
 +    {
 +      lines = 1 + (int)(label_len / max_width);
 +      line_len = (int)(label_len / lines);
-+      wrapped_label = malloc(sizeof(wrapped_label) * lines);
++      wrapped_label = malloc(sizeof(*wrapped_label) * lines);
 +      label_index = i = n = 0;
 +      while (classification[label_index])
 +      {
@@ -989,7 +989,7 @@ diff -urNp cups-1.4.6.old/filter/common.c cups-1.4.6/filter/common.c
 +    else
 +    {
 +      lines = 1;
-+      wrapped_label = malloc(sizeof(wrapped_label));
++      wrapped_label = malloc(sizeof(*wrapped_label));
 +      wrapped_label[0] = (char*)classification;
 +    }
 +
@@ -1115,7 +1115,7 @@ diff -urNp cups-1.4.6.old/filter/pstops.c cups-1.4.6/filter/pstops.c
 +    {
 +      lines = 1 + (int)(label_len / max_width);
 +      line_len = (int)(label_len / lines);
-+      wrapped_label = malloc(sizeof(wrapped_label) * lines);
++      wrapped_label = malloc(sizeof(*wrapped_label) * lines);
 +      label_index = i = n = 0;
 +      while (classification[label_index])
 +      {
@@ -1147,7 +1147,7 @@ diff -urNp cups-1.4.6.old/filter/pstops.c cups-1.4.6/filter/pstops.c
 +    else
 +    {
 +      lines = 1;
-+      wrapped_label = malloc(sizeof(wrapped_label));
++      wrapped_label = malloc(sizeof(*wrapped_label));
 +      wrapped_label[0] = (char*)classification;
 +    }
 +
@@ -1963,7 +1963,7 @@ diff -urNp cups-1.4.6.old/scheduler/ipp.c cups-1.4.6/scheduler/ipp.c
  
     /*
      * See if we need to add the starting sheet...
-@@ -4295,6 +4527,107 @@ check_rss_recipient(
+@@ -4295,6 +4527,111 @@ check_rss_recipient(
  }
  
  
@@ -2022,7 +2022,11 @@ diff -urNp cups-1.4.6.old/scheduler/ipp.c cups-1.4.6/scheduler/ipp.c
 +    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", con->scon);
 +    return -1;
 +  }
-+  avc_context_to_sid(job->scon, &jobsid);
++  if (avc_context_to_sid(job->scon, &jobsid) != 0)
++  {
++    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", job->scon);
++    return -1;
++  }
 +  avc_entry_ref_init(&avcref);
 +  tclass = SECCLASS_FILE;
 +  avr = FILE__READ;
