@@ -12,10 +12,10 @@ index 0decf8f..a35ee82 100644
  		log.o \
 diff --git a/scheduler/colord.c b/scheduler/colord.c
 new file mode 100644
-index 0000000..2fdf401
+index 0000000..7428bf7
 --- /dev/null
 +++ b/scheduler/colord.c
-@@ -0,0 +1,663 @@
+@@ -0,0 +1,668 @@
 +/*
 + * "$Id$"
 + *
@@ -63,11 +63,15 @@ index 0000000..2fdf401
 +
 +#define COLORD_SPACE_RGB      "rgb"       /* RGB colorspace */
 +#define COLORD_SPACE_CMYK     "cmyk"      /* CMYK colorspace */
++#define COLORD_SPACE_GRAY     "gray"      /* Gray colorspace */
 +
 +#define COLORD_MODE_PHYSICAL  "physical"  /* Actual device */
 +#define COLORD_MODE_VIRTUAL   "virtual"   /* Virtual device with no hardware */
 +
 +#define COLORD_KIND_PRINTER   "printer"   /* printing output device */
++
++/* the timeout for connecting to colord */
++#define COLORD_DBUS_TIMEOUT   5000        /* ms */
 +
 +/* This is static */
 +static DBusConnection *con = NULL;
@@ -137,7 +141,6 @@ index 0000000..2fdf401
 +  DBusMessageIter       args;                   /* D-Bus method arguments */
 +  DBusMessageIter       dict;                   /* D-Bus method arguments */
 +  DBusError             error;                  /* D-Bus error */
-+  int                   options = 1;            /* Options for CreateProfile */
 +  char                  *idstr;                 /* Profile ID string */
 +  size_t                idstrlen;               /* Profile ID allocated length */
 +  const char            *profile_path;          /* Device object path */
@@ -184,11 +187,11 @@ index 0000000..2fdf401
 +
 +  /* send syncronous */
 +  dbus_error_init(&error);
-+  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling CreateProfile(%s,%d)",
-+                  idstr, options);
++  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling CreateProfile(%s,%s)",
++                  idstr, scope);
 +  reply = dbus_connection_send_with_reply_and_block(con,
 +                                                    message,
-+                                                    -1,
++                                                    COLORD_DBUS_TIMEOUT,
 +                                                    &error);
 +  if (reply == NULL)
 +  {
@@ -252,7 +255,7 @@ index 0000000..2fdf401
 +  dbus_error_init(&error);
 +  reply = dbus_connection_send_with_reply_and_block(con,
 +                                                    message,
-+                                                    -1,
++                                                    COLORD_DBUS_TIMEOUT,
 +                                                    &error);
 +  if (reply == NULL)
 +  {
@@ -275,6 +278,7 @@ index 0000000..2fdf401
 +
 +static void
 +colordCreateDevice (cupsd_printer_t *p,         /* I - Printer */
++                    ppd_file_t *ppd,            /* I - PPD file */
 +                    cups_array_t *profiles,     /* I - Profiles array */
 +                    const char *colorspace,     /* I - Device colorspace, e.g. 'rgb' */
 +                    const char *relation,       /* I - Profile relation, either 'soft' or 'hard' */
@@ -315,9 +319,10 @@ index 0000000..2fdf401
 +                                 &dict);
 +  message_dict_add_strings(&dict, "Colorspace", colorspace);
 +  message_dict_add_strings(&dict, "Mode", COLORD_MODE_PHYSICAL);
-+  if (p->make_model != NULL)
-+    message_dict_add_strings(&dict, "Vendor", p->make_model);
-+  message_dict_add_strings(&dict, "Model", p->name);
++  if (ppd->manufacturer != NULL)
++    message_dict_add_strings(&dict, "Vendor", ppd->manufacturer);
++  if (ppd->modelname != NULL)
++    message_dict_add_strings(&dict, "Model", ppd->modelname);
 +  if (p->sanitized_device_uri != NULL)
 +    message_dict_add_strings(&dict, "Serial", p->sanitized_device_uri);
 +  message_dict_add_strings(&dict, "Kind", COLORD_KIND_PRINTER);
@@ -329,7 +334,7 @@ index 0000000..2fdf401
 +                  device_id, scope);
 +  reply = dbus_connection_send_with_reply_and_block(con,
 +                                                    message,
-+                                                    -1,
++                                                    COLORD_DBUS_TIMEOUT,
 +                                                    &error);
 +  if (reply == NULL)
 +  {
@@ -398,10 +403,11 @@ index 0000000..2fdf401
 +  cupsdLogMessage(CUPSD_LOG_DEBUG, "Calling DeleteDevice(%s)", device_id);
 +  reply = dbus_connection_send_with_reply_and_block(con,
 +                                                    message,
-+                                                    -1,
++                                                    COLORD_DBUS_TIMEOUT,
 +                                                    &error);
 +  if (reply == NULL)
 +  {
++        /* this can happen normally on start-up */
 +        cupsdLogMessage(CUPSD_LOG_DEBUG,
 +                        "failed to DeleteDevice: %s:%s",
 +                        error.name, error.message);
@@ -540,14 +546,10 @@ index 0000000..2fdf401
 +  * See if we have any embedded profiles...
 +  */
 +
++  /* old CUPS has no cupsArrayNew3... */
 +  profiles = cupsArrayNew (NULL, NULL);
-+  profile_key = "APTiogaProfile";
++  profile_key = "cupsICCProfile";
 +  attr = ppdFindAttr(ppd, profile_key, NULL);
-+  if (attr == NULL)
-+  {
-+    profile_key = "cupsICCProfile";
-+    attr = ppdFindAttr(ppd, profile_key, NULL);
-+  }
 +  for (; attr; attr = ppdFindNextAttr(ppd, profile_key, NULL))
 +    if (attr->spec[0] && attr->value && attr->value[0])
 +    {
@@ -612,6 +614,8 @@ index 0000000..2fdf401
 +                            COLORD_SCOPE_TEMP);
 +        break;
 +    case PPD_CS_GRAY :
++        device_colorspace = COLORD_SPACE_GRAY;
++        break;
 +    case PPD_CS_N :
 +        colordCreateProfile(profiles,
 +                            p->name,
@@ -629,6 +633,7 @@ index 0000000..2fdf401
 +  cupsdLogMessage(CUPSD_LOG_INFO, "Registering ICC color profiles for \"%s\"",
 +                  p->name);
 +  colordCreateDevice (p,
++                      ppd,
 +                      profiles,
 +                      device_colorspace,
 +                      COLORD_RELATION_SOFT,

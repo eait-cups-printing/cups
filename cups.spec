@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -610,6 +610,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue May 17 2011 Richard Hughes <rhughes@redhat.com> 1:1.4.6-16
+- Updated colord patch from upstream review.
+
 * Fri Mar 25 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-15
 - Polished patches according to results from static analysis of code (bug #690130).
 
