@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -489,6 +489,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
+%attr(0660,root,lp) %dev(char,6,0) /lib/udev/lp0
+%attr(0660,root,lp) %dev(char,6,1) /lib/udev/lp1
+%attr(0660,root,lp) %dev(char,6,2) /lib/udev/lp2
+%attr(0660,root,lp) %dev(char,6,3) /lib/udev/lp3
 /lib/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
@@ -610,6 +614,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed May 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-17
+- Package parallel port printer device nodes (bug #678804).
+
 * Tue May 17 2011 Richard Hughes <rhughes@redhat.com> 1:1.4.6-16
 - Updated colord patch from upstream review.
 
