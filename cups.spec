@@ -489,10 +489,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
-%attr(0660,root,lp) %dev(char,6,0) /lib/udev/lp0
-%attr(0660,root,lp) %dev(char,6,1) /lib/udev/lp1
-%attr(0660,root,lp) %dev(char,6,2) /lib/udev/lp2
-%attr(0660,root,lp) %dev(char,6,3) /lib/udev/lp3
+%attr(0660,root,lp) %dev(char,6,0) /lib/udev/devices/lp0
+%attr(0660,root,lp) %dev(char,6,1) /lib/udev/devices/lp1
+%attr(0660,root,lp) %dev(char,6,2) /lib/udev/devices/lp2
+%attr(0660,root,lp) %dev(char,6,3) /lib/udev/devices/lp3
 /lib/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
