@@ -15,7 +15,7 @@ new file mode 100644
 index 0000000..7428bf7
 --- /dev/null
 +++ b/scheduler/colord.c
-@@ -0,0 +1,668 @@
+@@ -0,0 +1,676 @@
 +/*
 + * "$Id$"
 + *
@@ -64,6 +64,7 @@ index 0000000..7428bf7
 +#define COLORD_SPACE_RGB      "rgb"       /* RGB colorspace */
 +#define COLORD_SPACE_CMYK     "cmyk"      /* CMYK colorspace */
 +#define COLORD_SPACE_GRAY     "gray"      /* Gray colorspace */
++#define COLORD_SPACE_UNKNOWN  "unknown"   /* Unknown colorspace */
 +
 +#define COLORD_MODE_PHYSICAL  "physical"  /* Actual device */
 +#define COLORD_MODE_VIRTUAL   "virtual"   /* Virtual device with no hardware */
@@ -131,6 +132,7 @@ index 0000000..7428bf7
 +colordCreateProfile (cups_array_t *profiles,    /* I - Profiles array */
 +                     const char *printer_name,  /* I - Printer name */
 +                     const char *qualifier,     /* I - Profile qualifier */
++                     const char *colorspace,    /* I - Profile colorspace */
 +                     const char **format,       /* I - Profile qualifier format */
 +                     const char *iccfile,       /* I - ICC filename */
 +                     const char *scope)         /* I - The scope of the profile, e.g.
@@ -181,6 +183,7 @@ index 0000000..7428bf7
 +                                   &dict);
 +  message_dict_add_strings(&dict, "Qualifier", qualifier);
 +  message_dict_add_strings(&dict, "Format", format_str);
++  message_dict_add_strings(&dict, "Colorspace", colorspace);
 +  if (iccfile != NULL)
 +    message_dict_add_strings(&dict, "Filename", iccfile);
 +  dbus_message_iter_close_container(&args, &dict);
@@ -570,6 +573,7 @@ index 0000000..7428bf7
 +      colordCreateProfile(profiles,
 +                          p->name,
 +                          attr->spec,
++                          COLORD_SPACE_UNKNOWN,
 +                          (const char **)format,
 +                          iccfile,
 +                          COLORD_SCOPE_TEMP);
@@ -582,6 +586,7 @@ index 0000000..7428bf7
 +  colordCreateProfile(profiles,
 +                      p->name,
 +                      "Gray..",
++                      COLORD_SPACE_GRAY,
 +                      (const char **)format,
 +                      NULL,
 +                      COLORD_SCOPE_TEMP);
@@ -599,6 +604,7 @@ index 0000000..7428bf7
 +        colordCreateProfile(profiles,
 +                            p->name,
 +                            "RGB..",
++                            COLORD_SPACE_RGB,
 +                            (const char **)format,
 +                            NULL,
 +                            COLORD_SCOPE_TEMP);
@@ -609,6 +615,7 @@ index 0000000..7428bf7
 +        colordCreateProfile(profiles,
 +                            p->name,
 +                            "CMYK..",
++                            COLORD_SPACE_CMYK,
 +                            (const char **)format,
 +                            NULL,
 +                            COLORD_SCOPE_TEMP);
@@ -620,6 +627,7 @@ index 0000000..7428bf7
 +        colordCreateProfile(profiles,
 +                            p->name,
 +                            "DeviceN..",
++                            COLORD_SPACE_UNKNOWN,
 +                            (const char **)format,
 +                            NULL,
 +                            COLORD_SCOPE_TEMP);
