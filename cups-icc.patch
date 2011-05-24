@@ -1,5 +1,3 @@
-diff --git a/scheduler/Makefile b/scheduler/Makefile
-index 0decf8f..a35ee82 100644
 --- a/scheduler/Makefile
 +++ b/scheduler/Makefile
 @@ -26,6 +26,7 @@ CUPSDOBJS =	\
@@ -10,12 +8,9 @@ index 0decf8f..a35ee82 100644
  		listen.o \
  		job.o \
  		log.o \
-diff --git a/scheduler/colord.c b/scheduler/colord.c
-new file mode 100644
-index 0000000..7428bf7
---- /dev/null
-+++ b/scheduler/colord.c
-@@ -0,0 +1,676 @@
+--- b/scheduler/colord.c
++++ cups-1.4.6/scheduler/colord.c	2011-05-24 12:47:19.698093377 +0100
+@@ -0,0 +1,684 @@
 +/*
 + * "$Id$"
 + *
@@ -521,6 +516,14 @@ index 0000000..7428bf7
 +  int                   i;              /* Loop counter */
 +
 + /*
++  * Do nothing for discovered printers as they will have local color
++  * correction
++  */
++
++  if (p->type & CUPS_PRINTER_DISCOVERED)
++    return;
++
++ /*
 +  * Ensure we have a DBus connection
 +  */
 +
@@ -533,7 +536,7 @@ index 0000000..7428bf7
 +  snprintf(ppdfile, sizeof(ppdfile), "%s/ppd/%s.ppd", ServerRoot, p->name);
 +  if ((ppd = ppdOpenFile(ppdfile)) == NULL)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_WARN,
++    cupsdLogMessage(CUPSD_LOG_DEBUG,
 +                    "cannot open %s",
 +                    ppdfile);
 +    return;
@@ -692,9 +695,6 @@ index 0000000..7428bf7
 +/*
 + * End of "$Id$".
 + */
-diff --git a/scheduler/colord.h b/scheduler/colord.h
-new file mode 100644
-index 0000000..262b695
 --- /dev/null
 +++ b/scheduler/colord.h
 @@ -0,0 +1,22 @@
@@ -720,8 +720,6 @@ index 0000000..262b695
 +/*
 + * End of "$Id$".
 + */
-diff --git a/scheduler/ipp.c b/scheduler/ipp.c
-index 6ba8339..55b7ed3 100644
 --- a/scheduler/ipp.c
 +++ b/scheduler/ipp.c
 @@ -2962,17 +2962,23 @@ add_printer(cupsd_client_t  *con,	/* I - Client connection */
@@ -769,8 +767,6 @@ index 6ba8339..55b7ed3 100644
    apple_unregister_profiles(printer);
  #endif /* __APPLE__ */
  
-diff --git a/scheduler/printers.c b/scheduler/printers.c
-index aedae5d..0947aeb 100644
 --- a/scheduler/printers.c
 +++ b/scheduler/printers.c
 @@ -80,6 +80,9 @@
@@ -877,8 +873,6 @@ index aedae5d..0947aeb 100644
    * Let the browse protocols reflect the change
    */
  
-diff --git a/scheduler/printers.h b/scheduler/printers.h
-index 3afc88d..85d2c88 100644
 --- a/scheduler/printers.h
 +++ b/scheduler/printers.h
 @@ -175,6 +175,10 @@ extern const char	*cupsdValidateDest(const char *uri,
