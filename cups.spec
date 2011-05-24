@@ -10,13 +10,15 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
+%global alphatag b1
+
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.6
-Release: 17%{?dist}
+Version: 1.5
+Release: 0.1.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
 # Our initscript
 Source1: cups.init
 # Pixmap for desktop file
@@ -37,7 +39,7 @@ Source8: cups.cron
 Source9: textonly.filter
 Source10: textonly.ppd
 Patch1: cups-no-gzip-man.patch
-Patch2: cups-1.1.16-system-auth.patch
+Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
 Patch4: cups-serial.patch
 Patch5: cups-banners.patch
@@ -47,34 +49,27 @@ Patch8: cups-direct-usb.patch
 Patch9: cups-lpr-help.patch
 Patch10: cups-peercred.patch
 Patch11: cups-pid.patch
-Patch12: cups-page-label.patch
-Patch13: cups-eggcups.patch
-Patch14: cups-getpass.patch
-Patch15: cups-driverd-timeout.patch
-Patch16: cups-strict-ppd-line-length.patch
-Patch17: cups-logrotate.patch
-Patch18: cups-usb-paperout.patch
-Patch19: cups-build.patch
-Patch20: cups-res_init.patch
-Patch21: cups-filter-debug.patch
-Patch22: cups-uri-compat.patch
-Patch23: cups-cups-get-classes.patch
-Patch25: cups-str3382.patch
-Patch26: cups-force-gnutls.patch
-Patch27: cups-serialize-gnutls.patch
-Patch29: cups-0755.patch
-Patch31: cups-hostnamelookups.patch
-Patch33: cups-snmp-quirks.patch
-Patch34: cups-hp-deviceid-oid.patch
-Patch35: cups-dnssd-deviceid.patch
-Patch36: cups-ricoh-deviceid-oid.patch
-Patch37: cups-texttops-rotate-page.patch
-Patch38: cups-autotype-crash.patch
-Patch39: cups-str3754.patch
-Patch40: cups-avahi.patch
-Patch41: cups-icc.patch
-Patch42: cups-usb-parallel.patch
-Patch43: cups-job-state-changed.patch
+Patch12: cups-eggcups.patch
+Patch13: cups-getpass.patch
+Patch14: cups-driverd-timeout.patch
+Patch15: cups-strict-ppd-line-length.patch
+Patch16: cups-logrotate.patch
+Patch17: cups-usb-paperout.patch
+Patch18: cups-build.patch
+Patch19: cups-res_init.patch
+Patch20: cups-filter-debug.patch
+Patch21: cups-uri-compat.patch
+Patch22: cups-cups-get-classes.patch
+Patch23: cups-str3382.patch
+Patch24: cups-serialize-gnutls.patch
+Patch25: cups-0755.patch
+Patch26: cups-snmp-quirks.patch
+Patch27: cups-hp-deviceid-oid.patch
+Patch28: cups-dnssd-deviceid.patch
+Patch29: cups-ricoh-deviceid-oid.patch
+Patch30: cups-usb-parallel.patch
+Patch31: cups-avahi.patch
+Patch32: cups-icc.patch
 
 Patch100: cups-lspp.patch
 
@@ -212,7 +207,7 @@ UNIX® operating systems. This is the package that provides a PHP
 module. 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{alphatag}
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
@@ -235,66 +230,50 @@ module.
 %patch10 -p1 -b .peercred
 # Maintain a cupsd.pid file.
 %patch11 -p1 -b .pid
-# Fix orientation of page labels.
-%patch12 -p1 -b .page-label
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
-%patch13 -p1 -b .eggcups
+%patch12 -p1 -b .eggcups
 # More sophisticated implementation of cupsGetPassword than getpass.
-%patch14 -p1 -b .getpass
+%patch13 -p1 -b .getpass
 # Increase driverd timeout to 70s to accommodate foomatic.
-%patch15 -p1 -b .driverd-timeout
+%patch14 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
-%patch16 -p1 -b .strict-ppd-line-length
+%patch15 -p1 -b .strict-ppd-line-length
 # Re-open the log if it has been logrotated under us.
-%patch17 -p1 -b .logrotate
+%patch16 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch18 -p1 -b .usb-paperout
+%patch17 -p1 -b .usb-paperout
 # Simplify the DNSSD parts so they can build using the compat library.
-%patch19 -p1 -b .build
+%patch18 -p1 -b .build
 # Re-initialise the resolver on failure in httpAddrGetList().
-%patch20 -p1 -b .res_init
+%patch19 -p1 -b .res_init
 # Log extra debugging information if no filters are available.
-%patch21 -p1 -b .filter-debug
+%patch20 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
-%patch22 -p1 -b .uri-compat
+%patch21 -p1 -b .uri-compat
 # Fix support for older CUPS servers in cupsGetDests.
-%patch23 -p1 -b .cups-get-classes
+%patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
-%patch25 -p1 -b .str3382
-# Force the use of gnutls despite thread-safety concerns (bug #607159).
-%patch26 -p1 -b .force-gnutls
+%patch23 -p1 -b .str3382
 # Perform locking for gnutls and avoid libgcrypt's broken
 # locking (bug #607159).
-%patch27 -p1 -b .serialize-gnutls
+#%patch24 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch29 -p1 -b .0755
-# Use numeric addresses for interfaces unless HostNameLookups are
-# turned on (bug #583054).
-%patch31 -p1 -b .hostnamelookups
+%patch25 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
-%patch33 -p1 -b .snmp-quirks
+%patch26 -p1 -b .snmp-quirks
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch34 -p1 -b .hp-deviceid-oid
+%patch27 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-%patch35 -p1 -b .dnssd-deviceid
+%patch28 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch36 -p1 -b .ricoh-deviceid-oid
-# Adjust texttops output to be in natural orientation (STR #3563).
-# This fixes page-label orientation when texttops is used in the
-# filter chain (bug #572338).
-%patch37 -p1 -b .texttops-rotate-page
-# Don't crash when MIME database could not be loaded (bug #610088).
-%patch38 -p1 -b .autotype-crash
-# Don't crash when job queued for printer that times out (bug #660604).
-%patch39 -p1 -b .str3754
-# Avahi support in the dnssd backend.
-%patch40 -p1 -b .avahi
-# ICC colord support.
-%patch41 -p1 -b .icc
+%patch29 -p1 -b .ricoh-deviceid-oid
 # Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
-%patch42 -p1 -b .usb-parallel
-# Fixed dbus notifier support for job-state-changed.
-%patch43 -p1 -b .job-state-changed
+%patch30 -p1 -b .usb-parallel
+
+# Avahi support in the dnssd backend.
+#%patch31 -p1 -b .avahi
+# ICC colord support.
+#%patch32 -p1 -b .icc
 
 %if %lspp
 # LSPP support.
@@ -320,6 +299,7 @@ rm "$f"~
 # Rebuild configure script for --enable-avahi.
 aclocal -I config-scripts
 autoconf -I config-scripts
+
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
@@ -614,6 +594,16 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue May 24 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.1.b1
+- 1.5b1
+  - removed cups-texttops-rotate-page.patch (#572338 is CANTFIX)
+  - removed cups-page-label.patch (#520141 seems to be CANTFIX)
+- TODO:
+  - work-around STR#3846
+  - remove OR port cups-serialize-gnutls.patch ??? (STR#3605)
+  - port avahi.patch
+  - port icc.patch
+
 * Wed May 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-17
 - Package parallel port printer device nodes (bug #678804).
 

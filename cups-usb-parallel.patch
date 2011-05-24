@@ -1,7 +1,7 @@
-diff -up cups-1.4.6/backend/ieee1284.c.usb-parallel cups-1.4.6/backend/ieee1284.c
---- cups-1.4.6/backend/ieee1284.c.usb-parallel	2010-04-10 00:42:09.000000000 +0200
-+++ cups-1.4.6/backend/ieee1284.c	2011-02-01 16:13:44.000000000 +0100
-@@ -55,7 +55,7 @@ backendGetDeviceID(
+diff -up cups-1.5b1/backend/ieee1284.c.usb-parallel cups-1.5b1/backend/ieee1284.c
+--- cups-1.5b1/backend/ieee1284.c.usb-parallel	2011-05-20 05:49:49.000000000 +0200
++++ cups-1.5b1/backend/ieee1284.c	2011-05-24 17:56:40.000000000 +0200
+@@ -65,7 +65,7 @@ backendGetDeviceID(
  #  if defined(__sun) && defined(ECPPIOC_GETDEVID)
    struct ecpp_device_id did;		/* Device ID buffer */
  #  endif /* __sun && ECPPIOC_GETDEVID */
@@ -10,7 +10,7 @@ diff -up cups-1.4.6/backend/ieee1284.c.usb-parallel cups-1.4.6/backend/ieee1284.
  
    DEBUG_printf(("backendGetDeviceID(fd=%d, device_id=%p, device_id_size=%d, "
                  "make_model=%p, make_model_size=%d, scheme=\"%s\", "
-@@ -176,7 +176,7 @@ backendGetDeviceID(
+@@ -186,7 +186,7 @@ backendGetDeviceID(
        * and then limit the length to the size of our buffer...
        */
  
@@ -19,7 +19,7 @@ diff -up cups-1.4.6/backend/ieee1284.c.usb-parallel cups-1.4.6/backend/ieee1284.
  	length = (((unsigned)device_id[1] & 255) << 8) +
  		 ((unsigned)device_id[0] & 255);
  
-@@ -214,11 +214,16 @@ backendGetDeviceID(
+@@ -224,11 +224,16 @@ backendGetDeviceID(
  	device_id[length] = '\0';
        }
      }
@@ -37,7 +37,7 @@ diff -up cups-1.4.6/backend/ieee1284.c.usb-parallel cups-1.4.6/backend/ieee1284.
  #  endif /* __linux */
  
  #   if defined(__sun) && defined(ECPPIOC_GETDEVID)
-@@ -246,14 +251,24 @@ backendGetDeviceID(
+@@ -256,14 +261,24 @@ backendGetDeviceID(
  #  endif /* __sun && ECPPIOC_GETDEVID */
    }
  
