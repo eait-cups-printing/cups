@@ -1,0 +1,24 @@
+diff -up cups-1.5b2/config-scripts/cups-common.m4.15b-workaround cups-1.5b2/config-scripts/cups-common.m4
+--- cups-1.5b2/config-scripts/cups-common.m4.15b-workaround	2011-05-26 14:39:11.000000000 +0200
++++ cups-1.5b2/config-scripts/cups-common.m4	2011-05-26 15:19:35.000000000 +0200
+@@ -406,7 +406,7 @@ AC_ARG_WITH(components, [  --with-compon
+ 
+ case "$COMPONENTS" in
+ 	all)
+-		BUILDDIRS="filter backend berkeley cgi-bin driver monitor notifier ppdc scheduler systemv conf data locale man doc examples templates"
++		BUILDDIRS="filter backend berkeley cgi-bin driver monitor notifier ppdc scheduler systemv conf data locale man doc examples templates desktop"
+ 		;;
+ 
+ 	core)
+diff -up cups-1.5b2/scheduler/client.c.15b-workaround cups-1.5b2/scheduler/client.c
+--- cups-1.5b2/scheduler/client.c.15b-workaround	2011-05-20 05:49:49.000000000 +0200
++++ cups-1.5b2/scheduler/client.c	2011-05-26 15:17:34.000000000 +0200
+@@ -3220,7 +3220,7 @@ encrypt_client(cupsd_client_t *con)	/* I
+   gnutls_certificate_set_x509_key_file(*credentials, ServerCertificate,
+ 				       ServerKey, GNUTLS_X509_FMT_PEM);
+ 
+-  gnutls_init(&con->http.tls), GNUTLS_SERVER);
++  gnutls_init(&con->http.tls, GNUTLS_SERVER);
+   gnutls_set_default_priority(con->http.tls);
+   gnutls_credentials_set(con->http.tls, GNUTLS_CRD_CERTIFICATE, *credentials);
+   gnutls_transport_set_ptr(con->http.tls, (gnutls_transport_ptr)HTTP(con));
