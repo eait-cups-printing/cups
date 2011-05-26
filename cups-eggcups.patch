@@ -96,7 +96,7 @@ diff -up cups-1.5b1/backend/Makefile.eggcups cups-1.5b1/backend/Makefile
  ipp:	ipp.o ../cups/$(LIBCUPS) libbackend.a
  	echo Linking $@...
 -	$(CC) $(LDFLAGS) -o ipp ipp.o libbackend.a $(LIBS)
-+	$(CC) $(LDFLAGS) -o ipp ipp.o libbackend.a $(LIBS) $(CUPSDLIBS)
++	$(CC) $(LDFLAGS) -o ipp ipp.o libbackend.a $(LIBS) $(SERVERLIBS)
  	$(RM) http
  	$(LN) ipp http
  

@@ -32,7 +32,7 @@ diff -up cups-1.5b1/backend/snmp-supplies.c.snmp-quirks cups-1.5b1/backend/snmp-
  static int		charset = -1;	/* Character set for supply names */
  static int		num_supplies = 0;
  					/* Number of supplies found */
-++static int		quirks = 0;	/* Printer quirks */
++static int		quirks = 0;	/* Printer quirks */
  static backend_supplies_t supplies[CUPS_MAX_SUPPLIES];
  					/* Supply information */
  static int		supply_state = -1;

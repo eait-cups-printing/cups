@@ -10,12 +10,12 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global alphatag b1
+%global alphatag b2
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.1.%{alphatag}%{?dist}
+Release: 0.2.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -70,6 +70,7 @@ Patch29: cups-ricoh-deviceid-oid.patch
 Patch30: cups-usb-parallel.patch
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
+Patch33: cups-1.5b-workaround.patch
 
 Patch100: cups-lspp.patch
 
@@ -176,6 +177,10 @@ Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 Requires: php(zend-abi) = %{php_zend_api}
 Requires: php(api) = %{php_core_api}
 
+%package ipptool
+Summary: Common Unix Printing System - tool for performing IPP requests
+Group: System Environment/Daemons
+Requires: %{name}-libs = %{epoch}:%{version}-%{release}
 
 %description
 The Common UNIX Printing System provides a portable printing layer for 
@@ -205,6 +210,9 @@ lpd emulation.
 The Common UNIX Printing System provides a portable printing layer for
 UNIX® operating systems. This is the package that provides a PHP
 module. 
+
+%description ipptool
+Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
 %setup -q -n %{name}-%{version}%{alphatag}
@@ -274,6 +282,8 @@ module.
 #%patch31 -p1 -b .avahi
 # ICC colord support.
 #%patch32 -p1 -b .icc
+
+%patch33 -p1 -b .15b-workaround
 
 %if %lspp
 # LSPP support.
@@ -381,9 +391,6 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/portreserve
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
 
 echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
-
-# Handle https:// device URIs (bug #478677, STR #3122).
-ln -s ipp $RPM_BUILD_ROOT%{cups_serverbin}/backend/https
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
@@ -524,6 +531,7 @@ rm -rf $RPM_BUILD_ROOT
 %{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
 %{cups_serverbin}/daemon/cups-driverd
+%{cups_serverbin}/daemon/cups-exec
 %{cups_serverbin}/notifier
 %{cups_serverbin}/filter
 %{cups_serverbin}/monitor
@@ -538,7 +546,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_datadir}/cups/banners
 %{_datadir}/cups/banners/*
 %{_datadir}/cups/charsets
-%{_datadir}/cups/charmaps
 %{_datadir}/cups/data
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
@@ -593,16 +600,34 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/php.d/%{name}.ini
 %{php_extdir}/phpcups.so
 
+%files ipptool
+%defattr(-,root,root)
+%{_bindir}/ipptool
+%dir %{_datadir}/cups/ipptool
+%{_datadir}/cups/ipptool/create-printer-subscription.test
+%{_datadir}/cups/ipptool/get-completed-jobs.test
+%{_datadir}/cups/ipptool/get-jobs.test
+%{_datadir}/cups/ipptool/ipp-1.1.test
+%{_datadir}/cups/ipptool/ipp-2.0.test
+%{_datadir}/cups/ipptool/ipp-2.1.test
+%{_datadir}/cups/ipptool/testfile.jpg
+%{_datadir}/cups/ipptool/testfile.pdf
+%{_datadir}/cups/ipptool/testfile.ps
+%{_datadir}/cups/ipptool/testfile.txt
+%{_mandir}/man1/ipptool.1.gz
+
 %changelog
+* Thu May 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.2.b2
+- 1.5b2
+- TODO:
+  - remove OR port cups-serialize-gnutls.patch ??? (STR#3605)
+  - port avahi.patch
+  - port icc.patch
+
 * Tue May 24 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.1.b1
 - 1.5b1
   - removed cups-texttops-rotate-page.patch (#572338 is CANTFIX)
   - removed cups-page-label.patch (#520141 seems to be CANTFIX)
-- TODO:
-  - work-around STR#3846
-  - remove OR port cups-serialize-gnutls.patch ??? (STR#3605)
-  - port avahi.patch
-  - port icc.patch
 
 * Wed May 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-17
 - Package parallel port printer device nodes (bug #678804).
