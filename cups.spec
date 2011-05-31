@@ -2,7 +2,7 @@
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
 %global use_alternatives 1
-%global lspp 0
+%global lspp 1
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.4.%{alphatag}%{?dist}
+Release: 0.5.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -305,7 +305,6 @@ rm "$f"~
 # Rebuild configure script for --enable-avahi.
 aclocal -I config-scripts
 autoconf -I config-scripts
-
 
 %build
 export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
@@ -613,6 +612,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue May 31 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.5.b2
+- enable LSPP support again
+
 * Tue May 31 2011 Richard Hughes <rhughes@redhat.com> 1:1.5-0.4.b2
 - Updated colord patch against 1.5 upstream and fixes from Tim Waugh.
 
