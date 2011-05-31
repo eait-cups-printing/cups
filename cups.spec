@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.2.%{alphatag}%{?dist}
+Release: 0.3.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -61,7 +61,6 @@ Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
 Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
-Patch24: cups-serialize-gnutls.patch
 Patch25: cups-0755.patch
 Patch26: cups-snmp-quirks.patch
 Patch27: cups-hp-deviceid-oid.patch
@@ -262,9 +261,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
-# Perform locking for gnutls and avoid libgcrypt's broken
-# locking (bug #607159).
-#%patch24 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
@@ -617,12 +613,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue May 31 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.3.b2
+- fix lspp.patch to not include "config.h" in cups/cups.h (#709384)
+
 * Thu May 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.2.b2
 - 1.5b2
-- TODO:
-  - remove OR port cups-serialize-gnutls.patch ??? (STR#3605)
-  - port avahi.patch
-  - port icc.patch
 
 * Tue May 24 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.1.b1
 - 1.5b1
