@@ -2,7 +2,7 @@
 %global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
 
 %global use_alternatives 1
-%global lspp 1
+%global lspp 0
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.3.%{alphatag}%{?dist}
+Release: 0.4.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -277,7 +277,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Avahi support in the dnssd backend.
 #%patch31 -p1 -b .avahi
 # ICC colord support.
-#%patch32 -p1 -b .icc
+%patch32 -p1 -b .icc
 
 %patch33 -p1 -b .15b-workaround
 
@@ -613,6 +613,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue May 31 2011 Richard Hughes <rhughes@redhat.com> 1:1.5-0.4.b2
+- Updated colord patch against 1.5 upstream and fixes from Tim Waugh.
+
 * Tue May 31 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.3.b2
 - fix lspp.patch to not include "config.h" in cups/cups.h (#709384)
 

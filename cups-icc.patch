@@ -1,16 +1,38 @@
+From f8907dde0b21af7e78ed208bd850119715af4bfc Mon Sep 17 00:00:00 2001
+From: Richard Hughes <richard@hughsie.com>
+Date: Tue, 1 Mar 2011 16:05:48 +0000
+Subject: [PATCH] Add colord support to CUPS which allows Linux printers to be
+ color managed
+
+---
+ scheduler/Makefile   |    1 +
+ scheduler/colord.c   |  678 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ scheduler/colord.h   |   22 ++
+ scheduler/ipp.c      |   18 ++-
+ scheduler/printers.c |   69 +++++
+ scheduler/printers.h |    4 +
+ 6 files changed, 789 insertions(+), 3 deletions(-)
+ create mode 100644 scheduler/colord.c
+ create mode 100644 scheduler/colord.h
+
+diff --git a/scheduler/Makefile b/scheduler/Makefile
+index 3c7da8e..b9c47d3 100644
 --- a/scheduler/Makefile
 +++ b/scheduler/Makefile
-@@ -26,6 +26,7 @@ CUPSDOBJS =	\
- 		env.o \
+@@ -27,6 +27,7 @@ CUPSDOBJS =	\
+ 		file.o \
  		main.o \
  		ipp.o \
 +		colord.o \
  		listen.o \
  		job.o \
  		log.o \
---- b/scheduler/colord.c
-+++ cups-1.4.6/scheduler/colord.c	2011-05-24 12:47:19.698093377 +0100
-@@ -0,0 +1,684 @@
+diff --git a/scheduler/colord.c b/scheduler/colord.c
+new file mode 100644
+index 0000000..6c60237
+--- /dev/null
++++ b/scheduler/colord.c
+@@ -0,0 +1,678 @@
 +/*
 + * "$Id$"
 + *
@@ -507,7 +529,6 @@
 +  char                  ppdfile[1024],  /* PPD filename */
 +                        iccfile[1024];  /* ICC filename */
 +  ppd_file_t            *ppd;           /* PPD file */
-+  char                  *profile_path;  /* Profile path */
 +  cups_array_t          *profiles;      /* Profile paths array */
 +  const char            *profile_key;   /* Profile keyword */
 +  ppd_attr_t            *attr;          /* Profile attributes */
@@ -552,8 +573,8 @@
 +  * See if we have any embedded profiles...
 +  */
 +
-+  /* old CUPS has no cupsArrayNew3... */
-+  profiles = cupsArrayNew (NULL, NULL);
++  profiles = cupsArrayNew3 (NULL, NULL, NULL, 0, NULL,
++                            (cups_afree_func_t) free);
 +  profile_key = "cupsICCProfile";
 +  attr = ppdFindAttr(ppd, profile_key, NULL);
 +  for (; attr; attr = ppdFindNextAttr(ppd, profile_key, NULL))
@@ -654,11 +675,6 @@
 +  * Free any memory we used...
 +  */
 +
-+  for (profile_path = cupsArrayFirst(profiles);
-+       profile_path != NULL;
-+       profile_path = cupsArrayNext(profiles)) {
-+    free(profile_path);
-+  }
 +  cupsArrayDelete(profiles);
 +  for (i=0; i<3; i++)
 +    free(format[i]);
@@ -695,6 +711,9 @@
 +/*
 + * End of "$Id$".
 + */
+diff --git a/scheduler/colord.h b/scheduler/colord.h
+new file mode 100644
+index 0000000..262b695
 --- /dev/null
 +++ b/scheduler/colord.h
 @@ -0,0 +1,22 @@
@@ -720,9 +739,11 @@
 +/*
 + * End of "$Id$".
 + */
+diff --git a/scheduler/ipp.c b/scheduler/ipp.c
+index 2b91319..e470c32 100644
 --- a/scheduler/ipp.c
 +++ b/scheduler/ipp.c
-@@ -2962,17 +2962,23 @@ add_printer(cupsd_client_t  *con,	/* I - Client connection */
+@@ -2925,17 +2925,23 @@ add_printer(cupsd_client_t  *con,	/* I - Client connection */
  
      cupsdSetPrinterReasons(printer, "none");
  
@@ -748,8 +769,8 @@
    }
  
   /*
-@@ -7052,11 +7058,17 @@ delete_printer(cupsd_client_t  *con,	/* I - Client connection */
-   snprintf(filename, sizeof(filename), "%s/%s.pwg3", CacheDir, printer->name);
+@@ -7032,11 +7038,17 @@ delete_printer(cupsd_client_t  *con,	/* I - Client connection */
+   snprintf(filename, sizeof(filename), "%s/%s.data", CacheDir, printer->name);
    unlink(filename);
  
 -#ifdef __APPLE__
@@ -767,9 +788,11 @@
    apple_unregister_profiles(printer);
  #endif /* __APPLE__ */
  
+diff --git a/scheduler/printers.c b/scheduler/printers.c
+index 9b876e3..cfb0db3 100644
 --- a/scheduler/printers.c
 +++ b/scheduler/printers.c
-@@ -80,6 +80,9 @@
+@@ -77,6 +77,9 @@
  #  include <sys/vfs.h>
  #endif /* HAVE_SYS_VFS_H */
  
@@ -779,7 +802,7 @@
  
  /*
   * Local functions...
-@@ -740,6 +743,53 @@ cupsdDeleteAllPrinters(void)
+@@ -708,6 +711,53 @@ cupsdDeleteAllPrinters(void)
    }
  }
  
@@ -833,7 +856,7 @@
  
  /*
   * 'cupsdDeletePrinter()' - Delete a printer from the system.
-@@ -780,6 +830,12 @@ cupsdDeletePrinter(
+@@ -748,6 +798,12 @@ cupsdDeletePrinter(
  		              "Job stopped.");
  
   /*
@@ -846,8 +869,8 @@
    * If this printer is the next for browsing, point to the next one...
    */
  
-@@ -1488,6 +1544,12 @@ cupsdRenamePrinter(
-   p->prefiltertype = mimeAddType(MimeDatabase, "prefilter", name);
+@@ -1414,6 +1470,12 @@ cupsdRenamePrinter(
+   }
  
   /*
 +  * Unregister profiles...
@@ -859,7 +882,7 @@
    * Rename the printer...
    */
  
-@@ -2700,6 +2762,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)/* I - Printer to setup */
+@@ -2640,6 +2702,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)/* I - Printer to setup */
  #endif /* __sgi */
  
   /*
@@ -873,9 +896,11 @@
    * Let the browse protocols reflect the change
    */
  
+diff --git a/scheduler/printers.h b/scheduler/printers.h
+index 1751578..3820428 100644
 --- a/scheduler/printers.h
 +++ b/scheduler/printers.h
-@@ -175,6 +175,10 @@ extern const char	*cupsdValidateDest(const char *uri,
+@@ -170,6 +170,10 @@ extern const char	*cupsdValidateDest(const char *uri,
  			        	   cups_ptype_t *dtype,
  					   cupsd_printer_t **printer);
  extern void		cupsdWritePrintcap(void);
@@ -886,3 +911,6 @@
  
  
  /*
+-- 
+1.7.5.2
+
