@@ -8,9 +8,9 @@
  		listen.o \
  		job.o \
  		log.o \
---- b/scheduler/colord.c
-+++ cups-1.4.6/scheduler/colord.c	2011-05-24 12:47:19.698093377 +0100
-@@ -0,0 +1,684 @@
+--- cups-1.4.6/scheduler/colord.c	2011-05-24 12:47:19.698093377 +0100
++++ cups-1.4.6/scheduler/colord.c	2011-06-03 14:01:22.780205436 +0100
+@@ -0,0 +1,688 @@
 +/*
 + * "$Id$"
 + *
@@ -528,6 +528,8 @@
 +  */
 +
 +  colordStart();
++  if (con == NULL)
++    return;
 +
 + /*
 +  * Try opening the PPD file for this printer...
@@ -681,6 +683,8 @@
 +  */
 +
 +  colordStart();
++  if (con == NULL)
++    return;
 +
 + /*
 +  * Just delete the device itself, and leave the profiles registered

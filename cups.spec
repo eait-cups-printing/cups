@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -617,6 +617,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jun  3 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-19
+- Don't crash when unable to connect to D-Bus.
+
 * Fri Jun 03 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.6-18
 - Set the default RIPCache to 128m (STR #3535, bug #549901).
 
