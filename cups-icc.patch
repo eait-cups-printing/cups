@@ -458,7 +458,7 @@
 +    tmp += 7;
 +  format[0] = strdup(tmp);
 +
-+  /* get 2st section */
++  /* get 2nd section */
 +  tmp = "cupsICCQualifier2";
 +  attr = ppdFindAttr(ppd, tmp, NULL);
 +  if (attr != NULL)
@@ -476,7 +476,7 @@
 +    tmp += 7;
 +  format[1] = strdup(tmp);
 +
-+  /* get 3st section */
++  /* get 3rd section */
 +  tmp = "cupsICCQualifier3";
 +  attr = ppdFindAttr(ppd, tmp, NULL);
 +  if (attr != NULL)
