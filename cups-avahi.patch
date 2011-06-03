@@ -1929,7 +1929,7 @@ diff -up cups-1.4.6/scheduler/dirsvc.c.avahi cups-1.4.6/scheduler/dirsvc.c
 +					   "_http._tcp", /* type */
 +					   NULL, /* domain */
 +					   NULL, /* host */
-+					   htons(DNSSDPort), /* port */
++					   DNSSDPort, /* port */
 +					   "path=/", NULL);
 +      if (ret == 0)
 +	ret = avahi_entry_group_commit (AvahiWebIFGroup);
@@ -2424,7 +2424,7 @@ diff -up cups-1.4.6/scheduler/dirsvc.c.avahi cups-1.4.6/scheduler/dirsvc.c
 +						AVAHI_IF_UNSPEC,
 +						AVAHI_PROTO_UNSPEC,
 +						0, name, regtype, NULL, NULL,
-+						htons(DNSSDPort),
++						DNSSDPort,
 +						ipp_txt);
 +    if (ret < 0)
 +      goto add_failed;
@@ -2443,7 +2443,7 @@ diff -up cups-1.4.6/scheduler/dirsvc.c.avahi cups-1.4.6/scheduler/dirsvc.c
 +						  AVAHI_PROTO_UNSPEC,
 +						  0, name,
 +						  "_printer._tcp", NULL, NULL,
-+						  htons(515),
++						  515,
 +						  printer_txt);
 +      if (ret < 0)
 +	goto add_failed;

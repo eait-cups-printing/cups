@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.6
-Release: 19%{?dist}
+Release: 20%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -617,6 +617,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Jun  3 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-20
+- Use correct port number when publishing services through Avahi
+  (Ubuntu #792309).
+
 * Fri Jun  3 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-19
 - Don't crash when unable to connect to D-Bus.
 
