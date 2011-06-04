@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.5.%{alphatag}%{?dist}
+Release: 0.6.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -612,6 +612,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Sat Jun 04 2011 Richard Hughes <rhughes@redhat.com> 1:1.5-0.6.b2
+- Updated colord patch with fixes from Tim Waugh.
+
 * Tue May 31 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.5.b2
 - enable LSPP support again
 

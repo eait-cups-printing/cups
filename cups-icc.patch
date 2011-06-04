@@ -1,17 +1,18 @@
-From f8907dde0b21af7e78ed208bd850119715af4bfc Mon Sep 17 00:00:00 2001
+From 7a8aceb1e8585410e3fca17c2e349877915dfdac Mon Sep 17 00:00:00 2001
 From: Richard Hughes <richard@hughsie.com>
 Date: Tue, 1 Mar 2011 16:05:48 +0000
 Subject: [PATCH] Add colord support to CUPS which allows Linux printers to be
  color managed
 
+This functionality is possible because of lots of help from Tim Waugh -- thanks!
 ---
  scheduler/Makefile   |    1 +
- scheduler/colord.c   |  678 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ scheduler/colord.c   |  682 ++++++++++++++++++++++++++++++++++++++++++++++++++
  scheduler/colord.h   |   22 ++
  scheduler/ipp.c      |   18 ++-
  scheduler/printers.c |   69 +++++
  scheduler/printers.h |    4 +
- 6 files changed, 789 insertions(+), 3 deletions(-)
+ 6 files changed, 793 insertions(+), 3 deletions(-)
  create mode 100644 scheduler/colord.c
  create mode 100644 scheduler/colord.h
 
@@ -29,10 +30,10 @@ index 3c7da8e..b9c47d3 100644
  		log.o \
 diff --git a/scheduler/colord.c b/scheduler/colord.c
 new file mode 100644
-index 0000000..6c60237
+index 0000000..e420a6d
 --- /dev/null
 +++ b/scheduler/colord.c
-@@ -0,0 +1,678 @@
+@@ -0,0 +1,682 @@
 +/*
 + * "$Id$"
 + *
@@ -480,7 +481,7 @@ index 0000000..6c60237
 +    tmp += 7;
 +  format[0] = strdup(tmp);
 +
-+  /* get 2st section */
++  /* get 2nd section */
 +  tmp = "cupsICCQualifier2";
 +  attr = ppdFindAttr(ppd, tmp, NULL);
 +  if (attr != NULL)
@@ -498,7 +499,7 @@ index 0000000..6c60237
 +    tmp += 7;
 +  format[1] = strdup(tmp);
 +
-+  /* get 3st section */
++  /* get 3rd section */
 +  tmp = "cupsICCQualifier3";
 +  attr = ppdFindAttr(ppd, tmp, NULL);
 +  if (attr != NULL)
@@ -549,6 +550,8 @@ index 0000000..6c60237
 +  */
 +
 +  colordStart();
++  if (con == NULL)
++    return;
 +
 + /*
 +  * Try opening the PPD file for this printer...
@@ -697,6 +700,8 @@ index 0000000..6c60237
 +  */
 +
 +  colordStart();
++  if (con == NULL)
++    return;
 +
 + /*
 +  * Just delete the device itself, and leave the profiles registered
