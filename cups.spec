@@ -10,12 +10,12 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global alphatag b2
+%global alphatag rc1
 
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.6.%{alphatag}%{?dist}
+Release: 0.7.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -66,10 +66,10 @@ Patch26: cups-snmp-quirks.patch
 Patch27: cups-hp-deviceid-oid.patch
 Patch28: cups-dnssd-deviceid.patch
 Patch29: cups-ricoh-deviceid-oid.patch
-Patch30: cups-usb-parallel.patch
+
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
-Patch33: cups-1.5b-workaround.patch
+
 
 Patch100: cups-lspp.patch
 
@@ -271,15 +271,11 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch28 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch29 -p1 -b .ricoh-deviceid-oid
-# Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
-%patch30 -p1 -b .usb-parallel
 
 # Avahi support in the dnssd backend.
 #%patch31 -p1 -b .avahi
 # ICC colord support.
 %patch32 -p1 -b .icc
-
-%patch33 -p1 -b .15b-workaround
 
 %if %lspp
 # LSPP support.
@@ -612,6 +608,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jun 15 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.7.rc1
+- 1.5rc1
+
 * Sat Jun 04 2011 Richard Hughes <rhughes@redhat.com> 1:1.5-0.6.b2
 - Updated colord patch with fixes from Tim Waugh.
 

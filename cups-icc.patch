@@ -797,9 +797,9 @@ diff --git a/scheduler/printers.c b/scheduler/printers.c
 index 9b876e3..cfb0db3 100644
 --- a/scheduler/printers.c
 +++ b/scheduler/printers.c
-@@ -77,6 +77,9 @@
- #  include <sys/vfs.h>
- #endif /* HAVE_SYS_VFS_H */
+@@ -80,6 +80,9 @@
+ #  include <asl.h>
+ #endif /* __APPLE__ */
  
 +#ifdef HAVE_DBUS
 +# include "colord.h"
