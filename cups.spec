@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -71,8 +71,13 @@ Patch32: cups-texttops-rotate-page.patch
 Patch33: cups-usb-parallel.patch
 Patch34: cups-str3535.patch
 
-Patch40: cups-avahi.patch
-Patch41: cups-icc.patch
+Patch40: cups-avahi-1-config.patch
+Patch41: cups-avahi-2-backend.patch
+Patch42: cups-avahi-3-timeouts.patch
+Patch43: cups-avahi-4-poll.patch
+Patch44: cups-avahi-5-services.patch
+
+Patch45: cups-icc.patch
 
 Patch100: cups-lspp.patch
 
@@ -283,10 +288,17 @@ module.
 # Set the default RIPCache to 128m (STR #3535, bug #549901).
 %patch34 -p1 -b .str3535
 
-# Avahi support in the dnssd backend.
-%patch40 -p1 -b .avahi
+# Avahi support:
+# - discovery in the dnssd backend
+# - service announcement in the scheduler
+%patch40 -p1 -b .avahi-1-config
+%patch41 -p1 -b .avahi-2-backend
+%patch42 -p1 -b .avahi-3-timeouts
+%patch43 -p1 -b .avahi-4-poll
+%patch44 -p1 -b .avahi-5-services
+
 # ICC colord support.
-%patch41 -p1 -b .icc
+%patch45 -p1 -b .icc
 
 %if %lspp
 # LSPP support.
@@ -606,6 +618,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-2
+- Updated avahi patches.
+
 * Tue Jun 28 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-1
 - 1.4.7.
 
