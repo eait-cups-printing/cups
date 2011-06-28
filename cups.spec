@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.6
-Release: 7%{?dist}
+Version: 1.4.7
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -58,16 +58,12 @@ Patch24: cups-avahi.patch
 Patch25: cups-str3382.patch
 Patch26: cups-force-gnutls.patch
 Patch27: cups-serialize-gnutls.patch
-Patch29: cups-0755.patch
-Patch31: cups-hostnamelookups.patch
-Patch33: cups-snmp-quirks.patch
-Patch34: cups-hp-deviceid-oid.patch
-Patch35: cups-dnssd-deviceid.patch
-Patch36: cups-ricoh-deviceid-oid.patch
-Patch37: cups-texttops-rotate-page.patch
-Patch38: cups-autotype-crash.patch
-Patch39: cups-str3754.patch
-Patch40: cups-job-state-changed.patch
+Patch28: cups-0755.patch
+Patch29: cups-snmp-quirks.patch
+Patch30: cups-hp-deviceid-oid.patch
+Patch31: cups-dnssd-deviceid.patch
+Patch32: cups-ricoh-deviceid-oid.patch
+Patch33: cups-texttops-rotate-page.patch
 
 Patch100: cups-lspp.patch
 
@@ -253,28 +249,19 @@ module.
 # locking (bug #607159).
 %patch27 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch29 -p1 -b .0755
-# Use numeric addresses for interfaces unless HostNameLookups are
-# turned on (bug #583054).
-%patch31 -p1 -b .hostnamelookups
+%patch28 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
-%patch33 -p1 -b .snmp-quirks
+%patch29 -p1 -b .snmp-quirks
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch34 -p1 -b .hp-deviceid-oid
+%patch30 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-%patch35 -p1 -b .dnssd-deviceid
+%patch31 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch36 -p1 -b .ricoh-deviceid-oid
+%patch32 -p1 -b .ricoh-deviceid-oid
 # Adjust texttops output to be in natural orientation (STR #3563).
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
-%patch37 -p1 -b .texttops-rotate-page
-# Don't crash when MIME database could not be loaded (bug #610088).
-%patch38 -p1 -b .autotype-crash
-# Don't crash when job queued for printer that times out (bug #660604).
-%patch39 -p1 -b .str3754
-# Fixed dbus notifier support for job-state-changed.
-%patch40 -p1 -b .job-state-changed
+%patch33 -p1 -b .texttops-rotate-page
 
 %if %lspp
 # LSPP support.
@@ -572,6 +559,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 28 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-1
+- 1.4.7.
+
 * Thu Mar 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-7
 - LSPP: only warn when unable to get printer context.
 
