@@ -12,8 +12,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.6
-Release: 20%{?dist}
+Version: 1.4.7
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -59,23 +59,20 @@ Patch20: cups-res_init.patch
 Patch21: cups-filter-debug.patch
 Patch22: cups-uri-compat.patch
 Patch23: cups-cups-get-classes.patch
-Patch25: cups-str3382.patch
-Patch26: cups-force-gnutls.patch
-Patch27: cups-serialize-gnutls.patch
-Patch29: cups-0755.patch
-Patch31: cups-hostnamelookups.patch
-Patch33: cups-snmp-quirks.patch
-Patch34: cups-hp-deviceid-oid.patch
-Patch35: cups-dnssd-deviceid.patch
-Patch36: cups-ricoh-deviceid-oid.patch
-Patch37: cups-texttops-rotate-page.patch
-Patch38: cups-autotype-crash.patch
-Patch39: cups-str3754.patch
+Patch24: cups-str3382.patch
+Patch25: cups-force-gnutls.patch
+Patch26: cups-serialize-gnutls.patch
+Patch27: cups-0755.patch
+Patch28: cups-snmp-quirks.patch
+Patch29: cups-hp-deviceid-oid.patch
+Patch30: cups-dnssd-deviceid.patch
+Patch31: cups-ricoh-deviceid-oid.patch
+Patch32: cups-texttops-rotate-page.patch
+Patch33: cups-usb-parallel.patch
+Patch34: cups-str3535.patch
+
 Patch40: cups-avahi.patch
 Patch41: cups-icc.patch
-Patch42: cups-usb-parallel.patch
-Patch43: cups-job-state-changed.patch
-Patch44: cups-str3535.patch
 
 Patch100: cups-lspp.patch
 
@@ -261,43 +258,35 @@ module.
 # Fix support for older CUPS servers in cupsGetDests.
 %patch23 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
-%patch25 -p1 -b .str3382
+%patch24 -p1 -b .str3382
 # Force the use of gnutls despite thread-safety concerns (bug #607159).
-%patch26 -p1 -b .force-gnutls
+%patch25 -p1 -b .force-gnutls
 # Perform locking for gnutls and avoid libgcrypt's broken
 # locking (bug #607159).
-%patch27 -p1 -b .serialize-gnutls
+%patch26 -p1 -b .serialize-gnutls
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch29 -p1 -b .0755
-# Use numeric addresses for interfaces unless HostNameLookups are
-# turned on (bug #583054).
-%patch31 -p1 -b .hostnamelookups
+%patch27 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
-%patch33 -p1 -b .snmp-quirks
+%patch28 -p1 -b .snmp-quirks
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch34 -p1 -b .hp-deviceid-oid
+%patch29 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-%patch35 -p1 -b .dnssd-deviceid
+%patch30 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch36 -p1 -b .ricoh-deviceid-oid
+%patch31 -p1 -b .ricoh-deviceid-oid
 # Adjust texttops output to be in natural orientation (STR #3563).
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
-%patch37 -p1 -b .texttops-rotate-page
-# Don't crash when MIME database could not be loaded (bug #610088).
-%patch38 -p1 -b .autotype-crash
-# Don't crash when job queued for printer that times out (bug #660604).
-%patch39 -p1 -b .str3754
+%patch32 -p1 -b .texttops-rotate-page
+# Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
+%patch33 -p1 -b .usb-parallel
+# Set the default RIPCache to 128m (STR #3535, bug #549901).
+%patch34 -p1 -b .str3535
+
 # Avahi support in the dnssd backend.
 %patch40 -p1 -b .avahi
 # ICC colord support.
 %patch41 -p1 -b .icc
-# Till's patch to fix USB-Parallel adapter cable problem (bug #624564).
-%patch42 -p1 -b .usb-parallel
-# Fixed dbus notifier support for job-state-changed.
-%patch43 -p1 -b .job-state-changed
-# Set the default RIPCache to 128m (STR #3535, bug #549901).
-%patch44 -p1 -b .str3535
 
 %if %lspp
 # LSPP support.
@@ -617,6 +606,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jun 28 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-1
+- 1.4.7.
+
 * Fri Jun  3 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.6-20
 - Use correct port number when publishing services through Avahi
   (Ubuntu #792309).
