@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -433,6 +433,12 @@ d %{_localstatedir}/run/cups 0755 root lp -
 d %{_localstatedir}/run/cups/certs 0511 lp sys -
 EOF
 
+find %{buildroot} -type f -o -type l | sed '
+s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
+/^%lang(C)/d
+/^\([^%].*\)/d
+' > %{name}.lang
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -490,7 +496,7 @@ rm -f %{cups_serverbin}/backend/smb
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
 %attr(0660,root,lp) %dev(char,6,0) /lib/udev/devices/lp0
@@ -618,6 +624,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-3
+- Tag localization files correctly (bug #716421).
+
 * Tue Jun 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-2
 - Updated avahi patches.
 
