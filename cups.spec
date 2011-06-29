@@ -15,12 +15,12 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.8.%{alphatag}%{?dist}
+Release: 0.9.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
-# Our initscript
-Source1: cups.init
+# Our systemd service unit
+Source1: cups.service
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # udev rules for libusb devices
@@ -106,6 +106,7 @@ BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
 BuildRequires: poppler-utils
+BuildRequires: systemd-units
 
 # Make sure we get postscriptdriver tags.
 BuildRequires: python-cups
@@ -128,6 +129,10 @@ Requires: tmpwatch
 
 # Requires /etc/tmpfiles.d (bug #656566)
 Requires: systemd-units >= 13
+Requires(post): systemd-units
+Requires(preun): systemd-units
+Requires(postun): systemd-units
+Requires(post): systemd-sysv
 
 # We use portreserve to prevent our TCP port being stolen.
 # Require the package here so that we know /etc/portreserve/ exists.
@@ -330,8 +335,8 @@ chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 rm -rf	$RPM_BUILD_ROOT%{_initddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
-mkdir -p $RPM_BUILD_ROOT%{_initddir}
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initddir}/cups
+mkdir -p $RPM_BUILD_ROOT%{_unitdir}
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
 
 find $RPM_BUILD_ROOT%{_datadir}/cups/model -name "*.ppd" |xargs gzip -n9f
 
@@ -414,8 +419,11 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 ' > %{name}.lang
 
 %post
-/sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
-/sbin/chkconfig --add cups || true
+if [ $1 -eq 1 ] ; then
+	# Initial installation
+	/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
 /bin/rm -rf %{_sysconfdir}/cups/certs
@@ -433,8 +441,7 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 	 --slave %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
 	 --slave %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
 	 --slave %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
-	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz \
-	 --initscript cups
+	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz
 %endif
 rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
 exit 0
@@ -444,9 +451,10 @@ exit 0
 %postun libs -p /sbin/ldconfig
 
 %preun
-if [ "$1" = "0" ]; then
-	/sbin/service cups stop > /dev/null 2>&1
-	/sbin/chkconfig --del cups
+if [ $1 -eq 0 ] ; then
+	# Package removal, not upgrade
+	/bin/systemctl --no-reload disable %{name}.service >/dev/null 2>&1 || :
+	/bin/systemctl stop %{name}.service >/dev/null 2>&1 || :
 %if %use_alternatives
 	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
 %endif
@@ -454,10 +462,22 @@ fi
 exit 0
 
 %postun
-if [ "$1" -ge "1" ]; then
-	/sbin/service cups condrestart > /dev/null 2>&1
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ]; then
+	# Package upgrade, not uninstall
+	/bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
 fi
 exit 0
+
+%triggerun -- %{name} < 1.5-0.9
+# Save the current service runlevel info
+# User must manually run systemd-sysv-convert --apply cups
+# to migrate them to systemd targets
+%{_bindir}/systemd-sysv-convert --save %{name} >/dev/null 2>&1 || :
+
+# Run these because the SysV package being removed won't do them
+/sbin/chkconfig --del cups >/dev/null 2>&1 || :
+/bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
 
 %triggerin -- samba-client
 ln -sf ../../../bin/smbspool %{cups_serverbin}/backend/smb || :
@@ -515,7 +535,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_datadir}/%{name}/www/ja/index.html
 %doc %{_datadir}/%{name}/www/pl/index.html
 %doc %{_datadir}/%{name}/www/ru/index.html
-%{_initddir}/cups
+%{_unitdir}/%{name}.service
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
 %{_bindir}/cancel*
@@ -614,6 +634,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.9.rc1
+- Ship systemd service unit instead of SysV initscript (bug #690766).
+
 * Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.8.rc1
 - Tag localization files correctly (bug #716421).
 
