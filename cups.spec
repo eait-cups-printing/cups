@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.9.%{alphatag}%{?dist}
+Release: 0.10.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -133,10 +133,6 @@ Requires(post): systemd-units
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 Requires(post): systemd-sysv
-
-# We use portreserve to prevent our TCP port being stolen.
-# Require the package here so that we know /etc/portreserve/ exists.
-Requires: portreserve
 
 Requires: poppler-utils
 
@@ -380,13 +376,8 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/subscriptions.conf
 # This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 
-# Tell portreserve which port we want it to protect.
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/portreserve
-
 # LSB 3.2 printer driver directory
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
-
-echo ipp > $RPM_BUILD_ROOT%{_sysconfdir}/portreserve/%{name}
 
 # Remove unshipped files.
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
@@ -515,7 +506,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
-%config(noreplace) %{_sysconfdir}/portreserve/%{name}
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/eu
@@ -634,6 +624,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.10.rc1
+- Don't use portreserve any more.  Better approach is to use systemd
+  socket activation (not yet done).
+
 * Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.9.rc1
 - Ship systemd service unit instead of SysV initscript (bug #690766).
 
