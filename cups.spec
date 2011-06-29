@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -384,6 +384,12 @@ __EOF__
 install -m644 %{SOURCE3} \
 	%{buildroot}/lib/udev/rules.d/70-cups-libusb.rules
 
+find %{buildroot} -type f -o -type l | sed '
+s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
+/^%lang(C)/d
+/^\([^%].*\)/d
+' > %{name}.lang
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -441,7 +447,7 @@ rm -f %{cups_serverbin}/backend/smb
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
 /lib/udev/rules.d/70-cups-libusb.rules
@@ -559,6 +565,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-2
+- Tag localization files correctly (bug #716421).
+
 * Tue Jun 28 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-1
 - 1.4.7.
 
