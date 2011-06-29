@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.7.%{alphatag}%{?dist}
+Release: 0.8.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -407,6 +407,12 @@ d %{_localstatedir}/run/cups 0755 root lp -
 d %{_localstatedir}/run/cups/certs 0511 lp sys -
 EOF
 
+find %{buildroot} -type f -o -type l | sed '
+s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
+/^%lang(C)/d
+/^\([^%].*\)/d
+' > %{name}.lang
+
 %post
 /sbin/chkconfig --del cupsd 2>/dev/null || true # Make sure old versions aren't there anymore
 /sbin/chkconfig --add cups || true
@@ -464,7 +470,7 @@ rm -f %{cups_serverbin}/backend/smb
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
 %attr(0660,root,lp) %dev(char,6,0) /lib/udev/devices/lp0
@@ -608,6 +614,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.8.rc1
+- Tag localization files correctly (bug #716421).
+
 * Wed Jun 15 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5-0.7.rc1
 - 1.5rc1
 
