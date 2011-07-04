@@ -19,8 +19,6 @@ Release: 0.10.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
-# Our systemd service unit
-Source1: cups.service
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # udev rules for libusb devices
@@ -69,6 +67,7 @@ Patch29: cups-ricoh-deviceid-oid.patch
 
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
+Patch33: 0001-systemd-add-systemd-socket-activation-and-unit-files.patch
 
 
 Patch100: cups-lspp.patch
@@ -278,6 +277,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # ICC colord support.
 %patch32 -p1 -b .icc
 
+%patch33 -p1 -b .systemd
+
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
@@ -332,7 +333,6 @@ rm -rf	$RPM_BUILD_ROOT%{_initddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
 	$RPM_BUILD_ROOT%{_sysconfdir}/rc?.d
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
 
 find $RPM_BUILD_ROOT%{_datadir}/cups/model -name "*.ppd" |xargs gzip -n9f
 
@@ -444,8 +444,8 @@ exit 0
 %preun
 if [ $1 -eq 0 ] ; then
 	# Package removal, not upgrade
-	/bin/systemctl --no-reload disable %{name}.service >/dev/null 2>&1 || :
-	/bin/systemctl stop %{name}.service >/dev/null 2>&1 || :
+	/bin/systemctl --no-reload disable %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
+	/bin/systemctl stop %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
 %if %use_alternatives
 	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
 %endif
@@ -526,6 +526,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_datadir}/%{name}/www/pl/index.html
 %doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
+%{_unitdir}/%{name}.socket
+%{_unitdir}/%{name}.path
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
 %{_bindir}/cancel*
