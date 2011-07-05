@@ -15,14 +15,12 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.11.%{alphatag}%{?dist}
+Release: 0.12.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
-# udev rules for libusb devices
-Source3: cups-libusb.rules
 # LSPP-required ps->pdf filter
 Source4: pstopdf
 # xinetd config file for cups-lpd service
@@ -393,11 +391,6 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 extension=phpcups.so
 __EOF__
 
-# Install the udev rules.
-%{__mkdir_p} %{buildroot}/lib/udev/rules.d
-install -m644 %{SOURCE3} \
-	%{buildroot}/lib/udev/rules.d/70-cups-libusb.rules
-
 # install /etc/tmpfiles.d/cups.conf (bug #656566)
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
 cat > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/cups.conf <<EOF
@@ -490,7 +483,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0660,root,lp) %dev(char,6,1) /lib/udev/devices/lp1
 %attr(0660,root,lp) %dev(char,6,2) /lib/udev/devices/lp2
 %attr(0660,root,lp) %dev(char,6,3) /lib/udev/devices/lp3
-/lib/udev/rules.d/70-cups-libusb.rules
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) /var/run/cups
 %dir %attr(0511,lp,sys) /var/run/cups/certs
@@ -628,6 +620,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jul  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.12.rc1
+- Removed udev rules file as it is no longer necessary.
+
 * Tue Jul  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.11.rc1
 - Add support for systemd socket activation (patch from Lennart
   Poettering).
