@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.10.%{alphatag}%{?dist}
+Release: 0.11.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -67,7 +67,7 @@ Patch29: cups-ricoh-deviceid-oid.patch
 
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
-Patch33: 0001-systemd-add-systemd-socket-activation-and-unit-files.patch
+Patch33: cups-systemd-socket.patch
 
 
 Patch100: cups-lspp.patch
@@ -277,7 +277,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # ICC colord support.
 %patch32 -p1 -b .icc
 
-%patch33 -p1 -b .systemd
+# Add support for systemd socket activation (patch from Lennart
+# Poettering).
+%patch33 -p1 -b .systemd-socket
 
 %if %lspp
 # LSPP support.
@@ -626,6 +628,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jul  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.11.rc1
+- Add support for systemd socket activation (patch from Lennart
+  Poettering).
+
 * Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.10.rc1
 - Don't use portreserve any more.  Better approach is to use systemd
   socket activation (not yet done).
