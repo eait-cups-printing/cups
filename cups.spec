@@ -67,7 +67,6 @@ Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
 Patch33: cups-systemd-socket.patch
 
-
 Patch100: cups-lspp.patch
 
 Epoch: 1
