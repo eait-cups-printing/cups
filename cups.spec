@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -340,7 +340,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
-make %{?_smp_mflags}
+make %{?_smp_mflags} V=1
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -624,6 +624,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-4
+- Make build log verbose enough to include compiler flags used.
+
 * Wed Jun 29 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-3
 - Tag localization files correctly (bug #716421).
 
