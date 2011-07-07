@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -70,6 +70,7 @@ Patch31: cups-ricoh-deviceid-oid.patch
 Patch32: cups-texttops-rotate-page.patch
 Patch33: cups-usb-parallel.patch
 Patch34: cups-str3535.patch
+Patch35: cups-str3875.patch
 
 Patch40: cups-avahi-1-config.patch
 Patch41: cups-avahi-2-backend.patch
@@ -287,6 +288,8 @@ module.
 %patch33 -p1 -b .usb-parallel
 # Set the default RIPCache to 128m (STR #3535, bug #549901).
 %patch34 -p1 -b .str3535
+# Fix SNMP supply level crasher (STR #3875, bug #719057).
+%patch35 -p1 -b .str3875
 
 # Avahi support:
 # - discovery in the dnssd backend
@@ -624,6 +627,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jul  7 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-6
+- Fix SNMP supply level crasher (STR #3875, bug #719057).
+
 * Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-5
 - Undo last change which had no effect.  We already remove the .SILENT
   target from the Makefile as part of the build.
