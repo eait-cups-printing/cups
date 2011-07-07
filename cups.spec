@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.13.%{alphatag}%{?dist}
+Release: 0.14.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -319,7 +319,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
-make %{?_smp_mflags} V=1
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -620,6 +620,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.14.rc1
+- Undo last change which had no effect.  We already remove the .SILENT
+  target from the Makefile as part of the build.
+
 * Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.13.rc1
 - Make build log verbose enough to include compiler flags used.
 
