@@ -1,0 +1,15 @@
+diff -up cups-1.4.7/backend/snmp-supplies.c.str3875 cups-1.4.7/backend/snmp-supplies.c
+--- cups-1.4.7/backend/snmp-supplies.c.str3875	2011-07-07 16:44:41.000000000 +0200
++++ cups-1.4.7/backend/snmp-supplies.c	2011-07-07 16:48:19.201008765 +0200
+@@ -259,7 +259,10 @@ backendSNMPSupplies(
+       if (quirks & QUIRK_CAPACITY)
+         supplies[i].max_capacity = 100;
+ 
+-      percent = 100 * supplies[i].level / supplies[i].max_capacity;
++      if (supplies[i].max_capacity > 0)
++	percent = 100 * supplies[i].level / supplies[i].max_capacity;
++      else
++        percent = 50;
+ 
+       if (percent <= 10)
+       {

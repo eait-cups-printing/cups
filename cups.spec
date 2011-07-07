@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -64,6 +64,7 @@ Patch30: cups-hp-deviceid-oid.patch
 Patch31: cups-dnssd-deviceid.patch
 Patch32: cups-ricoh-deviceid-oid.patch
 Patch33: cups-texttops-rotate-page.patch
+Patch34: cups-str3875.patch
 
 Patch100: cups-lspp.patch
 
@@ -262,6 +263,8 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch33 -p1 -b .texttops-rotate-page
+# Fix SNMP supply level crasher (STR #3875, bug #719057).
+%patch34 -p1 -b .str3875
 
 %if %lspp
 # LSPP support.
@@ -565,6 +568,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Thu Jul  7 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-5
+- Fix SNMP supply level crasher (STR #3875, bug #719057).
+
 * Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-4
 - Undo last change which had no effect.  We already remove the .SILENT
   target from the Makefile as part of the build.
