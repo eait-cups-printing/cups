@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -71,6 +71,7 @@ Patch32: cups-texttops-rotate-page.patch
 Patch33: cups-usb-parallel.patch
 Patch34: cups-str3535.patch
 Patch35: cups-str3875.patch
+Patch36: cups-polld-busy-loop.patch
 
 Patch40: cups-avahi-1-config.patch
 Patch41: cups-avahi-2-backend.patch
@@ -290,6 +291,8 @@ module.
 %patch34 -p1 -b .str3535
 # Fix SNMP supply level crasher (STR #3875, bug #719057).
 %patch35 -p1 -b .str3875
+# Avoid busy loop in cups-polld (bug #720921).
+%patch36 -p1 -b .polld-busy-loop
 
 # Avahi support:
 # - discovery in the dnssd backend
@@ -627,6 +630,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jul 13 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-7
+- Avoid busy loop in cups-polld (bug #720921).
+
 * Thu Jul  7 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.7-6
 - Fix SNMP supply level crasher (STR #3875, bug #719057).
 
