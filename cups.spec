@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.14.%{alphatag}%{?dist}
+Release: 0.15.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -34,6 +34,7 @@ Source8: cups.cron
 # Filter and PPD for textonly printing
 Source9: textonly.filter
 Source10: textonly.ppd
+Source11: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
@@ -365,6 +366,10 @@ install -c -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
 install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
 %endif
 
+# Ship an rpm macro for where to put driver executables.
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
+install -m 0644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
+
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
@@ -589,6 +594,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/*.so
 %{_includedir}/cups
 %{_mandir}/man1/cups-config.1*
+%{_sysconfdir}/rpm/macros.cups
 
 %files lpd
 %defattr(-,root,root)
@@ -619,6 +625,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Jul 15 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.15.rc1
+- Ship an rpm macro for where to put driver executables.
+
 * Thu Jul  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.14.rc1
 - Undo last change which had no effect.  We already remove the .SILENT
   target from the Makefile as part of the build.
