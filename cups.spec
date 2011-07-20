@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.7
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch32: cups-ricoh-deviceid-oid.patch
 Patch33: cups-texttops-rotate-page.patch
 Patch34: cups-str3875.patch
 Patch35: cups-polld-busy-loop.patch
+Patch36: cups-str3880.patch
 
 Patch100: cups-lspp.patch
 
@@ -269,6 +270,8 @@ module.
 %patch34 -p1 -b .str3875
 # Avoid busy loop in cups-polld (bug #720921).
 %patch35 -p1 -b .polld-busy-loop
+# Don't delete job data files when restarted (STR #3880).
+%patch36 -p1 -b .str3880
 
 %if %lspp
 # LSPP support.
@@ -577,6 +580,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Jul 20 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-8
+- Don't delete job data files when restarted (STR #3880).
+
 * Fri Jul 15 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-7
 - Ship an rpm macro for where to put driver executables.
 
