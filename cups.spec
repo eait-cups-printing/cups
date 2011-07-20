@@ -15,7 +15,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5
-Release: 0.15.%{alphatag}%{?dist}
+Release: 0.16.%{alphatag}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch29: cups-ricoh-deviceid-oid.patch
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
 Patch33: cups-systemd-socket.patch
+Patch34: cups-str3880.patch
 
 Patch100: cups-lspp.patch
 
@@ -278,6 +279,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch33 -p1 -b .systemd-socket
+
+# Don't delete job data files when restarted (STR #3880).
+%patch34 -p1 -b .str3880
 
 %if %lspp
 # LSPP support.
@@ -625,6 +629,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jul 20 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.16.rc1
+- Don't delete job data files when restarted (STR #3880).
+
 * Fri Jul 15 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.15.rc1
 - Ship an rpm macro for where to put driver executables.
 
