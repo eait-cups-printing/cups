@@ -12,8 +12,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.7
-Release: 9%{?dist}
+Version: 1.4.8
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -71,9 +71,7 @@ Patch31: cups-ricoh-deviceid-oid.patch
 Patch32: cups-texttops-rotate-page.patch
 Patch33: cups-usb-parallel.patch
 Patch34: cups-str3535.patch
-Patch35: cups-str3875.patch
-Patch36: cups-polld-busy-loop.patch
-Patch37: cups-str3880.patch
+Patch35: cups-polld-busy-loop.patch
 
 Patch40: cups-avahi-1-config.patch
 Patch41: cups-avahi-2-backend.patch
@@ -291,12 +289,8 @@ module.
 %patch33 -p1 -b .usb-parallel
 # Set the default RIPCache to 128m (STR #3535, bug #549901).
 %patch34 -p1 -b .str3535
-# Fix SNMP supply level crasher (STR #3875, bug #719057).
-%patch35 -p1 -b .str3875
 # Avoid busy loop in cups-polld (bug #720921).
-%patch36 -p1 -b .polld-busy-loop
-# Don't delete job data files when restarted (STR #3880).
-%patch37 -p1 -b .str3880
+%patch35 -p1 -b .polld-busy-loop
 
 # Avahi support:
 # - discovery in the dnssd backend
@@ -639,6 +633,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.8-1
+- 1.4.8
+
 * Wed Jul 20 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-9
 - Don't delete job data files when restarted (STR #3880).
 
