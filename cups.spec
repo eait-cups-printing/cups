@@ -10,15 +10,13 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global alphatag rc1
-
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.5
-Release: 0.16.%{alphatag}%{?dist}
+Version: 1.5.0
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
-Source: http://ftp.easysw.com/pub/cups/%{version}%{alphatag}/cups-%{version}%{alphatag}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # LSPP-required ps->pdf filter
@@ -67,7 +65,6 @@ Patch29: cups-ricoh-deviceid-oid.patch
 Patch31: cups-avahi.patch
 Patch32: cups-icc.patch
 Patch33: cups-systemd-socket.patch
-Patch34: cups-str3880.patch
 
 Patch100: cups-lspp.patch
 
@@ -213,7 +210,7 @@ module.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q -n %{name}-%{version}%{alphatag}
+%setup -q
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
@@ -279,9 +276,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch33 -p1 -b .systemd-socket
-
-# Don't delete job data files when restarted (STR #3880).
-%patch34 -p1 -b .str3880
 
 %if %lspp
 # LSPP support.
@@ -629,6 +623,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5.0-1
+- 1.5.0
+
 * Wed Jul 20 2011 Tim Waugh <twaugh@redhat.com> 1:1.5-0.16.rc1
 - Don't delete job data files when restarted (STR #3880).
 
