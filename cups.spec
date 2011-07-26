@@ -7,8 +7,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.4.7
-Release: 8%{?dist}
+Version: 1.4.8
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -65,9 +65,7 @@ Patch30: cups-hp-deviceid-oid.patch
 Patch31: cups-dnssd-deviceid.patch
 Patch32: cups-ricoh-deviceid-oid.patch
 Patch33: cups-texttops-rotate-page.patch
-Patch34: cups-str3875.patch
-Patch35: cups-polld-busy-loop.patch
-Patch36: cups-str3880.patch
+Patch34: cups-polld-busy-loop.patch
 
 Patch100: cups-lspp.patch
 
@@ -266,12 +264,8 @@ module.
 # This fixes page-label orientation when texttops is used in the
 # filter chain (bug #572338).
 %patch33 -p1 -b .texttops-rotate-page
-# Fix SNMP supply level crasher (STR #3875, bug #719057).
-%patch34 -p1 -b .str3875
 # Avoid busy loop in cups-polld (bug #720921).
-%patch35 -p1 -b .polld-busy-loop
-# Don't delete job data files when restarted (STR #3880).
-%patch36 -p1 -b .str3880
+%patch34 -p1 -b .polld-busy-loop
 
 %if %lspp
 # LSPP support.
@@ -580,6 +574,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.8-1
+- 1.4.8
+
 * Wed Jul 20 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.7-8
 - Don't delete job data files when restarted (STR #3880).
 

@@ -1,6 +1,6 @@
-diff -up cups-1.4.7/backend/snmp-supplies.c.snmp-quirks cups-1.4.7/backend/snmp-supplies.c
---- cups-1.4.7/backend/snmp-supplies.c.snmp-quirks	2011-03-10 04:50:59.000000000 +0100
-+++ cups-1.4.7/backend/snmp-supplies.c	2011-06-28 11:11:57.944155996 +0200
+diff -up cups-1.4.8/backend/snmp-supplies.c.snmp-quirks cups-1.4.8/backend/snmp-supplies.c
+--- cups-1.4.8/backend/snmp-supplies.c.snmp-quirks	2011-07-06 22:27:31.000000000 +0200
++++ cups-1.4.8/backend/snmp-supplies.c	2011-07-26 11:02:14.709121584 +0200
 @@ -49,6 +49,13 @@
  
  
@@ -59,10 +59,10 @@ diff -up cups-1.4.7/backend/snmp-supplies.c.snmp-quirks cups-1.4.7/backend/snmp-
 +      if (quirks & QUIRK_CAPACITY)
 +        supplies[i].max_capacity = 100;
 +
-       percent = 100 * supplies[i].level / supplies[i].max_capacity;
- 
-       if (percent <= 10)
-@@ -406,6 +432,7 @@ backend_init_supplies(
+       if (supplies[i].max_capacity > 0)
+ 	percent = 100 * supplies[i].level / supplies[i].max_capacity;
+       else
+@@ -409,6 +435,7 @@ backend_init_supplies(
      http_addr_t *addr)			/* I - Printer address */
  {
    int		i,			/* Looping var */
@@ -70,7 +70,7 @@ diff -up cups-1.4.7/backend/snmp-supplies.c.snmp-quirks cups-1.4.7/backend/snmp-
  		type;			/* Current marker type */
    cups_file_t	*cachefile;		/* Cache file */
    const char	*cachedir;		/* CUPS_CACHEDIR value */
-@@ -467,6 +494,7 @@ backend_init_supplies(
+@@ -470,6 +497,7 @@ backend_init_supplies(
    current_state = -1;
    num_supplies  = -1;
    charset       = -1;
@@ -78,7 +78,7 @@ diff -up cups-1.4.7/backend/snmp-supplies.c.snmp-quirks cups-1.4.7/backend/snmp-
  
    memset(supplies, 0, sizeof(supplies));
  
-@@ -482,6 +510,34 @@ backend_init_supplies(
+@@ -485,6 +513,34 @@ backend_init_supplies(
      return;
    }
  
