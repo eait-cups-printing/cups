@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -62,9 +62,14 @@ Patch27: cups-hp-deviceid-oid.patch
 Patch28: cups-dnssd-deviceid.patch
 Patch29: cups-ricoh-deviceid-oid.patch
 
-Patch31: cups-avahi.patch
-Patch32: cups-icc.patch
-Patch33: cups-systemd-socket.patch
+Patch30: cups-avahi-1-config.patch
+Patch31: cups-avahi-2-backend.patch
+Patch32: cups-avahi-3-timeouts.patch
+Patch33: cups-avahi-4-poll.patch
+Patch34: cups-avahi-5-services.patch
+
+Patch35: cups-icc.patch
+Patch36: cups-systemd-socket.patch
 
 Patch100: cups-lspp.patch
 
@@ -268,14 +273,21 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch29 -p1 -b .ricoh-deviceid-oid
 
-# Avahi support in the dnssd backend.
-#%patch31 -p1 -b .avahi
+# Avahi support:
+# - discovery in the dnssd backend
+# - service announcement in the scheduler
+%patch30 -p1 -b .avahi-1-config
+%patch31 -p1 -b .avahi-2-backend
+%patch32 -p1 -b .avahi-3-timeouts
+%patch33 -p1 -b .avahi-4-poll
+%patch34 -p1 -b .avahi-5-services
+
 # ICC colord support.
-%patch32 -p1 -b .icc
+%patch35 -p1 -b .icc
 
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
-%patch33 -p1 -b .systemd-socket
+%patch36 -p1 -b .systemd-socket
 
 %if %lspp
 # LSPP support.
@@ -623,6 +635,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Aug  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-2
+- Ported avahi support from 1.4.
+
 * Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.5.0-1
 - 1.5.0
 
