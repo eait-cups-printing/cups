@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -635,6 +635,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Aug  8 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-3
+- Updated avahi support to register sub-types.
+
 * Fri Aug  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-2
 - Ported avahi support from 1.4.
 
