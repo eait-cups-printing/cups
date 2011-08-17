@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -421,7 +421,7 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 %post
 if [ $1 -eq 1 ] ; then
 	# Initial installation
-	/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+	/bin/systemctl enable cups.{service,socket,path} >/dev/null 2>&1 || :
 fi
 
 # Remove old-style certs directory; new-style is /var/run
@@ -635,6 +635,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Aug 17 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-4
+- Enable systemd units by default (bug #731421).
+
 * Mon Aug  8 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-3
 - Updated avahi support to register sub-types.
 
