@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -66,6 +66,7 @@ Patch31: cups-dnssd-deviceid.patch
 Patch32: cups-ricoh-deviceid-oid.patch
 Patch33: cups-texttops-rotate-page.patch
 Patch34: cups-polld-busy-loop.patch
+Patch35: cups-CVE-2011-2896.patch
 
 Patch100: cups-lspp.patch
 
@@ -266,6 +267,8 @@ module.
 %patch33 -p1 -b .texttops-rotate-page
 # Avoid busy loop in cups-polld (bug #720921).
 %patch34 -p1 -b .polld-busy-loop
+# Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
+%patch35 -p1 -b .CVE-2011-2896
 
 %if %lspp
 # LSPP support.
@@ -574,6 +577,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-2
+- Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
+
 * Tue Jul 26 2011 Jiri Popelka <jpopelka@redhat.com> 1:1.4.8-1
 - 1.4.8
 
