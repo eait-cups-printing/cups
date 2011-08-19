@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -78,7 +78,7 @@ Epoch: 1
 Url: http://www.cups.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: /sbin/chkconfig /sbin/service
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
 Requires: /usr/sbin/alternatives
@@ -151,7 +151,7 @@ Requires: colord
 Summary: Common Unix Printing System - development environment
 Group: Development/Libraries
 License: LGPLv2
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
@@ -167,7 +167,7 @@ License: LGPLv2
 Summary: Common Unix Printing System - lpd emulation
 Group: System Environment/Daemons
 Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: xinetd
 
 %package php
@@ -639,6 +639,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-6
+- Tighten explicit libs sub-package requirement so that it includes
+  the correct architecture as well (bug #731421 comment #8).
+
 * Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-5
 - Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
 
