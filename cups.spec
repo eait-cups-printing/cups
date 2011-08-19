@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -70,6 +70,7 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
+Patch37: cups-CVE-2011-2896.patch
 
 Patch100: cups-lspp.patch
 
@@ -288,6 +289,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch36 -p1 -b .systemd-socket
+
+# Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
+%patch37 -p1 -b .CVE-2011-2896
 
 %if %lspp
 # LSPP support.
@@ -635,6 +639,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-5
+- Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
+
 * Wed Aug 17 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-4
 - Enable systemd units by default (bug #731421).
 
