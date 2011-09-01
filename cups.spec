@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -639,6 +639,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Sep  1 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-7
+- Use PathExistsGlob instead of DirectoryNotEmpty in cups.path
+  (bug #734435).
+
 * Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-6
 - Tighten explicit libs sub-package requirement so that it includes
   the correct architecture as well (bug #731421 comment #8).

@@ -56,7 +56,7 @@ diff -up cups-1.5.0/data/cups.path.in.systemd-socket cups-1.5.0/data/cups.path.i
 +Description=CUPS Printer Service Spool
 +
 +[Path]
-+DirectoryNotEmpty=@CUPS_REQUESTS@
++PathExistsGlob=@CUPS_REQUESTS@/d*
 +
 +[Install]
 +WantedBy=multi-user.target
