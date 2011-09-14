@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -639,6 +639,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Sep 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-8
+- Prevent libcups crash in cups-get-classes patch (bug #736698).
+
 * Thu Sep  1 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-7
 - Use PathExistsGlob instead of DirectoryNotEmpty in cups.path
   (bug #734435).
