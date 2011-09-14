@@ -1,7 +1,7 @@
-diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
---- cups-1.4rc1/cups/dest.c.cups-get-classes	2009-05-13 22:39:17.000000000 +0100
-+++ cups-1.4rc1/cups/dest.c	2009-07-28 22:17:40.285709944 +0100
-@@ -1735,6 +1735,7 @@ cups_get_sdests(http_t      *http,	/* I 
+diff -up cups-1.4.8/cups/dest.c.cups-get-classes cups-1.4.8/cups/dest.c
+--- cups-1.4.8/cups/dest.c.cups-get-classes	2010-08-13 02:34:04.000000000 +0100
++++ cups-1.4.8/cups/dest.c	2011-09-14 12:00:56.330558590 +0100
+@@ -1755,6 +1755,7 @@ cups_get_sdests(http_t      *http,	/* I 
    char		uri[1024];		/* printer-uri value */
    int		num_options;		/* Number of options */
    cups_option_t	*options;		/* Options */
@@ -9,7 +9,7 @@ diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
  #ifdef __APPLE__
    char		media_default[41];	/* Default paper size */
  #endif /* __APPLE__ */
-@@ -1791,6 +1792,8 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1811,6 +1812,8 @@ cups_get_sdests(http_t      *http,	/* I 
    *    printer-uri [for IPP_GET_PRINTER_ATTRIBUTES]
    */
  
@@ -18,7 +18,7 @@ diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
    request = ippNewRequest(op);
  
    ippAddStrings(request, IPP_TAG_OPERATION, IPP_TAG_KEYWORD,
-@@ -1848,6 +1851,23 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1868,6 +1871,23 @@ cups_get_sdests(http_t      *http,	/* I 
  	    attr->value_tag != IPP_TAG_URI)
            continue;
  
@@ -42,7 +42,7 @@ diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
          if (!strcmp(attr->name, "auth-info-required") ||
  	    !strcmp(attr->name, "device-uri") ||
  	    !strcmp(attr->name, "marker-change-time") ||
-@@ -1939,6 +1959,28 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1959,6 +1979,28 @@ cups_get_sdests(http_t      *http,	/* I 
            continue;
        }
  
@@ -52,7 +52,7 @@ diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
 +      * early if so.
 +      */
 +
-+      if (op == CUPS_GET_CLASSES)
++      if (op == CUPS_GET_CLASSES && num_dests > 0)
 +      {
 +	int diff;
 +	cups_find_dest (printer_name, NULL, num_dests, *dests, 0, &diff);
@@ -71,7 +71,7 @@ diff -up cups-1.4rc1/cups/dest.c.cups-get-classes cups-1.4rc1/cups/dest.c
        if ((dest = cups_add_dest(printer_name, NULL, &num_dests, dests)) != NULL)
        {
          dest->num_options = num_options;
-@@ -1955,6 +1997,16 @@ cups_get_sdests(http_t      *http,	/* I 
+@@ -1975,6 +2017,16 @@ cups_get_sdests(http_t      *http,	/* I 
    }
  
   /*

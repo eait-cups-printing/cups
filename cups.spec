@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -636,6 +636,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-4
+- Prevent libcups crash in cups-get-classes patch (bug #736698).
+
 * Fri Aug 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-3
 - Tighten explicit libs sub-package requirement so that it includes
   the correct architecture as well (bug #731421 comment #8).
