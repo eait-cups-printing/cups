@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -639,6 +639,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Sep 22 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-9
+- Fixed systemd socket activation support (bug #738709, bug #738710).
+
 * Wed Sep 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-8
 - Prevent libcups crash in cups-get-classes patch (bug #736698).
 
