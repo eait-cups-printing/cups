@@ -8,7 +8,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -67,6 +67,7 @@ Patch32: cups-ricoh-deviceid-oid.patch
 Patch33: cups-texttops-rotate-page.patch
 Patch34: cups-polld-busy-loop.patch
 Patch35: cups-CVE-2011-2896.patch
+Patch36: cups-str3947.patch
 
 Patch100: cups-lspp.patch
 
@@ -269,6 +270,8 @@ module.
 %patch34 -p1 -b .polld-busy-loop
 # Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
 %patch35 -p1 -b .CVE-2011-2896
+# Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
+%patch36 -p1 -b .str3947
 
 %if %lspp
 # LSPP support.
@@ -577,6 +580,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Wed Sep 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-5
+- Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
+
 * Wed Sep 14 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-4
 - Prevent libcups crash in cups-get-classes patch (bug #736698).
 
