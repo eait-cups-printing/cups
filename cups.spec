@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -56,6 +56,7 @@ Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
 Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
+Patch24: cups-str3947.patch
 Patch25: cups-0755.patch
 Patch26: cups-snmp-quirks.patch
 Patch27: cups-hp-deviceid-oid.patch
@@ -263,6 +264,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
+# Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
+%patch24 -p1 -b .str3947
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
@@ -639,6 +642,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Sep 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-10
+- Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
+
 * Thu Sep 22 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-9
 - Fixed systemd socket activation support (bug #738709, bug #738710).
 
