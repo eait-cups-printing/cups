@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -642,6 +642,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Oct 03 2011 Richard Hughes <rhughes@redhat.com> 1:1.5.0-11
+- Updated colord patch with fixes to DeleteDevice.
+- Resolves https://bugzilla.redhat.com/show_bug.cgi?id=741697
+
 * Wed Sep 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-10
 - Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
 
