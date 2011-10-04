@@ -643,8 +643,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Oct  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-12
-- Fix for systemd socket activation: relax permissions check for
-  domain socket in libcups.
+- More fixes for systemd socket activation:
+  - relax permissions check for domain socket in libcups.
+  - initialise addrlen before calling getsockname().
 
 * Mon Oct 03 2011 Richard Hughes <rhughes@redhat.com> 1:1.5.0-11
 - Updated colord patch with fixes to DeleteDevice.
