@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,6 +72,7 @@ Patch34: cups-avahi-5-services.patch
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 Patch37: cups-CVE-2011-2896.patch
+Patch38: cups-driverd-bug.patch
 
 Patch100: cups-lspp.patch
 
@@ -295,6 +296,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
 %patch37 -p1 -b .CVE-2011-2896
+
+# Work around PPDs cache handling issue (bug #742989).
+%patch38 -p1 -b .driverd-bug
 
 %if %lspp
 # LSPP support.
@@ -642,6 +646,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Oct  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-13
+- Work around PPDs cache handling issue (bug #742989).
+
 * Tue Oct  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-12
 - More fixes for systemd socket activation:
   - relax permissions check for domain socket in libcups.
