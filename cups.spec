@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -642,6 +642,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Oct  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-12
+- Fix for systemd socket activation: relax permissions check for
+  domain socket in libcups.
+
 * Mon Oct 03 2011 Richard Hughes <rhughes@redhat.com> 1:1.5.0-11
 - Updated colord patch with fixes to DeleteDevice.
 - Resolves https://bugzilla.redhat.com/show_bug.cgi?id=741697
