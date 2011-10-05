@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -73,6 +73,7 @@ Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 Patch37: cups-CVE-2011-2896.patch
 Patch38: cups-driverd-bug.patch
+Patch39: cups-loopback.patch
 
 Patch100: cups-lspp.patch
 
@@ -299,6 +300,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # Work around PPDs cache handling issue (bug #742989).
 %patch38 -p1 -b .driverd-bug
+
+# Handle "localhost" resolving to 127.0.0.1 on IPv6-addressed systems
+# (bug #737230).
+%patch39 -p1 -b .loopback
 
 %if %lspp
 # LSPP support.
@@ -646,6 +651,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Oct  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-14
+- Handle "localhost" resolving to 127.0.0.1 on IPv6-addressed systems
+  (bug #737230).
+
 * Tue Oct  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-13
 - Work around PPDs cache handling issue (bug #742989).
 

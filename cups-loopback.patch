@@ -1,0 +1,14 @@
+diff -up cups-1.5.0/cups/http-addr.c.loopback cups-1.5.0/cups/http-addr.c
+--- cups-1.5.0/cups/http-addr.c.loopback	2011-10-05 17:48:36.469794399 +0100
++++ cups-1.5.0/cups/http-addr.c	2011-10-05 17:48:52.293500663 +0100
+@@ -147,7 +147,9 @@ httpAddrLocalhost(
+ 
+ #ifdef AF_INET6
+   if (addr->addr.sa_family == AF_INET6 &&
+-      IN6_IS_ADDR_LOOPBACK(&(addr->ipv6.sin6_addr)))
++      (IN6_IS_ADDR_LOOPBACK(&(addr->ipv6.sin6_addr)) ||
++       (IN6_IS_ADDR_V4COMPAT(&(addr->ipv6.sin6_addr)) &&
++	addr->ipv6.sin6_addr.s6_addr[12] == 0x7f)))
+     return (1);
+ #endif /* AF_INET6 */
+ 
