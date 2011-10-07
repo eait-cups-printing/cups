@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -651,6 +651,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Oct  7 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-15
+- Fixed Timeouts array comparison function (Ubuntu #860691).
+
 * Wed Oct  5 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-14
 - Handle "localhost" resolving to 127.0.0.1 on IPv6-addressed systems
   (bug #737230).
