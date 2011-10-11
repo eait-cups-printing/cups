@@ -72,7 +72,7 @@ Patch34: cups-avahi-5-services.patch
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 Patch37: cups-CVE-2011-2896.patch
-Patch38: cups-driverd-bug.patch
+Patch38: cups-str3921.patch
 
 Patch100: cups-lspp.patch
 
@@ -298,7 +298,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .CVE-2011-2896
 
 # Work around PPDs cache handling issue (bug #742989).
-%patch38 -p1 -b .driverd-bug
+%patch38 -p1 -b .str3921
 
 %if %lspp
 # LSPP support.
@@ -647,6 +647,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Oct 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-16
+- Use upstream fix for driverd issue (bug #742989).
 - Array handling fixes for DNSSDPrinters.
 - Array handling fixes for Avahi poll implementation.
 - Increase client blocking timeout from 30s to 70s (bug #744715).
