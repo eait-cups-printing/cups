@@ -646,7 +646,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
-* Mon Oct 10 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-16
+* Tue Oct 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-16
+- Array handling fixes for Avahi poll implementation.
 - Increase client blocking timeout from 30s to 70s (bug #744715).
 - Set BindIPv6Only=ipv6-only in systemd socket unit file as better fix
   for bug #737230.
