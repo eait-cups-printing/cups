@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -109,7 +109,7 @@ BuildRequires: libtiff-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
 BuildRequires: poppler-utils
-BuildRequires: systemd-units
+BuildRequires: systemd-units, systemd-devel
 
 # Make sure we get postscriptdriver tags.
 BuildRequires: python-cups
@@ -646,6 +646,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Oct 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-17
+- Use libsystemd-daemon instead of bundling sd-daemon.c.
+
 * Tue Oct 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-16
 - Use upstream fix for driverd issue (bug #742989).
 - Array handling fixes for DNSSDPrinters.
