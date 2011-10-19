@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -646,6 +646,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Oct 19 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-18
+- Make sure to guard against retrying the Avahi connection whilst
+  already doing so (Ubuntu #877967).
+
 * Tue Oct 18 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-17
 - Use libsystemd-daemon instead of bundling sd-daemon.c.
 
