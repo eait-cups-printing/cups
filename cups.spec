@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 19%{?dist}
+Release: 20%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -73,6 +73,7 @@ Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 Patch37: cups-CVE-2011-2896.patch
 Patch38: cups-str3921.patch
+Patch39: cups-ps-command-filter.patch
 
 Patch100: cups-lspp.patch
 
@@ -299,6 +300,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # Work around PPDs cache handling issue (bug #742989).
 %patch38 -p1 -b .str3921
+
+# Set the correct PostScript command filter for e.g. foomatic queues
+# (STR #3973).
+%patch39 -p1 -b .ps-command-filter
 
 %if %lspp
 # LSPP support.
@@ -649,6 +654,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Nov  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-20
+- Set the correct PostScript command filter for e.g. foomatic queues
+  (STR #3973).
+
 * Mon Oct 31 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-19
 - Set correct systemd service default on upgrade (bug #748841).
 
