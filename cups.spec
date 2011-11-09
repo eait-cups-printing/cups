@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 20%{?dist}
+Release: 21%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -485,14 +485,20 @@ if [ $1 -ge 1 ]; then
 fi
 exit 0
 
-%triggerun -- %{name} < 1.5-0.9
+%triggerun -- %{name} < 1:1.5-21
+# This package is allowed to autostart; however, the upgrade trigger
+# in Fedora 16 final failed to actually do this.  Do it now as a
+# one-off fix for bug #748841.
+/bin/systemctl --no-reload enable %{name}.{service,socket,path} >/dev/null 2>&1 || :
+
+%triggerun -- %{name} < 1:1.5-0.9
 # Save the current service runlevel info
 # User must manually run systemd-sysv-convert --apply cups
 # to migrate them to systemd targets
 %{_bindir}/systemd-sysv-convert --save %{name} >/dev/null 2>&1 || :
 
 # This package is allowed to autostart:
-/bin/systemctl --no-reload enable %{name}.{service,socket,path} || :
+/bin/systemctl --no-reload enable %{name}.{service,socket,path} >/dev/null 2>&1 || :
 
 # Run these because the SysV package being removed won't do them
 /sbin/chkconfig --del cups >/dev/null 2>&1 || :
@@ -654,6 +660,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Nov  9 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-21
+- Set correct systemd service default on upgrade, once updates are
+  applied (bug #748841).
+
 * Fri Nov  4 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-20
 - Set the correct PostScript command filter for e.g. foomatic queues
   (STR #3973).
