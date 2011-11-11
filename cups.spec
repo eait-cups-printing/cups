@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 21%{?dist}
+Release: 22%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -485,7 +485,7 @@ if [ $1 -ge 1 ]; then
 fi
 exit 0
 
-%triggerun -- %{name} < 1:1.5-21
+%triggerun -- %{name} < 1:1.5.0-22
 # This package is allowed to autostart; however, the upgrade trigger
 # in Fedora 16 final failed to actually do this.  Do it now as a
 # one-off fix for bug #748841.
@@ -660,6 +660,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Nov 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-22
+- Fixed trigger (bug #748841).
+
 * Wed Nov  9 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-21
 - Set correct systemd service default on upgrade, once updates are
   applied (bug #748841).
