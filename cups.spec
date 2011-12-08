@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 22%{?dist}
+Release: 23%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -660,6 +660,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Dec  9 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-23
+- Bind to datagram socket as well in systemd cups.socket unit file, to
+  prevent that port being stolen by another service (bug #760070).
+
 * Fri Nov 11 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-22
 - Fixed trigger (bug #748841).
 
