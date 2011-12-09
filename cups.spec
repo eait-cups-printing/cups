@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.8
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -639,6 +639,9 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Fri Dec  9 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-6
+- Detangle cups-serverbin-compat.patch from cups-lspp.patch.
+
 * Wed Sep 28 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-5
 - Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
 

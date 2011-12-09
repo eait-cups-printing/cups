@@ -123,13 +123,13 @@ diff -up cups-1.4.7/scheduler/job.c.serverbin-compat cups-1.4.7/scheduler/job.c
 +      if (access(command, F_OK))
 +	{
 +	  snprintf(command, sizeof(command), "%s/backend/%s", ServerBin_compat,
-+		   method);
++		   scheme);
 +	  if (!access(command, F_OK))
 +	    {
 +	      /* Not in the correct directory, but we found it in the compat
 +	       * directory.  Issue a warning. */
 +	      cupsdLogMessage(CUPSD_LOG_INFO,
-+			      "Backend '%s' not in %s/backend!", method,
++			      "Backend '%s' not in %s/backend!", scheme,
 +			      ServerBin);
 +	    }
 +	  else
@@ -137,7 +137,7 @@ diff -up cups-1.4.7/scheduler/job.c.serverbin-compat cups-1.4.7/scheduler/job.c
 +	      /* Not in the compat directory either; make any error
 +		 messages use the correct directory name then. */
 +	      snprintf(command, sizeof(command), "%s/backend/%s", ServerBin,
-+		       method);
++		       scheme);
 +	    }
 +	}
 +#endif /* __x86_64__ */
