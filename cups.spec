@@ -661,6 +661,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Fri Dec  9 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-23
+- Detangle cups-serverbin-compat.patch from cups-lspp.patch.
 - Bind to datagram socket as well in systemd cups.socket unit file, to
   prevent that port being stolen by another service (bug #760070).
 
