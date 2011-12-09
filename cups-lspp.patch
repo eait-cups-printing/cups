@@ -2362,31 +2362,6 @@ diff -up cups-1.4.7/scheduler/job.c.lspp cups-1.4.7/scheduler/job.c
    if (Classification && !banner_page)
    {
      if ((attr = ippFindAttribute(job->attrs, "job-sheets",
-@@ -1165,13 +1245,13 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
-       if (access(command, F_OK))
- 	{
- 	  snprintf(command, sizeof(command), "%s/backend/%s", ServerBin_compat,
--		   method);
-+		   scheme);
- 	  if (!access(command, F_OK))
- 	    {
- 	      /* Not in the correct directory, but we found it in the compat
- 	       * directory.  Issue a warning. */
- 	      cupsdLogMessage(CUPSD_LOG_INFO,
--			      "Backend '%s' not in %s/backend!", method,
-+			      "Backend '%s' not in %s/backend!", scheme,
- 			      ServerBin);
- 	    }
- 	  else
-@@ -1179,7 +1259,7 @@ cupsdContinueJob(cupsd_job_t *job)	/* I 
- 	      /* Not in the compat directory either; make any error
- 		 messages use the correct directory name then. */
- 	      snprintf(command, sizeof(command), "%s/backend/%s", ServerBin,
--		       method);
-+		       scheme);
- 	    }
- 	}
- #endif /* __x86_64__ */
 @@ -1634,6 +1714,20 @@ cupsdLoadJob(cupsd_job_t *job)		/* I - J
      goto error;
    }
