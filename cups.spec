@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -660,6 +660,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.5.0-25
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
 * Wed Dec 21 2011 Tim Waugh <twaugh@redhat.com> 1:1.5.0-24
 - Fixed textonly filter to work with single copies (bug #738412).
 
