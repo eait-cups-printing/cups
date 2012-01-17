@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 26%{?dist}
+Release: 27%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -670,6 +670,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.0-27
+- Use PrivateTmp=true in the service file (bug #782495).
+
 * Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.0-26
 - Replace newline characters with spaces in reported Device IDs
   (bug #782129, STR #4005).
