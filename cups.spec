@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.4.8
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -74,6 +74,7 @@ Patch34: cups-str3535.patch
 Patch35: cups-polld-busy-loop.patch
 Patch36: cups-CVE-2011-2896.patch
 Patch37: cups-str3947.patch
+Patch38: cups-str4004.patch
 
 Patch40: cups-avahi-1-config.patch
 Patch41: cups-avahi-2-backend.patch
@@ -297,6 +298,9 @@ module.
 %patch36 -p1 -b .CVE-2011-2896
 # Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
 %patch37 -p1 -b .str3947
+# Don't accept Device URIs of '\0' from SNMP devices
+# (bug #770646, STR #4004).
+%patch38 -p1 -b .str4004
 
 # Avahi support:
 # - discovery in the dnssd backend
@@ -639,6 +643,10 @@ rm -rf $RPM_BUILD_ROOT
 %{php_extdir}/phpcups.so
 
 %changelog
+* Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.4.8-8
+- Don't accept Device URIs of '\0' from SNMP devices
+  (bug #770646, STR #4004).
+
 * Wed Dec 21 2011 Tim Waugh <twaugh@redhat.com> 1:1.4.8-7
 - Fixed textonly filter to work with single copies (bug #738412).
 
