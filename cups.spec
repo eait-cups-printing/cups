@@ -13,7 +13,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -74,6 +74,8 @@ Patch36: cups-systemd-socket.patch
 Patch37: cups-CVE-2011-2896.patch
 Patch38: cups-str3921.patch
 Patch39: cups-ps-command-filter.patch
+Patch40: cups-str4004.patch
+Patch41: cups-str4005.patch
 
 Patch100: cups-lspp.patch
 
@@ -304,6 +306,14 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Set the correct PostScript command filter for e.g. foomatic queues
 # (STR #3973).
 %patch39 -p1 -b .ps-command-filter
+
+# Don't accept Device URIs of '\0' from SNMP devices
+# (bug #770646, STR #4004).
+%patch40 -p1 -b .str4004
+
+# Replace newline characters with spaces in reported Device IDs
+# (bug #782129, STR #4005).
+%patch41 -p1 -b .str4005
 
 %if %lspp
 # LSPP support.
@@ -660,6 +670,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.0-26
+- Replace newline characters with spaces in reported Device IDs
+  (bug #782129, STR #4005).
+- Don't accept Device URIs of '\0' from SNMP devices
+  (bug #770646, STR #4004).
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.5.0-25
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 

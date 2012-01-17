@@ -1,0 +1,13 @@
+diff -up cups-1.5.0/backend/snmp.c.snmp-bad-uri cups-1.5.0/backend/snmp.c
+--- cups-1.5.0/backend/snmp.c.snmp-bad-uri	2012-01-17 11:51:00.786457690 +0000
++++ cups-1.5.0/backend/snmp.c	2012-01-17 11:51:57.123384361 +0000
+@@ -1120,7 +1120,8 @@ read_snmp_response(int fd)		/* I - SNMP
+ 
+     case DEVICE_URI :
+ 	if (device && packet.object_type == CUPS_ASN1_OCTET_STRING &&
+-	    !device->uri && packet.object_value.string.num_bytes > 0)
++	    !device->uri && packet.object_value.string.num_bytes > 3 &&
++	    strlen ((char *)packet.object_value.string.bytes) > 3)
+ 	{
+ 	 /*
+ 	  * Update an existing cache entry...
