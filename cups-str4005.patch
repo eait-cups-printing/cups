@@ -1,0 +1,25 @@
+diff -up cups-1.5.0/cups/backend.c.backend-bad-id cups-1.5.0/cups/backend.c
+--- cups-1.5.0/cups/backend.c.backend-bad-id	2011-04-29 23:45:35.000000000 +0100
++++ cups-1.5.0/cups/backend.c	2012-01-17 12:23:13.687442534 +0000
+@@ -110,7 +110,8 @@ cupsBackendReport(
+ 
+ 
+ /*
+- * 'quote_string()' - Write a quoted string to stdout, escaping \ and ".
++ * 'quote_string()' - Write a quoted string to stdout, escaping \ and ",
++ * and replacing newline with space.
+  */
+ 
+ static void
+@@ -125,7 +126,10 @@ quote_string(const char *s)		/* I - Stri
+       if (*s == '\\' || *s == '\"')
+ 	putchar('\\');
+ 
+-      putchar(*s);
++      if (*s == '\n')
++	putchar(' ');
++      else
++	putchar(*s);
+ 
+       s ++;
+     }

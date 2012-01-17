@@ -75,6 +75,7 @@ Patch35: cups-polld-busy-loop.patch
 Patch36: cups-CVE-2011-2896.patch
 Patch37: cups-str3947.patch
 Patch38: cups-str4004.patch
+Patch39: cups-str4005.patch
 
 Patch40: cups-avahi-1-config.patch
 Patch41: cups-avahi-2-backend.patch
@@ -301,6 +302,9 @@ module.
 # Don't accept Device URIs of '\0' from SNMP devices
 # (bug #770646, STR #4004).
 %patch38 -p1 -b .str4004
+# Replace newline characters with spaces in reported Device IDs
+# (bug #782129, STR #4005).
+%patch39 -p1 -b .str4005
 
 # Avahi support:
 # - discovery in the dnssd backend
@@ -644,6 +648,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.4.8-8
+- Replace newline characters with spaces in reported Device IDs
+  (bug #782129, STR #4005).
 - Don't accept Device URIs of '\0' from SNMP devices
   (bug #770646, STR #4004).
 
