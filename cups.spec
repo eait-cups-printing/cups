@@ -1,5 +1,11 @@
 %global php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
-%global php_apiver %((echo 0; php -i 2>/dev/null | sed -n 's/^PHP API => //p') | tail -1)
+
+# Fix private-shared-object-provides
+# RPM 4.8
+%{?filter_provides_in: %filter_provides_in %{php_extdir}/.*\.so$}
+%{?filter_setup}
+# RPM 4.9
+%global __provides_exclude_from %{?__provides_exclude_from:%__provides_exclude_from|}%{php_extdir}/.*\\.so$
 
 %global use_alternatives 1
 %global lspp 1
@@ -13,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.0
-Release: 27%{?dist}
+Release: 28%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -76,6 +82,7 @@ Patch38: cups-str3921.patch
 Patch39: cups-ps-command-filter.patch
 Patch40: cups-str4004.patch
 Patch41: cups-str4005.patch
+Patch42: cups-str3999.patch
 
 Patch100: cups-lspp.patch
 
@@ -315,6 +322,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # (bug #782129, STR #4005).
 %patch41 -p1 -b .str4005
 
+# Build against PHP 5.4.0 (STR #3999)
+%patch42 -p1 -b .str3999
+
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
@@ -443,6 +453,15 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^%lang(C)/d
 /^\([^%].*\)/d
 ' > %{name}.lang
+
+%check
+# Minimal load test of php extension
+LD_LIBRARY_PATH=${RPM_BUILD_ROOT}%{_libdir} \
+php --no-php-ini \
+    --define extension_dir=${RPM_BUILD_ROOT}%{php_extdir} \
+    --define extension=phpcups.so \
+    --modules | grep phpcups
+
 
 %post
 if [ $1 -eq 1 ] ; then
@@ -670,6 +689,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Jan 18 2012 Remi Collet <remi@fedoraproject.org> 1:1.5.0-28
+- build against php 5.4.0, patch for STR #3999
+- add filter to fix private-shared-object-provides
+- add %%check for php extension
+
 * Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.0-27
 - Use PrivateTmp=true in the service file (bug #782495).
 
