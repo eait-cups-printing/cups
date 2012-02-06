@@ -1222,10 +1222,10 @@ diff -up cups-1.5b2/scheduler/client.c.lspp cups-1.5b2/scheduler/client.c
 --- cups-1.5b2/scheduler/client.c.lspp	2011-05-31 18:29:01.327890576 +0200
 +++ cups-1.5b2/scheduler/client.c	2011-05-31 18:29:01.364890113 +0200
 @@ -44,6 +44,7 @@
-  *   valid_host()           - Is the Host: field valid?
-  *   write_file()           - Send a file via HTTP.
-  *   write_pipe()           - Flag that data is available on the CGI pipe.
-+ *   client_pid_to_auid()   - Get the audit login uid of the client.
+  *   valid_host()            - Is the Host: field valid?
+  *   write_file()            - Send a file via HTTP.
+  *   write_pipe()            - Flag that data is available on the CGI pipe.
++ *   client_pid_to_auid()    - Get the audit login uid of the client.
   */
  
  /*

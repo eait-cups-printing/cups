@@ -12,8 +12,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.5.0
-Release: 26%{?dist}
+Version: 1.5.2
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -56,7 +56,6 @@ Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
 Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
-Patch24: cups-str3947.patch
 Patch25: cups-0755.patch
 Patch26: cups-snmp-quirks.patch
 Patch27: cups-hp-deviceid-oid.patch
@@ -71,11 +70,6 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
-Patch37: cups-CVE-2011-2896.patch
-Patch38: cups-str3921.patch
-Patch39: cups-ps-command-filter.patch
-Patch40: cups-str4004.patch
-Patch41: cups-str4005.patch
 
 Patch100: cups-lspp.patch
 
@@ -248,7 +242,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch12 -p1 -b .eggcups
 # More sophisticated implementation of cupsGetPassword than getpass.
 %patch13 -p1 -b .getpass
-# Increase driverd timeout to 70s to accommodate foomatic.
+# Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch14 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
 %patch15 -p1 -b .strict-ppd-line-length
@@ -268,8 +262,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
-# Fixed string manipulation in the dbus notifier (STR #3947, bug #741833).
-%patch24 -p1 -b .str3947
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
@@ -296,24 +288,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch36 -p1 -b .systemd-socket
-
-# Avoid GIF reader loop (CVE-2011-2896, STR #3914, bug #727800).
-%patch37 -p1 -b .CVE-2011-2896
-
-# Work around PPDs cache handling issue (bug #742989).
-%patch38 -p1 -b .str3921
-
-# Set the correct PostScript command filter for e.g. foomatic queues
-# (STR #3973).
-%patch39 -p1 -b .ps-command-filter
-
-# Don't accept Device URIs of '\0' from SNMP devices
-# (bug #770646, STR #4004).
-%patch40 -p1 -b .str4004
-
-# Replace newline characters with spaces in reported Device IDs
-# (bug #782129, STR #4005).
-%patch41 -p1 -b .str4005
 
 %if %lspp
 # LSPP support.
@@ -563,6 +537,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_datadir}/%{name}/www/de/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/eu/index.html
+%doc %{_datadir}/%{name}/www/fr/index.html
+%doc %{_datadir}/%{name}/www/hu/index.html
 %doc %{_datadir}/%{name}/www/id/index.html
 %doc %{_datadir}/%{name}/www/it/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
@@ -606,6 +582,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/templates/de/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/eu/*.tmpl
+%{_datadir}/cups/templates/fr/*.tmpl
+%{_datadir}/cups/templates/hu/*.tmpl
 %{_datadir}/cups/templates/id/*.tmpl
 %{_datadir}/cups/templates/it/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
@@ -657,19 +635,14 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{_bindir}/ipptool
 %dir %{_datadir}/cups/ipptool
-%{_datadir}/cups/ipptool/create-printer-subscription.test
-%{_datadir}/cups/ipptool/get-completed-jobs.test
-%{_datadir}/cups/ipptool/get-jobs.test
-%{_datadir}/cups/ipptool/ipp-1.1.test
-%{_datadir}/cups/ipptool/ipp-2.0.test
-%{_datadir}/cups/ipptool/ipp-2.1.test
-%{_datadir}/cups/ipptool/testfile.jpg
-%{_datadir}/cups/ipptool/testfile.pdf
-%{_datadir}/cups/ipptool/testfile.ps
-%{_datadir}/cups/ipptool/testfile.txt
+%{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Feb 06 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-1
+- 1.5.2
+- Updated FSF address in pstopdf and textonly filters
+
 * Tue Jan 17 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.0-26
 - Replace newline characters with spaces in reported Device IDs
   (bug #782129, STR #4005).
