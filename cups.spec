@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -654,6 +654,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Feb 15 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-2
+- Removed banners from LSPP patch on Dan Walsh's advice.
+
 * Mon Feb 06 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-1
 - 1.5.2
 - Updated FSF address in pstopdf and textonly filters
