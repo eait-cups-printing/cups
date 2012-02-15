@@ -76,6 +76,7 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
+Patch37: cups-str4014.patch
 
 Patch100: cups-lspp.patch
 
@@ -294,6 +295,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch36 -p1 -b .systemd-socket
+
+# Synthesize notify-printer-uri for job-completed events where the job
+# never started processing (bug #784786, STR #4014).
+%patch37 -p1 -b .str4014
 
 %if %lspp
 # LSPP support.
@@ -655,6 +660,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Feb 15 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-2
+- Synthesize notify-printer-uri for job-completed events where the job
+  never started processing (bug #784786, STR #4014).
 - Removed banners from LSPP patch on Dan Walsh's advice.
 
 * Mon Feb 06 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-1
