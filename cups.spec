@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -149,9 +149,6 @@ Requires: acl
 
 # Make sure we have some filters for converting to raster format.
 Requires: ghostscript-cups
-
-# Make sure we register devices and profiles with colord.
-Requires: colord
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -659,6 +656,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Feb 16 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-3
+- Removed hard requirement on colord as it is optional.
+
 * Wed Feb 15 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-2
 - Synthesize notify-printer-uri for job-completed events where the job
   never started processing (bug #784786, STR #4014).
