@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -77,6 +77,7 @@ Patch34: cups-avahi-5-services.patch
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 Patch37: cups-str4014.patch
+Patch38: cups-polld-reconnect.patch
 
 Patch100: cups-lspp.patch
 
@@ -296,6 +297,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Synthesize notify-printer-uri for job-completed events where the job
 # never started processing (bug #784786, STR #4014).
 %patch37 -p1 -b .str4014
+
+# cups-polld: restart polling on error (bug #769292, STR #4031).
+%patch38 -p1 -b .polld-reconnect
 
 %if %lspp
 # LSPP support.
@@ -656,6 +660,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Feb 23 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-4
+- cups-polld: restart polling on error (bug #769292, STR #4031).
+
 * Thu Feb 16 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-3
 - Removed hard requirement on colord as it is optional.
 
