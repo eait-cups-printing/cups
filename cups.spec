@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -664,6 +664,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Mar 16 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-7
+- Removed debugging messages from systemd-socket patch.
+
 * Wed Mar 14 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-6
 - Pulled in bugfixes from Avahi patches on fedorapeople.org.
 
