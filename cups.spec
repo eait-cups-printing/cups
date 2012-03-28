@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -142,6 +142,8 @@ Requires(post): systemd-units
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 Requires(post): systemd-sysv
+# Requires working PrivateTmp (bug #807672)
+Requires(pre): systemd >= 37-14
 
 Requires: poppler-utils
 
@@ -664,6 +666,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Mar 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-8
+- Avoid systemd PrivateTmp bug by explicitly requiring the fixed
+  version of systemd (bug #807672).
+
 * Fri Mar 16 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-7
 - Removed debugging messages from systemd-socket patch.
 
