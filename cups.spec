@@ -1,12 +1,5 @@
 %global php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
 
-# Fix private-shared-object-provides
-# RPM 4.8
-%{?filter_provides_in: %filter_provides_in %{php_extdir}/.*\.so$}
-%{?filter_setup}
-# RPM 4.9
-%global __provides_exclude_from %{?__provides_exclude_from:%__provides_exclude_from|}%{php_extdir}/.*\\.so$
-
 %global use_alternatives 1
 %global lspp 1
 
@@ -19,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -666,6 +659,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Mar 29 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-10
+- Removed private-shared-object-provides filter lines as they are not
+  necessary (see bug #807767 comment #3).
+
 * Thu Mar 29 2012 Mamoru Tasaka <mtasaka@fedoraproject.org> - 1:1.5.2-9
 - Rebuild against fixed rpm (bug #807767)
 
