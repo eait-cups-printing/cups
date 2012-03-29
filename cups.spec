@@ -19,7 +19,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -666,6 +666,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Mar 29 2012 Mamoru Tasaka <mtasaka@fedoraproject.org> - 1:1.5.2-9
+- Rebuild against fixed rpm (bug #807767)
+
 * Wed Mar 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-8
 - Avoid systemd PrivateTmp bug by explicitly requiring the fixed
   version of systemd (bug #807672).
