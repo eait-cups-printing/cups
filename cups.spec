@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -424,11 +424,26 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 extension=phpcups.so
 __EOF__
 
-# install /etc/tmpfiles.d/cups.conf (bug #656566)
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d
-cat > ${RPM_BUILD_ROOT}%{_sysconfdir}/tmpfiles.d/cups.conf <<EOF
+# install /usr/lib/tmpfiles.d/cups.conf (bug #656566)
+mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
+cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups.conf <<EOF
 d %{_localstatedir}/run/cups 0755 root lp -
 d %{_localstatedir}/run/cups/certs 0511 lp sys -
+EOF
+
+# /usr/lib/tmpfiles.d/cups-lp.conf (bug #812641)
+cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups-lp.conf <<EOF
+# This file is part of cups.
+#
+# Legacy parallel port character device nodes, to trigger the
+# auto-loading of the kernel module on access.
+#
+# See tmpfiles.d(5) for details
+
+c /dev/lp0 0660 root lp - 6:0
+c /dev/lp1 0660 root lp - 6:1
+c /dev/lp2 0660 root lp - 6:2
+c /dev/lp3 0660 root lp - 6:3
 EOF
 
 find %{buildroot} -type f -o -type l | sed '
@@ -530,14 +545,11 @@ rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
-%attr(0660,root,lp) %dev(char,6,0) /lib/udev/devices/lp0
-%attr(0660,root,lp) %dev(char,6,1) /lib/udev/devices/lp1
-%attr(0660,root,lp) %dev(char,6,2) /lib/udev/devices/lp2
-%attr(0660,root,lp) %dev(char,6,3) /lib/udev/devices/lp3
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
-%dir %attr(0755,root,lp) /var/run/cups
-%dir %attr(0511,lp,sys) /var/run/cups/certs
-%config(noreplace) %{_sysconfdir}/tmpfiles.d/cups.conf
+%dir %attr(0755,root,lp) %{_localstatedir}/run/cups
+%dir %attr(0511,lp,sys) %{_localstatedir}/run/cups/certs
+%{_prefix}/lib/tmpfiles.d/cups.conf
+%{_prefix}/lib/tmpfiles.d/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
@@ -619,9 +631,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/templates/ru/*.tmpl
 %{_datadir}/locale/*/*.po
 %{_datadir}/ppd
-%dir %attr(1770,root,lp) /var/spool/cups/tmp
-%dir %attr(0710,root,lp) /var/spool/cups
-%dir %attr(0755,lp,sys) /var/log/cups
+%dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
+%dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
+%dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
@@ -667,6 +679,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Apr 17 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-12
+- Install /usr/lib/tmpfiles.d/cups-lp.conf to support /dev/lp* devices (#812641)
+- Move /etc/tmpfiles.d/cups.conf to /usr/lib/tmpfiles.d/ (#812641)
+
 * Tue Apr 17 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-11
 - The IPP backend did not always setup username/password authentication
   for printers (bug #810007, STR #3985)
