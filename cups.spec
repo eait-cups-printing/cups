@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,6 +72,8 @@ Patch36: cups-systemd-socket.patch
 Patch37: cups-str4014.patch
 Patch38: cups-polld-reconnect.patch
 Patch39: cups-translation.patch
+Patch40: cups-str3985.patch
+Patch41: cups-revision10277.patch
 
 Patch100: cups-lspp.patch
 
@@ -299,6 +301,12 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # If the translated message is empty return the original message (bug #797570, STR #4033).
 %patch39 -p1 -b .translation
+
+# The IPP backend did not always setup username/password authentication for printers (bug #810007, STR #3985)
+%patch40 -p1 -b .str3985
+
+# Detect authentication errors for all requests.
+%patch41 -p1 -b .revision10277
 
 %if %lspp
 # LSPP support.
@@ -659,6 +667,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Apr 17 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-11
+- The IPP backend did not always setup username/password authentication
+  for printers (bug #810007, STR #3985)
+- Detect authentication errors for all requests.
+  (bug #810007, upstream commit revision10277)
+
 * Thu Mar 29 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.2-10
 - Removed private-shared-object-provides filter lines as they are not
   necessary (see bug #807767 comment #3).
