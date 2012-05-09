@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.2
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -79,7 +79,7 @@ Patch100: cups-lspp.patch
 
 Epoch: 1
 Url: http://www.cups.org/
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
 Requires: /sbin/chkconfig /sbin/service
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %use_alternatives
@@ -351,8 +351,6 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-
 make BUILDROOT=$RPM_BUILD_ROOT install 
 
 # Serial backend needs to run as root (bug #212577).
@@ -418,8 +416,8 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
 # Put the php config bit into place
-%{__mkdir_p} %{buildroot}%{_sysconfdir}/php.d
-%{__cat} << __EOF__ > %{buildroot}%{_sysconfdir}/php.d/%{name}.ini
+%{__mkdir_p} $RPM_BUILD_ROOT%{_sysconfdir}/php.d
+%{__cat} << __EOF__ > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/%{name}.ini
 ; Enable %{name} extension module
 extension=phpcups.so
 __EOF__
@@ -446,7 +444,7 @@ c /dev/lp2 0660 root lp - 6:2
 c /dev/lp3 0660 root lp - 6:3
 EOF
 
-find %{buildroot} -type f -o -type l | sed '
+find $RPM_BUILD_ROOT -type f -o -type l | sed '
 s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^%lang(C)/d
 /^\([^%].*\)/d
@@ -539,11 +537,15 @@ exit 0
 [ $2 = 0 ] || exit 0
 rm -f %{cups_serverbin}/backend/smb
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+%triggerin -- samba4-client
+ln -sf %{_bindir}/smbspool %{cups_serverbin}/backend/smb || :
+exit 0
+
+%triggerun -- samba4-client
+[ $2 = 0 ] || exit 0
+rm -f %{cups_serverbin}/backend/smb
 
 %files -f %{name}.lang
-%defattr(-,root,root)
 %doc README.txt CREDITS.txt CHANGES.txt
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) %{_localstatedir}/run/cups
@@ -647,12 +649,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/cups/ppdc/*.h
 
 %files libs
-%defattr(-,root,root)
 %doc LICENSE.txt
 %{_libdir}/*.so.*
 
 %files devel
-%defattr(-,root,root)
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
@@ -660,25 +660,27 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/rpm/macros.cups
 
 %files lpd
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
 %dir %{cups_serverbin}
 %dir %{cups_serverbin}/daemon
 %{cups_serverbin}/daemon/cups-lpd
 
 %files php
-%defattr(-,root,root)
 %config(noreplace) %{_sysconfdir}/php.d/%{name}.ini
 %{php_extdir}/phpcups.so
 
 %files ipptool
-%defattr(-,root,root)
 %{_bindir}/ipptool
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed May 09 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-13
+- Add triggers for samba4-client. (#817110)
+- No need to define BuildRoot and clean it in clean and install section anymore.
+- %%defattr no longer needed in %%files sections.
+
 * Tue Apr 17 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-12
 - Install /usr/lib/tmpfiles.d/cups-lp.conf to support /dev/lp* devices (#812641)
 - Move /etc/tmpfiles.d/cups.conf to /usr/lib/tmpfiles.d/ (#812641)
