@@ -11,8 +11,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.5.2
-Release: 13%{?dist}
+Version: 1.5.3
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -69,11 +69,6 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
-Patch37: cups-str4014.patch
-Patch38: cups-polld-reconnect.patch
-Patch39: cups-translation.patch
-Patch40: cups-str3985.patch
-Patch41: cups-revision10277.patch
 
 Patch100: cups-lspp.patch
 
@@ -291,22 +286,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch36 -p1 -b .systemd-socket
-
-# Synthesize notify-printer-uri for job-completed events where the job
-# never started processing (bug #784786, STR #4014).
-%patch37 -p1 -b .str4014
-
-# cups-polld: restart polling on error (bug #769292, STR #4031).
-%patch38 -p1 -b .polld-reconnect
-
-# If the translated message is empty return the original message (bug #797570, STR #4033).
-%patch39 -p1 -b .translation
-
-# The IPP backend did not always setup username/password authentication for printers (bug #810007, STR #3985)
-%patch40 -p1 -b .str3985
-
-# Detect authentication errors for all requests.
-%patch41 -p1 -b .revision10277
 
 %if %lspp
 # LSPP support.
@@ -676,6 +655,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue May 15 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.3-1
+- 1.5.3
+
 * Wed May 09 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.2-13
 - Add triggers for samba4-client. (#817110)
 - No need to define BuildRoot and clean it in clean and install section anymore.
