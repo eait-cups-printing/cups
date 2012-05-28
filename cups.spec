@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -102,6 +102,7 @@ BuildRequires: php-devel, pcre-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: libtiff-devel
+BuildRequires: libusb1-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
 BuildRequires: poppler-utils
@@ -655,6 +656,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon May 28 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.3-2
+- Buildrequire libusb1 (STR #3477)
+
 * Tue May 15 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.3-1
 - 1.5.3
 
