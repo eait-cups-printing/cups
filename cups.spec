@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -139,7 +139,7 @@ Requires(pre): systemd >= 37-14
 Requires: poppler-utils
 
 # We ship udev rules which use setfacl.
-Requires: udev
+Requires: systemd
 Requires: acl
 
 # Make sure we have some filters for converting to raster format.
@@ -656,6 +656,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Jun 05 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.3-3
+- Require systemd instead of udev.
+
 * Mon May 28 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.3-2
 - Buildrequire libusb1 (STR #3477)
 
