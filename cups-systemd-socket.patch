@@ -117,15 +117,12 @@ diff -up cups-1.5.2/data/cups.service.in.systemd-socket cups-1.5.2/data/cups.ser
 diff -up cups-1.5.2/data/cups.socket.in.systemd-socket cups-1.5.2/data/cups.socket.in
 --- cups-1.5.2/data/cups.socket.in.systemd-socket	2012-03-16 14:50:57.150449788 +0000
 +++ cups-1.5.2/data/cups.socket.in	2012-03-16 14:50:57.150449788 +0000
-@@ -0,0 +1,11 @@
+@@ -0,0 +1,8 @@
 +[Unit]
 +Description=CUPS Printing Service Sockets
 +
 +[Socket]
 +ListenStream=@CUPS_DEFAULT_DOMAINSOCKET@
-+ListenStream=631
-+ListenDatagram=0.0.0.0:631
-+BindIPv6Only=ipv6-only
 +
 +[Install]
 +WantedBy=sockets.target
