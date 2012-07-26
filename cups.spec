@@ -11,8 +11,8 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.5.3
-Release: 5%{?dist}
+Version: 1.5.4
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -656,6 +656,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Jul 26 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-1
+- 1.5.4
+
 * Tue Jul 24 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.3-5
 - Don't enable IP-based systemd socket activation by default (bug #842365).
 
