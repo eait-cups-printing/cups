@@ -1,5 +1,3 @@
-%global php_extdir %(php-config --extension-dir 2>/dev/null || echo %{_libdir}/php4)
-
 %global use_alternatives 1
 %global lspp 1
 
@@ -11,15 +9,13 @@
 
 Summary: Common Unix Printing System
 Name: cups
-Version: 1.5.4
+Version: 1.6.1
 Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
-# LSPP-required ps->pdf filter
-Source4: pstopdf
 # xinetd config file for cups-lpd service
 Source5: cups-lpd
 # Logrotate configuration
@@ -28,14 +24,11 @@ Source6: cups.logrotate
 Source7: ncp.backend
 # Cron-based tmpwatch for /var/spool/cups/tmp
 Source8: cups.cron
-# Filter and PPD for textonly printing
-Source9: textonly.filter
-Source10: textonly.ppd
 Source11: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-serial.patch
+
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -44,31 +37,24 @@ Patch9: cups-lpr-help.patch
 Patch10: cups-peercred.patch
 Patch11: cups-pid.patch
 Patch12: cups-eggcups.patch
-Patch13: cups-getpass.patch
+
 Patch14: cups-driverd-timeout.patch
 Patch15: cups-strict-ppd-line-length.patch
 Patch16: cups-logrotate.patch
 Patch17: cups-usb-paperout.patch
-Patch18: cups-build.patch
+#Patch18: cups-build.patch
 Patch19: cups-res_init.patch
 Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
 Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
 Patch25: cups-0755.patch
-Patch26: cups-snmp-quirks.patch
+
 Patch27: cups-hp-deviceid-oid.patch
 Patch28: cups-dnssd-deviceid.patch
 Patch29: cups-ricoh-deviceid-oid.patch
 
-Patch30: cups-avahi-1-config.patch
-Patch31: cups-avahi-2-backend.patch
-Patch32: cups-avahi-3-timeouts.patch
-Patch33: cups-avahi-4-poll.patch
-Patch34: cups-avahi-5-services.patch
-
-Patch35: cups-icc.patch
-Patch36: cups-systemd-socket.patch
+Patch30: cups-systemd-socket.patch
 
 Patch100: cups-lspp.patch
 
@@ -76,6 +62,7 @@ Epoch: 1
 Url: http://www.cups.org/
 
 Requires: /sbin/chkconfig /sbin/service
+Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %use_alternatives
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
@@ -97,16 +84,12 @@ Conflicts: kdelibs < 6:3.5.2-6
 BuildRequires: pam-devel pkgconfig
 BuildRequires: gnutls-devel libacl-devel
 BuildRequires: openldap-devel
-BuildRequires: make >= 1:3.80
-BuildRequires: php-devel, pcre-devel
-BuildRequires: libjpeg-devel
-BuildRequires: libpng-devel
-BuildRequires: libtiff-devel
 BuildRequires: libusb1-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
-BuildRequires: poppler-utils
 BuildRequires: systemd-units, systemd-devel
+BuildRequires: dbus-devel
+BuildRequires: automake
 
 # Make sure we get postscriptdriver tags.
 BuildRequires: python-cups
@@ -116,13 +99,7 @@ BuildRequires: libselinux-devel >= 1.23
 BuildRequires: audit-libs-devel >= 1.1
 %endif
 
-# -fstack-protector-all requires GCC 4.0.1
-BuildRequires: gcc >= 4.0.1
-
-BuildRequires: automake
-
-BuildRequires: dbus-devel >= 0.90
-Requires: dbus >= 0.90
+Requires: dbus
 
 # Requires tmpwatch for the cron.daily script (bug #218901).
 Requires: tmpwatch
@@ -135,8 +112,6 @@ Requires(postun): systemd-units
 Requires(post): systemd-sysv
 # Requires working PrivateTmp (bug #807672)
 Requires(pre): systemd >= 37-14
-
-Requires: poppler-utils
 
 # We ship udev rules which use setfacl.
 Requires: systemd
@@ -161,6 +136,11 @@ Summary: Common Unix Printing System - libraries
 Group: System Environment/Libraries
 License: LGPLv2
 
+%package filesystem
+Summary: Common Unix Printing System - directory layout
+Group: System Environment/Base
+BuildArch: noarch
+
 %package lpd
 Summary: Common Unix Printing System - lpd emulation
 Group: System Environment/Daemons
@@ -168,47 +148,39 @@ Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: xinetd
 
-%package php
-Summary: Common Unix Printing System - php module
-Group: Development/Languages
-Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
-Requires: php(zend-abi) = %{php_zend_api}
-Requires: php(api) = %{php_core_api}
-
 %package ipptool
 Summary: Common Unix Printing System - tool for performing IPP requests
 Group: System Environment/Daemons
-Requires: %{name}-libs = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description
-The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. It has been developed by Easy Software Products 
-to promote a standard printing solution for all UNIX vendors and users. 
-CUPS provides the System V and Berkeley command-line interfaces. 
+The Common UNIX Printing System provides a portable printing layer for
+UNIX® operating systems. It has been developed by Easy Software Products
+to promote a standard printing solution for all UNIX vendors and users.
+CUPS provides the System V and Berkeley command-line interfaces.
 
 %description devel
-The Common UNIX Printing System provides a portable printing layer for 
+The Common UNIX Printing System provides a portable printing layer for
 UNIX® operating systems. This is the development package for creating
 additional printer drivers, and other CUPS services.
 
 %description libs
-The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. It has been developed by Easy Software Products 
-to promote a standard printing solution for all UNIX vendors and users. 
-CUPS provides the System V and Berkeley command-line interfaces. 
+The Common UNIX Printing System provides a portable printing layer for
+UNIX® operating systems. It has been developed by Easy Software Products
+to promote a standard printing solution for all UNIX vendors and users.
+CUPS provides the System V and Berkeley command-line interfaces.
 The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
-%description lpd
-The Common UNIX Printing System provides a portable printing layer for 
-UNIX® operating systems. This is the package that provides standard 
-lpd emulation.
-
-%description php
+%description filesystem
 The Common UNIX Printing System provides a portable printing layer for
-UNIX® operating systems. This is the package that provides a PHP
-module. 
+UNIX® operating systems. This package provides some directories which are
+required by other packages that add CUPS drivers (i.e. filters, backends etc.).
+
+%description lpd
+The Common UNIX Printing System provides a portable printing layer for
+UNIX® operating systems. This is the package that provides standard
+lpd emulation.
 
 %description ipptool
 Sends IPP requests to the specified URI and tests and/or displays the results.
@@ -221,8 +193,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Fix compilation of serial backend.
-%patch4 -p1 -b .serial
+
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -239,8 +210,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch11 -p1 -b .pid
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch12 -p1 -b .eggcups
-# More sophisticated implementation of cupsGetPassword than getpass.
-%patch13 -p1 -b .getpass
+
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch14 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
@@ -250,8 +220,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Support for errno==ENOSPACE-based USB paper-out reporting.
 %patch17 -p1 -b .usb-paperout
 # Simplify the DNSSD parts so they can build using the compat library.
-%patch18 -p1 -b .build
-# Re-initialise the resolver on failure in httpAddrGetList().
+#%%patch18 -p1 -b .build
+# Re-initialise the resolver on failure in httpAddrGetList() (bug #567353).
 %patch19 -p1 -b .res_init
 # Log extra debugging information if no filters are available.
 %patch20 -p1 -b .filter-debug
@@ -263,8 +233,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch23 -p1 -b .str3382
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
-# Handle SNMP supply level quirks (bug #581825).
-%patch26 -p1 -b .snmp-quirks
+
 # Add an SNMP query for HP's device ID OID (STR #3552).
 %patch27 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
@@ -272,26 +241,22 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch29 -p1 -b .ricoh-deviceid-oid
 
-# Avahi support:
-# - discovery in the dnssd backend
-# - service announcement in the scheduler
-%patch30 -p1 -b .avahi-1-config
-%patch31 -p1 -b .avahi-2-backend
-%patch32 -p1 -b .avahi-3-timeouts
-%patch33 -p1 -b .avahi-4-poll
-%patch34 -p1 -b .avahi-5-services
-
-# ICC colord support.
-%patch35 -p1 -b .icc
-
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
-%patch36 -p1 -b .systemd-socket
+%patch30 -p1 -b .systemd-socket
 
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
+
+# We want to use the PDF workflow in principle with one exception when the input
+# is PostScript and the printer is a native PostScript printer.
+# To avoid the PS -> PDF -> PS conversion (costs 66),
+# set the cost factor of pstops to 65.
+# This forth-and-back conversion sometimes produces PostScript files which are
+# too big for the printer's memory resulting in not getting printed.
+sed -i -r -e '/\spstops$/ { s/66/65/ }' conf/mime.convs.in
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -301,15 +266,11 @@ perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
-# Fix locale code for Norwegian (bug #520379).
-mv locale/cups_no.po locale/cups_nb.po
-
 f=CREDITS.txt
 mv "$f" "$f"~
 iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
 rm "$f"~
 
-# Rebuild configure script for --enable-avahi.
 aclocal -I config-scripts
 autoconf -I config-scripts
 
@@ -320,10 +281,12 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 %if %lspp
 	--enable-lspp \
 %endif
-	--with-log-file-perm=0600 --enable-relro \
-	--with-pdftops=pdftops \
+	--with-cupsd-file-perm=0755 \
+	--with-log-file-perm=0600 \
+	--enable-relro \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
-	--with-php=/usr/bin/php-cgi --enable-avahi \
+	--with-php=/usr/bin/php-cgi \
+	--enable-avahi \
 	--enable-threads --enable-gnutls \
 	localedir=%{_datadir}/locale
 
@@ -332,9 +295,6 @@ make %{?_smp_mflags}
 
 %install
 make BUILDROOT=$RPM_BUILD_ROOT install 
-
-# Serial backend needs to run as root (bug #212577).
-chmod 700 $RPM_BUILD_ROOT%{cups_serverbin}/backend/serial
 
 rm -rf	$RPM_BUILD_ROOT%{_initddir} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/init.d \
@@ -365,13 +325,6 @@ install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
 install -c -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -c -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 install -c -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
-install -c -m 755 %{SOURCE9} $RPM_BUILD_ROOT%{cups_serverbin}/filter/textonly
-install -c -m 644 %{SOURCE10} $RPM_BUILD_ROOT%{_datadir}/cups/model/textonly.ppd
-
-# Ship pstopdf for LSPP systems to deal with malicious postscript
-%if %lspp
-install -c -m 755 %{SOURCE4} $RPM_BUILD_ROOT%{cups_serverbin}/filter
-%endif
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
@@ -394,13 +347,9 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
-
-# Put the php config bit into place
-%{__mkdir_p} $RPM_BUILD_ROOT%{_sysconfdir}/php.d
-%{__cat} << __EOF__ > $RPM_BUILD_ROOT%{_sysconfdir}/php.d/%{name}.ini
-; Enable %{name} extension module
-extension=phpcups.so
-__EOF__
+# these are shipped with cups-filters
+rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/banners
+rm -f $RPM_BUILD_ROOT%{_datadir}/cups/data/testprint
 
 # install /usr/lib/tmpfiles.d/cups.conf (bug #656566)
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
@@ -430,20 +379,9 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^\([^%].*\)/d
 ' > %{name}.lang
 
-%check
-# Minimal load test of php extension
-LD_LIBRARY_PATH=${RPM_BUILD_ROOT}%{_libdir} \
-php --no-php-ini \
-    --define extension_dir=${RPM_BUILD_ROOT}%{php_extdir} \
-    --define extension=phpcups.so \
-    --modules | grep phpcups
-
 
 %post
-if [ $1 -eq 1 ] ; then
-	# Initial installation
-	/bin/systemctl enable cups.{service,socket,path} >/dev/null 2>&1 || :
-fi
+%{systemd_post} %{name}.path %{name}.socket %{name}.service
 
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
@@ -472,23 +410,20 @@ exit 0
 %postun libs -p /sbin/ldconfig
 
 %preun
-if [ $1 -eq 0 ] ; then
-	# Package removal, not upgrade
-	/bin/systemctl --no-reload disable %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
-	/bin/systemctl stop %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
+%{systemd_preun} %{name}.path %{name}.socket %{name}.service
+
 %if %use_alternatives
+if [ $1 -eq 0 ] ; then
 	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
-%endif
 fi
+%endif
+
 exit 0
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ]; then
-	# Package upgrade, not uninstall
-	/bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
-fi
+%{systemd_postun_with_restart} %{name}.service
 exit 0
+
 
 %triggerun -- %{name} < 1:1.5.0-22
 # This package is allowed to autostart; however, the upgrade trigger
@@ -546,26 +481,17 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
+%dir %{_datadir}/%{name}/www/ca
 %dir %{_datadir}/%{name}/www/es
-%dir %{_datadir}/%{name}/www/eu
 %dir %{_datadir}/%{name}/www/ja
-%dir %{_datadir}/%{name}/www/pl
-%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
-%doc %{_datadir}/%{name}/www/de/index.html
+%doc %{_datadir}/%{name}/www/ca/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
-%doc %{_datadir}/%{name}/www/eu/index.html
-%doc %{_datadir}/%{name}/www/fr/index.html
-%doc %{_datadir}/%{name}/www/hu/index.html
-%doc %{_datadir}/%{name}/www/id/index.html
-%doc %{_datadir}/%{name}/www/it/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
-%doc %{_datadir}/%{name}/www/pl/index.html
-%doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -574,54 +500,34 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cancel*
 %{_bindir}/lp*
 %{_bindir}/ppd*
-%dir %{cups_serverbin}
-%{cups_serverbin}/backend
+%{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
-%{cups_serverbin}/daemon/cups-polld
 %{cups_serverbin}/daemon/cups-deviced
 %{cups_serverbin}/daemon/cups-driverd
 %{cups_serverbin}/daemon/cups-exec
 %{cups_serverbin}/notifier
-%{cups_serverbin}/filter
+%{cups_serverbin}/filter/*
 %{cups_serverbin}/monitor
-%{cups_serverbin}/driver
 %{_mandir}/man1/cancel*
 %{_mandir}/man1/cupstest*
 %{_mandir}/man1/lp*
 %{_mandir}/man1/ppd*
 %{_mandir}/man[578]/*
 %{_sbindir}/*
-%dir %{_datadir}/cups
-%dir %{_datadir}/cups/banners
-%{_datadir}/cups/banners/*
-%{_datadir}/cups/charsets
-%{_datadir}/cups/data
-%{_datadir}/cups/fonts
-%{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
 %{_datadir}/cups/templates/*.tmpl
-%{_datadir}/cups/templates/de/*.tmpl
+%{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
-%{_datadir}/cups/templates/eu/*.tmpl
-%{_datadir}/cups/templates/fr/*.tmpl
-%{_datadir}/cups/templates/hu/*.tmpl
-%{_datadir}/cups/templates/id/*.tmpl
-%{_datadir}/cups/templates/it/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
-%{_datadir}/cups/templates/pl/*.tmpl
-%{_datadir}/cups/templates/ru/*.tmpl
-%{_datadir}/locale/*/*.po
-%{_datadir}/ppd
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
 %{_datadir}/pixmaps/cupsprinter.png
 %{_sysconfdir}/cron.daily/cups
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
-%{_datadir}/cups/drv
+%{_datadir}/cups/drv/sample.drv
 %{_datadir}/cups/examples
-%dir %{_datadir}/cups/mime
 %{_datadir}/cups/mime/mime.types
 %{_datadir}/cups/mime/mime.convs
 %dir %{_datadir}/cups/ppdc
@@ -631,6 +537,20 @@ rm -f %{cups_serverbin}/backend/smb
 %files libs
 %doc LICENSE.txt
 %{_libdir}/*.so.*
+
+%files filesystem
+%dir %{cups_serverbin}
+%dir %{cups_serverbin}/backend
+%dir %{cups_serverbin}/driver
+%dir %{cups_serverbin}/filter
+%dir %{_datadir}/cups
+#%%dir %%{_datadir}/cups/banners
+#%%dir %%{_datadir}/cups/charsets
+%dir %{_datadir}/cups/data
+%dir %{_datadir}/cups/drv
+%dir %{_datadir}/cups/mime
+%dir %{_datadir}/cups/model
+%dir %{_datadir}/ppd
 
 %files devel
 %{_bindir}/cups-config
@@ -645,10 +565,6 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{cups_serverbin}/daemon
 %{cups_serverbin}/daemon/cups-lpd
 
-%files php
-%config(noreplace) %{_sysconfdir}/php.d/%{name}.ini
-%{php_extdir}/phpcups.so
-
 %files ipptool
 %{_bindir}/ipptool
 %dir %{_datadir}/cups/ipptool
@@ -656,6 +572,23 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Aug 08 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-1
+- 1.6.1
+ - simplified systemd.patch due to removed CUPS Browsing protocol (STR #3922)
+ - removed:
+   textonly filter - moved to cups-filters
+   pstopdf filter - cups-filters also has pstopdf (different)
+   PHP module - moved to cups-filters (STR #3932)
+   serial.patch - moved to cups-filters
+   getpass.patch - r10140 removed the getpass() use
+   snmp-quirks.patch - fixed upstream (r10493)
+   avahi patches - merged upstream (STR #3066)
+   icc.patch - merged upstream (STR #3808)
+ - TODO:
+   - do we need cups-build.patch ?
+- added filesystem sub-package (#624695)
+- use macroized systemd scriptlets
+
 * Thu Jul 26 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-1
 - 1.5.4
 
