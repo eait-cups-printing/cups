@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -119,6 +119,7 @@ Requires: acl
 
 # Make sure we have some filters for converting to raster format.
 Requires: ghostscript-cups
+Requires: cups-filters
 
 %package devel
 Summary: Common Unix Printing System - development environment
@@ -572,6 +573,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Aug 08 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-2
+- Requires: cups-filters
+
 * Wed Aug 08 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-1
 - 1.6.1
  - simplified systemd.patch due to removed CUPS Browsing protocol (STR #3922)
