@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -382,7 +382,7 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 
 
 %post
-%{systemd_post} %{name}.path %{name}.socket %{name}.service
+%systemd_post %{name}.path %{name}.socket %{name}.service
 
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
@@ -411,7 +411,7 @@ exit 0
 %postun libs -p /sbin/ldconfig
 
 %preun
-%{systemd_preun} %{name}.path %{name}.socket %{name}.service
+%systemd_preun %{name}.path %{name}.socket %{name}.service
 
 %if %use_alternatives
 if [ $1 -eq 0 ] ; then
@@ -422,7 +422,7 @@ fi
 exit 0
 
 %postun
-%{systemd_postun_with_restart} %{name}.service
+%systemd_postun_with_restart %{name}.service
 exit 0
 
 
@@ -573,6 +573,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Aug 13 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-3
+- fixed usage of parametrized systemd macros (#847405)
+
 * Wed Aug 08 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-2
 - Requires: cups-filters
 
