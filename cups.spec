@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -440,10 +440,7 @@ php --no-php-ini \
 
 
 %post
-if [ $1 -eq 1 ] ; then
-	# Initial installation
-	/bin/systemctl enable cups.{service,socket,path} >/dev/null 2>&1 || :
-fi
+%systemd_post %{name}.path %{name}.socket %{name}.service
 
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
@@ -472,22 +469,17 @@ exit 0
 %postun libs -p /sbin/ldconfig
 
 %preun
-if [ $1 -eq 0 ] ; then
-	# Package removal, not upgrade
-	/bin/systemctl --no-reload disable %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
-	/bin/systemctl stop %{name}.path %{name}.socket %{name}.service >/dev/null 2>&1 || :
+%systemd_preun %{name}.path %{name}.socket %{name}.service
+
 %if %use_alternatives
+if [ $1 -eq 0 ] ; then
 	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
-%endif
 fi
+%endif
 exit 0
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ]; then
-	# Package upgrade, not uninstall
-	/bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
-fi
+%systemd_postun_with_restart %{name}.service
 exit 0
 
 %triggerun -- %{name} < 1:1.5.0-22
@@ -656,6 +648,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Aug 21 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-2
+- use new systemd-rpm macros (#850074)
+
 * Thu Jul 26 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-1
 - 1.5.4
 
