@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -55,6 +55,7 @@ Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
 Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
+Patch24: cups-usblp-quirks.patch
 Patch25: cups-0755.patch
 Patch26: cups-snmp-quirks.patch
 Patch27: cups-hp-deviceid-oid.patch
@@ -261,6 +262,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
+# Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
+# This patch adds a quirk handler for this reset so that it will not be done for all printers.
+#(bug #847923, STR #4155)
+%patch24 -p1 -b .usblp-quirks
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
 # Handle SNMP supply level quirks (bug #581825).
@@ -648,6 +653,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-3
+- quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
+
 * Tue Aug 21 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-2
 - use new systemd-rpm macros (#850074)
 
