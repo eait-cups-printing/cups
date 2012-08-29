@@ -117,24 +117,6 @@ diff -up cups-1.5.4/scheduler/client.c.avahi-5-services cups-1.5.4/scheduler/cli
  
   /*
    * Check if the hostname is an IP address...
-@@ -5073,7 +5073,7 @@ valid_host(cupsd_client_t *con)		/* I -
-     }
-   }
- 
--#ifdef HAVE_DNSSD
-+#if defined(HAVE_DNSSD) || defined(HAVE_AVAHI)
-   for (a = (cupsd_alias_t *)cupsArrayFirst(DNSSDAlias);
-        a;
-        a = (cupsd_alias_t *)cupsArrayNext(DNSSDAlias))
-@@ -5098,7 +5098,7 @@ valid_host(cupsd_client_t *con)		/* I -
-         return (1);
-     }
-   }
--#endif /* HAVE_DNSSD */
-+#endif /* HAVE_DNSSD || HAVE_AVAHI */
- 
-  /*
-   * Check for interface hostname matches...
 diff -up cups-1.5.4/scheduler/conf.c.avahi-5-services cups-1.5.4/scheduler/conf.c
 --- cups-1.5.4/scheduler/conf.c.avahi-5-services	2012-08-29 11:15:24.510931435 +0200
 +++ cups-1.5.4/scheduler/conf.c	2012-08-29 11:22:07.045867370 +0200
