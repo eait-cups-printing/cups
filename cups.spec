@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -70,6 +70,8 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
+
+Patch40: cups-r10572.patch
 
 Patch100: cups-lspp.patch
 
@@ -292,6 +294,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
 %patch36 -p1 -b .systemd-socket
+
+# CUPS now includes the port number in the Host: header for HTTP requests. (r10572)
+%patch40 -p1 -b .r10572
 
 %if %lspp
 # LSPP support.
@@ -653,6 +658,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Aug 29 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-4
+- backport 2 upstream commits (r10572, r10573)
+
 * Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-3
 - quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
 
