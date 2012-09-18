@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -72,6 +72,7 @@ Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
 
 Patch40: cups-r10572.patch
+Patch41: cups-ipp-no-create-job.patch
 
 Patch100: cups-lspp.patch
 
@@ -297,6 +298,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # CUPS now includes the port number in the Host: header for HTTP requests. (r10572)
 %patch40 -p1 -b .r10572
+
+# Don't use the IPP Create-Job operation, widely implemented
+# unreliably (bug #854989).
+%patch41 -p1 -b .ipp-no-create-job
 
 %if %lspp
 # LSPP support.
@@ -658,6 +663,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Sep 18 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-5
+- Don't use the IPP Create-Job operation, widely implemented
+  unreliably (bug #854989).
+
 * Wed Aug 29 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-4
 - backport 2 upstream commits (r10572, r10573)
 
