@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -163,7 +163,7 @@ Provides: cupsddk-devel = 1.2.3-7
 %package libs
 Summary: Common Unix Printing System - libraries
 Group: System Environment/Libraries
-License: LGPLv2
+License: LGPLv2 and zlib
 
 %package lpd
 Summary: Common Unix Printing System - lpd emulation
@@ -663,6 +663,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-6
+- The cups-libs subpackage contains code distributed under the zlib
+  license (md5.c). 
+
 * Tue Sep 18 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-5
 - Don't use the IPP Create-Job operation, widely implemented
   unreliably (bug #854989).
