@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -136,7 +136,7 @@ Provides: cupsddk-devel = 1.2.3-7
 %package libs
 Summary: Common Unix Printing System - libraries
 Group: System Environment/Libraries
-License: LGPLv2
+License: LGPLv2 and zlib
 
 %package filesystem
 Summary: Common Unix Printing System - directory layout
@@ -578,6 +578,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-5
+- The cups-libs subpackage contains code distributed under the zlib
+  license (md5.c). 
+
 * Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-4
 - quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
 
