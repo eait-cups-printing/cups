@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -70,9 +70,11 @@ Patch34: cups-avahi-5-services.patch
 
 Patch35: cups-icc.patch
 Patch36: cups-systemd-socket.patch
+Patch37: cups-ipp-no-create-job.patch
 
 Patch40: cups-r10572.patch
-Patch41: cups-ipp-no-create-job.patch
+Patch41: cups-str4072.patch
+Patch42: cups-str4124.patch
 
 Patch100: cups-lspp.patch
 
@@ -296,12 +298,18 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Poettering).
 %patch36 -p1 -b .systemd-socket
 
-# CUPS now includes the port number in the Host: header for HTTP requests. (r10572)
-%patch40 -p1 -b .r10572
-
 # Don't use the IPP Create-Job operation, widely implemented
 # unreliably (bug #854989).
-%patch41 -p1 -b .ipp-no-create-job
+%patch37 -p1 -b .ipp-no-create-job
+
+# CUPS now includes the port number in the Host: header for HTTP requests. (r10572)
+%patch40 -p1 -b .r10572
+# The scheduler no longer allows job-name values
+# that are not valid network Unicode strings (STR #4072)
+%patch41 -p1 -b .str4072
+# cupsBackendReport() now filters out all control characters
+# from the reported 1284 device IDs (STR #4124)
+%patch42 -p1 -b .str4124
 
 %if %lspp
 # LSPP support.
@@ -663,6 +671,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Fri Sep 21 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-7
+- backport fixes for STR #4072, STR #4124
+
 * Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-6
 - The cups-libs subpackage contains code distributed under the zlib
   license (md5.c). 

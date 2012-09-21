@@ -1,0 +1,12 @@
+diff -up cups-1.5.4/cups/backend.c.str4124 cups-1.5.4/cups/backend.c
+--- cups-1.5.4/cups/backend.c.str4124	2012-01-30 22:50:42.000000000 +0100
++++ cups-1.5.4/cups/backend.c	2012-09-21 16:02:42.638864512 +0200
+@@ -125,7 +125,7 @@ quote_string(const char *s)		/* I - Stri
+       if (*s == '\\' || *s == '\"')
+ 	putchar('\\');
+ 
+-      if (*s == '\n')
++      if (((*s & 255) < ' ' && *s != '\t') || *s == 0x7f)
+         putchar(' ');
+       else
+         putchar(*s);
