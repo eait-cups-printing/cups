@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -75,6 +75,7 @@ Patch37: cups-ipp-no-create-job.patch
 Patch40: cups-r10572.patch
 Patch41: cups-str4072.patch
 Patch42: cups-str4124.patch
+Patch43: cups-str4194.patch
 
 Patch100: cups-lspp.patch
 
@@ -269,7 +270,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch23 -p1 -b .str3382
 # Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
 # This patch adds a quirk handler for this reset so that it will not be done for all printers.
-#(bug #847923, STR #4155)
+# (bug #847923, STR #4155, STR #4191)
 %patch24 -p1 -b .usblp-quirks
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
@@ -310,6 +311,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # cupsBackendReport() now filters out all control characters
 # from the reported 1284 device IDs (STR #4124)
 %patch42 -p1 -b .str4124
+# The IPP backend could get stuck in an endless loop on certain network errors
+# (STR #4194)
+%patch43 -p1 -b .str4194
 
 %if %lspp
 # LSPP support.
@@ -671,6 +675,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Oct 01 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-8
+- backport fixes for STR #4191, STR #4194
+
 * Fri Sep 21 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-7
 - backport fixes for STR #4072, STR #4124
 
