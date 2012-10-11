@@ -1,6 +1,6 @@
 diff -up cups-1.5.4/cgi-bin/admin.c.avahi-5-services cups-1.5.4/cgi-bin/admin.c
---- cups-1.5.4/cgi-bin/admin.c.avahi-5-services	2011-08-17 23:01:53.000000000 +0200
-+++ cups-1.5.4/cgi-bin/admin.c	2012-08-29 11:15:25.429920413 +0200
+--- cups-1.5.4/cgi-bin/admin.c.avahi-5-services	2011-08-17 22:01:53.000000000 +0100
++++ cups-1.5.4/cgi-bin/admin.c	2012-10-11 13:00:35.888322772 +0100
 @@ -1643,7 +1643,7 @@ do_config_server(http_t *http)		/* I - H
        else
  	local_protocols[0] = '\0';
@@ -32,8 +32,8 @@ diff -up cups-1.5.4/cgi-bin/admin.c.avahi-5-services cups-1.5.4/cgi-bin/admin.c
  #ifdef HAVE_LDAP
    cgiSetVariable("HAVE_LDAP", "1");
 diff -up cups-1.5.4/scheduler/avahi.h.avahi-5-services cups-1.5.4/scheduler/avahi.h
---- cups-1.5.4/scheduler/avahi.h.avahi-5-services	2012-08-29 11:15:25.335921543 +0200
-+++ cups-1.5.4/scheduler/avahi.h	2012-08-29 11:15:25.429920413 +0200
+--- cups-1.5.4/scheduler/avahi.h.avahi-5-services	2012-10-11 13:00:28.757295603 +0100
++++ cups-1.5.4/scheduler/avahi.h	2012-10-11 13:00:35.888322772 +0100
 @@ -3,7 +3,7 @@
   *
   *   Avahi poll implementation for the CUPS scheduler.
@@ -97,8 +97,8 @@ diff -up cups-1.5.4/scheduler/avahi.h.avahi-5-services cups-1.5.4/scheduler/avah
  /*
   * End of "$Id$".
 diff -up cups-1.5.4/scheduler/client.c.avahi-5-services cups-1.5.4/scheduler/client.c
---- cups-1.5.4/scheduler/client.c.avahi-5-services	2012-03-07 07:05:39.000000000 +0100
-+++ cups-1.5.4/scheduler/client.c	2012-08-29 11:18:35.265583578 +0200
+--- cups-1.5.4/scheduler/client.c.avahi-5-services	2012-03-07 06:05:39.000000000 +0000
++++ cups-1.5.4/scheduler/client.c	2012-10-11 13:00:35.891322784 +0100
 @@ -5003,7 +5003,7 @@ valid_host(cupsd_client_t *con)		/* I -
  	    !strncmp(host, "[::1]:", 6));
    }
@@ -118,8 +118,8 @@ diff -up cups-1.5.4/scheduler/client.c.avahi-5-services cups-1.5.4/scheduler/cli
   /*
    * Check if the hostname is an IP address...
 diff -up cups-1.5.4/scheduler/conf.c.avahi-5-services cups-1.5.4/scheduler/conf.c
---- cups-1.5.4/scheduler/conf.c.avahi-5-services	2012-08-29 11:15:24.510931435 +0200
-+++ cups-1.5.4/scheduler/conf.c	2012-08-29 11:22:07.045867370 +0200
+--- cups-1.5.4/scheduler/conf.c.avahi-5-services	2012-10-11 13:00:28.670295210 +0100
++++ cups-1.5.4/scheduler/conf.c	2012-10-11 13:00:35.892322789 +0100
 @@ -85,9 +85,9 @@ static const cupsd_var_t	variables[] =
  {
    { "AccessLog",		&AccessLog,		CUPSD_VARTYPE_STRING },
@@ -145,8 +145,8 @@ diff -up cups-1.5.4/scheduler/conf.c.avahi-5-services cups-1.5.4/scheduler/conf.
    cupsdSetString(&LPDConfigFile, CUPS_DEFAULT_LPD_CONFIG_FILE);
    cupsdSetString(&SMBConfigFile, CUPS_DEFAULT_SMB_CONFIG_FILE);
 diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dirsvc.c
---- cups-1.5.4/scheduler/dirsvc.c.avahi-5-services	2012-08-29 11:15:24.842927454 +0200
-+++ cups-1.5.4/scheduler/dirsvc.c	2012-08-29 11:15:25.553918926 +0200
+--- cups-1.5.4/scheduler/dirsvc.c.avahi-5-services	2012-10-11 13:00:28.718295427 +0100
++++ cups-1.5.4/scheduler/dirsvc.c	2012-10-11 13:00:35.893322793 +0100
 @@ -27,6 +27,7 @@
   *   ldap_connect()             - Start new LDAP connection
   *   ldap_reconnect()           - Reconnect to LDAP Server
@@ -682,9 +682,10 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +    */
 +
 +    avahi_string_list_free (p->ipp_txt);
-+
 +    if (p->printer_txt)
 +      avahi_string_list_free (p->printer_txt);
++
++    p->ipp_txt = p->printer_txt = NULL;
 +
 +   /*
 +    * Update the service group entry.
@@ -708,9 +709,6 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +    if (ret < 0)
 +      goto update_failed;
 +
-+    p->ipp_txt = ipp_txt;
-+    ipp_txt = NULL;
-+
 +    if (BrowseLocalProtocols & BROWSE_LPD)
 +    {
 +      ret = avahi_entry_group_update_service_txt_strlst (p->avahi_group,
@@ -721,9 +719,6 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +							 printer_txt);
 +      if (ret < 0)
 +	goto update_failed;
-+
-+      p->printer_txt = printer_txt;
-+      printer_txt = NULL;
 +    }
 +
 +    ret = avahi_entry_group_commit (p->avahi_group);
@@ -736,8 +731,13 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +      avahi_entry_group_reset (p->avahi_group);
 +      avahi_entry_group_free (p->avahi_group);
 +      p->avahi_group = NULL;
-+      ipp_txt = p->ipp_txt;
-+      p->ipp_txt = NULL;
++    }
++    else
++    {
++      /* Success */
++      p->ipp_txt = ipp_txt;
++      p->printer_txt = printer_txt;
++      ipp_txt = printer_txt = NULL;
 +    }
 +  }
 +
@@ -817,8 +817,6 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +    }
 +
 +    free (regtype_copy);
-+    p->ipp_txt = ipp_txt;
-+    ipp_txt = NULL;
 +
 +    if (BrowseLocalProtocols & BROWSE_LPD)
 +    {
@@ -835,9 +833,6 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +						  printer_txt);
 +      if (ret < 0)
 +	goto add_failed;
-+
-+      p->printer_txt = printer_txt;
-+      printer_txt = NULL;
 +    }
 +
 +    ret = avahi_entry_group_commit (p->avahi_group);
@@ -854,8 +849,13 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
 +	avahi_entry_group_free (p->avahi_group);
 +	p->avahi_group = NULL;
 +      }
-+      ipp_txt = p->ipp_txt;
-+      p->ipp_txt = NULL;
++    }
++    else
++    {
++      /* Success */
++      p->ipp_txt = ipp_txt;
++      p->printer_txt = printer_txt;
++      ipp_txt = printer_txt = NULL;
 +    }
 +  }
 +
@@ -1076,8 +1076,8 @@ diff -up cups-1.5.4/scheduler/dirsvc.c.avahi-5-services cups-1.5.4/scheduler/dir
   * 'get_auth_info_required()' - Get the auth-info-required value to advertise.
   */
 diff -up cups-1.5.4/scheduler/dirsvc.h.avahi-5-services cups-1.5.4/scheduler/dirsvc.h
---- cups-1.5.4/scheduler/dirsvc.h.avahi-5-services	2011-03-21 03:12:14.000000000 +0100
-+++ cups-1.5.4/scheduler/dirsvc.h	2012-08-29 11:15:25.595918423 +0200
+--- cups-1.5.4/scheduler/dirsvc.h.avahi-5-services	2011-03-21 02:12:14.000000000 +0000
++++ cups-1.5.4/scheduler/dirsvc.h	2012-10-11 13:00:35.893322793 +0100
 @@ -31,6 +31,10 @@
  #  endif /* HAVE_LDAP_SSL_H */
  #endif /* HAVE_LDAP */
@@ -1151,8 +1151,8 @@ diff -up cups-1.5.4/scheduler/dirsvc.h.avahi-5-services cups-1.5.4/scheduler/dir
  extern void	cupsdUpdateLDAPBrowse(void);
  #endif /* HAVE_LDAP */
 diff -up cups-1.5.4/scheduler/ipp.c.avahi-5-services cups-1.5.4/scheduler/ipp.c
---- cups-1.5.4/scheduler/ipp.c.avahi-5-services	2012-08-29 11:15:24.827927634 +0200
-+++ cups-1.5.4/scheduler/ipp.c	2012-08-29 11:15:25.598918387 +0200
+--- cups-1.5.4/scheduler/ipp.c.avahi-5-services	2012-10-11 13:00:28.712295399 +0100
++++ cups-1.5.4/scheduler/ipp.c	2012-10-11 13:00:35.895322802 +0100
 @@ -6098,7 +6098,7 @@ copy_printer_attrs(
      ippAddDate(con->response, IPP_TAG_PRINTER, "printer-current-time",
                 ippTimeToDate(curtime));
@@ -1172,8 +1172,8 @@ diff -up cups-1.5.4/scheduler/ipp.c.avahi-5-services cups-1.5.4/scheduler/ipp.c
    if (!ra || cupsArrayFind(ra, "printer-error-policy"))
      ippAddString(con->response, IPP_TAG_PRINTER, IPP_TAG_NAME,
 diff -up cups-1.5.4/scheduler/main.c.avahi-5-services cups-1.5.4/scheduler/main.c
---- cups-1.5.4/scheduler/main.c.avahi-5-services	2012-08-29 11:15:25.045925022 +0200
-+++ cups-1.5.4/scheduler/main.c	2012-08-29 11:24:40.645852870 +0200
+--- cups-1.5.4/scheduler/main.c.avahi-5-services	2012-10-11 13:00:28.755295593 +0100
++++ cups-1.5.4/scheduler/main.c	2012-10-11 13:00:35.895322802 +0100
 @@ -120,6 +120,10 @@ main(int  argc,				/* I - Number of comm
    cupsd_listener_t	*lis;		/* Current listener */
    time_t		current_time,	/* Current time */
@@ -1241,8 +1241,8 @@ diff -up cups-1.5.4/scheduler/main.c.avahi-5-services cups-1.5.4/scheduler/main.
  
  #ifndef __APPLE__
 diff -up cups-1.5.4/scheduler/printers.c.avahi-5-services cups-1.5.4/scheduler/printers.c
---- cups-1.5.4/scheduler/printers.c.avahi-5-services	2012-08-29 11:15:24.688929302 +0200
-+++ cups-1.5.4/scheduler/printers.c	2012-08-29 11:15:25.686917331 +0200
+--- cups-1.5.4/scheduler/printers.c.avahi-5-services	2012-10-11 13:00:28.677295241 +0100
++++ cups-1.5.4/scheduler/printers.c	2012-10-11 13:00:35.896322807 +0100
 @@ -883,9 +883,9 @@ cupsdDeletePrinter(
    cupsdClearString(&p->alert);
    cupsdClearString(&p->alert_description);
@@ -1274,8 +1274,8 @@ diff -up cups-1.5.4/scheduler/printers.c.avahi-5-services cups-1.5.4/scheduler/p
  
  
 diff -up cups-1.5.4/scheduler/printers.h.avahi-5-services cups-1.5.4/scheduler/printers.h
---- cups-1.5.4/scheduler/printers.h.avahi-5-services	2011-03-18 19:42:46.000000000 +0100
-+++ cups-1.5.4/scheduler/printers.h	2012-08-29 11:15:25.713917008 +0200
+--- cups-1.5.4/scheduler/printers.h.avahi-5-services	2011-03-18 18:42:46.000000000 +0000
++++ cups-1.5.4/scheduler/printers.h	2012-10-11 13:00:35.896322807 +0100
 @@ -16,6 +16,9 @@
  #ifdef HAVE_DNSSD
  #  include <dns_sd.h>
