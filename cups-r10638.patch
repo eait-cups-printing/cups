@@ -1,0 +1,24 @@
+From b1c8da8900d3c854e108ce445bef9fce8522ca22 Mon Sep 17 00:00:00 2001
+From: mike <mike@7a7537e8-13f0-0310-91df-b6672ffda945>
+Date: Tue, 2 Oct 2012 16:30:35 +0000
+Subject: [PATCH] The IPP backend did not send a cancel request to printers
+ when a job was canceled and the printer did not support
+ Create-Job.
+
+git-svn-id: http://svn.easysw.com/public/cups/trunk@10638 7a7537e8-13f0-0310-91df-b6672ffda945
+---
+diff --git a/backend/ipp.c b/backend/ipp.c
+index b509996..5eecc29 100644
+--- a/backend/ipp.c
++++ b/backend/ipp.c
+@@ -89,6 +89,7 @@ static int		child_pid = 0;	/* Child process ID */
+ #endif /* HAVE_GSSAPI && HAVE_XPC */
+ static const char * const jattrs[] =	/* Job attributes we want */
+ {
++  "job-id",
+   "job-impressions-completed",
+   "job-media-sheets-completed",
+   "job-name",
+-- 
+1.7.11.7
+

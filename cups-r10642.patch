@@ -1,0 +1,40 @@
+From c98bc4b769f85da3199485c85e8c98bb8c87ff04 Mon Sep 17 00:00:00 2001
+From: mike <mike@7a7537e8-13f0-0310-91df-b6672ffda945>
+Date: Tue, 9 Oct 2012 03:01:31 +0000
+Subject: [PATCH] Work around broken 1284 device IDs that use a newline
+ instead of a semicolon.
+
+git-svn-id: http://svn.easysw.com/public/cups/trunk@10642 7a7537e8-13f0-0310-91df-b6672ffda945
+---
+diff --git a/backend/snmp.c b/backend/snmp.c
+index f672e37..fc40800 100644
+--- a/backend/snmp.c
++++ b/backend/snmp.c
+@@ -1025,6 +1025,11 @@ read_snmp_response(int fd)		/* I - SNMP socket file descriptor */
+ 	    * Description is the IEEE-1284 device ID...
+ 	    */
+ 
++            char *ptr;			/* Pointer into device ID */
++
++            for (ptr = (char *)packet.object_value.string.bytes; *ptr; ptr ++)
++              if (*ptr == '\n')
++                *ptr = ';';		/* A lot of bad printers put a newline */
+ 	    if (!device->id)
+ 	      device->id = strdup((char *)packet.object_value.string.bytes);
+ 
+@@ -1066,8 +1071,11 @@ read_snmp_response(int fd)		/* I - SNMP socket file descriptor */
+ 	  */
+ 
+ 	  char	make_model[256];	/* Make and model */
++          char *ptr;			/* Pointer into device ID */
+ 
+-
++          for (ptr = (char *)packet.object_value.string.bytes; *ptr; ptr ++)
++            if (*ptr == '\n')
++              *ptr = ';';		/* A lot of bad printers put a newline */
+ 	  if (device->id)
+ 	    free(device->id);
+ 
+-- 
+1.7.11.7
+

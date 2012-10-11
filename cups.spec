@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -76,6 +76,8 @@ Patch40: cups-r10572.patch
 Patch41: cups-str4072.patch
 Patch42: cups-str4124.patch
 Patch43: cups-str4194.patch
+Patch44: cups-r10638.patch
+Patch45: cups-r10642.patch
 
 Patch100: cups-lspp.patch
 
@@ -314,6 +316,11 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # The IPP backend could get stuck in an endless loop on certain network errors
 # (STR #4194)
 %patch43 -p1 -b .str4194
+# The IPP backend did not send a cancel request to printers when a job was
+# canceled and the printer did not support Create-Job.
+%patch44 -p1 -b .r10638
+# Work around broken 1284 device IDs that use a newline instead of a semicolon.
+%patch45 -p1 -b .r10642
 
 %if %lspp
 # LSPP support.
@@ -675,6 +682,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Thu Oct 11 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-9
+- backport 2 upstream commits (r10638, r10642)
+
 * Mon Oct 01 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-8
 - backport fixes for STR #4191, STR #4194
 
