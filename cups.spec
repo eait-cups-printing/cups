@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -235,7 +235,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch23 -p1 -b .str3382
 # Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
 # This patch adds a quirk handler for this reset so that it will not be done for all printers.
-#(bug #847923, STR #4155)
+# (bug #847923, STR #4155, STR #4191)
+# bug #867392
 %patch24 -p1 -b .usblp-quirks
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
@@ -578,6 +579,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Oct 22 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-6
+- Add quirk rule for Xerox Phaser 3124 (#867392)
+- backport more quirk rules (STR #4191)
+
 * Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-5
 - The cups-libs subpackage contains code distributed under the zlib
   license (md5.c). 
