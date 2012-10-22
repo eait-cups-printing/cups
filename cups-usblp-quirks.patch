@@ -1,6 +1,6 @@
 diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-libusb.c
 --- cups-1.5.4/backend/usb-libusb.c.usblp-quirks	2012-07-16 19:16:46.000000000 +0200
-+++ cups-1.5.4/backend/usb-libusb.c	2012-10-01 12:25:00.971216077 +0200
++++ cups-1.5.4/backend/usb-libusb.c	2012-10-17 16:30:58.571793169 +0200
 @@ -70,7 +70,7 @@ typedef struct usb_printer_s		/**** USB
  			read_endp,	/* Read endpoint */
  			protocol,	/* Protocol: 1 = Uni-di, 2 = Bi-di. */
@@ -19,7 +19,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
  #define USBLP_QUIRK_NO_REATTACH	0x8000	/* After printing we cannot re-attach
  					   the usblp kernel module */
  
-@@ -141,15 +143,41 @@ static const struct quirk_printer_struct
+@@ -141,15 +143,43 @@ static const struct quirk_printer_struct
  	{ 0x0409, 0xf1be, USBLP_QUIRK_BIDIR }, /* NEC Picty800 (HP OEM) */
  	{ 0x0482, 0x0010, USBLP_QUIRK_BIDIR }, /* Kyocera Mita FS 820,
  						  by zut <kernel@zut.de> */
@@ -54,6 +54,8 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
 -			  USBLP_QUIRK_NO_REATTACH },
 +			  USBLP_QUIRK_NO_REATTACH |
 +	                  USBLP_QUIRK_RESET },
++	{ 0x0924, 0x3ce9, USBLP_QUIRK_NO_REATTACH }, /* Xerox Phaser 3124
++			  https://bugzilla.redhat.com/show_bug.cgi?id=867392 */
  	/* Prolific Technology, Inc. PL2305 Parallel Port
 -	   (USB -> Parallel adapter) */
 +	   (USB -> Parallel adapter), https://bugs.launchpad.net/bugs/987485 */
@@ -64,7 +66,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
  	{ 0, 0 }
  };
  
-@@ -256,7 +284,12 @@ print_device(const char *uri,		/* I - De
+@@ -256,7 +286,12 @@ print_device(const char *uri,		/* I - De
    }
  
    g.print_fd = print_fd;
@@ -78,7 +80,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
  
   /*
    * If we are printing data from a print driver on stdin, ignore SIGTERM
-@@ -772,7 +805,7 @@ close_device(usb_printer_t *printer)	/*
+@@ -772,7 +807,7 @@ close_device(usb_printer_t *printer)	/*
      * Reset the device to clean up after the job
      */
  
@@ -87,7 +89,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
      {
        if ((errcode = libusb_reset_device(printer->handle)) < 0)
  	fprintf(stderr,
-@@ -1288,7 +1321,7 @@ open_device(usb_printer_t *printer,	/* I
+@@ -1288,7 +1323,7 @@ open_device(usb_printer_t *printer,	/* I
    }
  
    printer->usblp_attached = 0;
@@ -96,7 +98,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
  
    if (verbose)
      fputs("STATE: +connecting-to-device\n", stderr);
-@@ -1586,7 +1619,8 @@ static unsigned int quirks(int vendor, i
+@@ -1586,7 +1621,8 @@ static unsigned int quirks(int vendor, i
    for (i = 0; quirk_printers[i].vendorId; i++)
    {
      if (vendor == quirk_printers[i].vendorId &&

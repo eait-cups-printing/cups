@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -682,6 +682,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Oct 22 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-11
+- Add quirk rule for Xerox Phaser 3124 (#867392)
+
 * Thu Oct 11 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-10
 - Avoid double-free crash in Avahi support (bug #863409).
 
