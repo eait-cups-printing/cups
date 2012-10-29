@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -53,7 +53,6 @@ Patch18: cups-build.patch
 Patch19: cups-res_init.patch
 Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
-Patch22: cups-cups-get-classes.patch
 Patch23: cups-str3382.patch
 Patch24: cups-usblp-quirks.patch
 Patch25: cups-0755.patch
@@ -266,8 +265,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch20 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
 %patch21 -p1 -b .uri-compat
-# Fix support for older CUPS servers in cupsGetDests.
-%patch22 -p1 -b .cups-get-classes
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
 # Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
@@ -682,6 +679,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Oct 29 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-12
+- Removed broken cups-get-classes patch (bug #870612).
+
 * Mon Oct 22 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-11
 - Add quirk rule for Xerox Phaser 3124 (#867392)
 
