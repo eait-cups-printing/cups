@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -28,7 +28,7 @@ Source11: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-
+Patch4: cups-dbus-utf8.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -194,7 +194,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-
+# Ensure attributes are valid UTF-8 in dbus notifier (bug #863387).
+%patch4 -p1 -b .dbus-utf8
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -576,6 +577,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Tue Oct 30 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-8
+- Ensure attributes are valid UTF-8 in dbus notifier (bug #863387).
+
 * Mon Oct 29 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-7
 - Removed broken cups-get-classes patch (bug #870612).
 
