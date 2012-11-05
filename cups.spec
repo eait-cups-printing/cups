@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -78,6 +78,7 @@ Patch42: cups-str4124.patch
 Patch43: cups-str4194.patch
 Patch44: cups-r10638.patch
 Patch45: cups-r10642.patch
+Patch46: cups-str4190.patch
 
 Patch100: cups-lspp.patch
 
@@ -321,6 +322,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch44 -p1 -b .r10638
 # Work around broken 1284 device IDs that use a newline instead of a semicolon.
 %patch45 -p1 -b .r10642
+# Apply upstream patch to stop backend spinning on failed auth (bug #873264).
+%patch46 -p1 -b .str4190
 
 %if %lspp
 # LSPP support.
@@ -682,6 +685,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Nov  5 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-14
+- Apply upstream patch to stop backend spinning on failed auth (bug #873264).
+
 * Wed Oct 31 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-13
 - Ensure attributes are valid UTF-8 in dbus notifier (bug #863387).
 
