@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -293,7 +293,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-php=/usr/bin/php-cgi \
 	--enable-avahi \
 	--enable-threads --enable-gnutls \
-	--disable-webif \
+	--enable-webif \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -578,6 +578,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Nov 19 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-10
+- Re-enable the web interface as it is required for adjusting server
+  settings (bug #878090).
+
 * Tue Nov  6 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-9
 - Disable the web interface by default (bug #864522).
 
