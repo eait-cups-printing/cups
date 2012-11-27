@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -80,6 +80,8 @@ Patch44: cups-r10638.patch
 Patch45: cups-r10642.patch
 Patch46: cups-str4190.patch
 
+Patch47: cups-str4223.patch
+
 Patch100: cups-lspp.patch
 
 Epoch: 1
@@ -140,6 +142,7 @@ Requires: tmpwatch
 # Requires /etc/tmpfiles.d (bug #656566)
 Requires: systemd-units >= 13
 Requires(post): systemd-units
+Requires(post): grep, sed
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 Requires(post): systemd-sysv
@@ -325,6 +328,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Apply upstream patch to stop backend spinning on failed auth (bug #873264).
 %patch46 -p1 -b .str4190
 
+# Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
+%patch47 -p1 -b .str4223
+
 %if %lspp
 # LSPP support.
 %patch100 -p1 -b .lspp
@@ -477,6 +483,42 @@ php --no-php-ini \
 
 
 %post
+# Deal with config migration due to CVE-2012-5519 (STR #4223)
+IN=%{_sysconfdir}/cups/cupsd.conf
+OUT=%{_sysconfdir}/cups/cups-files.conf
+copiedany=no
+for keyword in AccessLog CacheDir ConfigFilePerm	\
+    DataDir DocumentRoot ErrorLog FatalErrors		\
+    FileDevice FontPath Group LogFilePerm		\
+    LPDConfigFile PageLog Printcap PrintcapFormat	\
+    RequestRoot ServerBin ServerCertificate		\
+    ServerKey ServerRoot SMBConfigFile StateDir		\
+    SystemGroup SystemGroupAuthKey TempDir User; do
+    if ! /usr/bin/grep -iq ^$keyword "$IN"; then continue; fi
+    copy=yes
+    if /usr/bin/grep -iq ^$keyword "$OUT"; then
+	if [ "`/usr/bin/grep -i ^$keyword "$IN"`" ==	\
+	     "`/usr/bin/grep -i ^$keyword "$OUT"`" ]; then
+	    copy=no
+	else
+	    /usr/bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT"
+	fi
+    fi
+    if [ "$copy" == "yes" ]; then
+	if [ "$copiedany" == "no" ]; then
+	    cat >> "$OUT" <<EOF
+
+# Settings automatically moved from cupsd.conf by RPM package:
+EOF
+	fi
+
+	/usr/bin/grep -i ^$keyword "$IN" >> "$OUT"
+	copiedany=yes
+    fi
+
+    /usr/bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN"
+done
+
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
 # Remove old-style certs directory; new-style is /var/run
@@ -562,6 +604,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_prefix}/lib/tmpfiles.d/cups.conf
 %{_prefix}/lib/tmpfiles.d/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
@@ -685,6 +728,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Nov 26 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-15
+- Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
+  Migrate configuration keywords as needed.
+
 * Mon Nov  5 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-14
 - Apply upstream patch to stop backend spinning on failed auth (bug #873264).
 
