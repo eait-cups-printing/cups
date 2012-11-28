@@ -1,4 +1,3 @@
-diff -up cups-1.5.4/conf/cupsd.conf.in.str4223 cups-1.5.4/conf/cupsd.conf.in
 --- cups-1.5.4/conf/cupsd.conf.in.str4223	2010-12-09 21:24:51.000000000 +0000
 +++ cups-1.5.4/conf/cupsd.conf.in	2012-11-27 13:36:54.512147828 +0000
 @@ -9,10 +9,6 @@
@@ -12,7 +11,6 @@ diff -up cups-1.5.4/conf/cupsd.conf.in.str4223 cups-1.5.4/conf/cupsd.conf.in
  # Only listen for connections from the local machine.
  Listen localhost:@DEFAULT_IPP_PORT@
  @CUPS_LISTEN_DOMAINSOCKET@
-diff -up cups-1.5.4/conf/cups-files.conf.in.str4223 cups-1.5.4/conf/cups-files.conf.in
 --- cups-1.5.4/conf/cups-files.conf.in.str4223	2012-11-27 13:36:54.512147828 +0000
 +++ cups-1.5.4/conf/cups-files.conf.in	2012-11-27 13:36:54.512147828 +0000
 @@ -0,0 +1,98 @@
@@ -114,7 +112,6 @@ diff -up cups-1.5.4/conf/cups-files.conf.in.str4223 cups-1.5.4/conf/cups-files.c
 +#
 +# End of "$Id$".
 +#
-diff -up cups-1.5.4/config-scripts/cups-defaults.m4.str4223 cups-1.5.4/config-scripts/cups-defaults.m4
 --- cups-1.5.4/config-scripts/cups-defaults.m4.str4223	2011-05-06 23:53:53.000000000 +0100
 +++ cups-1.5.4/config-scripts/cups-defaults.m4	2012-11-27 13:36:54.513147832 +0000
 @@ -367,6 +367,7 @@ else
@@ -133,7 +130,6 @@ diff -up cups-1.5.4/config-scripts/cups-defaults.m4.str4223 cups-1.5.4/config-sc
  
  dnl Default MaxCopies value...
  AC_ARG_WITH(max-copies, [  --with-max-copies       set default max copies value, default=9999 ],
-diff -up cups-1.5.4/config-scripts/cups-ssl.m4.str4223 cups-1.5.4/config-scripts/cups-ssl.m4
 --- cups-1.5.4/config-scripts/cups-ssl.m4.str4223	2012-11-27 13:36:54.356147158 +0000
 +++ cups-1.5.4/config-scripts/cups-ssl.m4	2012-11-27 13:36:54.513147832 +0000
 @@ -27,6 +27,8 @@ AC_ARG_WITH(openssl-includes, [  --with-
@@ -182,7 +178,6 @@ diff -up cups-1.5.4/config-scripts/cups-ssl.m4.str4223 cups-1.5.4/config-scripts
  AC_SUBST(IPPALIASES)
  AC_SUBST(SSLFLAGS)
  AC_SUBST(SSLLIBS)
-diff -up cups-1.5.4/configure.in.str4223 cups-1.5.4/configure.in
 --- cups-1.5.4/configure.in.str4223	2012-11-27 13:36:54.482147699 +0000
 +++ cups-1.5.4/configure.in	2012-11-27 13:36:54.513147832 +0000
 @@ -66,6 +66,7 @@ AC_SUBST(INSTALL_LANGUAGES)
@@ -201,7 +196,6 @@ diff -up cups-1.5.4/configure.in.str4223 cups-1.5.4/configure.in
  	  man/cups-lpd.man
  	  man/cupsaddsmb.man
  	  man/cupsd.conf.man
-diff -up cups-1.5.4/conf/Makefile.str4223 cups-1.5.4/conf/Makefile
 --- cups-1.5.4/conf/Makefile.str4223	2012-11-27 13:36:54.336147072 +0000
 +++ cups-1.5.4/conf/Makefile	2012-11-27 13:36:54.513147832 +0000
 @@ -19,7 +19,7 @@ include ../Makedefs
@@ -213,7 +207,6 @@ diff -up cups-1.5.4/conf/Makefile.str4223 cups-1.5.4/conf/Makefile
  REPLACE	=	mime.convs mime.types
  
  
-diff -up cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.5.4/doc/help/ref-cupsd-conf.html.in
 --- cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223	2012-01-30 21:40:21.000000000 +0000
 +++ cups-1.5.4/doc/help/ref-cupsd-conf.html.in	2012-11-27 13:36:54.514147836 +0000
 @@ -191,82 +191,6 @@ HREF="#Location"><CODE>Location</CODE></
@@ -583,7 +576,6 @@ diff -up cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.5.4/doc/help/
  <H2 CLASS="title"><SPAN CLASS="INFO">CUPS 1.5</SPAN><A NAME="WebInterface">WebInterface</A></H2>
  
  <H3>Examples</H3>
-diff -up cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.5.4/doc/help/ref-cups-files-conf.html.in
 --- cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223	2012-11-27 13:36:54.514147836 +0000
 +++ cups-1.5.4/doc/help/ref-cups-files-conf.html.in	2012-11-27 13:36:54.514147836 +0000
 @@ -0,0 +1,531 @@
@@ -1118,7 +1110,6 @@ diff -up cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.5.4/doc/
 +
 +</BODY>
 +</HTML>
-diff -up cups-1.5.4/doc/Makefile.str4223 cups-1.5.4/doc/Makefile
 --- cups-1.5.4/doc/Makefile.str4223	2011-01-17 05:40:28.000000000 +0000
 +++ cups-1.5.4/doc/Makefile	2012-11-27 13:36:54.514147836 +0000
 @@ -3,7 +3,7 @@
@@ -1130,7 +1121,6 @@ diff -up cups-1.5.4/doc/Makefile.str4223 cups-1.5.4/doc/Makefile
  #   Copyright 1997-2007 by Easy Software Products.
  #
  #   These coded instructions, statements, and computer programs are the
-diff -up cups-1.5.4/man/cupsd.conf.man.in.str4223 cups-1.5.4/man/cupsd.conf.man.in
 --- cups-1.5.4/man/cupsd.conf.man.in.str4223	2011-05-18 22:33:35.000000000 +0100
 +++ cups-1.5.4/man/cupsd.conf.man.in	2012-11-27 13:36:54.515147841 +0000
 @@ -12,12 +12,15 @@
@@ -1396,7 +1386,6 @@ diff -up cups-1.5.4/man/cupsd.conf.man.in.str4223 cups-1.5.4/man/cupsd.conf.man.
  \fIsubscriptions.conf(5)\fR,
  .br
  http://localhost:631/help
-diff -up cups-1.5.4/man/cups-files.conf.man.in.str4223 cups-1.5.4/man/cups-files.conf.man.in
 --- cups-1.5.4/man/cups-files.conf.man.in.str4223	2012-11-27 13:36:54.515147841 +0000
 +++ cups-1.5.4/man/cups-files.conf.man.in	2012-11-27 13:36:54.515147841 +0000
 @@ -0,0 +1,146 @@
@@ -1546,7 +1535,6 @@ diff -up cups-1.5.4/man/cups-files.conf.man.in.str4223 cups-1.5.4/man/cups-files
 +.\"
 +.\" End of "$Id$".
 +.\"
-diff -up cups-1.5.4/man/Makefile.str4223 cups-1.5.4/man/Makefile
 --- cups-1.5.4/man/Makefile.str4223	2010-06-22 22:21:37.000000000 +0100
 +++ cups-1.5.4/man/Makefile	2012-11-27 13:36:54.515147841 +0000
 @@ -39,6 +39,7 @@ MAN1	=	cancel.$(MAN1EXT) \
@@ -1557,7 +1545,6 @@ diff -up cups-1.5.4/man/Makefile.str4223 cups-1.5.4/man/Makefile
  		cups-snmp.conf.$(MAN5EXT) \
  		cupsd.conf.$(MAN5EXT) \
  		ipptoolfile.$(MAN5EXT) \
-diff -up cups-1.5.4/packaging/cups.list.in.str4223 cups-1.5.4/packaging/cups.list.in
 --- cups-1.5.4/packaging/cups.list.in.str4223	2012-04-24 00:49:19.000000000 +0100
 +++ cups-1.5.4/packaging/cups.list.in	2012-11-27 13:36:54.515147841 +0000
 @@ -588,6 +588,7 @@ d 0755 root $CUPS_GROUP $SERVERROOT/inte
@@ -1568,7 +1555,6 @@ diff -up cups-1.5.4/packaging/cups.list.in.str4223 cups-1.5.4/packaging/cups.lis
  f $CUPS_PERM root $CUPS_GROUP $SERVERROOT/cupsd.conf.default conf/cupsd.conf
  
  %if PAMDIR
-diff -up cups-1.5.4/packaging/cups.spec.in.str4223 cups-1.5.4/packaging/cups.spec.in
 --- cups-1.5.4/packaging/cups.spec.in.str4223	2012-04-23 18:46:53.000000000 +0100
 +++ cups-1.5.4/packaging/cups.spec.in	2012-11-27 13:36:54.516147846 +0000
 @@ -152,6 +152,7 @@ rm -rf $RPM_BUILD_ROOT
@@ -1579,7 +1565,6 @@ diff -up cups-1.5.4/packaging/cups.spec.in.str4223 cups-1.5.4/packaging/cups.spe
  /etc/cups/cupsd.conf.default
  %dir /etc/cups/interfaces
  %dir /etc/cups/ppd
-diff -up cups-1.5.4/scheduler/client.c.str4223 cups-1.5.4/scheduler/client.c
 --- cups-1.5.4/scheduler/client.c.str4223	2012-11-27 13:36:54.461147608 +0000
 +++ cups-1.5.4/scheduler/client.c	2012-11-27 13:36:54.516147846 +0000
 @@ -35,7 +35,7 @@
@@ -1680,7 +1665,6 @@ diff -up cups-1.5.4/scheduler/client.c.str4223 cups-1.5.4/scheduler/client.c
    ReloadTime = time(NULL);
  
   /*
-diff -up cups-1.5.4/scheduler/conf.c.str4223 cups-1.5.4/scheduler/conf.c
 --- cups-1.5.4/scheduler/conf.c.str4223	2012-11-27 13:36:54.461147608 +0000
 +++ cups-1.5.4/scheduler/conf.c	2012-11-27 13:37:21.371244571 +0000
 @@ -27,7 +27,8 @@
@@ -2468,7 +2452,6 @@ diff -up cups-1.5.4/scheduler/conf.c.str4223 cups-1.5.4/scheduler/conf.c
    }
  
    return (1);
-diff -up cups-1.5.4/scheduler/conf.h.str4223 cups-1.5.4/scheduler/conf.h
 --- cups-1.5.4/scheduler/conf.h.str4223	2012-11-27 13:36:54.347147118 +0000
 +++ cups-1.5.4/scheduler/conf.h	2012-11-27 13:36:54.518147854 +0000
 @@ -96,7 +96,9 @@ typedef struct
@@ -2482,10 +2465,9 @@ diff -up cups-1.5.4/scheduler/conf.h.str4223 cups-1.5.4/scheduler/conf.h
  			*ServerName		VALUE(NULL),
  					/* FQDN for server */
  			*ServerAdmin		VALUE(NULL),
-diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
---- cups-1.5.4/scheduler/main.c.str4223	2012-11-27 13:36:54.491147738 +0000
-+++ cups-1.5.4/scheduler/main.c	2012-11-27 13:36:54.518147854 +0000
-@@ -225,7 +225,6 @@ main(int  argc,				/* I - Number of comm
+--- cups-1.5.4/scheduler/main.c	2012-11-27 13:36:54.518147854 +0000
++++ cups-1.5.4/scheduler/main.c	2012-11-28 11:41:13.992801205 +0000
+@@ -225,7 +225,6 @@
  
                  char *current;		/* Current directory */
  
@@ -2493,7 +2475,7 @@ diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
  	       /*
  	        * Allocate a buffer for the current working directory to
  		* reduce run-time stack usage; this approximates the
-@@ -251,6 +250,35 @@ main(int  argc,				/* I - Number of comm
+@@ -251,6 +250,35 @@
  		cupsdSetStringf(&ConfigurationFile, "%s/%s", current, argv[i]);
  		free(current);
                }
@@ -2529,7 +2511,7 @@ diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
  	      break;
  
            case 'f' : /* Run in foreground... */
-@@ -289,6 +317,29 @@ main(int  argc,				/* I - Number of comm
+@@ -289,6 +317,29 @@
  	      UseProfiles = 0;
  	      break;
  
@@ -2559,7 +2541,16 @@ diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
  #ifdef __APPLE__
            case 'S' : /* Disable system management functions */
                fputs("cupsd: -S (disable system management) for internal "
-diff -up cups-1.5.4/test/run-stp-tests.sh.str4223 cups-1.5.4/test/run-stp-tests.sh
+@@ -318,6 +369,9 @@
+   if (!ConfigurationFile)
+     cupsdSetString(&ConfigurationFile, CUPS_SERVERROOT "/cupsd.conf");
+ 
++  if (!CupsFilesFile)
++    cupsdSetString(&CupsFilesFile, CUPS_SERVERROOT "/cups-files.conf");
++
+  /*
+   * If the user hasn't specified "-f", run in the background...
+   */
 --- cups-1.5.4/test/run-stp-tests.sh.str4223	2012-05-15 15:04:18.000000000 +0100
 +++ cups-1.5.4/test/run-stp-tests.sh	2012-11-27 13:36:54.518147854 +0000
 @@ -337,25 +337,10 @@ fi
