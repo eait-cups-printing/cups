@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -404,14 +404,14 @@ for keyword in AccessLog CacheDir ConfigFilePerm	\
     RequestRoot ServerBin ServerCertificate		\
     ServerKey ServerRoot SMBConfigFile StateDir		\
     SystemGroup SystemGroupAuthKey TempDir User; do
-    if ! /usr/bin/grep -iq ^$keyword "$IN"; then continue; fi
+    if ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
     copy=yes
-    if /usr/bin/grep -iq ^$keyword "$OUT"; then
-	if [ "`/usr/bin/grep -i ^$keyword "$IN"`" ==	\
-	     "`/usr/bin/grep -i ^$keyword "$OUT"`" ]; then
+    if /bin/grep -iq ^$keyword "$OUT"; then
+	if [ "`/bin/grep -i ^$keyword "$IN"`" ==	\
+	     "`/bin/grep -i ^$keyword "$OUT"`" ]; then
 	    copy=no
 	else
-	    /usr/bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT"
+	    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT"
 	fi
     fi
     if [ "$copy" == "yes" ]; then
@@ -422,11 +422,11 @@ for keyword in AccessLog CacheDir ConfigFilePerm	\
 EOF
 	fi
 
-	/usr/bin/grep -i ^$keyword "$IN" >> "$OUT"
+	/bin/grep -i ^$keyword "$IN" >> "$OUT"
 	copiedany=yes
     fi
 
-    /usr/bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN"
+    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN"
 done
 
 %systemd_post %{name}.path %{name}.socket %{name}.service
@@ -621,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Wed Nov 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-12
+- Fixed paths in config migration %%post script.
+
 * Mon Nov 26 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-11
 - Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
   Migrate configuration keywords as needed.
