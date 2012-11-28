@@ -623,6 +623,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Nov 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-12
 - Fixed paths in config migration %%post script.
+- Set default cups-files.conf filename.
 
 * Mon Nov 26 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-11
 - Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
