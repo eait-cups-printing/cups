@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -401,7 +401,7 @@ for keyword in AccessLog CacheDir ConfigFilePerm	\
     DataDir DocumentRoot ErrorLog FatalErrors		\
     FileDevice FontPath Group LogFilePerm		\
     LPDConfigFile PageLog Printcap PrintcapFormat	\
-    RequestRoot ServerBin ServerCertificate		\
+    RemoteRoot RequestRoot ServerBin ServerCertificate	\
     ServerKey ServerRoot SMBConfigFile StateDir		\
     SystemGroup SystemGroupAuthKey TempDir User; do
     if ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
@@ -621,6 +621,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Dec  3 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-13
+- Applied additional upstream patch for CVE-2012-5519 so that the
+  RemoteRoot keyword is recognised in the correct configuration file.
+
 * Wed Nov 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-12
 - Fixed paths in config migration %%post script.
 - Set default cups-files.conf filename.

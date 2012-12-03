@@ -1,6 +1,6 @@
 diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
 --- cups-1.6.1/conf/cupsd.conf.in.str4223	2010-12-09 21:24:51.000000000 +0000
-+++ cups-1.6.1/conf/cupsd.conf.in	2012-11-28 12:02:12.812981877 +0000
++++ cups-1.6.1/conf/cupsd.conf.in	2012-12-03 11:13:29.845124902 +0000
 @@ -9,10 +9,6 @@
  # for troubleshooting...
  LogLevel @CUPS_LOG_LEVEL@
@@ -13,8 +13,8 @@ diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
  Listen localhost:@DEFAULT_IPP_PORT@
  @CUPS_LISTEN_DOMAINSOCKET@
 diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.conf.in
---- cups-1.6.1/conf/cups-files.conf.in.str4223	2012-11-28 12:02:12.813981881 +0000
-+++ cups-1.6.1/conf/cups-files.conf.in	2012-11-28 12:02:12.813981881 +0000
+--- cups-1.6.1/conf/cups-files.conf.in.str4223	2012-12-03 11:13:29.845124902 +0000
++++ cups-1.6.1/conf/cups-files.conf.in	2012-12-03 11:15:00.160381557 +0000
 @@ -0,0 +1,98 @@
 +#
 +# "$Id$"
@@ -57,7 +57,7 @@ diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.c
 +#DataDir @CUPS_DATADIR@
 +
 +# Location of the static web content served by the scheduler...
-+#DocRoot @CUPS_DOCROOT@
++#DocumentRoot @CUPS_DOCROOT@
 +
 +# Location of the file logging all messages produced by the scheduler and any
 +# helper programs; may be the name "syslog". If not an absolute path, the value
@@ -116,7 +116,7 @@ diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.c
 +#
 diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-scripts/cups-defaults.m4
 --- cups-1.6.1/config-scripts/cups-defaults.m4.str4223	2012-04-23 18:26:57.000000000 +0100
-+++ cups-1.6.1/config-scripts/cups-defaults.m4	2012-11-28 12:02:12.813981881 +0000
++++ cups-1.6.1/config-scripts/cups-defaults.m4	2012-12-03 11:13:29.845124902 +0000
 @@ -305,6 +305,7 @@ else
  fi
  
@@ -134,8 +134,8 @@ diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-sc
  dnl Default MaxCopies value...
  AC_ARG_WITH(max-copies, [  --with-max-copies       set default max copies value, default=9999 ],
 diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts/cups-ssl.m4
---- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2012-11-28 12:02:12.775981737 +0000
-+++ cups-1.6.1/config-scripts/cups-ssl.m4	2012-11-28 12:02:12.813981881 +0000
+--- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2012-12-03 11:13:29.778124661 +0000
++++ cups-1.6.1/config-scripts/cups-ssl.m4	2012-12-03 11:13:29.845124902 +0000
 @@ -27,6 +27,8 @@ AC_ARG_WITH(openssl-includes, [  --with-
  SSLFLAGS=""
  SSLLIBS=""
@@ -183,8 +183,8 @@ diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts
  AC_SUBST(SSLFLAGS)
  AC_SUBST(SSLLIBS)
 diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
---- cups-1.6.1/configure.in.str4223	2012-11-28 12:02:12.809981864 +0000
-+++ cups-1.6.1/configure.in	2012-11-28 12:02:12.813981881 +0000
+--- cups-1.6.1/configure.in.str4223	2012-12-03 11:13:29.838124878 +0000
++++ cups-1.6.1/configure.in	2012-12-03 11:13:29.845124902 +0000
 @@ -61,6 +61,7 @@ AC_SUBST(INSTALL_LANGUAGES)
  AC_SUBST(UNINSTALL_LANGUAGES)
  
@@ -202,8 +202,8 @@ diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
  	  man/cups-snmp.man
  	  man/cupsaddsmb.man
 diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
---- cups-1.6.1/conf/Makefile.str4223	2012-11-28 12:02:12.764981698 +0000
-+++ cups-1.6.1/conf/Makefile	2012-11-28 12:02:12.813981881 +0000
+--- cups-1.6.1/conf/Makefile.str4223	2012-12-03 11:13:29.760124597 +0000
++++ cups-1.6.1/conf/Makefile	2012-12-03 11:13:29.846124906 +0000
 @@ -19,7 +19,7 @@ include ../Makedefs
  # Config files...
  #
@@ -215,7 +215,7 @@ diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
  
 diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cupsd-conf.html.in
 --- cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2012-11-28 12:02:12.814981885 +0000
++++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2012-12-03 11:13:29.846124906 +0000
 @@ -197,82 +197,6 @@ HREF="#Location"><CODE>Location</CODE></
  HREF="#Limit"><CODE>Limit</CODE></A> section.</P>
  
@@ -606,8 +606,8 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  
  <H3>Examples</H3>
 diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cups-files-conf.html.in
---- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2012-11-28 12:02:12.814981885 +0000
-+++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2012-11-28 12:02:12.814981885 +0000
+--- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-03 11:13:29.846124906 +0000
++++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2012-12-03 11:13:29.846124906 +0000
 @@ -0,0 +1,531 @@
 +<HTML>
 +<!-- SECTION: References -->
@@ -1142,7 +1142,7 @@ diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/
 +</HTML>
 diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
 --- cups-1.6.1/doc/Makefile.str4223	2012-04-23 19:04:24.000000000 +0100
-+++ cups-1.6.1/doc/Makefile	2012-11-28 12:02:12.814981885 +0000
++++ cups-1.6.1/doc/Makefile	2012-12-03 11:13:29.847124910 +0000
 @@ -3,7 +3,7 @@
  #
  #   Documentation makefile for CUPS.
@@ -1154,7 +1154,7 @@ diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
  #   These coded instructions, statements, and computer programs are the
 diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.in
 --- cups-1.6.1/man/cupsd.conf.man.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/man/cupsd.conf.man.in	2012-11-28 12:02:12.815981889 +0000
++++ cups-1.6.1/man/cupsd.conf.man.in	2012-12-03 11:13:29.847124910 +0000
 @@ -12,12 +12,15 @@
  .\"   which should have been included with this file.  If this file is
  .\"   file is missing or damaged, see the license at "http://www.cups.org/".
@@ -1419,8 +1419,8 @@ diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.
  .br
  http://localhost:631/help
 diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files.conf.man.in
---- cups-1.6.1/man/cups-files.conf.man.in.str4223	2012-11-28 12:02:12.815981889 +0000
-+++ cups-1.6.1/man/cups-files.conf.man.in	2012-11-28 12:02:12.815981889 +0000
+--- cups-1.6.1/man/cups-files.conf.man.in.str4223	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/man/cups-files.conf.man.in	2012-12-03 11:13:29.847124910 +0000
 @@ -0,0 +1,146 @@
 +.\"
 +.\" "$Id$"
@@ -1570,7 +1570,7 @@ diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files
 +.\"
 diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
 --- cups-1.6.1/man/Makefile.str4223	2012-05-25 04:11:46.000000000 +0100
-+++ cups-1.6.1/man/Makefile	2012-11-28 12:02:12.815981889 +0000
++++ cups-1.6.1/man/Makefile	2012-12-03 11:13:29.847124910 +0000
 @@ -39,6 +39,7 @@ MAN1	=	cancel.$(MAN1EXT) \
  		ppdpo.$(MAN1EXT)
  MAN5	=	classes.conf.$(MAN5EXT) \
@@ -1581,7 +1581,7 @@ diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
  		ipptoolfile.$(MAN5EXT) \
 diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.list.in
 --- cups-1.6.1/packaging/cups.list.in.str4223	2012-05-07 23:41:42.000000000 +0100
-+++ cups-1.6.1/packaging/cups.list.in	2012-11-28 12:02:12.815981889 +0000
++++ cups-1.6.1/packaging/cups.list.in	2012-12-03 11:13:29.847124910 +0000
 @@ -534,6 +534,8 @@ d 0755 root sys $SERVERROOT -
  d 0755 root $CUPS_GROUP $SERVERROOT/interfaces -
  d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
@@ -1593,7 +1593,7 @@ diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.lis
  c $CUPS_PERM root $CUPS_GROUP $SERVERROOT/snmp.conf conf/snmp.conf
 diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spec.in
 --- cups-1.6.1/packaging/cups.spec.in.str4223	2012-07-27 21:33:27.000000000 +0100
-+++ cups-1.6.1/packaging/cups.spec.in	2012-11-28 12:02:12.815981889 +0000
++++ cups-1.6.1/packaging/cups.spec.in	2012-12-03 11:13:29.847124910 +0000
 @@ -135,6 +135,7 @@ rm -rf $RPM_BUILD_ROOT
  %defattr(-,root,root)
  %dir /etc/cups
@@ -1604,7 +1604,7 @@ diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spe
  %dir /etc/cups/ppd
 diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
 --- cups-1.6.1/scheduler/client.c.str4223	2012-05-07 23:41:30.000000000 +0100
-+++ cups-1.6.1/scheduler/client.c	2012-11-28 12:02:12.816981892 +0000
++++ cups-1.6.1/scheduler/client.c	2012-12-03 11:13:29.848124914 +0000
 @@ -32,7 +32,7 @@
   *   compare_clients()	    - Compare two client connections.
   *   data_ready()	    - Check whether data is available from a client.
@@ -1704,8 +1704,8 @@ diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
  
   /*
 diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
---- cups-1.6.1/scheduler/conf.c.str4223	2012-11-28 12:02:12.770981719 +0000
-+++ cups-1.6.1/scheduler/conf.c	2012-11-28 12:02:12.817981895 +0000
+--- cups-1.6.1/scheduler/conf.c.str4223	2012-12-03 11:13:29.773124642 +0000
++++ cups-1.6.1/scheduler/conf.c	2012-12-03 11:14:48.906349487 +0000
 @@ -14,23 +14,25 @@
   *
   * Contents:
@@ -1800,7 +1800,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
 -  { "Printcap",			&Printcap,		CUPSD_VARTYPE_STRING },
 -  { "PrintcapGUI",		&PrintcapGUI,		CUPSD_VARTYPE_STRING },
    { "ReloadTimeout",		&ReloadTimeout,		CUPSD_VARTYPE_TIME },
-   { "RemoteRoot",		&RemoteRoot,		CUPSD_VARTYPE_STRING },
+-  { "RemoteRoot",		&RemoteRoot,		CUPSD_VARTYPE_STRING },
 -  { "RequestRoot",		&RequestRoot,		CUPSD_VARTYPE_STRING },
    { "RIPCache",			&RIPCache,		CUPSD_VARTYPE_STRING },
    { "RootCertDuration",		&RootCertDuration,	CUPSD_VARTYPE_TIME },
@@ -1824,6 +1824,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
 +  { "LPDConfigFile",		&LPDConfigFile,		CUPSD_VARTYPE_STRING },
 +  { "PageLog",			&PageLog,		CUPSD_VARTYPE_STRING },
 +  { "Printcap",			&Printcap,		CUPSD_VARTYPE_STRING },
++  { "RemoteRoot",		&RemoteRoot,		CUPSD_VARTYPE_STRING },
 +  { "RequestRoot",		&RequestRoot,		CUPSD_VARTYPE_STRING },
    { "ServerBin",		&ServerBin,		CUPSD_VARTYPE_PATHNAME },
  #ifdef HAVE_SSL
@@ -1920,15 +1921,30 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
    RunUser = getuid();
  
    cupsdLogMessage(CUPSD_LOG_INFO, "Remote access is %s.",
-@@ -2558,13 +2592,244 @@ parse_protocols(const char *s)		/* I - S
+@@ -911,6 +945,13 @@ cupsdReadConfiguration(void)
+   }
+ 
+  /*
++  * Make sure ConfigFilePerm and LogFilePerm have sane values...
++  */
++
++  ConfigFilePerm &= 0664;
++  LogFilePerm    &= 0664;
++
++ /*
+   * Open the system log for cupsd if necessary...
+   */
+ 
+@@ -2558,13 +2599,244 @@ parse_protocols(const char *s)		/* I - S
  
  
  /*
 - * 'read_configuration()' - Read a configuration file.
 + * 'parse_variable()' - Parse a variable line.
-+ */
-+
-+static int				/* O - 1 on success, 0 on failure */
+  */
+ 
+ static int				/* O - 1 on success, 0 on failure */
+-read_configuration(cups_file_t *fp)	/* I - File to read from */
 +parse_variable(
 +    const char        *filename,	/* I - Name of configuration file */
 +    int               linenum,		/* I - Line in configuration file */
@@ -2158,17 +2174,16 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
 +
 +/*
 + * 'read_cupsd_conf()' - Read the cupsd.conf configuration file.
-  */
- 
- static int				/* O - 1 on success, 0 on failure */
--read_configuration(cups_file_t *fp)	/* I - File to read from */
++ */
++
++static int				/* O - 1 on success, 0 on failure */
 +read_cupsd_conf(cups_file_t *fp)	/* I - File to read from */
  {
 -  int			i;		/* Looping var */
    int			linenum;	/* Current line number */
    char			line[HTTP_MAX_BUFFER],
  					/* Line from file */
-@@ -2573,12 +2838,10 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2573,12 +2845,10 @@ read_configuration(cups_file_t *fp)	/* I
  			*value,		/* Pointer to value */
  			*valueptr;	/* Pointer into value */
    int			valuelen;	/* Length of value */
@@ -2181,7 +2196,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
  
  
   /*
-@@ -2610,7 +2873,7 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2610,7 +2880,7 @@ read_configuration(cups_file_t *fp)	/* I
  	                incname, strerror(errno));
        else
        {
@@ -2190,7 +2205,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
  	cupsFileClose(incfile);
        }
      }
-@@ -2634,8 +2897,6 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2634,8 +2904,6 @@ read_configuration(cups_file_t *fp)	/* I
        if (linenum == 0)
  	return (0);
      }
@@ -2199,7 +2214,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
      else if (!_cups_strcasecmp(line, "FaxRetryInterval") && value)
      {
        JobRetryInterval = atoi(value);
-@@ -2779,10 +3040,10 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2779,10 +3047,10 @@ read_configuration(cups_file_t *fp)	/* I
  
        BrowseLocalProtocols = protocols;
      }
@@ -2212,7 +2227,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
        */
  
        if (!_cups_strcasecmp(value, "none"))
-@@ -2831,81 +3092,6 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2831,81 +3099,6 @@ read_configuration(cups_file_t *fp)	/* I
        }
      }
  #endif /* HAVE_SSL */
@@ -2294,7 +2309,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
      else if (!_cups_strcasecmp(line, "HostNameLookups") && value)
      {
       /*
-@@ -2984,22 +3170,6 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -2984,22 +3177,6 @@ read_configuration(cups_file_t *fp)	/* I
          cupsdLogMessage(CUPSD_LOG_WARN, "Unknown LogTimeFormat %s on line %d.",
  	                value, linenum);
      }
@@ -2317,7 +2332,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
      else if (!_cups_strcasecmp(line, "ServerTokens") && value)
      {
       /*
-@@ -3125,182 +3295,192 @@ read_configuration(cups_file_t *fp)	/* I
+@@ -3125,182 +3302,193 @@ read_configuration(cups_file_t *fp)	/* I
  			"line %d.", value, linenum);
      }
  #endif /* HAVE_SSL */
@@ -2336,6 +2351,7 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
 +             !_cups_strcasecmp(line, "PageLog") ||
 +             !_cups_strcasecmp(line, "Printcap") ||
 +             !_cups_strcasecmp(line, "PrintcapFormat") ||
++             !_cups_strcasecmp(line, "RemoteRoot") ||
 +             !_cups_strcasecmp(line, "RequestRoot") ||
 +             !_cups_strcasecmp(line, "ServerBin") ||
 +             !_cups_strcasecmp(line, "ServerCertificate") ||
@@ -2669,8 +2685,8 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
  
    return (1);
 diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
---- cups-1.6.1/scheduler/conf.h.str4223	2012-11-28 12:02:12.770981719 +0000
-+++ cups-1.6.1/scheduler/conf.h	2012-11-28 12:02:12.817981895 +0000
+--- cups-1.6.1/scheduler/conf.h.str4223	2012-12-03 11:13:29.774124646 +0000
++++ cups-1.6.1/scheduler/conf.h	2012-12-03 11:13:29.849124917 +0000
 @@ -96,7 +96,9 @@ typedef struct
   */
  
@@ -2683,8 +2699,8 @@ diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
  					/* FQDN for server */
  			*ServerAdmin		VALUE(NULL),
 diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
---- cups-1.6.1/scheduler/main.c.str4223	2012-11-28 12:02:12.811981873 +0000
-+++ cups-1.6.1/scheduler/main.c	2012-11-28 12:02:18.164998519 +0000
+--- cups-1.6.1/scheduler/main.c.str4223	2012-12-03 11:13:29.842124892 +0000
++++ cups-1.6.1/scheduler/main.c	2012-12-03 11:15:39.658494980 +0000
 @@ -216,7 +216,6 @@ main(int  argc,				/* I - Number of comm
  
                  char *current;		/* Current directory */
@@ -2693,43 +2709,7 @@ diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
  	       /*
  	        * Allocate a buffer for the current working directory to
  		* reduce run-time stack usage; this approximates the
-@@ -242,6 +241,35 @@ main(int  argc,				/* I - Number of comm
- 		cupsdSetStringf(&ConfigurationFile, "%s/%s", current, argv[i]);
- 		free(current);
-               }
-+
-+	      if (!CupsFilesFile)
-+	      {
-+	        char	*filename,	/* Copy of cupsd.conf filename */
-+			*slash;		/* Final slash in cupsd.conf filename */
-+		size_t	len;		/* Size of buffer */
-+
-+		len = strlen(ConfigurationFile) + 15;
-+		if ((filename = malloc(len)) == NULL)
-+		{
-+		  _cupsLangPrintf(stderr,
-+		                  _("cupsd: Unable to get path to "
-+		                    "cups-files.conf file."));
-+                  return (1);
-+		}
-+
-+		strlcpy(filename, ConfigurationFile, len);
-+		if ((slash = strrchr(filename, '/')) == NULL)
-+		{
-+		  _cupsLangPrintf(stderr,
-+		                  _("cupsd: Unable to get path to "
-+		                    "cups-files.conf file."));
-+                  return (1);
-+		}
-+
-+		strlcpy(slash, "/cups-files.conf", len - (slash - filename));
-+		cupsdSetString(&CupsFilesFile, filename);
-+		free(filename);
-+	      }
- 	      break;
- 
-           case 'f' : /* Run in foreground... */
-@@ -280,6 +308,29 @@ main(int  argc,				/* I - Number of comm
+@@ -280,6 +279,29 @@ main(int  argc,				/* I - Number of comm
  	      UseProfiles = 0;
  	      break;
  
@@ -2759,19 +2739,45 @@ diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
  #ifdef __APPLE__
            case 'S' : /* Disable system management functions */
                fputs("cupsd: -S (disable system management) for internal "
-@@ -309,6 +360,9 @@ main(int  argc,				/* I - Number of comm
+@@ -309,6 +331,35 @@ main(int  argc,				/* I - Number of comm
    if (!ConfigurationFile)
      cupsdSetString(&ConfigurationFile, CUPS_SERVERROOT "/cupsd.conf");
  
 +  if (!CupsFilesFile)
-+    cupsdSetString(&CupsFilesFile, CUPS_SERVERROOT "/cups-files.conf");
++  {
++    char	*filename,	/* Copy of cupsd.conf filename */
++                *slash;		/* Final slash in cupsd.conf filename */
++    size_t	len;		/* Size of buffer */
++
++    len = strlen(ConfigurationFile) + 15;
++    if ((filename = malloc(len)) == NULL)
++    {
++      _cupsLangPrintf(stderr,
++		      _("cupsd: Unable to get path to "
++			"cups-files.conf file."));
++      return (1);
++    }
++
++    strlcpy(filename, ConfigurationFile, len);
++    if ((slash = strrchr(filename, '/')) == NULL)
++    {
++      _cupsLangPrintf(stderr,
++		      _("cupsd: Unable to get path to "
++			"cups-files.conf file."));
++      return (1);
++    }
++
++    strlcpy(slash, "/cups-files.conf", len - (slash - filename));
++    cupsdSetString(&CupsFilesFile, filename);
++    free(filename);
++  }
 +
   /*
    * If the user hasn't specified "-f", run in the background...
    */
 diff -up cups-1.6.1/test/run-stp-tests.sh.str4223 cups-1.6.1/test/run-stp-tests.sh
 --- cups-1.6.1/test/run-stp-tests.sh.str4223	2012-05-21 16:35:25.000000000 +0100
-+++ cups-1.6.1/test/run-stp-tests.sh	2012-11-28 12:02:12.818981899 +0000
++++ cups-1.6.1/test/run-stp-tests.sh	2012-12-03 11:13:29.850124920 +0000
 @@ -385,26 +385,11 @@ fi
  cat >/tmp/cups-$user/cupsd.conf <<EOF
  StrictConformance Yes
