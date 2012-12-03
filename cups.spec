@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -658,11 +658,12 @@ rm -f %{cups_serverbin}/backend/smb
 %{cups_serverbin}/filter
 %{cups_serverbin}/monitor
 %{cups_serverbin}/driver
-%{_mandir}/man1/cancel*
-%{_mandir}/man1/cupstest*
-%{_mandir}/man1/lp*
-%{_mandir}/man1/ppd*
-%{_mandir}/man[578]/*
+%{_mandir}/man[1578]/*
+# devel subpackage
+%exclude %{_mandir}/man1/cups-config.1.gz
+# ipptool subpackage
+%exclude %{_mandir}/man1/ipptool.1.gz
+%exclude %{_mandir}/man5/ipptoolfile.5.gz
 %{_sbindir}/*
 %dir %{_datadir}/cups
 %dir %{_datadir}/cups/banners
@@ -708,7 +709,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cups-config
 %{_libdir}/*.so
 %{_includedir}/cups
-%{_mandir}/man1/cups-config.1*
+%{_mandir}/man1/cups-config.1.gz
 %{_sysconfdir}/rpm/macros.cups
 
 %files lpd
@@ -726,8 +727,12 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ipptool.1.gz
+%{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Dec  3 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-19
+- move ipptoolfile(5) to ipptool subpackage
+
 * Mon Dec  3 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-18
 - Applied additional upstream patch for CVE-2012-5519 so that the
   RemoteRoot keyword is recognised in the correct configuration file.
