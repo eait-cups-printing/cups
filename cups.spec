@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -728,6 +728,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 
 %changelog
+* Mon Dec  3 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-17
+- Fixed patch for CVE-2012-5519 so that LogFilePerm and LPDConfigFile
+  are recognised keywords for cups-files.conf (bug #882379).
+
 * Wed Nov 28 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-16
 - Fixed paths in config migration %%post script.
 - Set default cups-files.conf filename.
