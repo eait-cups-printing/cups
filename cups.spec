@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 19%{?dist}
+Release: 20%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -483,42 +483,6 @@ php --no-php-ini \
 
 
 %post
-# Deal with config migration due to CVE-2012-5519 (STR #4223)
-IN=%{_sysconfdir}/cups/cupsd.conf
-OUT=%{_sysconfdir}/cups/cups-files.conf
-copiedany=no
-for keyword in AccessLog CacheDir ConfigFilePerm	\
-    DataDir DocumentRoot ErrorLog FatalErrors		\
-    FileDevice FontPath Group LogFilePerm		\
-    LPDConfigFile PageLog Printcap PrintcapFormat	\
-    RemoteRoot RequestRoot ServerBin ServerCertificate	\
-    ServerKey ServerRoot SMBConfigFile StateDir		\
-    SystemGroup SystemGroupAuthKey TempDir User; do
-    if ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
-    copy=yes
-    if /bin/grep -iq ^$keyword "$OUT"; then
-	if [ "`/bin/grep -i ^$keyword "$IN"`" ==	\
-	     "`/bin/grep -i ^$keyword "$OUT"`" ]; then
-	    copy=no
-	else
-	    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT"
-	fi
-    fi
-    if [ "$copy" == "yes" ]; then
-	if [ "$copiedany" == "no" ]; then
-	    cat >> "$OUT" <<EOF
-
-# Settings automatically moved from cupsd.conf by RPM package:
-EOF
-	fi
-
-	/bin/grep -i ^$keyword "$IN" >> "$OUT"
-	copiedany=yes
-    fi
-
-    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN"
-done
-
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
 # Remove old-style certs directory; new-style is /var/run
@@ -541,6 +505,44 @@ done
 	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz
 %endif
 rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
+
+# Deal with config migration due to CVE-2012-5519 (STR #4223)
+IN=%{_sysconfdir}/cups/cupsd.conf
+OUT=%{_sysconfdir}/cups/cups-files.conf
+copiedany=no
+for keyword in AccessLog CacheDir ConfigFilePerm	\
+    DataDir DocumentRoot ErrorLog FatalErrors		\
+    FileDevice FontPath Group LogFilePerm		\
+    LPDConfigFile PageLog Printcap PrintcapFormat	\
+    RemoteRoot RequestRoot ServerBin ServerCertificate	\
+    ServerKey ServerRoot SMBConfigFile StateDir		\
+    SystemGroup SystemGroupAuthKey TempDir User; do
+    if ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
+    copy=yes
+    if /bin/grep -iq ^$keyword "$OUT"; then
+	if [ "`/bin/grep -i ^$keyword "$IN"`" ==	\
+	     "`/bin/grep -i ^$keyword "$OUT"`" ]; then
+	    copy=no
+	else
+	    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT" || :
+	fi
+    fi
+    if [ "$copy" == "yes" ]; then
+	if [ "$copiedany" == "no" ]; then
+	    ( cat >> "$OUT" <<EOF
+
+# Settings automatically moved from cupsd.conf by RPM package:
+EOF
+	    ) || :
+	fi
+
+	( /bin/grep -i ^$keyword "$IN" >> "$OUT" ) || :
+	copiedany=yes
+    fi
+
+    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN" || :
+done
+
 exit 0
 
 %post libs -p /sbin/ldconfig
@@ -730,6 +732,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Dec  4 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-20
+- Small error handling improvements in the configuration migration
+  script.
+
 * Mon Dec  3 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-19
 - move ipptoolfile(5) to ipptool subpackage
 
