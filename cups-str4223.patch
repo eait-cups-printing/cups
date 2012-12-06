@@ -1,6 +1,6 @@
 diff -up cups-1.5.4/conf/cupsd.conf.in.str4223 cups-1.5.4/conf/cupsd.conf.in
 --- cups-1.5.4/conf/cupsd.conf.in.str4223	2010-12-09 21:24:51.000000000 +0000
-+++ cups-1.5.4/conf/cupsd.conf.in	2012-12-03 11:42:12.451165079 +0000
++++ cups-1.5.4/conf/cupsd.conf.in	2012-12-06 12:52:04.943832641 +0000
 @@ -9,10 +9,6 @@
  # for troubleshooting...
  LogLevel @CUPS_LOG_LEVEL@
@@ -13,8 +13,8 @@ diff -up cups-1.5.4/conf/cupsd.conf.in.str4223 cups-1.5.4/conf/cupsd.conf.in
  Listen localhost:@DEFAULT_IPP_PORT@
  @CUPS_LISTEN_DOMAINSOCKET@
 diff -up cups-1.5.4/conf/cups-files.conf.in.str4223 cups-1.5.4/conf/cups-files.conf.in
---- cups-1.5.4/conf/cups-files.conf.in.str4223	2012-12-03 11:42:12.451165079 +0000
-+++ cups-1.5.4/conf/cups-files.conf.in	2012-12-03 11:42:38.553234214 +0000
+--- cups-1.5.4/conf/cups-files.conf.in.str4223	2012-12-06 12:52:04.943832641 +0000
++++ cups-1.5.4/conf/cups-files.conf.in	2012-12-06 12:52:04.943832641 +0000
 @@ -0,0 +1,98 @@
 +#
 +# "$Id$"
@@ -116,7 +116,7 @@ diff -up cups-1.5.4/conf/cups-files.conf.in.str4223 cups-1.5.4/conf/cups-files.c
 +#
 diff -up cups-1.5.4/config-scripts/cups-defaults.m4.str4223 cups-1.5.4/config-scripts/cups-defaults.m4
 --- cups-1.5.4/config-scripts/cups-defaults.m4.str4223	2011-05-06 23:53:53.000000000 +0100
-+++ cups-1.5.4/config-scripts/cups-defaults.m4	2012-12-03 11:42:12.452165082 +0000
++++ cups-1.5.4/config-scripts/cups-defaults.m4	2012-12-06 12:52:04.944832644 +0000
 @@ -367,6 +367,7 @@ else
  fi
  
@@ -134,8 +134,8 @@ diff -up cups-1.5.4/config-scripts/cups-defaults.m4.str4223 cups-1.5.4/config-sc
  dnl Default MaxCopies value...
  AC_ARG_WITH(max-copies, [  --with-max-copies       set default max copies value, default=9999 ],
 diff -up cups-1.5.4/config-scripts/cups-ssl.m4.str4223 cups-1.5.4/config-scripts/cups-ssl.m4
---- cups-1.5.4/config-scripts/cups-ssl.m4.str4223	2012-12-03 11:42:12.302164578 +0000
-+++ cups-1.5.4/config-scripts/cups-ssl.m4	2012-12-03 11:42:12.452165082 +0000
+--- cups-1.5.4/config-scripts/cups-ssl.m4.str4223	2012-12-06 12:52:04.863832402 +0000
++++ cups-1.5.4/config-scripts/cups-ssl.m4	2012-12-06 12:52:04.944832644 +0000
 @@ -27,6 +27,8 @@ AC_ARG_WITH(openssl-includes, [  --with-
  SSLFLAGS=""
  SSLLIBS=""
@@ -183,8 +183,8 @@ diff -up cups-1.5.4/config-scripts/cups-ssl.m4.str4223 cups-1.5.4/config-scripts
  AC_SUBST(SSLFLAGS)
  AC_SUBST(SSLLIBS)
 diff -up cups-1.5.4/configure.in.str4223 cups-1.5.4/configure.in
---- cups-1.5.4/configure.in.str4223	2012-12-03 11:42:12.426164994 +0000
-+++ cups-1.5.4/configure.in	2012-12-03 11:42:12.452165082 +0000
+--- cups-1.5.4/configure.in.str4223	2012-12-06 12:52:04.922832578 +0000
++++ cups-1.5.4/configure.in	2012-12-06 12:52:04.944832644 +0000
 @@ -66,6 +66,7 @@ AC_SUBST(INSTALL_LANGUAGES)
  AC_SUBST(UNINSTALL_LANGUAGES)
  
@@ -202,8 +202,8 @@ diff -up cups-1.5.4/configure.in.str4223 cups-1.5.4/configure.in
  	  man/cupsaddsmb.man
  	  man/cupsd.conf.man
 diff -up cups-1.5.4/conf/Makefile.str4223 cups-1.5.4/conf/Makefile
---- cups-1.5.4/conf/Makefile.str4223	2012-12-03 11:42:12.281164507 +0000
-+++ cups-1.5.4/conf/Makefile	2012-12-03 11:42:12.453165085 +0000
+--- cups-1.5.4/conf/Makefile.str4223	2012-12-06 12:52:04.852832369 +0000
++++ cups-1.5.4/conf/Makefile	2012-12-06 12:52:04.944832644 +0000
 @@ -19,7 +19,7 @@ include ../Makedefs
  # Config files...
  #
@@ -215,7 +215,7 @@ diff -up cups-1.5.4/conf/Makefile.str4223 cups-1.5.4/conf/Makefile
  
 diff -up cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.5.4/doc/help/ref-cupsd-conf.html.in
 --- cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223	2012-01-30 21:40:21.000000000 +0000
-+++ cups-1.5.4/doc/help/ref-cupsd-conf.html.in	2012-12-03 11:42:12.453165085 +0000
++++ cups-1.5.4/doc/help/ref-cupsd-conf.html.in	2012-12-06 12:52:04.945832647 +0000
 @@ -191,82 +191,6 @@ HREF="#Location"><CODE>Location</CODE></
  HREF="#Limit"><CODE>Limit</CODE></A> section.</P>
  
@@ -584,8 +584,8 @@ diff -up cups-1.5.4/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.5.4/doc/help/
  
  <H3>Examples</H3>
 diff -up cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.5.4/doc/help/ref-cups-files-conf.html.in
---- cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-03 11:42:12.454165088 +0000
-+++ cups-1.5.4/doc/help/ref-cups-files-conf.html.in	2012-12-03 11:42:12.454165088 +0000
+--- cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-06 12:52:04.945832647 +0000
++++ cups-1.5.4/doc/help/ref-cups-files-conf.html.in	2012-12-06 12:52:04.945832647 +0000
 @@ -0,0 +1,531 @@
 +<HTML>
 +<!-- SECTION: References -->
@@ -1120,7 +1120,7 @@ diff -up cups-1.5.4/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.5.4/doc/
 +</HTML>
 diff -up cups-1.5.4/doc/Makefile.str4223 cups-1.5.4/doc/Makefile
 --- cups-1.5.4/doc/Makefile.str4223	2011-01-17 05:40:28.000000000 +0000
-+++ cups-1.5.4/doc/Makefile	2012-12-03 11:42:12.454165088 +0000
++++ cups-1.5.4/doc/Makefile	2012-12-06 12:52:04.945832647 +0000
 @@ -3,7 +3,7 @@
  #
  #   Documentation makefile for CUPS.
@@ -1130,9 +1130,487 @@ diff -up cups-1.5.4/doc/Makefile.str4223 cups-1.5.4/doc/Makefile
  #   Copyright 1997-2007 by Easy Software Products.
  #
  #   These coded instructions, statements, and computer programs are the
+diff -up cups-1.5.4/locale/cups_da.po.str4223 cups-1.5.4/locale/cups_da.po
+--- cups-1.5.4/locale/cups_da.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_da.po	2012-12-06 12:52:23.562877028 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Arkivmappe - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7066,10 +7066,10 @@ msgstr "variable-bindings bruger uendeli
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Arkivets enheds-URI'er er blevet slået fra! Du slår det til ved at se i "
+-#~ "FileDevice-direktivet i \"%s/cupsd.conf\"."
++#~ "FileDevice-direktivet i \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Fixertemperatur høj!"
+diff -up cups-1.5.4/locale/cups_de.po.str4223 cups-1.5.4/locale/cups_de.po
+--- cups-1.5.4/locale/cups_de.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_de.po	2012-12-06 12:52:23.576877070 +0000
+@@ -2760,7 +2760,7 @@ msgstr "Dateiordner – 9/16 x 3 7/16 Zo
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7104,10 +7104,10 @@ msgstr "variable-bindings hat unbestimmt
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Dateigeräte-URIs wurden deaktiviert! Infos zum Aktivieren finden Sie im "
+-#~ "FileDevice-Verzeichnis unter „%s/cupsd.conf“."
++#~ "FileDevice-Verzeichnis unter „%s/cups-files.conf“."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Die Temperatur des Fixierers ist zu hoch!"
+diff -up cups-1.5.4/locale/cups_es.po.str4223 cups-1.5.4/locale/cups_es.po
+--- cups-1.5.4/locale/cups_es.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_es.po	2012-12-06 12:52:23.585877097 +0000
+@@ -2991,10 +2991,10 @@ msgstr "Carpeta de archivosr - 9/16 x 3
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ "Los URIs del dispositivo de archivo han sido deshabilitados. Para "
+-"habilitarlos, vea la directiva FileDevice en \"%s/cupsd.conf\"."
++"habilitarlos, vea la directiva FileDevice en \"%s/cups-files.conf\"."
+ 
+ #, c-format
+ msgid "Finished page %d."
+diff -up cups-1.5.4/locale/cups_eu.po.str4223 cups-1.5.4/locale/cups_eu.po
+--- cups-1.5.4/locale/cups_eu.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_eu.po	2012-12-06 12:52:23.599877139 +0000
+@@ -2793,7 +2793,7 @@ msgstr "Fitxategien karpeta - 9/16 x 3 7
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7181,10 +7181,10 @@ msgstr "'variable-bindings'-ek definitu
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Fitxategiaren gailuaren URIak desgaitu egin dira. Gaitzeko, ikus "
+-#~ "FileDevice direktiba \"%s/cupsd.conf\" fitxategian."
++#~ "FileDevice direktiba \"%s/cups-files.conf\" fitxategian."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Fuser-aren tenperatura altua."
+diff -up cups-1.5.4/locale/cups_fi.po.str4223 cups-1.5.4/locale/cups_fi.po
+--- cups-1.5.4/locale/cups_fi.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_fi.po	2012-12-06 12:52:23.613877181 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Arkistokansio - 9/16 x 3 7/16 \"
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7070,10 +7070,10 @@ msgstr "variable-bindings käyttää mä
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Tiedostolaitteiden osoitteet on poistettu käytöstä! Voit ottaa ne "
+-#~ "käyttöön ”%s/cupsd.conf”-tiedoston FileDevice-säännöllä."
++#~ "käyttöön ”%s/cups-files.conf”-tiedoston FileDevice-säännöllä."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Lämpövastuksen lämpötila on korkea!"
+diff -up cups-1.5.4/locale/cups_fr.po.str4223 cups-1.5.4/locale/cups_fr.po
+--- cups-1.5.4/locale/cups_fr.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_fr.po	2012-12-06 12:52:23.627877223 +0000
+@@ -2760,7 +2760,7 @@ msgstr "Dossier de fichier - 9/16 x 3 7/
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7117,10 +7117,10 @@ msgstr "variable-bindings s’avère êt
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Les URI des périphériques de fichier ont été désactivés. Pour l’activer, "
+-#~ "reportez-vous à la directive FileDevice dans « %s/cupsd.conf »."
++#~ "reportez-vous à la directive FileDevice dans « %s/cups-files.conf »."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Température de l’unité-fusible élevée."
+diff -up cups-1.5.4/locale/cups_hu.po.str4223 cups-1.5.4/locale/cups_hu.po
+--- cups-1.5.4/locale/cups_hu.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_hu.po	2012-12-06 12:52:23.637877253 +0000
+@@ -2963,10 +2963,10 @@ msgstr "Fájlmappa - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ "A fájl eszközök URI-címei le lettek tiltva. Az engedélyezéshez lásd a "
+-"FileDevice direktívát a(z) „%s/cupsd.conf” fájlban."
++"FileDevice direktívát a(z) „%s/cups-files.conf” fájlban."
+ 
+ #, c-format
+ msgid "Finished page %d."
+diff -up cups-1.5.4/locale/cups_id.po.str4223 cups-1.5.4/locale/cups_id.po
+--- cups-1.5.4/locale/cups_id.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_id.po	2012-12-06 12:52:23.651877295 +0000
+@@ -2791,7 +2791,7 @@ msgstr "Map - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7011,10 +7011,10 @@ msgstr "variable-bindings memiliki panja
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Berkas URI perangkat telah dinonaktifkan! Untuk mengaktifkannya, lihatlah "
+-#~ "petunjuk FileDevice dalam \"%s/cupsd.conf\"."
++#~ "petunjuk FileDevice dalam \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Suhu fusi tinggi!"
+diff -up cups-1.5.4/locale/cups_it.po.str4223 cups-1.5.4/locale/cups_it.po
+--- cups-1.5.4/locale/cups_it.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_it.po	2012-12-06 12:52:23.665877337 +0000
+@@ -2761,7 +2761,7 @@ msgstr "Cartella documento: 9/16 x 3 7/1
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7160,10 +7160,10 @@ msgstr "variable-bindings utilizza una l
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Gli URI del dispositivo documento sono stati disabilitati! Per "
+-#~ "abilitarli, consulta l'istruzione del FileDevice in \"%s/cupsd.conf\"."
++#~ "abilitarli, consulta l'istruzione del FileDevice in \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Temperatura del fusibile elevata!"
+diff -up cups-1.5.4/locale/cups_ja.po.str4223 cups-1.5.4/locale/cups_ja.po
+--- cups-1.5.4/locale/cups_ja.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_ja.po	2012-12-06 12:52:23.679877379 +0000
+@@ -2788,7 +2788,7 @@ msgstr "ファイルフォルダー - 9/
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7155,9 +7155,9 @@ msgstr "variable-bindings の長さが�
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+-#~ "ファイルデバイス URI は無効になっています! 有効にするには、\"%s/cupsd.conf"
++#~ "ファイルデバイス URI は無効になっています! 有効にするには、\"%s/cups-files.conf"
+ #~ "\" の FileDevice ディレクティブを参照してください。"
+ 
+ #~ msgid "Fuser temperature high!"
+diff -up cups-1.5.4/locale/cups_ko.po.str4223 cups-1.5.4/locale/cups_ko.po
+--- cups-1.5.4/locale/cups_ko.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_ko.po	2012-12-06 12:52:23.692877418 +0000
+@@ -2759,7 +2759,7 @@ msgstr "파일 폴더 - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7043,9 +7043,9 @@ msgstr "variable-bindings의 길이가 �
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+-#~ "파일 장비 URI가 비활성화되었습니다! 활성화하려면, \"%s/cupsd.conf\"에 있"
++#~ "파일 장비 URI가 비활성화되었습니다! 활성화하려면, \"%s/cups-files.conf\"에 있"
+ #~ "는 FileDevice 지시문을 보십시오."
+ 
+ #~ msgid "Fuser temperature high!"
+diff -up cups-1.5.4/locale/cups_nl.po.str4223 cups-1.5.4/locale/cups_nl.po
+--- cups-1.5.4/locale/cups_nl.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_nl.po	2012-12-06 12:52:23.706877460 +0000
+@@ -2760,7 +2760,7 @@ msgstr "Dossiermap - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7096,10 +7096,10 @@ msgstr "onbepaalde lengte gebruikt voor
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "File device-URI&aops;s zijn uitgeschakeld! Raadpleeg als u de URI&aops;s "
+-#~ "weer wilt inschakelen de richtlijn voor FileDevice in \"%s/cupsd.conf\"."
++#~ "weer wilt inschakelen de richtlijn voor FileDevice in \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Fusertemperatuur te hoog!"
+diff -up cups-1.5.4/locale/cups_no.po.str4223 cups-1.5.4/locale/cups_no.po
+--- cups-1.5.4/locale/cups_no.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_no.po	2012-12-06 12:52:23.719877498 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Filmappe – 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7044,10 +7044,10 @@ msgstr "variable-bindings bruker uendeli
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Enhets-URIer for filer er deaktivert! Hvis du vil aktivere funksjonen, "
+-#~ "leser du FileDevice-direktivet i «%s/cupsd.conf»."
++#~ "leser du FileDevice-direktivet i «%s/cups-files.conf»."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Fikseringsenhetens temperatur er høy!"
+diff -up cups-1.5.4/locale/cups_pl.po.str4223 cups-1.5.4/locale/cups_pl.po
+--- cups-1.5.4/locale/cups_pl.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_pl.po	2012-12-06 12:52:23.733877540 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Folder - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7080,10 +7080,10 @@ msgstr "variable-bindings używa niesko�
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "URI pliku urządzenia zostało wyłączone! Aby włączyć, zobacz dyrektywę "
+-#~ "FileDevice w \"%s/cupsd.conf\"."
++#~ "FileDevice w \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Wysoka temperatura wygrzewacza!"
+diff -up cups-1.5.4/locale/cups_pt_BR.po.str4223 cups-1.5.4/locale/cups_pt_BR.po
+--- cups-1.5.4/locale/cups_pt_BR.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_pt_BR.po	2012-12-06 12:52:23.747877582 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Pasta de Arquivo - 9/16 x 3 7/16
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7085,10 +7085,10 @@ msgstr "variable-bindings usa compriment
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "URIs de dispositivo de arquivo foram desativados! Para ativá-los, "
+-#~ "consulte a diretiva FileDevice em \"%s/cupsd.conf\"."
++#~ "consulte a diretiva FileDevice em \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Temperatura do fuser alta!"
+diff -up cups-1.5.4/locale/cups_pt.po.str4223 cups-1.5.4/locale/cups_pt.po
+--- cups-1.5.4/locale/cups_pt.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_pt.po	2012-12-06 12:52:23.760877621 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Pasta de ficheiros - 9/16 x 3 7/
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7081,10 +7081,10 @@ msgstr "variable-bindings com compriment
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "URIs do periférico do ficheiro foram desactivados! Para activar, consulte "
+-#~ "a directiva FileDevice em \"%s/cupsd.conf\"."
++#~ "a directiva FileDevice em \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Temperatura do fusor elevada!"
+diff -up cups-1.5.4/locale/cups_ru.po.str4223 cups-1.5.4/locale/cups_ru.po
+--- cups-1.5.4/locale/cups_ru.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_ru.po	2012-12-06 12:52:23.774877663 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Каталог файла - 9 16
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7060,10 +7060,10 @@ msgstr "Для variable-bindings дли�
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "URI-адреса файлового устройства отключены! Чтобы включить их, используйте "
+-#~ "директиву FileDevice в «%s/cupsd.conf»."
++#~ "директиву FileDevice в «%s/cups-files.conf»."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Высокая температура термофиксатора!"
+diff -up cups-1.5.4/locale/cups_sv.po.str4223 cups-1.5.4/locale/cups_sv.po
+--- cups-1.5.4/locale/cups_sv.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_sv.po	2012-12-06 12:52:23.787877702 +0000
+@@ -2759,7 +2759,7 @@ msgstr "Filmapp - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7056,10 +7056,10 @@ msgstr "variabelbindningar använder obe
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+ #~ "Filenhets URI:er har blivit avaktiverade! För att aktivera, se direktivet "
+-#~ "FileDevice i \"%s/cupsd.conf\"."
++#~ "FileDevice i \"%s/cups-files.conf\"."
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "Hög fixeringstemperatur!"
+diff -up cups-1.5.4/locale/cups_zh.po.str4223 cups-1.5.4/locale/cups_zh.po
+--- cups-1.5.4/locale/cups_zh.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_zh.po	2012-12-06 12:52:23.801877744 +0000
+@@ -2758,7 +2758,7 @@ msgstr "文件夹 - 9/16 x 3 7/16 英寸
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7010,9 +7010,9 @@ msgstr "variable-bindings 使用不定�
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+-#~ "文件设备 URI 已被停用！要启用，请参阅“%s/cupsd.conf”中的 FileDevice 指令。"
++#~ "文件设备 URI 已被停用！要启用，请参阅“%s/cups-files.conf”中的 FileDevice 指令。"
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "加热鼓温度过高！"
+diff -up cups-1.5.4/locale/cups_zh_TW.po.str4223 cups-1.5.4/locale/cups_zh_TW.po
+--- cups-1.5.4/locale/cups_zh_TW.po.str4223	2012-03-07 21:38:28.000000000 +0000
++++ cups-1.5.4/locale/cups_zh_TW.po	2012-12-06 12:52:23.814877783 +0000
+@@ -2758,7 +2758,7 @@ msgstr "檔案夾 - 9/16 x 3 7/16\""
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ 
+ #, c-format
+@@ -7012,9 +7012,9 @@ msgstr "variable-bindings 使用的長�
+ 
+ #~ msgid ""
+ #~ "File device URIs have been disabled! To enable, see the FileDevice "
+-#~ "directive in \"%s/cupsd.conf\"."
++#~ "directive in \"%s/cups-files.conf\"."
+ #~ msgstr ""
+-#~ "已停用檔案設備 URI！若要啟用，請參閱“%s/cupsd.conf”中的 FileDevice 指示。"
++#~ "已停用檔案設備 URI！若要啟用，請參閱“%s/cups-files.conf”中的 FileDevice 指示。"
+ 
+ #~ msgid "Fuser temperature high!"
+ #~ msgstr "加熱器溫度高！"
 diff -up cups-1.5.4/man/cupsd.conf.man.in.str4223 cups-1.5.4/man/cupsd.conf.man.in
 --- cups-1.5.4/man/cupsd.conf.man.in.str4223	2011-05-18 22:33:35.000000000 +0100
-+++ cups-1.5.4/man/cupsd.conf.man.in	2012-12-03 11:42:12.454165088 +0000
++++ cups-1.5.4/man/cupsd.conf.man.in	2012-12-06 12:52:04.946832650 +0000
 @@ -12,12 +12,15 @@
  .\"   which should have been included with this file.  If this file is
  .\"   file is missing or damaged, see the license at "http://www.cups.org/".
@@ -1397,8 +1875,8 @@ diff -up cups-1.5.4/man/cupsd.conf.man.in.str4223 cups-1.5.4/man/cupsd.conf.man.
  .br
  http://localhost:631/help
 diff -up cups-1.5.4/man/cups-files.conf.man.in.str4223 cups-1.5.4/man/cups-files.conf.man.in
---- cups-1.5.4/man/cups-files.conf.man.in.str4223	2012-12-03 11:42:12.454165088 +0000
-+++ cups-1.5.4/man/cups-files.conf.man.in	2012-12-03 11:42:12.454165088 +0000
+--- cups-1.5.4/man/cups-files.conf.man.in.str4223	2012-12-06 12:52:04.946832650 +0000
++++ cups-1.5.4/man/cups-files.conf.man.in	2012-12-06 12:52:04.946832650 +0000
 @@ -0,0 +1,146 @@
 +.\"
 +.\" "$Id$"
@@ -1548,7 +2026,7 @@ diff -up cups-1.5.4/man/cups-files.conf.man.in.str4223 cups-1.5.4/man/cups-files
 +.\"
 diff -up cups-1.5.4/man/Makefile.str4223 cups-1.5.4/man/Makefile
 --- cups-1.5.4/man/Makefile.str4223	2010-06-22 22:21:37.000000000 +0100
-+++ cups-1.5.4/man/Makefile	2012-12-03 11:42:12.454165088 +0000
++++ cups-1.5.4/man/Makefile	2012-12-06 12:52:04.946832650 +0000
 @@ -39,6 +39,7 @@ MAN1	=	cancel.$(MAN1EXT) \
  		ppdpo.$(MAN1EXT)
  MAN5	=	classes.conf.$(MAN5EXT) \
@@ -1559,7 +2037,7 @@ diff -up cups-1.5.4/man/Makefile.str4223 cups-1.5.4/man/Makefile
  		ipptoolfile.$(MAN5EXT) \
 diff -up cups-1.5.4/packaging/cups.list.in.str4223 cups-1.5.4/packaging/cups.list.in
 --- cups-1.5.4/packaging/cups.list.in.str4223	2012-04-24 00:49:19.000000000 +0100
-+++ cups-1.5.4/packaging/cups.list.in	2012-12-03 11:42:12.455165091 +0000
++++ cups-1.5.4/packaging/cups.list.in	2012-12-06 12:52:04.946832650 +0000
 @@ -588,6 +588,7 @@ d 0755 root $CUPS_GROUP $SERVERROOT/inte
  d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
  d 0700 root $CUPS_GROUP $SERVERROOT/ssl -
@@ -1570,7 +2048,7 @@ diff -up cups-1.5.4/packaging/cups.list.in.str4223 cups-1.5.4/packaging/cups.lis
  %if PAMDIR
 diff -up cups-1.5.4/packaging/cups.spec.in.str4223 cups-1.5.4/packaging/cups.spec.in
 --- cups-1.5.4/packaging/cups.spec.in.str4223	2012-04-23 18:46:53.000000000 +0100
-+++ cups-1.5.4/packaging/cups.spec.in	2012-12-03 11:42:12.455165091 +0000
++++ cups-1.5.4/packaging/cups.spec.in	2012-12-06 12:52:04.947832653 +0000
 @@ -152,6 +152,7 @@ rm -rf $RPM_BUILD_ROOT
  %defattr(-,root,root)
  %dir /etc/cups
@@ -1580,8 +2058,8 @@ diff -up cups-1.5.4/packaging/cups.spec.in.str4223 cups-1.5.4/packaging/cups.spe
  %dir /etc/cups/interfaces
  %dir /etc/cups/ppd
 diff -up cups-1.5.4/scheduler/client.c.str4223 cups-1.5.4/scheduler/client.c
---- cups-1.5.4/scheduler/client.c.str4223	2012-12-03 11:42:12.408164934 +0000
-+++ cups-1.5.4/scheduler/client.c	2012-12-03 11:42:12.456165095 +0000
+--- cups-1.5.4/scheduler/client.c.str4223	2012-12-06 12:52:04.911832546 +0000
++++ cups-1.5.4/scheduler/client.c	2012-12-06 12:52:04.948832656 +0000
 @@ -35,7 +35,7 @@
   *   data_ready()            - Check whether data is available from a client.
   *   encrypt_client()        - Enable encryption for the client...
@@ -1681,8 +2159,8 @@ diff -up cups-1.5.4/scheduler/client.c.str4223 cups-1.5.4/scheduler/client.c
  
   /*
 diff -up cups-1.5.4/scheduler/conf.c.str4223 cups-1.5.4/scheduler/conf.c
---- cups-1.5.4/scheduler/conf.c.str4223	2012-12-03 11:42:12.409164937 +0000
-+++ cups-1.5.4/scheduler/conf.c	2012-12-03 11:43:54.795434434 +0000
+--- cups-1.5.4/scheduler/conf.c.str4223	2012-12-06 12:52:04.912832549 +0000
++++ cups-1.5.4/scheduler/conf.c	2012-12-06 12:52:04.949832659 +0000
 @@ -27,7 +27,8 @@
   *   parse_fatal_errors()     - Parse FatalErrors values in a string.
   *   parse_groups()           - Parse system group names in a string.
@@ -2487,8 +2965,8 @@ diff -up cups-1.5.4/scheduler/conf.c.str4223 cups-1.5.4/scheduler/conf.c
  
    return (1);
 diff -up cups-1.5.4/scheduler/conf.h.str4223 cups-1.5.4/scheduler/conf.h
---- cups-1.5.4/scheduler/conf.h.str4223	2012-12-03 11:42:12.291164541 +0000
-+++ cups-1.5.4/scheduler/conf.h	2012-12-03 11:42:12.457165099 +0000
+--- cups-1.5.4/scheduler/conf.h.str4223	2012-12-06 12:52:04.859832390 +0000
++++ cups-1.5.4/scheduler/conf.h	2012-12-06 12:52:04.949832659 +0000
 @@ -96,7 +96,9 @@ typedef struct
   */
  
@@ -2500,9 +2978,21 @@ diff -up cups-1.5.4/scheduler/conf.h.str4223 cups-1.5.4/scheduler/conf.h
  			*ServerName		VALUE(NULL),
  					/* FQDN for server */
  			*ServerAdmin		VALUE(NULL),
+diff -up cups-1.5.4/scheduler/ipp.c.str4223 cups-1.5.4/scheduler/ipp.c
+--- cups-1.5.4/scheduler/ipp.c.str4223	2012-12-06 12:52:04.931832605 +0000
++++ cups-1.5.4/scheduler/ipp.c	2012-12-06 12:52:04.951832665 +0000
+@@ -2568,7 +2568,7 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 	send_ipp_status(con, IPP_NOT_POSSIBLE,
+ 	                _("File device URIs have been disabled. "
+ 	                  "To enable, see the FileDevice directive in "
+-			  "\"%s/cupsd.conf\"."),
++			  "\"%s/cups-files.conf\"."),
+ 			ServerRoot);
+ 	return;
+       }
 diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
---- cups-1.5.4/scheduler/main.c.str4223	2012-12-03 11:42:12.428165001 +0000
-+++ cups-1.5.4/scheduler/main.c	2012-12-03 11:44:31.837533988 +0000
+--- cups-1.5.4/scheduler/main.c.str4223	2012-12-06 12:52:04.925832587 +0000
++++ cups-1.5.4/scheduler/main.c	2012-12-06 12:52:04.951832665 +0000
 @@ -225,7 +225,6 @@ main(int  argc,				/* I - Number of comm
  
                  char *current;		/* Current directory */
@@ -2579,7 +3069,7 @@ diff -up cups-1.5.4/scheduler/main.c.str4223 cups-1.5.4/scheduler/main.c
    */
 diff -up cups-1.5.4/test/run-stp-tests.sh.str4223 cups-1.5.4/test/run-stp-tests.sh
 --- cups-1.5.4/test/run-stp-tests.sh.str4223	2012-05-15 15:04:18.000000000 +0100
-+++ cups-1.5.4/test/run-stp-tests.sh	2012-12-03 11:42:12.457165099 +0000
++++ cups-1.5.4/test/run-stp-tests.sh	2012-12-06 12:52:04.951832665 +0000
 @@ -337,25 +337,10 @@ fi
  
  cat >/tmp/cups-$user/cupsd.conf <<EOF
