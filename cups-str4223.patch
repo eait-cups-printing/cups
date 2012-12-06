@@ -1,6 +1,6 @@
 diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
 --- cups-1.6.1/conf/cupsd.conf.in.str4223	2010-12-09 21:24:51.000000000 +0000
-+++ cups-1.6.1/conf/cupsd.conf.in	2012-12-03 11:13:29.845124902 +0000
++++ cups-1.6.1/conf/cupsd.conf.in	2012-12-06 12:49:36.164469353 +0000
 @@ -9,10 +9,6 @@
  # for troubleshooting...
  LogLevel @CUPS_LOG_LEVEL@
@@ -13,8 +13,8 @@ diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
  Listen localhost:@DEFAULT_IPP_PORT@
  @CUPS_LISTEN_DOMAINSOCKET@
 diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.conf.in
---- cups-1.6.1/conf/cups-files.conf.in.str4223	2012-12-03 11:13:29.845124902 +0000
-+++ cups-1.6.1/conf/cups-files.conf.in	2012-12-03 11:15:00.160381557 +0000
+--- cups-1.6.1/conf/cups-files.conf.in.str4223	2012-12-06 12:49:36.164469353 +0000
++++ cups-1.6.1/conf/cups-files.conf.in	2012-12-06 12:49:36.164469353 +0000
 @@ -0,0 +1,98 @@
 +#
 +# "$Id$"
@@ -116,7 +116,7 @@ diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.c
 +#
 diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-scripts/cups-defaults.m4
 --- cups-1.6.1/config-scripts/cups-defaults.m4.str4223	2012-04-23 18:26:57.000000000 +0100
-+++ cups-1.6.1/config-scripts/cups-defaults.m4	2012-12-03 11:13:29.845124902 +0000
++++ cups-1.6.1/config-scripts/cups-defaults.m4	2012-12-06 12:49:36.165469356 +0000
 @@ -305,6 +305,7 @@ else
  fi
  
@@ -134,8 +134,8 @@ diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-sc
  dnl Default MaxCopies value...
  AC_ARG_WITH(max-copies, [  --with-max-copies       set default max copies value, default=9999 ],
 diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts/cups-ssl.m4
---- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2012-12-03 11:13:29.778124661 +0000
-+++ cups-1.6.1/config-scripts/cups-ssl.m4	2012-12-03 11:13:29.845124902 +0000
+--- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2012-12-06 12:49:36.096469149 +0000
++++ cups-1.6.1/config-scripts/cups-ssl.m4	2012-12-06 12:49:36.166469359 +0000
 @@ -27,6 +27,8 @@ AC_ARG_WITH(openssl-includes, [  --with-
  SSLFLAGS=""
  SSLLIBS=""
@@ -183,8 +183,8 @@ diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts
  AC_SUBST(SSLFLAGS)
  AC_SUBST(SSLLIBS)
 diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
---- cups-1.6.1/configure.in.str4223	2012-12-03 11:13:29.838124878 +0000
-+++ cups-1.6.1/configure.in	2012-12-03 11:13:29.845124902 +0000
+--- cups-1.6.1/configure.in.str4223	2012-12-06 12:49:36.157469332 +0000
++++ cups-1.6.1/configure.in	2012-12-06 12:49:36.167469362 +0000
 @@ -61,6 +61,7 @@ AC_SUBST(INSTALL_LANGUAGES)
  AC_SUBST(UNINSTALL_LANGUAGES)
  
@@ -202,8 +202,8 @@ diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
  	  man/cups-snmp.man
  	  man/cupsaddsmb.man
 diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
---- cups-1.6.1/conf/Makefile.str4223	2012-12-03 11:13:29.760124597 +0000
-+++ cups-1.6.1/conf/Makefile	2012-12-03 11:13:29.846124906 +0000
+--- cups-1.6.1/conf/Makefile.str4223	2012-12-06 12:49:36.077469093 +0000
++++ cups-1.6.1/conf/Makefile	2012-12-06 12:49:36.167469362 +0000
 @@ -19,7 +19,7 @@ include ../Makedefs
  # Config files...
  #
@@ -215,7 +215,7 @@ diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
  
 diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cupsd-conf.html.in
 --- cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2012-12-03 11:13:29.846124906 +0000
++++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2012-12-06 12:49:36.168469365 +0000
 @@ -197,82 +197,6 @@ HREF="#Location"><CODE>Location</CODE></
  HREF="#Limit"><CODE>Limit</CODE></A> section.</P>
  
@@ -606,8 +606,8 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  
  <H3>Examples</H3>
 diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cups-files-conf.html.in
---- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-03 11:13:29.846124906 +0000
-+++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2012-12-03 11:13:29.846124906 +0000
+--- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-06 12:49:36.168469365 +0000
++++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2012-12-06 12:49:36.168469365 +0000
 @@ -0,0 +1,531 @@
 +<HTML>
 +<!-- SECTION: References -->
@@ -1142,7 +1142,7 @@ diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/
 +</HTML>
 diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
 --- cups-1.6.1/doc/Makefile.str4223	2012-04-23 19:04:24.000000000 +0100
-+++ cups-1.6.1/doc/Makefile	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/doc/Makefile	2012-12-06 12:49:36.168469365 +0000
 @@ -3,7 +3,7 @@
  #
  #   Documentation makefile for CUPS.
@@ -1152,9 +1152,53 @@ diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
  #   Copyright 1997-2007 by Easy Software Products.
  #
  #   These coded instructions, statements, and computer programs are the
+diff -up cups-1.6.1/locale/cups_ca.po.str4223 cups-1.6.1/locale/cups_ca.po
+--- cups-1.6.1/locale/cups_ca.po.str4223	2012-07-16 18:34:21.000000000 +0100
++++ cups-1.6.1/locale/cups_ca.po	2012-12-06 12:50:31.120615029 +0000
+@@ -3710,10 +3710,10 @@ msgstr "Carpeta d'arxivador "
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
++"in \"%s/cups-files.conf\"."
+ msgstr ""
+ "S'han deshabilitat els URIs dels dispositius de fitxers. Per habilitar-los, "
+-"vegeu la directriu FileDevice a «%s/cupsd.conf»."
++"vegeu la directriu FileDevice a «%s/cups-files.conf»."
+ 
+ #: filter/rastertoepson.c:1117 filter/rastertohp.c:845
+ #: filter/rastertolabel.c:1273
+diff -up cups-1.6.1/locale/cups_es.po.str4223 cups-1.6.1/locale/cups_es.po
+--- cups-1.6.1/locale/cups_es.po.str4223	2012-07-16 18:26:00.000000000 +0100
++++ cups-1.6.1/locale/cups_es.po	2012-12-06 12:50:31.132615065 +0000
+@@ -3824,8 +3824,8 @@ msgstr "Carpeta de archivo"
+ 
+ #: scheduler/ipp.c:2370
+ #, c-format
+-msgid "File device URIs have been disabled. To enable, see the FileDevice directive in \"%s/cupsd.conf\"."
+-msgstr "Los URIs del dispositivo de archivo han sido deshabilitados. Para habilitarlos, vea la directiva FileDevice en \"%s/cupsd.conf\"."
++msgid "File device URIs have been disabled. To enable, see the FileDevice directive in \"%s/cups-files.conf\"."
++msgstr "Los URIs del dispositivo de archivo han sido deshabilitados. Para habilitarlos, vea la directiva FileDevice en \"%s/cups-files.conf\"."
+ 
+ #: filter/rastertoepson.c:1117
+ #: filter/rastertohp.c:845
+diff -up cups-1.6.1/locale/cups_ja.po.str4223 cups-1.6.1/locale/cups_ja.po
+--- cups-1.6.1/locale/cups_ja.po.str4223	2012-06-22 03:34:12.000000000 +0100
++++ cups-1.6.1/locale/cups_ja.po	2012-12-06 12:50:31.145615104 +0000
+@@ -3631,8 +3631,8 @@ msgstr "ファイルフォルダー"
+ #, c-format
+ msgid ""
+ "File device URIs have been disabled. To enable, see the FileDevice directive "
+-"in \"%s/cupsd.conf\"."
+-msgstr "ファイルデバイス URI は無効になっています。有効にするには、\"%s/cupsd.conf\" の FileDevice ディレクティブを参照してください。"
++"in \"%s/cups-files.conf\"."
++msgstr "ファイルデバイス URI は無効になっています。有効にするには、\"%s/cups-files.conf\" の FileDevice ディレクティブを参照してください。"
+ 
+ #: filter/rastertoepson.c:1117 filter/rastertohp.c:845
+ #: filter/rastertolabel.c:1273
 diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.in
 --- cups-1.6.1/man/cupsd.conf.man.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/man/cupsd.conf.man.in	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/man/cupsd.conf.man.in	2012-12-06 12:49:36.168469365 +0000
 @@ -12,12 +12,15 @@
  .\"   which should have been included with this file.  If this file is
  .\"   file is missing or damaged, see the license at "http://www.cups.org/".
@@ -1419,8 +1463,8 @@ diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.
  .br
  http://localhost:631/help
 diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files.conf.man.in
---- cups-1.6.1/man/cups-files.conf.man.in.str4223	2012-12-03 11:13:29.847124910 +0000
-+++ cups-1.6.1/man/cups-files.conf.man.in	2012-12-03 11:13:29.847124910 +0000
+--- cups-1.6.1/man/cups-files.conf.man.in.str4223	2012-12-06 12:49:36.169469368 +0000
++++ cups-1.6.1/man/cups-files.conf.man.in	2012-12-06 12:49:36.169469368 +0000
 @@ -0,0 +1,146 @@
 +.\"
 +.\" "$Id$"
@@ -1570,7 +1614,7 @@ diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files
 +.\"
 diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
 --- cups-1.6.1/man/Makefile.str4223	2012-05-25 04:11:46.000000000 +0100
-+++ cups-1.6.1/man/Makefile	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/man/Makefile	2012-12-06 12:49:36.169469368 +0000
 @@ -39,6 +39,7 @@ MAN1	=	cancel.$(MAN1EXT) \
  		ppdpo.$(MAN1EXT)
  MAN5	=	classes.conf.$(MAN5EXT) \
@@ -1581,7 +1625,7 @@ diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
  		ipptoolfile.$(MAN5EXT) \
 diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.list.in
 --- cups-1.6.1/packaging/cups.list.in.str4223	2012-05-07 23:41:42.000000000 +0100
-+++ cups-1.6.1/packaging/cups.list.in	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/packaging/cups.list.in	2012-12-06 12:49:36.169469368 +0000
 @@ -534,6 +534,8 @@ d 0755 root sys $SERVERROOT -
  d 0755 root $CUPS_GROUP $SERVERROOT/interfaces -
  d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
@@ -1593,7 +1637,7 @@ diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.lis
  c $CUPS_PERM root $CUPS_GROUP $SERVERROOT/snmp.conf conf/snmp.conf
 diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spec.in
 --- cups-1.6.1/packaging/cups.spec.in.str4223	2012-07-27 21:33:27.000000000 +0100
-+++ cups-1.6.1/packaging/cups.spec.in	2012-12-03 11:13:29.847124910 +0000
++++ cups-1.6.1/packaging/cups.spec.in	2012-12-06 12:49:36.169469368 +0000
 @@ -135,6 +135,7 @@ rm -rf $RPM_BUILD_ROOT
  %defattr(-,root,root)
  %dir /etc/cups
@@ -1604,7 +1648,7 @@ diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spe
  %dir /etc/cups/ppd
 diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
 --- cups-1.6.1/scheduler/client.c.str4223	2012-05-07 23:41:30.000000000 +0100
-+++ cups-1.6.1/scheduler/client.c	2012-12-03 11:13:29.848124914 +0000
++++ cups-1.6.1/scheduler/client.c	2012-12-06 12:49:36.170469371 +0000
 @@ -32,7 +32,7 @@
   *   compare_clients()	    - Compare two client connections.
   *   data_ready()	    - Check whether data is available from a client.
@@ -1704,8 +1748,8 @@ diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
  
   /*
 diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
---- cups-1.6.1/scheduler/conf.c.str4223	2012-12-03 11:13:29.773124642 +0000
-+++ cups-1.6.1/scheduler/conf.c	2012-12-03 11:14:48.906349487 +0000
+--- cups-1.6.1/scheduler/conf.c.str4223	2012-12-06 12:49:36.088469126 +0000
++++ cups-1.6.1/scheduler/conf.c	2012-12-06 12:49:36.172469377 +0000
 @@ -14,23 +14,25 @@
   *
   * Contents:
@@ -2685,8 +2729,8 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
  
    return (1);
 diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
---- cups-1.6.1/scheduler/conf.h.str4223	2012-12-03 11:13:29.774124646 +0000
-+++ cups-1.6.1/scheduler/conf.h	2012-12-03 11:13:29.849124917 +0000
+--- cups-1.6.1/scheduler/conf.h.str4223	2012-12-06 12:49:36.089469129 +0000
++++ cups-1.6.1/scheduler/conf.h	2012-12-06 12:49:36.172469377 +0000
 @@ -96,7 +96,9 @@ typedef struct
   */
  
@@ -2698,9 +2742,21 @@ diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
  			*ServerName		VALUE(NULL),
  					/* FQDN for server */
  			*ServerAdmin		VALUE(NULL),
+diff -up cups-1.6.1/scheduler/ipp.c.str4223 cups-1.6.1/scheduler/ipp.c
+--- cups-1.6.1/scheduler/ipp.c.str4223	2012-12-06 12:49:36.119469218 +0000
++++ cups-1.6.1/scheduler/ipp.c	2012-12-06 12:49:36.174469383 +0000
+@@ -2369,7 +2369,7 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 	send_ipp_status(con, IPP_NOT_POSSIBLE,
+ 	                _("File device URIs have been disabled. "
+ 	                  "To enable, see the FileDevice directive in "
+-			  "\"%s/cupsd.conf\"."),
++			  "\"%s/cups-files.conf\"."),
+ 			ServerRoot);
+ 	return;
+       }
 diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
---- cups-1.6.1/scheduler/main.c.str4223	2012-12-03 11:13:29.842124892 +0000
-+++ cups-1.6.1/scheduler/main.c	2012-12-03 11:15:39.658494980 +0000
+--- cups-1.6.1/scheduler/main.c.str4223	2012-12-06 12:49:36.159469338 +0000
++++ cups-1.6.1/scheduler/main.c	2012-12-06 12:49:36.175469386 +0000
 @@ -216,7 +216,6 @@ main(int  argc,				/* I - Number of comm
  
                  char *current;		/* Current directory */
@@ -2777,7 +2833,7 @@ diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
    */
 diff -up cups-1.6.1/test/run-stp-tests.sh.str4223 cups-1.6.1/test/run-stp-tests.sh
 --- cups-1.6.1/test/run-stp-tests.sh.str4223	2012-05-21 16:35:25.000000000 +0100
-+++ cups-1.6.1/test/run-stp-tests.sh	2012-12-03 11:13:29.850124920 +0000
++++ cups-1.6.1/test/run-stp-tests.sh	2012-12-06 12:49:36.175469386 +0000
 @@ -385,26 +385,11 @@ fi
  cat >/tmp/cups-$user/cupsd.conf <<EOF
  StrictConformance Yes

@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -625,6 +625,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Dec  6 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-16
+- Additional fix relating to CVE-2012-5519 to avoid misleading error
+  message about actions to take to enable file device URIs.
+
 * Tue Dec  4 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-15
 - Small error handling improvements in the configuration migration
   script.
