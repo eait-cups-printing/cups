@@ -1,0 +1,54 @@
+From 997514f0f7eb360d55a0e77fdba916221a395cb0 Mon Sep 17 00:00:00 2001
+From: mike <mike@7a7537e8-13f0-0310-91df-b6672ffda945>
+Date: Thu, 13 Dec 2012 16:38:56 +0000
+Subject: [PATCH] The IPP backend now stops queues when the server
+ configuration prevents successful job submission (STR #4125)
+
+git-svn-id: http://svn.easysw.com/public/cups/trunk@10758 7a7537e8-13f0-0310-91df-b6672ffda945
+diff --git a/backend/ipp.c b/backend/ipp.c
+index 05843ea..c61d6c8 100644
+--- a/backend/ipp.c
++++ b/backend/ipp.c
+@@ -1354,8 +1354,9 @@ main(int  argc,				/* I - Number of command-line args */
+  /*
+   * If the printer only claims to support IPP/1.0, or if the user specifically
+   * included version=1.0 in the URI, then do not try to use Create-Job or
+-  * Send-Document.  This is another dreaded compatibility hack, but unfortunately
+-  * there are enough broken printers out there that we need this for now...
++  * Send-Document.  This is another dreaded compatibility hack, but
++  * unfortunately there are enough broken printers out there that we need
++  * this for now...
+   */
+ 
+   if (version == 10)
+@@ -1812,6 +1813,27 @@ main(int  argc,				/* I - Number of command-line args */
+ 
+       goto cleanup;
+     }
++    else if (ipp_status == IPP_UPGRADE_REQUIRED)
++    {
++     /*
++      * Server is configured incorrectly; the policy for Create-Job and
++      * Send-Document has to be the same (auth or no auth, encryption or
++      * no encryption).  Force the queue to stop since printing will never
++      * work.
++      */
++
++      fputs("DEBUG: The server or printer is configured incorrectly.\n",
++            stderr);
++      fputs("DEBUG: The policy for Create-Job and Send-Document must have the "
++            "same authentication and encryption requirements.\n", stderr);
++
++      ipp_status = IPP_INTERNAL_ERROR;
++
++      if (job_id > 0)
++	cancel_job(http, uri, job_id, resource, argv[2], version);
++
++      goto cleanup;
++    }
+     else if (ipp_status == IPP_NOT_FOUND)
+     {
+      /*
+-- 
+1.8.0.1
+

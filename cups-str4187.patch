@@ -1,0 +1,41 @@
+From c6ae62cb67ef957fea5bf0e0bcd0a3201a2d6b4d Mon Sep 17 00:00:00 2001
+From: mike <mike@7a7537e8-13f0-0310-91df-b6672ffda945>
+Date: Thu, 13 Dec 2012 19:57:25 +0000
+Subject: [PATCH] The CUPS library did not always detect a timed out connection
+ to the server which could cause temporary loss of printing from applications
+ (STR #4187)
+
+git-svn-id: http://svn.easysw.com/public/cups/trunk@10760 7a7537e8-13f0-0310-91df-b6672ffda945
+diff --git a/cups/request.c b/cups/request.c
+index a04fbb3..f81785d 100644
+--- a/cups/request.c
++++ b/cups/request.c
+@@ -1007,6 +1007,25 @@ _cupsConnect(void)
+       httpClose(cg->http);
+       cg->http = NULL;
+     }
++    else
++    {
++     /*
++      * Same server, see if the connection is still established...
++      */
++
++      char ch;				/* Connection check byte */
++
++      if (recv(cg->http->fd, &ch, 1, MSG_PEEK | MSG_DONTWAIT) < 0 &&
++          errno != EWOULDBLOCK)
++      {
++       /*
++        * Nope, close the connection...
++        */
++
++	httpClose(cg->http);
++	cg->http = NULL;
++      }
++    }
+   }
+ 
+  /*
+-- 
+1.8.0.1
+

@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 21%{?dist}
+Release: 22%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -81,6 +81,11 @@ Patch45: cups-r10642.patch
 Patch46: cups-str4190.patch
 
 Patch47: cups-str4223.patch
+
+Patch48: cups-str4125.patch
+Patch49: cups-str4140.patch
+Patch50: cups-str4187.patch
+Patch51: cups-str4205.patch
 
 Patch100: cups-lspp.patch
 
@@ -330,6 +335,17 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
 %patch47 -p1 -b .str4223
+
+# The IPP backend now stops queues when the server
+# configuration prevents successful job submission (STR #4125)
+%patch48 -p1 -b .str4125
+# Fixed a problem with local Kerberos authentication (STR #4140, bug #837602)
+%patch49 -p1 -b .str4140
+# The CUPS library did not always detect a timed out connection to the server
+# which could cause temporary loss of printing from applications (STR #4187)
+%patch50 -p1 -b .str4187
+# Don't set auth-info-required all of the time (STR #4205)
+%patch51 -p1 -b .str4205
 
 %if %lspp
 # LSPP support.
@@ -732,6 +748,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Dec 18 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-22
+- backport fixes for STR #4125, STR #4140, STR #4187, STR #4205, STR #4232
+
 * Thu Dec  6 2012 Tim Waugh <twaugh@redhat.com> 1:1.5.4-21
 - Additional fix relating to CVE-2012-5519 to avoid misleading error
   message about actions to take to enable file device URIs.

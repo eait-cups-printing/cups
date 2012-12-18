@@ -1,0 +1,29 @@
+From b28fd9a0ad2262e7caa8615d891cff2422e496e5 Mon Sep 17 00:00:00 2001
+From: mike <mike@7a7537e8-13f0-0310-91df-b6672ffda945>
+Date: Mon, 17 Dec 2012 22:40:54 +0000
+Subject: [PATCH] Fixed a problem with local Kerberos authentication (STR
+ #4140)
+
+git-svn-id: http://svn.easysw.com/public/cups/trunk@10778 7a7537e8-13f0-0310-91df-b6672ffda945
+diff --git a/scheduler/client.c b/scheduler/client.c
+index 663c64b..e9abb82 100644
+--- a/scheduler/client.c
++++ b/scheduler/client.c
+@@ -2580,14 +2580,7 @@ cupsdSendHeader(
+ 	       con->http.hostname);
+ #ifdef HAVE_GSSAPI
+     else if (auth_type == CUPSD_AUTH_NEGOTIATE)
+-    {
+-#  ifdef AF_LOCAL
+-      if (_httpAddrFamily(con->http.hostaddr) == AF_LOCAL)
+-        strlcpy(auth_str, "Basic realm=\"CUPS\"", sizeof(auth_str));
+-      else
+-#  endif /* AF_LOCAL */
+       strlcpy(auth_str, "Negotiate", sizeof(auth_str));
+-    }
+ #endif /* HAVE_GSSAPI */
+ 
+     if (con->best && auth_type != CUPSD_AUTH_NEGOTIATE &&
+-- 
+1.8.0.1
+

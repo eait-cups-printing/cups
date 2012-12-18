@@ -1931,9 +1931,9 @@ diff -up cups-1.5.4/scheduler/printers.c.lspp cups-1.5.4/scheduler/printers.c
   * Local functions...
   */
 @@ -2231,6 +2238,13 @@ cupsdSetPrinterAttrs(cupsd_printer_t *p)
- 		  "username",
- 		  "password"
- 		};
+   cups_option_t	*option;		/* Current printer option */
+   char		*name,			/* Current user/group name */
+ 		*filter;		/* Current filter */
 +#ifdef WITH_LSPP
 +  char		*audit_message;		/* Audit message string */
 +  char		*printerfile;		/* Path to a local printer dev */
