@@ -65,7 +65,7 @@ Patch100: cups-lspp.patch
 Epoch: 1
 Url: http://www.cups.org/
 
-Requires: /sbin/chkconfig /sbin/service
+Requires: /sbin/chkconfig
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %use_alternatives
@@ -73,17 +73,7 @@ Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /u
 Requires: /usr/sbin/alternatives
 %endif
 
-# Unconditionally obsolete LPRng so that upgrades work properly.
-Obsoletes: lpd <= 3.8.15-3, lpr <= 3.8.15-3, LPRng <= 3.8.15-3
-Provides: lpd = 3.8.15-4, lpr = 3.8.15-4, LPRng = 3.8.15-4
-
-Obsoletes: cupsddk < 1.2.3-7
-Provides: cupsddk = 1.2.3-7
-Obsoletes: cupsddk-drivers < 1.2.3-7
-Provides: cupsddk-drivers = 1.2.3-7
-
-# kdelibs conflict for bug #192585.
-Conflicts: kdelibs < 6:3.5.2-6
+Provides: lpd lpr cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
 BuildRequires: gnutls-devel libacl-devel
@@ -639,7 +629,8 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Wed Dec 19 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-17
-- Migrate cups-lpd from xinetd to systemd socket activatable service (#884641)
+- Migrate cups-lpd from xinetd to systemd socket activatable service (#884641).
+- Clean up old Requires/Conflicts/Obsoletes/Provides.
 
 * Thu Dec  6 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-16
 - Additional fix relating to CVE-2012-5519 to avoid misleading error
