@@ -124,8 +124,7 @@ Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
-Obsoletes: cupsddk-devel < 1.2.3-7
-Provides: cupsddk-devel = 1.2.3-7
+Provides: cupsddk-devel
 
 %package libs
 Summary: Common Unix Printing System - libraries
