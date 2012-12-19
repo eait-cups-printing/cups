@@ -10,14 +10,16 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
-# xinetd config file for cups-lpd service
-Source5: cups-lpd
+# socket unit for cups-lpd service
+Source3: cups-lpd.socket
+# cups-lpd service unit configuration
+Source4: cups-lpd@.service
 # Logrotate configuration
 Source6: cups.logrotate
 # Backend for NCP protocol
@@ -150,7 +152,6 @@ Summary: Common Unix Printing System - lpd emulation
 Group: System Environment/Daemons
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: xinetd
 
 %package ipptool
 Summary: Common Unix Printing System - tool for performing IPP requests
@@ -271,9 +272,6 @@ sed -i -r -e '/\spstops$/ { s/66/65/ }' conf/mime.convs.in
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
-cp %{SOURCE5} cups-lpd.real
-perl -pi -e "s,\@LIBDIR\@,%{_libdir},g" cups-lpd.real
-
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
@@ -300,6 +298,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--enable-avahi \
 	--enable-threads --enable-gnutls \
 	--enable-webif \
+	--with-xinetd=no \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -331,12 +330,13 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
-install -c -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -c -m 644 cups-lpd.real $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/cups-lpd
-install -c -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
-install -c -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
-install -c -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
+install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
+install -p -m 644 %{SOURCE3} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
+install -p -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
+install -p -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
@@ -455,6 +455,10 @@ done
 
 exit 0
 
+%post lpd
+%systemd_post cups-lpd.socket
+exit 0
+
 %post libs -p /sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
@@ -470,10 +474,17 @@ fi
 
 exit 0
 
+%preun lpd
+%systemd_preun cups-lpd.socket
+exit 0
+
 %postun
 %systemd_postun_with_restart %{name}.service
 exit 0
 
+%postun lpd
+%systemd_postun_with_restart cups-lpd.socket
+exit 0
 
 %triggerun -- %{name} < 1:1.5.0-22
 # This package is allowed to autostart; however, the upgrade trigger
@@ -566,6 +577,8 @@ rm -f %{cups_serverbin}/backend/smb
 # ipptool subpackage
 %exclude %{_mandir}/man1/ipptool.1.gz
 %exclude %{_mandir}/man5/ipptoolfile.5.gz
+# lpd subpackage
+%exclude %{_mandir}/man8/cups-lpd.8.gz
 %{_sbindir}/*
 %dir %{_datadir}/cups/templates
 %{_datadir}/cups/templates/*.tmpl
@@ -612,10 +625,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_sysconfdir}/rpm/macros.cups
 
 %files lpd
-%config(noreplace) %{_sysconfdir}/xinetd.d/cups-lpd
-%dir %{cups_serverbin}
-%dir %{cups_serverbin}/daemon
+%{_unitdir}/cups-lpd.socket
+%{_unitdir}/cups-lpd@.service
 %{cups_serverbin}/daemon/cups-lpd
+%{_mandir}/man8/cups-lpd.8.gz
 
 %files ipptool
 %{_bindir}/ipptool
@@ -625,6 +638,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Dec 19 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-17
+- Migrate cups-lpd from xinetd to systemd socket activatable service (#884641)
+
 * Thu Dec  6 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-16
 - Additional fix relating to CVE-2012-5519 to avoid misleading error
   message about actions to take to enable file device URIs.
