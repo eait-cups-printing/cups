@@ -10,7 +10,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.6.1
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -24,9 +24,7 @@ Source4: cups-lpd@.service
 Source6: cups.logrotate
 # Backend for NCP protocol
 Source7: ncp.backend
-# Cron-based tmpwatch for /var/spool/cups/tmp
-Source8: cups.cron
-Source11: macros.cups
+Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
@@ -95,11 +93,8 @@ BuildRequires: audit-libs-devel >= 1.1
 
 Requires: dbus
 
-# Requires tmpwatch for the cron.daily script (bug #218901).
-Requires: tmpwatch
-
 # Requires /etc/tmpfiles.d (bug #656566)
-Requires: systemd-units >= 13
+Requires: systemd-units
 Requires(post): systemd-units
 Requires(post): grep, sed
 Requires(preun): systemd-units
@@ -319,17 +314,16 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
 install -p -m 644 %{SOURCE3} %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}
 install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -p -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
-install -p -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/cron.daily/cups
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
-install -m 0644 %{SOURCE11} $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
+install -m 0644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -352,17 +346,18 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/banners
 rm -f $RPM_BUILD_ROOT%{_datadir}/cups/data/testprint
 
-# install /usr/lib/tmpfiles.d/cups.conf (bug #656566)
+# install /usr/lib/tmpfiles.d/cups.conf (bug #656566, bug #893834)
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
 cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups.conf <<EOF
-d %{_localstatedir}/run/cups 0755 root lp -
-d %{_localstatedir}/run/cups/certs 0511 lp sys -
+# See tmpfiles.d(5) for details
+d /run/cups 0755 root lp -
+d /run/cups/certs 0511 lp sys -
+
+d /var/spool/cups/tmp - - - 30d
 EOF
 
 # /usr/lib/tmpfiles.d/cups-lp.conf (bug #812641)
 cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups-lp.conf <<EOF
-# This file is part of cups.
-#
 # Legacy parallel port character device nodes, to trigger the
 # auto-loading of the kernel module on access.
 #
@@ -578,7 +573,6 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
 %{_datadir}/pixmaps/cupsprinter.png
-%{_sysconfdir}/cron.daily/cups
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
 %{_datadir}/cups/drv/sample.drv
 %{_datadir}/cups/examples
@@ -627,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jan 10 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-18
+- clean /var/spool/cups/tmp with tmpfiles.d instead of tmpwatch&cron (#893834).
+
 * Wed Dec 19 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-17
 - Migrate cups-lpd from xinetd to systemd socket activatable service (#884641).
 - Clean up old Requires/Conflicts/Obsoletes/Provides.
