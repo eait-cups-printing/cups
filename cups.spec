@@ -9,10 +9,12 @@
 
 Summary: Common Unix Printing System
 Name: cups
+Epoch: 1
 Version: 1.6.1
 Release: 18%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
+Url: http://www.cups.org/
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
@@ -25,6 +27,7 @@ Source6: cups.logrotate
 # Backend for NCP protocol
 Source7: ncp.backend
 Source8: macros.cups
+
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
@@ -60,9 +63,6 @@ Patch31: cups-str4223.patch
 
 Patch100: cups-lspp.patch
 
-Epoch: 1
-Url: http://www.cups.org/
-
 Requires: /sbin/chkconfig
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
@@ -79,7 +79,7 @@ BuildRequires: openldap-devel
 BuildRequires: libusb1-devel
 BuildRequires: krb5-devel
 BuildRequires: avahi-devel
-BuildRequires: systemd-units, systemd-devel
+BuildRequires: systemd, systemd-devel
 BuildRequires: dbus-devel
 BuildRequires: automake
 
@@ -87,21 +87,19 @@ BuildRequires: automake
 BuildRequires: python-cups
 
 %if %lspp
-BuildRequires: libselinux-devel >= 1.23
-BuildRequires: audit-libs-devel >= 1.1
+BuildRequires: libselinux-devel
+BuildRequires: audit-libs-devel
 %endif
 
 Requires: dbus
 
-# Requires /etc/tmpfiles.d (bug #656566)
-Requires: systemd-units
-Requires(post): systemd-units
-Requires(post): grep, sed
-Requires(preun): systemd-units
-Requires(postun): systemd-units
-Requires(post): systemd-sysv
 # Requires working PrivateTmp (bug #807672)
-Requires(pre): systemd >= 37-14
+Requires(pre): systemd
+Requires(post): systemd
+Requires(post): systemd-sysv
+Requires(post): grep, sed
+Requires(preun): systemd
+Requires(postun): systemd
 
 # We ship udev rules which use setfacl.
 Requires: systemd
