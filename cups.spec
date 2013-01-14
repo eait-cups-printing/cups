@@ -11,7 +11,7 @@ Summary: Common Unix Printing System
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -348,6 +348,7 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/cups/data/testprint
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
 cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups.conf <<EOF
 # See tmpfiles.d(5) for details
+
 d /run/cups 0755 root lp -
 d /run/cups/certs 0511 lp sys -
 
@@ -563,6 +564,9 @@ rm -f %{cups_serverbin}/backend/smb
 %exclude %{_mandir}/man8/cups-lpd.8.gz
 %{_sbindir}/*
 %dir %{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates/ca
+%dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/ja
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
@@ -619,8 +623,11 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jan 14 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-19
+- Fix unowned directories (#894531).
+
 * Thu Jan 10 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-18
-- clean /var/spool/cups/tmp with tmpfiles.d instead of tmpwatch&cron (#893834).
+- Clean /var/spool/cups/tmp with tmpfiles.d instead of tmpwatch&cron (#893834).
 
 * Wed Dec 19 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-17
 - Migrate cups-lpd from xinetd to systemd socket activatable service (#884641).
