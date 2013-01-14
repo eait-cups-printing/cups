@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 22%{?dist}
+Release: 23%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -636,8 +636,13 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
+%dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/eu
+%dir %{_datadir}/%{name}/www/fr
+%dir %{_datadir}/%{name}/www/hu
+%dir %{_datadir}/%{name}/www/id
+%dir %{_datadir}/%{name}/www/it
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/pl
 %dir %{_datadir}/%{name}/www/ru
@@ -691,6 +696,16 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/fonts
 %{_datadir}/cups/model
 %dir %{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates/de
+%dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/eu
+%dir %{_datadir}/cups/templates/fr
+%dir %{_datadir}/cups/templates/hu
+%dir %{_datadir}/cups/templates/id
+%dir %{_datadir}/cups/templates/it
+%dir %{_datadir}/cups/templates/ja
+%dir %{_datadir}/cups/templates/pl
+%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/de/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
@@ -748,6 +763,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jan 14 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-23
+- Fix unowned directories (#894531).
+
 * Tue Dec 18 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-22
 - backport fixes for STR #4125, STR #4140, STR #4187, STR #4205, STR #4232
 
