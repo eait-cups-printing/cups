@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 23%{?dist}
+Release: 24%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -763,6 +763,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jan 18 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-24
+- Add quirk rule for Canon MP210 (#847923).
+
 * Mon Jan 14 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-23
 - Fix unowned directories (#894531).
 

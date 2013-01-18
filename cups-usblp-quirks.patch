@@ -19,7 +19,7 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
  #define USBLP_QUIRK_NO_REATTACH	0x8000	/* After printing we cannot re-attach
  					   the usblp kernel module */
  
-@@ -141,15 +143,43 @@ static const struct quirk_printer_struct
+@@ -141,15 +143,45 @@ static const struct quirk_printer_struct
  	{ 0x0409, 0xf1be, USBLP_QUIRK_BIDIR }, /* NEC Picty800 (HP OEM) */
  	{ 0x0482, 0x0010, USBLP_QUIRK_BIDIR }, /* Kyocera Mita FS 820,
  						  by zut <kernel@zut.de> */
@@ -27,6 +27,8 @@ diff -up cups-1.5.4/backend/usb-libusb.c.usblp-quirks cups-1.5.4/backend/usb-lib
 +			    Printer, http://www.cups.org/str.php?L4155 */
 +	{ 0x04a9, 0x10b6, USBLP_QUIRK_BIDIR }, /* Canon, Inc. PIXMA iP4300
 +			    Printer, https://bugs.launchpad.net/bugs/1032385 */
++	{ 0x04a9, 0x1721, USBLP_QUIRK_BIDIR }, /* Canon, Inc. MP210
++		      https://bugzilla.redhat.com/show_bug.cgi?id=847923#c53 */
 +	{ 0x04a9, 0x170c, USBLP_QUIRK_BIDIR }, /* Canon, Inc. MP500
 +			    Printer, https://bugs.launchpad.net/bugs/1032456 */
 +	{ 0x04a9, 0x1717, USBLP_QUIRK_BIDIR }, /* Canon, Inc. MP510
