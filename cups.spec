@@ -11,7 +11,7 @@ Summary: Common Unix Printing System
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 20%{?dist}
+Release: 21%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -623,6 +623,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.1-21
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Fri Jan 18 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-20
 - Add quirk rule for Canon MP210 (#847923).
 
