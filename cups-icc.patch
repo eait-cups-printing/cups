@@ -517,7 +517,7 @@ index 0000000..bd06e1c
 +                                         "DeleteDevice");
 +
 +  dbus_message_iter_init_append(message, &args);
-+  dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &device_id);
++  dbus_message_iter_append_basic(&args, DBUS_TYPE_OBJECT_PATH, &device_path);
 +
 +  /* send syncronous */
 +  dbus_error_init(&error);
