@@ -11,7 +11,7 @@ Summary: Common Unix Printing System
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 21%{?dist}
+Release: 22%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -40,7 +40,7 @@ Patch9: cups-lpr-help.patch
 Patch10: cups-peercred.patch
 Patch11: cups-pid.patch
 Patch12: cups-eggcups.patch
-
+Patch13: cups-str4276.patch
 Patch14: cups-driverd-timeout.patch
 Patch15: cups-strict-ppd-line-length.patch
 Patch16: cups-logrotate.patch
@@ -198,7 +198,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch11 -p1 -b .pid
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch12 -p1 -b .eggcups
-
+# Applied colorman fix from STR #4232 and STR #4276.
+%patch13 -p1 -b .str4276
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch14 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
@@ -623,6 +624,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Feb 15 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-22
+- Applied colorman fix from STR #4232 and STR #4276.
+
 * Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.1-21
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
