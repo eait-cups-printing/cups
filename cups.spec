@@ -7,7 +7,7 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-Summary: Common Unix Printing System
+Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.1
@@ -110,7 +110,7 @@ Requires: ghostscript-cups
 Requires: cups-filters
 
 %package devel
-Summary: Common Unix Printing System - development environment
+Summary: CUPS printing system - development environment
 Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
@@ -120,52 +120,52 @@ Requires: zlib-devel
 Provides: cupsddk-devel
 
 %package libs
-Summary: Common Unix Printing System - libraries
+Summary: CUPS printing system - libraries
 Group: System Environment/Libraries
 License: LGPLv2 and zlib
 
 %package filesystem
-Summary: Common Unix Printing System - directory layout
+Summary: CUPS printing system - directory layout
 Group: System Environment/Base
 BuildArch: noarch
 
 %package lpd
-Summary: Common Unix Printing System - lpd emulation
+Summary: CUPS printing system - lpd emulation
 Group: System Environment/Daemons
 Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 
 %package ipptool
-Summary: Common Unix Printing System - tool for performing IPP requests
+Summary: CUPS printing system - tool for performing IPP requests
 Group: System Environment/Daemons
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description
-The Common UNIX Printing System provides a portable printing layer for
-UNIX® operating systems. It has been developed by Easy Software Products
+CUPS printing system provides a portable printing layer for
+UNIX® operating systems. It has been developed by Apple Inc.
 to promote a standard printing solution for all UNIX vendors and users.
 CUPS provides the System V and Berkeley command-line interfaces.
 
 %description devel
-The Common UNIX Printing System provides a portable printing layer for
+CUPS printing system provides a portable printing layer for
 UNIX® operating systems. This is the development package for creating
 additional printer drivers, and other CUPS services.
 
 %description libs
-The Common UNIX Printing System provides a portable printing layer for
-UNIX® operating systems. It has been developed by Easy Software Products
+CUPS printing system provides a portable printing layer for
+UNIX® operating systems. It has been developed by Apple Inc.
 to promote a standard printing solution for all UNIX vendors and users.
 CUPS provides the System V and Berkeley command-line interfaces.
 The cups-libs package provides libraries used by applications to use CUPS
 natively, without needing the lp/lpr commands.
 
 %description filesystem
-The Common UNIX Printing System provides a portable printing layer for
+CUPS printing system provides a portable printing layer for
 UNIX® operating systems. This package provides some directories which are
 required by other packages that add CUPS drivers (i.e. filters, backends etc.).
 
 %description lpd
-The Common UNIX Printing System provides a portable printing layer for
+CUPS printing system provides a portable printing layer for
 UNIX® operating systems. This is the package that provides standard
 lpd emulation.
 
@@ -625,7 +625,8 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Wed Feb 27 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-23
-- fix bogus dates in changelog
+- Updated summary and descriptions (#882982).
+- Fixed bogus dates in changelog.
 
 * Fri Feb 15 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-22
 - Applied colorman fix from STR #4232 and STR #4276.
