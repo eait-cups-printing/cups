@@ -11,7 +11,7 @@ Summary: Common Unix Printing System
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 22%{?dist}
+Release: 23%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -624,6 +624,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Feb 27 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-23
+- fix bogus dates in changelog
+
 * Fri Feb 15 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-22
 - Applied colorman fix from STR #4232 and STR #4276.
 
@@ -1643,12 +1646,12 @@ rm -f %{cups_serverbin}/backend/smb
 * Wed Apr  2 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.7-1
 - 1.3.7.  No longer need str2715, str2727, or CVE-2008-0047 patches.
 
-* Thu Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-9
+* Tue Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-9
 - Applied patch to fix CVE-2008-1373 (GIF overflow, bug #438303).
 - Applied patch to prevent heap-based buffer overflow in CUPS helper
   program (bug #436153, CVE-2008-0047, STR #2729).
 
-* Thu Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-8
+* Tue Apr  1 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-8
 - Ship a few doc files (bug #438598).
 
 * Thu Mar 27 2008 Tim Waugh <twaugh@redhat.com> 1:1.3.6-7
@@ -1961,7 +1964,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Fixed support for /dev/ttyUSB devices (bug #212577, STR #2061).
 - Fixed parallel backend (bug #213021, STR #2056).
 
-* Tue Oct 26 2006 Tim Waugh <twaugh@redhat.com>
+* Thu Oct 26 2006 Tim Waugh <twaugh@redhat.com>
 - Ship a real lpoptions file to make sure it is world-readable (bug #203510).
 
 * Mon Oct 23 2006 Tim Waugh <twaugh@redhat.com> 1:1.2.5-3
@@ -2158,7 +2161,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Disable back-channel data in the usb backend (STR #1705, bug #192034).
 - Fix for 'browsing stops on reload', STR #1670 (bug #191217).
 
-* Wed May 16 2006 Tim Waugh <twaugh@redhat.com>
+* Wed May 17 2006 Tim Waugh <twaugh@redhat.com>
 - Sync to svn5538.
 - Added 'restartlog' to initscript, for clearing out error_log.  Useful
   for problem diagnosis.
