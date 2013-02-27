@@ -49,6 +49,7 @@ Patch17: cups-usb-paperout.patch
 Patch19: cups-res_init.patch
 Patch20: cups-filter-debug.patch
 Patch21: cups-uri-compat.patch
+Patch22: cups-directives.patch
 Patch23: cups-str3382.patch
 Patch24: cups-usblp-quirks.patch
 Patch25: cups-0755.patch
@@ -216,6 +217,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch20 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
 %patch21 -p1 -b .uri-compat
+# Remove obsolete browsing directives from cupsd.conf (bug #880826, STR #4157).
+%patch22 -p1 -b .directives
 # Fix temporary filename creation.
 %patch23 -p1 -b .str3382
 # Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
@@ -625,6 +628,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Wed Feb 27 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-23
+- Removed obsolete browsing directives from cupsd.conf (bug #880826, STR #4157).
 - Updated summary and descriptions (#882982).
 - Fixed bogus dates in changelog.
 
