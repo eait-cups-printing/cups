@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -61,6 +61,7 @@ Patch29: cups-ricoh-deviceid-oid.patch
 Patch30: cups-systemd-socket.patch
 
 Patch31: cups-str4223.patch
+Patch32: cups-lpd-manpage.patch
 
 Patch100: cups-lspp.patch
 
@@ -242,6 +243,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
 %patch31 -p1 -b .str4223
+
+# Talk about systemd in cups-lpd manpage (part of bug #884641).
+%patch32 -p1 -b .lpd-manpage
 
 %if %lspp
 # LSPP support.
@@ -627,6 +631,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Mar  5 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-25
+- Talk about systemd in cups-lpd manpage (part of bug #884641).
+
 * Tue Mar  5 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-24
 - Documentation fixes from STR #4223 (bug #915981).
 
