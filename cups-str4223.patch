@@ -1,6 +1,6 @@
 diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
---- cups-1.6.1/conf/cupsd.conf.in.str4223	2010-12-09 21:24:51.000000000 +0000
-+++ cups-1.6.1/conf/cupsd.conf.in	2012-12-06 12:49:36.164469353 +0000
+--- cups-1.6.1/conf/cupsd.conf.in.str4223	2013-03-05 16:58:52.738286029 +0000
++++ cups-1.6.1/conf/cupsd.conf.in	2013-03-05 16:58:52.793286241 +0000
 @@ -9,10 +9,6 @@
  # for troubleshooting...
  LogLevel @CUPS_LOG_LEVEL@
@@ -13,8 +13,8 @@ diff -up cups-1.6.1/conf/cupsd.conf.in.str4223 cups-1.6.1/conf/cupsd.conf.in
  Listen localhost:@DEFAULT_IPP_PORT@
  @CUPS_LISTEN_DOMAINSOCKET@
 diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.conf.in
---- cups-1.6.1/conf/cups-files.conf.in.str4223	2012-12-06 12:49:36.164469353 +0000
-+++ cups-1.6.1/conf/cups-files.conf.in	2012-12-06 12:49:36.164469353 +0000
+--- cups-1.6.1/conf/cups-files.conf.in.str4223	2013-03-05 16:58:52.794286245 +0000
++++ cups-1.6.1/conf/cups-files.conf.in	2013-03-05 16:58:52.794286245 +0000
 @@ -0,0 +1,98 @@
 +#
 +# "$Id$"
@@ -116,7 +116,7 @@ diff -up cups-1.6.1/conf/cups-files.conf.in.str4223 cups-1.6.1/conf/cups-files.c
 +#
 diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-scripts/cups-defaults.m4
 --- cups-1.6.1/config-scripts/cups-defaults.m4.str4223	2012-04-23 18:26:57.000000000 +0100
-+++ cups-1.6.1/config-scripts/cups-defaults.m4	2012-12-06 12:49:36.165469356 +0000
++++ cups-1.6.1/config-scripts/cups-defaults.m4	2013-03-05 16:58:52.795286249 +0000
 @@ -305,6 +305,7 @@ else
  fi
  
@@ -134,8 +134,8 @@ diff -up cups-1.6.1/config-scripts/cups-defaults.m4.str4223 cups-1.6.1/config-sc
  dnl Default MaxCopies value...
  AC_ARG_WITH(max-copies, [  --with-max-copies       set default max copies value, default=9999 ],
 diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts/cups-ssl.m4
---- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2012-12-06 12:49:36.096469149 +0000
-+++ cups-1.6.1/config-scripts/cups-ssl.m4	2012-12-06 12:49:36.166469359 +0000
+--- cups-1.6.1/config-scripts/cups-ssl.m4.str4223	2013-03-05 16:58:52.663285739 +0000
++++ cups-1.6.1/config-scripts/cups-ssl.m4	2013-03-05 16:58:52.795286249 +0000
 @@ -27,6 +27,8 @@ AC_ARG_WITH(openssl-includes, [  --with-
  SSLFLAGS=""
  SSLLIBS=""
@@ -183,8 +183,8 @@ diff -up cups-1.6.1/config-scripts/cups-ssl.m4.str4223 cups-1.6.1/config-scripts
  AC_SUBST(SSLFLAGS)
  AC_SUBST(SSLLIBS)
 diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
---- cups-1.6.1/configure.in.str4223	2012-12-06 12:49:36.157469332 +0000
-+++ cups-1.6.1/configure.in	2012-12-06 12:49:36.167469362 +0000
+--- cups-1.6.1/configure.in.str4223	2013-03-05 16:58:52.778286183 +0000
++++ cups-1.6.1/configure.in	2013-03-05 16:59:16.625378649 +0000
 @@ -61,6 +61,7 @@ AC_SUBST(INSTALL_LANGUAGES)
  AC_SUBST(UNINSTALL_LANGUAGES)
  
@@ -193,7 +193,14 @@ diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
  	  conf/cupsd.conf
  	  conf/mime.convs
  	  conf/pam.std
-@@ -77,6 +78,7 @@ AC_OUTPUT(Makedefs
+@@ -71,12 +72,14 @@ AC_OUTPUT(Makedefs
+           data/cups.socket
+           data/cups.path
+ 	  desktop/cups.desktop
++	  doc/help/ref-cups-files-conf.html
+ 	  doc/help/ref-cupsd-conf.html
+ 	  doc/help/standard.html
+ 	  doc/index.html
  	  man/client.conf.man
  	  man/cups-deviced.man
  	  man/cups-driverd.man
@@ -202,8 +209,8 @@ diff -up cups-1.6.1/configure.in.str4223 cups-1.6.1/configure.in
  	  man/cups-snmp.man
  	  man/cupsaddsmb.man
 diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
---- cups-1.6.1/conf/Makefile.str4223	2012-12-06 12:49:36.077469093 +0000
-+++ cups-1.6.1/conf/Makefile	2012-12-06 12:49:36.167469362 +0000
+--- cups-1.6.1/conf/Makefile.str4223	2013-03-05 16:58:52.623285586 +0000
++++ cups-1.6.1/conf/Makefile	2013-03-05 16:58:52.796286252 +0000
 @@ -19,7 +19,7 @@ include ../Makedefs
  # Config files...
  #
@@ -215,8 +222,45 @@ diff -up cups-1.6.1/conf/Makefile.str4223 cups-1.6.1/conf/Makefile
  
 diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cupsd-conf.html.in
 --- cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2012-12-06 12:49:36.168469365 +0000
-@@ -197,82 +197,6 @@ HREF="#Location"><CODE>Location</CODE></
++++ cups-1.6.1/doc/help/ref-cupsd-conf.html.in	2013-03-05 17:01:38.442945499 +0000
+@@ -49,36 +49,6 @@ automatically handles restarting the sch
+ </BLOCKQUOTE>
+ 
+ 
+-<H2 CLASS="title"><A NAME="AccessLog">AccessLog</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-AccessLog /var/log/cups/access_log
+-AccessLog /var/log/cups/access_log-%s
+-AccessLog syslog
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>AccessLog</CODE> directive sets the name of the
+-access log file. If the filename is not absolute then it is
+-assumed to be relative to the <A
+-HREF="#ServerRoot"><CODE>ServerRoot</CODE></A> directory. The
+-access log file is stored in "common log format" and can be used
+-by any web access reporting tool to generate a report on CUPS
+-server activity.</P>
+-
+-<P>The server name can be included in the filename by using
+-<CODE>%s</CODE> in the name.</P>
+-
+-<P>The special name "syslog" can be used to send the access
+-information to the system log instead of a plain file.</P>
+-
+-<P>The default access log file is
+-<VAR>@CUPS_LOGDIR@/access_log</VAR>.</P>
+-
+-
+ <H2 CLASS="title"><A NAME="AccessLogLevel">AccessLogLevel</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -197,82 +167,6 @@ HREF="#Location"><CODE>Location</CODE></
  HREF="#Limit"><CODE>Limit</CODE></A> section.</P>
  
  
@@ -299,7 +343,299 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><A NAME="AuthType">AuthType</A></H2>
  
  <H3>Examples</H3>
-@@ -2096,65 +2020,6 @@ PreserveJobFiles 604800
+@@ -436,40 +330,6 @@ used.</P>
+ <P>The default is to not allow classification overrides.</P>
+ 
+ 
+-<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.15</SPAN><A NAME="ConfigFilePerm">ConfigFilePerm</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-ConfigFilePerm 0644
+-ConfigFilePerm 0640
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>ConfigFilePerm</CODE> directive specifies the permissions to use when the scheduler writes configuration and cache files, typically in response to IPP or HTTP requests. The default is @CUPS_CONFIG_FILE_PERM@.</P>
+-
+-<BLOCKQUOTE><B>Note:</B>
+-
+-<P>The permissions for the <VAR>printers.conf</VAR> file are always masked to only allow access from the scheduler user (typically root). This is done because printer device URIs sometimes contain sensitive authentication information that should not be generally known on the system. There is no way to disable this security feature.</P>
+-
+-</BLOCKQUOTE>
+-
+-
+-<H2 CLASS="title"><A NAME="DataDir">DataDir</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-DataDir /usr/share/cups
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>DataDir</CODE> directive sets the directory to use
+-for data files.</P>
+-
+-
+ <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.2/OS X 10.5</SPAN><A NAME="DefaultAuthType">DefaultAuthType</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -653,32 +513,6 @@ DirtyCleanInterval 0
+ <P>The default value is <CODE>30</CODE> (30 seconds).</P>
+ 
+ 
+-<H2 CLASS="title"><A NAME="DocumentRoot">DocumentRoot</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-DocumentRoot /usr/share/doc/cups
+-DocumentRoot /foo/bar/doc/cups
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>DocumentRoot</CODE> directive specifies the location
+-of web content for the HTTP server in CUPS. If an absolute path
+-is not specified then it is assumed to be relative to the <A
+-HREF="#ServerRoot"><CODE>ServerRoot</CODE></A> directory. The
+-default directory is <VAR>@CUPS_DOCROOT@</VAR>.</P>
+-
+-<P>Documents are first looked up in a sub-directory for the
+-primary language requested by the client (e.g.
+-<VAR>@CUPS_DOCROOT@/fr/...</VAR>) and then directly under
+-the <CODE>DocumentRoot</CODE> directory (e.g.
+-<VAR>@CUPS_DOCROOT@/...</VAR>), so it is possible to
+-localize the web content by providing subdirectories for each
+-language needed.</P>
+-
+-
+ <H2 CLASS="title"><A NAME="Encryption">Encryption</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -701,31 +535,6 @@ encryption settings for that location. T
+ <CODE>IfRequested</CODE> for all locations.</P>
+ 
+ 
+-<H2 CLASS="title"><A NAME="ErrorLog">ErrorLog</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-ErrorLog /var/log/cups/error_log
+-ErrorLog /var/log/cups/error_log-%s
+-ErrorLog syslog
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>ErrorLog</CODE> directive sets the name of the error
+-log file. If the filename is not absolute then it is assumed to
+-be relative to the <A
+-HREF="#ServerRoot"><CODE>ServerRoot</CODE></A> directory. The
+-default error log file is <VAR>@CUPS_LOGDIR@/error_log</VAR>.</P>
+-
+-<P>The server name can be included in the filename by using
+-<CODE>%s</CODE> in the name.</P>
+-
+-<P>The special name "syslog" can be used to send the error
+-information to the system log instead of a plain file.</P>
+-
+-
+ <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.3/OS X 10.5</SPAN><A NAME="ErrorPolicy">ErrorPolicy</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -765,90 +574,6 @@ printer.</P>
+ 
+ 
+ 
+-<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.4/OS X 10.6</SPAN><A NAME="FatalErrors">FatalErrors</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-FatalErrors none
+-FatalErrors all
+-FatalErrors browse
+-FatalErrors config
+-FatalErrors listen
+-FatalErrors log
+-FatalErrors permissions
+-FatalErrors all -permissions
+-FatalErrors config permissions log
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>FatalErrors</CODE> directive determines whether certain kinds of
+-errors are fatal. The following kinds of errors are currently recognized:</P>
+-
+-<UL>
+-
+-	<LI><CODE>none</CODE> - No errors are fatal</LI>
+-
+-	<LI><CODE>all</CODE> - All of the errors below are fatal</LI>
+-
+-	<LI><CODE>browse</CODE> - Browsing initialization errors are fatal,
+-	for example failed binding to the CUPS browse port or failed connections
+-	to LDAP servers</LI>
+-
+-	<LI><CODE>config</CODE> - Configuration file syntax errors are
+-	fatal</LI>
+-
+-	<LI><CODE>listen</CODE> - Listen or Port errors are fatal, except for
+-	IPv6 failures on the loopback or "any" addresses</LI>
+-
+-	<LI><CODE>log</CODE> - Log file creation or write errors are fatal</LI>
+-
+-	<LI><CODE>permissions</CODE> - Bad startup file permissions are
+-	fatal, for example shared SSL certificate and key files with world-
+-	read permissions</LI>
+-
+-</UL>
+-
+-<P>Multiple errors can be listed, and the form "-kind" can be used with
+-<CODE>all</CODE> to remove specific kinds of errors. The default setting is
+-<CODE>@CUPS_FATAL_ERRORS@</CODE>.</P>
+-
+-
+-<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.18</SPAN><A NAME="FileDevice">FileDevice</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-FileDevice Yes
+-FileDevice No
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>FileDevice</CODE> directive determines whether the
+-scheduler allows new printers to be added using device URIs of
+-the form <CODE>file:/filename</CODE>. File devices are most often
+-used to test new printer drivers and do not support raw file
+-printing.</P>
+-
+-<P>The default setting is <CODE>No</CODE>.</P>
+-
+-<BLOCKQUOTE><B>Note:</B>
+-
+-<P>File devices are managed by the scheduler. Since the
+-scheduler normally runs as the root user, file devices
+-can be used to overwrite system files and potentially
+-gain unauthorized access to the system. If you must
+-create printers using file devices, we recommend that
+-you set the <CODE>FileDevice</CODE> directive to
+-<CODE>Yes</CODE> for only as long as you need to add the
+-printers to the system, and then reset the directive to
+-<CODE>No</CODE>.</P>
+-
+-</BLOCKQUOTE>
+-
+-
+ <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.3</SPAN><A NAME="FilterLimit">FilterLimit</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -893,39 +618,6 @@ value to assign to filter processes. The
+ is 0.</P>
+ 
+ 
+-<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.3</SPAN><A NAME="FontPath">FontPath</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-FontPath /foo/bar/fonts
+-FontPath /usr/share/cups/fonts:/foo/bar/fonts
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>FontPath</CODE> directive specifies the font path to
+-use when searching for fonts. The default font path is
+-<CODE>/usr/share/cups/fonts</CODE>.</P>
+-
+-
+-<H2 CLASS="title"><A NAME="Group">Group</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-Group lp
+-Group nobody
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>Group</CODE> directive specifies the UNIX group that
+-filter and CGI programs run as. The default group is
+-system-specific but is usually <CODE>lp</CODE> or
+-<CODE>nobody</CODE>.</P>
+-
+-
+ <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.6/OS X 10.8</SPAN><A NAME="GSSServiceName">GSSServiceName</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -1533,22 +1225,6 @@ error occurs during printing. The defaul
+ disables debugging history entirely and is not recommended.</P>
+ 
+ 
+-<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.15</SPAN><A NAME="LogFilePerm">LogFilePerm</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-LogFilePerm 0644
+-LogFilePerm 0600
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>LogFilePerm</CODE> directive specifies the
+-permissions to use when writing log files. The default
+-is @CUPS_LOG_FILE_PERM@.</P>
+-
+-
+ <H2 CLASS="title"><A NAME="LogLevel">LogLevel</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -1893,31 +1569,6 @@ HREF="#Location"><CODE>Location</CODE></
+ HREF="#Limit"><CODE>Limit</CODE></A> section.</P>
+ 
+ 
+-<H2 CLASS="title"><A NAME="PageLog">PageLog</A></H2>
+-
+-<H3>Examples</H3>
+-
+-<PRE CLASS="command">
+-PageLog /var/log/cups/page_log
+-PageLog /var/log/cups/page_log-%s
+-PageLog syslog
+-</PRE>
+-
+-<H3>Description</H3>
+-
+-<P>The <CODE>PageLog</CODE> directive sets the name of the page
+-log file. If the filename is not absolute then it is assumed to
+-be relative to the <A
+-HREF="#ServerRoot"><CODE>ServerRoot</CODE></A> directory. The
+-default page log file is <VAR>@CUPS_LOGDIR@/page_log</VAR>.</P>
+-
+-<P>The server name can be included in the filename by using
+-<CODE>%s</CODE> in the name.</P>
+-
+-<P>The special name "syslog" can be used to send the page
+-information to the system log instead of a plain file.</P>
+-
+-
+ <H2 CLASS="title"><A NAME="PageLogFormat">PageLogFormat</A></H2>
+ 
+ <H3>Examples</H3>
+@@ -2096,65 +1747,6 @@ PreserveJobFiles 604800
  </BLOCKQUOTE>
  
  
@@ -365,7 +701,7 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.21</SPAN><A NAME="ReloadTimeout">ReloadTimeout</A></H2>
  
  <H3>Examples</H3>
-@@ -2171,42 +2036,6 @@ of seconds the scheduler will wait for a
+@@ -2171,42 +1763,6 @@ of seconds the scheduler will wait for a
  before doing a restart. The default is 30 seconds.</P>
  
  
@@ -408,7 +744,7 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.7</SPAN><A NAME="Require">Require</A></H2>
  
  <H3>Examples</H3>
-@@ -2359,64 +2188,6 @@ alternate name with a ServerAlias direct
+@@ -2359,64 +1915,6 @@ alternate name with a ServerAlias direct
  </BLOCKQUOTE>
  
  
@@ -473,7 +809,7 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><A NAME="ServerName">ServerName</A></H2>
  
  <H3>Examples</H3>
-@@ -2433,23 +2204,6 @@ that is reported to clients. By default
+@@ -2433,23 +1931,6 @@ that is reported to clients. By default
  hostname.</P>
  
  
@@ -497,7 +833,7 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><SPAN CLASS="info">CUPS 1.1.21</SPAN><A NAME="ServerTokens">ServerTokens</A></H2>
  
  <H3>Examples</H3>
-@@ -2645,53 +2399,6 @@ subscription values to make private. The
+@@ -2645,53 +2126,6 @@ subscription values to make private. The
  HREF="#Policy"><CODE>Policy</CODE></A> section.</P>
  
  
@@ -551,7 +887,7 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  <H2 CLASS="title"><A NAME="Timeout">Timeout</A></H2>
  
  <H3>Examples</H3>
-@@ -2712,53 +2419,6 @@ to wait before an active HTTP or IPP req
+@@ -2712,53 +2146,6 @@ to wait before an active HTTP or IPP req
  <P>The default timeout is <CODE>5m</CODE> (five minutes).</P>
  
  
@@ -606,9 +942,9 @@ diff -up cups-1.6.1/doc/help/ref-cupsd-conf.html.in.str4223 cups-1.6.1/doc/help/
  
  <H3>Examples</H3>
 diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/help/ref-cups-files-conf.html.in
---- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2012-12-06 12:49:36.168469365 +0000
-+++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2012-12-06 12:49:36.168469365 +0000
-@@ -0,0 +1,531 @@
+--- cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223	2013-03-05 16:58:52.798286260 +0000
++++ cups-1.6.1/doc/help/ref-cups-files-conf.html.in	2013-03-05 17:02:04.602052537 +0000
+@@ -0,0 +1,513 @@
 +<HTML>
 +<!-- SECTION: References -->
 +<HEAD>
@@ -683,24 +1019,6 @@ diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/
 +
 +<P>The <CODE>DataDir</CODE> directive sets the directory to use
 +for data files.</P>
-+
-+
-+<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.2/OS X 10.5</SPAN><A NAME="DefaultAuthType">DefaultAuthType</A></H2>
-+
-+<H3>Examples</H3>
-+
-+<PRE CLASS="command">
-+DefaultAuthType Basic
-+DefaultAuthType BasicDigest
-+DefaultAuthType Digest
-+DefaultAuthType Negotiate
-+</PRE>
-+
-+<H3>Description</H3>
-+
-+<P>The <CODE>DefaultAuthType</CODE> directive specifies the type
-+of authentication to use for IPP operations that require a
-+username. The default is <CODE>Basic</CODE>.</P>
 +
 +
 +<H2 CLASS="title"><A NAME="DocumentRoot">DocumentRoot</A></H2>
@@ -1142,7 +1460,7 @@ diff -up cups-1.6.1/doc/help/ref-cups-files-conf.html.in.str4223 cups-1.6.1/doc/
 +</HTML>
 diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
 --- cups-1.6.1/doc/Makefile.str4223	2012-04-23 19:04:24.000000000 +0100
-+++ cups-1.6.1/doc/Makefile	2012-12-06 12:49:36.168469365 +0000
++++ cups-1.6.1/doc/Makefile	2013-03-05 17:02:38.730193057 +0000
 @@ -3,7 +3,7 @@
  #
  #   Documentation makefile for CUPS.
@@ -1152,9 +1470,17 @@ diff -up cups-1.6.1/doc/Makefile.str4223 cups-1.6.1/doc/Makefile
  #   Copyright 1997-2007 by Easy Software Products.
  #
  #   These coded instructions, statements, and computer programs are the
+@@ -105,6 +105,7 @@ HELPFILES	=	\
+ 			help/ref-classes-conf.html \
+ 			help/ref-client-conf.html \
+ 			help/ref-cupsd-conf.html \
++			help/ref-cups-files-conf.html \
+ 			help/ref-error_log.html \
+ 			help/ref-mailto-conf.html \
+ 			help/ref-page_log.html \
 diff -up cups-1.6.1/locale/cups_ca.po.str4223 cups-1.6.1/locale/cups_ca.po
 --- cups-1.6.1/locale/cups_ca.po.str4223	2012-07-16 18:34:21.000000000 +0100
-+++ cups-1.6.1/locale/cups_ca.po	2012-12-06 12:50:31.120615029 +0000
++++ cups-1.6.1/locale/cups_ca.po	2013-03-05 16:58:52.799286264 +0000
 @@ -3710,10 +3710,10 @@ msgstr "Carpeta d'arxivador "
  #, c-format
  msgid ""
@@ -1170,7 +1496,7 @@ diff -up cups-1.6.1/locale/cups_ca.po.str4223 cups-1.6.1/locale/cups_ca.po
  #: filter/rastertolabel.c:1273
 diff -up cups-1.6.1/locale/cups_es.po.str4223 cups-1.6.1/locale/cups_es.po
 --- cups-1.6.1/locale/cups_es.po.str4223	2012-07-16 18:26:00.000000000 +0100
-+++ cups-1.6.1/locale/cups_es.po	2012-12-06 12:50:31.132615065 +0000
++++ cups-1.6.1/locale/cups_es.po	2013-03-05 16:58:52.800286268 +0000
 @@ -3824,8 +3824,8 @@ msgstr "Carpeta de archivo"
  
  #: scheduler/ipp.c:2370
@@ -1184,7 +1510,7 @@ diff -up cups-1.6.1/locale/cups_es.po.str4223 cups-1.6.1/locale/cups_es.po
  #: filter/rastertohp.c:845
 diff -up cups-1.6.1/locale/cups_ja.po.str4223 cups-1.6.1/locale/cups_ja.po
 --- cups-1.6.1/locale/cups_ja.po.str4223	2012-06-22 03:34:12.000000000 +0100
-+++ cups-1.6.1/locale/cups_ja.po	2012-12-06 12:50:31.145615104 +0000
++++ cups-1.6.1/locale/cups_ja.po	2013-03-05 16:58:52.801286271 +0000
 @@ -3631,8 +3631,8 @@ msgstr "ファイルフォルダー"
  #, c-format
  msgid ""
@@ -1196,9 +1522,33 @@ diff -up cups-1.6.1/locale/cups_ja.po.str4223 cups-1.6.1/locale/cups_ja.po
  
  #: filter/rastertoepson.c:1117 filter/rastertohp.c:845
  #: filter/rastertolabel.c:1273
+diff -up cups-1.6.1/man/cupsctl.man.str4223 cups-1.6.1/man/cupsctl.man
+--- cups-1.6.1/man/cupsctl.man.str4223	2013-03-05 17:02:49.671238300 +0000
++++ cups-1.6.1/man/cupsctl.man	2013-03-05 17:03:26.576391527 +0000
+@@ -12,7 +12,7 @@
+ .\"   which should have been included with this file.  If this file is
+ .\"   file is missing or damaged, see the license at "http://www.cups.org/".
+ .\"
+-.TH cupsctl 8 "CUPS" "16 July 2012" "Apple Inc."
++.TH cupsctl 8 "CUPS" "12 December 2012" "Apple Inc."
+ .SH NAME
+ cupsctl \- configure cupsd.conf options
+ .SH SYNOPSIS
+@@ -84,11 +84,6 @@ Disable printer sharing:
+ .nf
+     cupsctl --no-shared-printers
+ .fi
+-.LP
+-Enable printing using the file: pseudo-device:
+-.nf
+-    cupsctl FileDevice=Yes
+-.fi
+ .SH KNOWN ISSUES
+ You cannot set the Listen or Port directives using \fIcupsctl\fR.
+ .SH SEE ALSO
 diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.in
 --- cups-1.6.1/man/cupsd.conf.man.in.str4223	2012-05-18 20:51:02.000000000 +0100
-+++ cups-1.6.1/man/cupsd.conf.man.in	2012-12-06 12:49:36.168469365 +0000
++++ cups-1.6.1/man/cupsd.conf.man.in	2013-03-05 16:58:52.801286271 +0000
 @@ -12,12 +12,15 @@
  .\"   which should have been included with this file.  If this file is
  .\"   file is missing or damaged, see the license at "http://www.cups.org/".
@@ -1463,8 +1813,8 @@ diff -up cups-1.6.1/man/cupsd.conf.man.in.str4223 cups-1.6.1/man/cupsd.conf.man.
  .br
  http://localhost:631/help
 diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files.conf.man.in
---- cups-1.6.1/man/cups-files.conf.man.in.str4223	2012-12-06 12:49:36.169469368 +0000
-+++ cups-1.6.1/man/cups-files.conf.man.in	2012-12-06 12:49:36.169469368 +0000
+--- cups-1.6.1/man/cups-files.conf.man.in.str4223	2013-03-05 16:58:52.801286271 +0000
++++ cups-1.6.1/man/cups-files.conf.man.in	2013-03-05 16:58:52.801286271 +0000
 @@ -0,0 +1,146 @@
 +.\"
 +.\" "$Id$"
@@ -1614,7 +1964,7 @@ diff -up cups-1.6.1/man/cups-files.conf.man.in.str4223 cups-1.6.1/man/cups-files
 +.\"
 diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
 --- cups-1.6.1/man/Makefile.str4223	2012-05-25 04:11:46.000000000 +0100
-+++ cups-1.6.1/man/Makefile	2012-12-06 12:49:36.169469368 +0000
++++ cups-1.6.1/man/Makefile	2013-03-05 16:58:52.801286271 +0000
 @@ -39,6 +39,7 @@ MAN1	=	cancel.$(MAN1EXT) \
  		ppdpo.$(MAN1EXT)
  MAN5	=	classes.conf.$(MAN5EXT) \
@@ -1625,7 +1975,7 @@ diff -up cups-1.6.1/man/Makefile.str4223 cups-1.6.1/man/Makefile
  		ipptoolfile.$(MAN5EXT) \
 diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.list.in
 --- cups-1.6.1/packaging/cups.list.in.str4223	2012-05-07 23:41:42.000000000 +0100
-+++ cups-1.6.1/packaging/cups.list.in	2012-12-06 12:49:36.169469368 +0000
++++ cups-1.6.1/packaging/cups.list.in	2013-03-05 16:58:52.802286275 +0000
 @@ -534,6 +534,8 @@ d 0755 root sys $SERVERROOT -
  d 0755 root $CUPS_GROUP $SERVERROOT/interfaces -
  d 0755 root $CUPS_GROUP $SERVERROOT/ppd -
@@ -1637,7 +1987,7 @@ diff -up cups-1.6.1/packaging/cups.list.in.str4223 cups-1.6.1/packaging/cups.lis
  c $CUPS_PERM root $CUPS_GROUP $SERVERROOT/snmp.conf conf/snmp.conf
 diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spec.in
 --- cups-1.6.1/packaging/cups.spec.in.str4223	2012-07-27 21:33:27.000000000 +0100
-+++ cups-1.6.1/packaging/cups.spec.in	2012-12-06 12:49:36.169469368 +0000
++++ cups-1.6.1/packaging/cups.spec.in	2013-03-05 16:58:52.802286275 +0000
 @@ -135,6 +135,7 @@ rm -rf $RPM_BUILD_ROOT
  %defattr(-,root,root)
  %dir /etc/cups
@@ -1648,7 +1998,7 @@ diff -up cups-1.6.1/packaging/cups.spec.in.str4223 cups-1.6.1/packaging/cups.spe
  %dir /etc/cups/ppd
 diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
 --- cups-1.6.1/scheduler/client.c.str4223	2012-05-07 23:41:30.000000000 +0100
-+++ cups-1.6.1/scheduler/client.c	2012-12-06 12:49:36.170469371 +0000
++++ cups-1.6.1/scheduler/client.c	2013-03-05 16:58:52.802286275 +0000
 @@ -32,7 +32,7 @@
   *   compare_clients()	    - Compare two client connections.
   *   data_ready()	    - Check whether data is available from a client.
@@ -1748,8 +2098,8 @@ diff -up cups-1.6.1/scheduler/client.c.str4223 cups-1.6.1/scheduler/client.c
  
   /*
 diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
---- cups-1.6.1/scheduler/conf.c.str4223	2012-12-06 12:49:36.088469126 +0000
-+++ cups-1.6.1/scheduler/conf.c	2012-12-06 12:49:36.172469377 +0000
+--- cups-1.6.1/scheduler/conf.c.str4223	2013-03-05 16:58:52.648285681 +0000
++++ cups-1.6.1/scheduler/conf.c	2013-03-05 16:58:52.803286279 +0000
 @@ -14,23 +14,25 @@
   *
   * Contents:
@@ -2729,8 +3079,8 @@ diff -up cups-1.6.1/scheduler/conf.c.str4223 cups-1.6.1/scheduler/conf.c
  
    return (1);
 diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
---- cups-1.6.1/scheduler/conf.h.str4223	2012-12-06 12:49:36.089469129 +0000
-+++ cups-1.6.1/scheduler/conf.h	2012-12-06 12:49:36.172469377 +0000
+--- cups-1.6.1/scheduler/conf.h.str4223	2013-03-05 16:58:52.649285685 +0000
++++ cups-1.6.1/scheduler/conf.h	2013-03-05 16:58:52.803286279 +0000
 @@ -96,7 +96,9 @@ typedef struct
   */
  
@@ -2743,8 +3093,8 @@ diff -up cups-1.6.1/scheduler/conf.h.str4223 cups-1.6.1/scheduler/conf.h
  					/* FQDN for server */
  			*ServerAdmin		VALUE(NULL),
 diff -up cups-1.6.1/scheduler/ipp.c.str4223 cups-1.6.1/scheduler/ipp.c
---- cups-1.6.1/scheduler/ipp.c.str4223	2012-12-06 12:49:36.119469218 +0000
-+++ cups-1.6.1/scheduler/ipp.c	2012-12-06 12:49:36.174469383 +0000
+--- cups-1.6.1/scheduler/ipp.c.str4223	2013-03-05 16:58:52.693285856 +0000
++++ cups-1.6.1/scheduler/ipp.c	2013-03-05 16:58:52.805286287 +0000
 @@ -2369,7 +2369,7 @@ add_printer(cupsd_client_t  *con,	/* I -
  	send_ipp_status(con, IPP_NOT_POSSIBLE,
  	                _("File device URIs have been disabled. "
@@ -2755,8 +3105,8 @@ diff -up cups-1.6.1/scheduler/ipp.c.str4223 cups-1.6.1/scheduler/ipp.c
  	return;
        }
 diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
---- cups-1.6.1/scheduler/main.c.str4223	2012-12-06 12:49:36.159469338 +0000
-+++ cups-1.6.1/scheduler/main.c	2012-12-06 12:49:36.175469386 +0000
+--- cups-1.6.1/scheduler/main.c.str4223	2013-03-05 16:58:52.786286214 +0000
++++ cups-1.6.1/scheduler/main.c	2013-03-05 16:58:52.805286287 +0000
 @@ -216,7 +216,6 @@ main(int  argc,				/* I - Number of comm
  
                  char *current;		/* Current directory */
@@ -2833,7 +3183,7 @@ diff -up cups-1.6.1/scheduler/main.c.str4223 cups-1.6.1/scheduler/main.c
    */
 diff -up cups-1.6.1/test/run-stp-tests.sh.str4223 cups-1.6.1/test/run-stp-tests.sh
 --- cups-1.6.1/test/run-stp-tests.sh.str4223	2012-05-21 16:35:25.000000000 +0100
-+++ cups-1.6.1/test/run-stp-tests.sh	2012-12-06 12:49:36.175469386 +0000
++++ cups-1.6.1/test/run-stp-tests.sh	2013-03-05 16:58:52.805286287 +0000
 @@ -385,26 +385,11 @@ fi
  cat >/tmp/cups-$user/cupsd.conf <<EOF
  StrictConformance Yes

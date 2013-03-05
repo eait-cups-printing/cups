@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 23%{?dist}
+Release: 24%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -627,6 +627,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Mar  5 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-24
+- Documentation fixes from STR #4223 (bug #915981).
+
 * Wed Feb 27 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-23
 - Removed obsolete browsing directives from cupsd.conf (bug #880826, STR #4157).
 - Updated summary and descriptions (#882982).
