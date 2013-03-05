@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -763,6 +763,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Mar  5 2013 Tim Waugh <twaugh@redhat.com> 1:1.5.4-26
+- Documentation fixes from STR #4223 (bug #915981).
+
 * Fri Feb 15 2013 Jiri Popelka <jpopelka@redhat.com> 1:1.5.4-25
 - Fixed STR #4232 fix (STR #4276).
 
