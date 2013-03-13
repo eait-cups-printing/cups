@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.1
-Release: 25%{?dist}
+Release: 26%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -348,9 +348,11 @@ mkdir -p $RPM_BUILD_ROOT%{_datadir}/ppd
 rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
-# these are shipped with cups-filters
-rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/banners
-rm -f $RPM_BUILD_ROOT%{_datadir}/cups/data/testprint
+
+# banners are also shipped with cups-filters
+# but we don't use them yet (#919489)
+#rm -rf $RPM_BUILD_ROOT%%{_datadir}/cups/banners
+#rm -f $RPM_BUILD_ROOT%%{_datadir}/cups/data/testprint
 
 # install /usr/lib/tmpfiles.d/cups.conf (bug #656566, bug #893834)
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
@@ -571,6 +573,8 @@ rm -f %{cups_serverbin}/backend/smb
 # lpd subpackage
 %exclude %{_mandir}/man8/cups-lpd.8.gz
 %{_sbindir}/*
+%{_datadir}/cups/banners
+%{_datadir}/cups/data/testprint
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/ca
 %dir %{_datadir}/cups/templates/es
@@ -602,7 +606,6 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{cups_serverbin}/driver
 %dir %{cups_serverbin}/filter
 %dir %{_datadir}/cups
-#%%dir %%{_datadir}/cups/banners
 #%%dir %%{_datadir}/cups/charsets
 %dir %{_datadir}/cups/data
 %dir %{_datadir}/cups/drv
@@ -631,6 +634,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Mar 13 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-26
+- ship banners again (#919489)
+
 * Tue Mar  5 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-25
 - Talk about systemd in cups-lpd manpage (part of bug #884641).
 
