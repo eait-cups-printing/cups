@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.6.1
-Release: 26%{?dist}
+Version: 1.6.2
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -40,28 +40,20 @@ Patch9: cups-lpr-help.patch
 Patch10: cups-peercred.patch
 Patch11: cups-pid.patch
 Patch12: cups-eggcups.patch
-Patch13: cups-str4276.patch
-Patch14: cups-driverd-timeout.patch
-Patch15: cups-strict-ppd-line-length.patch
-Patch16: cups-logrotate.patch
-Patch17: cups-usb-paperout.patch
-#Patch18: cups-build.patch
-Patch19: cups-res_init.patch
-Patch20: cups-filter-debug.patch
-Patch21: cups-uri-compat.patch
-Patch22: cups-directives.patch
-Patch23: cups-str3382.patch
-Patch24: cups-usblp-quirks.patch
-Patch25: cups-0755.patch
-
-Patch27: cups-hp-deviceid-oid.patch
-Patch28: cups-dnssd-deviceid.patch
-Patch29: cups-ricoh-deviceid-oid.patch
-
-Patch30: cups-systemd-socket.patch
-
-Patch31: cups-str4223.patch
-Patch32: cups-lpd-manpage.patch
+Patch13: cups-driverd-timeout.patch
+Patch14: cups-strict-ppd-line-length.patch
+Patch15: cups-logrotate.patch
+Patch16: cups-usb-paperout.patch
+Patch17: cups-res_init.patch
+Patch18: cups-filter-debug.patch
+Patch19: cups-uri-compat.patch
+Patch20: cups-str3382.patch
+Patch21: cups-0755.patch
+Patch22: cups-hp-deviceid-oid.patch
+Patch23: cups-dnssd-deviceid.patch
+Patch24: cups-ricoh-deviceid-oid.patch
+Patch25: cups-systemd-socket.patch
+Patch26: cups-lpd-manpage.patch
 
 Patch100: cups-lspp.patch
 
@@ -200,52 +192,35 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch11 -p1 -b .pid
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch12 -p1 -b .eggcups
-# Applied colorman fix from STR #4232 and STR #4276.
-%patch13 -p1 -b .str4276
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch14 -p1 -b .driverd-timeout
+%patch13 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
-%patch15 -p1 -b .strict-ppd-line-length
+%patch14 -p1 -b .strict-ppd-line-length
 # Re-open the log if it has been logrotated under us.
-%patch16 -p1 -b .logrotate
+%patch15 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch17 -p1 -b .usb-paperout
-# Simplify the DNSSD parts so they can build using the compat library.
-#%%patch18 -p1 -b .build
+%patch16 -p1 -b .usb-paperout
 # Re-initialise the resolver on failure in httpAddrGetList() (bug #567353).
-%patch19 -p1 -b .res_init
+%patch17 -p1 -b .res_init
 # Log extra debugging information if no filters are available.
-%patch20 -p1 -b .filter-debug
+%patch18 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
-%patch21 -p1 -b .uri-compat
-# Remove obsolete browsing directives from cupsd.conf (bug #880826, STR #4157).
-%patch22 -p1 -b .directives
+%patch19 -p1 -b .uri-compat
 # Fix temporary filename creation.
-%patch23 -p1 -b .str3382
-# Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
-# This patch adds a quirk handler for this reset so that it will not be done for all printers.
-# (bug #847923, STR #4155, STR #4191)
-# bug #867392
-%patch24 -p1 -b .usblp-quirks
+%patch20 -p1 -b .str3382
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch25 -p1 -b .0755
-
+%patch21 -p1 -b .0755
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch27 -p1 -b .hp-deviceid-oid
+%patch22 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-%patch28 -p1 -b .dnssd-deviceid
+%patch23 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch29 -p1 -b .ricoh-deviceid-oid
-
+%patch24 -p1 -b .ricoh-deviceid-oid
 # Add support for systemd socket activation (patch from Lennart
 # Poettering).
-%patch30 -p1 -b .systemd-socket
-
-# Apply upstream fix for CVE-2012-5519 (STR #4223, bug #875898).
-%patch31 -p1 -b .str4223
-
+%patch25 -p1 -b .systemd-socket
 # Talk about systemd in cups-lpd manpage (part of bug #884641).
-%patch32 -p1 -b .lpd-manpage
+%patch26 -p1 -b .lpd-manpage
 
 %if %lspp
 # LSPP support.
@@ -349,7 +324,7 @@ rm -rf $RPM_BUILD_ROOT%{_mandir}/cat? $RPM_BUILD_ROOT%{_mandir}/*/cat?
 rm -f $RPM_BUILD_ROOT%{_datadir}/applications/cups.desktop
 rm -rf $RPM_BUILD_ROOT%{_datadir}/icons
 
-# banners are also shipped with cups-filters
+# banners can be shipped with cups-filters
 # but we don't use them yet (#919489)
 #rm -rf $RPM_BUILD_ROOT%%{_datadir}/cups/banners
 #rm -f $RPM_BUILD_ROOT%%{_datadir}/cups/data/testprint
@@ -537,16 +512,22 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/ca
+%dir %{_datadir}/%{name}/www/cs
 %dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
 %doc %{_datadir}/%{name}/www/ca/index.html
+%doc %{_datadir}/%{name}/www/cs/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
+%doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
+%doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -577,12 +558,18 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/data/testprint
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/ca
+%dir %{_datadir}/cups/templates/cs
 %dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
+%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
+%{_datadir}/cups/templates/cs/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
+%{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
+%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -634,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Mar 18 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-1
+- 1.6.2
+
 * Wed Mar 13 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.1-26
 - ship banners again (#919489)
 
