@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -393,7 +393,7 @@ for keyword in AccessLog CacheDir ConfigFilePerm	\
     RemoteRoot RequestRoot ServerBin ServerCertificate	\
     ServerKey ServerRoot SMBConfigFile StateDir		\
     SystemGroup SystemGroupAuthKey TempDir User; do
-    if ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
+    if ! [ -f "$IN" ] || ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
     copy=yes
     if /bin/grep -iq ^$keyword "$OUT"; then
 	if [ "`/bin/grep -i ^$keyword "$IN"`" ==	\
@@ -618,6 +618,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-3
+- Check for cupsd.conf existence prior to grepping it (bug #928816).
+
 * Tue Mar 19 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-2
 - revert previous bug #919489 fix (i.e we don't ship banners now)
 
