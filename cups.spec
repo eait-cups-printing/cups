@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -54,6 +54,7 @@ Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
+Patch27: cups-avahi-address.patch
 
 Patch100: cups-lspp.patch
 
@@ -221,6 +222,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch25 -p1 -b .systemd-socket
 # Talk about systemd in cups-lpd manpage (part of bug #884641).
 %patch26 -p1 -b .lpd-manpage
+# Use IP address when resolving DNSSD URIs (bug #948288).
+%patch27 -p1 -b .avahi-address
 
 %if %lspp
 # LSPP support.
@@ -618,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-4
+- Use IP address when resolving DNSSD URIs (bug #948288).
+
 * Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-3
 - Check for cupsd.conf existence prior to grepping it (bug #928816).
 
