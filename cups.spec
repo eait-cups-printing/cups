@@ -621,6 +621,11 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Apr 10 2013 Tim Waugh <twaugh@redhat.com>
+- cups-dbus-utf.patch: now that the scheduler only accepts valid UTF-8
+  strings for job-name, there's no need to validate it as UTF-8 in the
+  dbus notifier.
+
 * Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-4
 - Use IP address when resolving DNSSD URIs (bug #948288).
 
