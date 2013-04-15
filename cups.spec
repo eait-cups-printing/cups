@@ -331,8 +331,8 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/cups/banners
 rm -f $RPM_BUILD_ROOT%{_datadir}/cups/data/testprint
 
 # install /usr/lib/tmpfiles.d/cups.conf (bug #656566, bug #893834)
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d
-cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups.conf <<EOF
+mkdir -p ${RPM_BUILD_ROOT}%{_tmpfilesdir}
+cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups.conf <<EOF
 # See tmpfiles.d(5) for details
 
 d /run/cups 0755 root lp -
