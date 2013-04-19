@@ -1,6 +1,9 @@
 %global use_alternatives 1
 %global lspp 1
 
+%global prever b1
+%global VERSION %{version}%{prever}
+
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
 # It's more of a libexec-style ({_libexecdir}) usage,
@@ -10,12 +13,12 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.6.2
-Release: 4%{?dist}
+Version: 1.7
+Release: 0.1.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
-Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
+Source: http://ftp.easysw.com/pub/cups/%{VERSION}/cups-%{VERSION}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -168,7 +171,7 @@ lpd emulation.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q
+%setup -q -n cups-%{VERSION}
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
@@ -342,7 +345,7 @@ d /var/spool/cups/tmp - - - 30d
 EOF
 
 # /usr/lib/tmpfiles.d/cups-lp.conf (bug #812641)
-cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups-lp.conf <<EOF
+cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups-lp.conf <<EOF
 # Legacy parallel port character device nodes, to trigger the
 # auto-loading of the kernel module on access.
 #
@@ -495,8 +498,8 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) %{_localstatedir}/run/cups
 %dir %attr(0511,lp,sys) %{_localstatedir}/run/cups/certs
-%{_prefix}/lib/tmpfiles.d/cups.conf
-%{_prefix}/lib/tmpfiles.d/cups-lp.conf
+%{_tmpfilesdir}/cups.conf
+%{_tmpfilesdir}/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
@@ -621,6 +624,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Apr 19 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.1.b1
+- 1.7b1
+- use _tmpfilesdir macro
+
 * Wed Apr 10 2013 Tim Waugh <twaugh@redhat.com>
 - cups-dbus-utf.patch: now that the scheduler only accepts valid UTF-8
   strings for job-name, there's no need to validate it as UTF-8 in the
