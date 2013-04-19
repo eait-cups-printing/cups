@@ -342,7 +342,7 @@ d /var/spool/cups/tmp - - - 30d
 EOF
 
 # /usr/lib/tmpfiles.d/cups-lp.conf (bug #812641)
-cat > ${RPM_BUILD_ROOT}%{_prefix}/lib/tmpfiles.d/cups-lp.conf <<EOF
+cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups-lp.conf <<EOF
 # Legacy parallel port character device nodes, to trigger the
 # auto-loading of the kernel module on access.
 #
@@ -495,8 +495,8 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) %{_localstatedir}/run/cups
 %dir %attr(0511,lp,sys) %{_localstatedir}/run/cups/certs
-%{_prefix}/lib/tmpfiles.d/cups.conf
-%{_prefix}/lib/tmpfiles.d/cups-lp.conf
+%{_tmpfilesdir}/cups.conf
+%{_tmpfilesdir}/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
@@ -626,10 +626,10 @@ rm -f %{cups_serverbin}/backend/smb
   strings for job-name, there's no need to validate it as UTF-8 in the
   dbus notifier.
 
-* Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-4
+* Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-4
 - Use IP address when resolving DNSSD URIs (bug #948288).
 
-* Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-3
+* Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-3
 - Check for cupsd.conf existence prior to grepping it (bug #928816).
 
 * Tue Mar 19 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-2
