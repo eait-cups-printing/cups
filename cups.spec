@@ -633,10 +633,10 @@ rm -f %{cups_serverbin}/backend/smb
   strings for job-name, there's no need to validate it as UTF-8 in the
   dbus notifier.
 
-* Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-4
+* Thu Apr  4 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-4
 - Use IP address when resolving DNSSD URIs (bug #948288).
 
-* Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.1-3
+* Thu Mar 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-3
 - Check for cupsd.conf existence prior to grepping it (bug #928816).
 
 * Tue Mar 19 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-2
