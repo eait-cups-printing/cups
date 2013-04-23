@@ -1,6 +1,6 @@
-diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
---- cups-1.5.3/backend/dnssd.c.avahi-2-backend	2012-05-15 16:53:18.164774446 +0200
-+++ cups-1.5.3/backend/dnssd.c	2012-05-15 17:09:07.684155704 +0200
+diff -up cups-1.5.4/backend/dnssd.c.avahi-2-backend cups-1.5.4/backend/dnssd.c
+--- cups-1.5.4/backend/dnssd.c.avahi-2-backend	2013-04-23 17:01:44.732854106 +0100
++++ cups-1.5.4/backend/dnssd.c	2013-04-23 17:01:53.671894092 +0100
 @@ -15,14 +15,21 @@
   *
   * Contents:
@@ -523,7 +523,7 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
  
    fprintf(stderr, "DEBUG2: query_callback(sdRef=%p, flags=%x, "
                    "interfaceIndex=%d, errorCode=%d, fullName=\"%s\", "
-@@ -719,94 +986,233 @@ query_callback(
+@@ -719,94 +986,235 @@ query_callback(
    if ((ptr = strstr(name, "._")) != NULL)
      *ptr = '\0';
  
@@ -592,7 +592,7 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
 +{
 +  AvahiClient		*client;
 +  cups_device_t		key,
-+			*device;
++			*device = NULL;
 +  char			uqname[1024],
 +			*ptr;
 +  cups_txt_records_t	txtr;
@@ -623,11 +623,13 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
 +  key.type = device_type (type);
 +
 + /*
-+  * Find the device and the the TXT information.
++  * Find the device and the TXT information.
 +  */
 +
 +  txtr.txt = txt;
-+  device = find_device ((cups_array_t *) context, &txtr, &key);
++  if (txt != NULL)
++    device = find_device ((cups_array_t *) context, &txtr, &key);
++
 +  if (device)
 +  {
 +   /*
@@ -819,7 +821,7 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
  	{
  	 /*
  	  * Add USB device ID information...
-@@ -861,6 +1267,10 @@ query_callback(
+@@ -861,6 +1269,10 @@ query_callback(
  	  if (device->type == CUPS_DEVICE_PRINTER)
  	    device->sent = 1;
  	}
@@ -830,7 +832,7 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
        }
  
        if (device->device_id)
-@@ -917,11 +1327,9 @@ query_callback(
+@@ -917,11 +1329,9 @@ query_callback(
      }
    }
  
@@ -843,9 +845,9 @@ diff -up cups-1.5.3/backend/dnssd.c.avahi-2-backend cups-1.5.3/backend/dnssd.c
  /*
   * 'sigterm_handler()' - Handle termination signals...
   */
-diff -up cups-1.5.3/cups/http-support.c.avahi-2-backend cups-1.5.3/cups/http-support.c
---- cups-1.5.3/cups/http-support.c.avahi-2-backend	2012-02-15 02:06:12.000000000 +0100
-+++ cups-1.5.3/cups/http-support.c	2012-05-15 17:04:51.045944634 +0200
+diff -up cups-1.5.4/cups/http-support.c.avahi-2-backend cups-1.5.4/cups/http-support.c
+--- cups-1.5.4/cups/http-support.c.avahi-2-backend	2012-02-15 01:06:12.000000000 +0000
++++ cups-1.5.4/cups/http-support.c	2013-04-23 17:01:44.755854208 +0100
 @@ -43,6 +43,10 @@
   *   http_copy_decode()   - Copy and decode a URI.
   *   http_copy_encode()   - Copy and encode a URI.
