@@ -1,0 +1,21 @@
+diff -up cups-1.7b1/cups/ipp.c.va_list cups-1.7b1/cups/ipp.c
+--- cups-1.7b1/cups/ipp.c.va_list	2013-03-14 19:45:49.000000000 +0100
++++ cups-1.7b1/cups/ipp.c	2013-04-29 15:45:52.680403846 +0200
+@@ -1210,7 +1210,7 @@ ippAddStringfv(ipp_t      *ipp,		/* I -
+       group == IPP_TAG_END || group >= IPP_TAG_UNSUPPORTED_VALUE ||
+       (value_tag < IPP_TAG_TEXT && value_tag != IPP_TAG_TEXTLANG &&
+        value_tag != IPP_TAG_NAMELANG) || value_tag > IPP_TAG_MIMETYPE ||
+-      !format || !ap)
++      !format)
+     return (NULL);
+ 
+   if ((value_tag == IPP_TAG_TEXTLANG || value_tag == IPP_TAG_NAMELANG)
+@@ -4449,7 +4449,7 @@ ippSetStringfv(ipp_t           *ipp,	/*
+   if (!ipp || !attr || !*attr ||
+       (value_tag < IPP_TAG_TEXT && value_tag != IPP_TAG_TEXTLANG &&
+        value_tag != IPP_TAG_NAMELANG) || value_tag > IPP_TAG_MIMETYPE ||
+-      !format || !ap)
++      !format)
+     return (0);
+ 
+  /*

@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.1.%{prever}%{?dist}
+Release: 0.2.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -58,6 +58,7 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
+Patch28: cups-17b1-va_list.patch
 
 Patch100: cups-lspp.patch
 
@@ -227,6 +228,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
+
+# do not apply unary exclamation mark to va_list (bug #957737).
+%patch28 -p1 -b .va_list
 
 %if %lspp
 # LSPP support.
@@ -624,6 +628,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Apr 29 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.2.b1
+- Do not apply unary exclamation mark to va_list (bug #957737).
+
 * Fri Apr 19 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.1.b1
 - 1.7b1
 - use _tmpfilesdir macro
