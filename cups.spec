@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.2.%{prever}%{?dist}
+Release: 0.3.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -585,7 +585,6 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/examples
 %{_datadir}/cups/mime/mime.types
 %{_datadir}/cups/mime/mime.convs
-%dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.defs
 %{_datadir}/cups/ppdc/*.h
 
@@ -605,6 +604,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/drv
 %dir %{_datadir}/cups/mime
 %dir %{_datadir}/cups/model
+%dir %{_datadir}/cups/ppdc
 %dir %{_datadir}/ppd
 
 %files devel
@@ -628,6 +628,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed May 15 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.3.b1
+- move cups/ppdc/ to filesystem subpackage
+
 * Mon Apr 29 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.2.b1
 - Do not apply unary exclamation mark to va_list (bug #957737).
 
