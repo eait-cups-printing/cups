@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -578,7 +578,6 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/examples
 %{_datadir}/cups/mime/mime.types
 %{_datadir}/cups/mime/mime.convs
-%dir %{_datadir}/cups/ppdc
 %{_datadir}/cups/ppdc/*.defs
 %{_datadir}/cups/ppdc/*.h
 
@@ -598,6 +597,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/drv
 %dir %{_datadir}/cups/mime
 %dir %{_datadir}/cups/model
+%dir %{_datadir}/cups/ppdc
 %dir %{_datadir}/ppd
 
 %files devel
@@ -621,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed May 15 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-5
+- move cups/ppdc/ to filesystem subpackage
+
 * Wed Apr 10 2013 Tim Waugh <twaugh@redhat.com>
 - cups-dbus-utf.patch: now that the scheduler only accepts valid UTF-8
   strings for job-name, there's no need to validate it as UTF-8 in the
