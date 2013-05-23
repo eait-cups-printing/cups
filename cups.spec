@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -55,6 +55,7 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
+Patch28: cups-usblp-quirks.patch
 
 Patch100: cups-lspp.patch
 
@@ -224,6 +225,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
+# More USB quirks for the libusb-based backend (STR #4311).
+# Fixed in 1.6.3
+%patch28 -p1 -b .quirks
 
 %if %lspp
 # LSPP support.
@@ -625,6 +629,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu May 23 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-7
+- Added more USB quirks for the libusb-based backend (STR #4311)
+
 * Thu May 23 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-6
 - don't ship Russian web templates because they're broken (#960571, STR #4310)
 
