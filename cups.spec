@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.3.%{prever}%{?dist}
+Release: 0.4.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -59,6 +59,7 @@ Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
 Patch28: cups-17b1-va_list.patch
+Patch29: cups-enum-all.patch
 
 Patch100: cups-lspp.patch
 
@@ -228,9 +229,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
-
 # do not apply unary exclamation mark to va_list (bug #957737).
 %patch28 -p1 -b .va_list
+# Return from cupsEnumDests() once all records have been returned.
+%patch29 -p1 -b .enum-all
 
 %if %lspp
 # LSPP support.
@@ -367,6 +369,10 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^\([^%].*\)/d
 ' > %{name}.lang
 
+# don't ship Russian web templates because they're broken (#960571, STR #4310)
+# will be fixed in 1.6.3
+rm -rf ${RPM_BUILD_ROOT}%{_datadir}/%{name}/www/ru
+rm -rf ${RPM_BUILD_ROOT}%{_datadir}/cups/templates/ru
 
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
@@ -524,7 +530,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/ja
-%dir %{_datadir}/%{name}/www/ru
+#%%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
@@ -535,7 +541,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
-%doc %{_datadir}/%{name}/www/ru/index.html
+#%%doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -568,14 +574,14 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
-%dir %{_datadir}/cups/templates/ru
+#%%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/cs/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
-%{_datadir}/cups/templates/ru/*.tmpl
+#%%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -628,6 +634,12 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun  4 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.4.b1
+- Return from cupsEnumDests() once all records have been returned.
+
+* Thu May 23 2013 Jiri Popelka <jpopelka@redhat.com>
+- don't ship Russian web templates because they're broken (#960571, STR #4310)
+
 * Wed May 15 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.3.b1
 - move cups/ppdc/ to filesystem subpackage
 
