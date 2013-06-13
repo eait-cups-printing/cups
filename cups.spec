@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 27%{?dist}
+Release: 28%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -79,13 +79,13 @@ Patch43: cups-str4194.patch
 Patch44: cups-r10638.patch
 Patch45: cups-r10642.patch
 Patch46: cups-str4190.patch
-
 Patch47: cups-str4223.patch
 
 Patch48: cups-str4125.patch
 Patch49: cups-str4140.patch
 Patch50: cups-str4187.patch
 Patch51: cups-str4205.patch
+Patch52: cups-stringpool-setprinterattr.patch
 
 Patch100: cups-lspp.patch
 
@@ -346,6 +346,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch50 -p1 -b .str4187
 # Don't set auth-info-required all of the time (STR #4205)
 %patch51 -p1 -b .str4205
+# Prevent stringpool damage leading to memory leaks (bug #974048).
+%patch52 -p1 -b .stringpool-setprinterattr
 
 %if %lspp
 # LSPP support.
@@ -763,6 +765,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jun 13 2013 Tim Waugh <twaugh@redhat.com> 1:1.5.4-28
+- Prevent stringpool damage leading to memory leaks (bug #974048).
+
 * Tue Apr 23 2013 Tim Waugh <twaugh@redhat.com> 1:1.5.4-27
 - dnssd backend: don't crash if avahi gives a callback with no TXT
   record (bug #927040).
