@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -58,6 +58,7 @@ Patch27: cups-avahi-address.patch
 Patch28: cups-usblp-quirks.patch
 Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
+Patch31: cups-dymo-deviceid.patch
 
 Patch100: cups-lspp.patch
 
@@ -234,6 +235,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch29 -p1 -b .enum-all
 # Prevent stringpool damage leading to memory leaks (bug #974048).
 %patch30 -p1 -b .stringpool-setprinterattr
+# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+%patch31 -p1 -b .dymo-deviceid
 
 %if %lspp
 # LSPP support.
@@ -635,6 +638,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 18 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-10
+- Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+
 * Thu Jun 13 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-9
 - Prevent stringpool damage leading to memory leaks (bug #974048).
 
