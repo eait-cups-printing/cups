@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.7.%{prever}%{?dist}
+Release: 0.8.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -99,7 +99,6 @@ Requires: dbus
 # Requires working PrivateTmp (bug #807672)
 Requires(pre): systemd
 Requires(post): systemd
-Requires(post): systemd-sysv
 Requires(post): grep, sed
 Requires(preun): systemd
 Requires(postun): systemd
@@ -483,19 +482,6 @@ exit 0
 # one-off fix for bug #748841.
 /bin/systemctl --no-reload enable %{name}.{service,socket,path} >/dev/null 2>&1 || :
 
-%triggerun -- %{name} < 1:1.5-0.9
-# Save the current service runlevel info
-# User must manually run systemd-sysv-convert --apply cups
-# to migrate them to systemd targets
-%{_bindir}/systemd-sysv-convert --save %{name} >/dev/null 2>&1 || :
-
-# This package is allowed to autostart:
-/bin/systemctl --no-reload enable %{name}.{service,socket,path} >/dev/null 2>&1 || :
-
-# Run these because the SysV package being removed won't do them
-/sbin/chkconfig --del cups >/dev/null 2>&1 || :
-/bin/systemctl try-restart %{name}.service >/dev/null 2>&1 || :
-
 %triggerin -- samba-client
 ln -sf ../../../bin/smbspool %{cups_serverbin}/backend/smb || :
 exit 0
@@ -643,6 +629,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jun 20 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.8.b1
+- Remove scriptlet for migrating to a systemd unit from a SysV initscript
+
 * Thu Jun 20 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.7.b1
 - Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
 
