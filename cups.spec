@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.6.%{prever}%{?dist}
+Release: 0.7.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -62,6 +62,7 @@ Patch28: cups-17b1-va_list.patch
 Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
+Patch32: cups-freebind.patch
 
 Patch100: cups-lspp.patch
 
@@ -239,6 +240,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch30 -p1 -b .stringpool-setprinterattr
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch31 -p1 -b .dymo-deviceid
+# Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
+%patch32 -p1 -b .freebind
 
 %if %lspp
 # LSPP support.
@@ -640,6 +643,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jun 20 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.7.b1
+- Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
+
 * Tue Jun 18 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.6.b1
 - Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 
