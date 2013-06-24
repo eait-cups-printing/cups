@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -60,6 +60,7 @@ Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
 Patch32: cups-use-ipp1.1.patch
+Patch33: cups-no-gcry.patch
 
 Patch100: cups-lspp.patch
 
@@ -241,6 +242,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch31 -p1 -b .dymo-deviceid
 # Default to IPP/1.1 for now (bug #977813).
 %patch32 -p1 -b .use-ipp1.1
+# Don't link against libgcrypt needlessly.
+%patch33 -p1 -b .no-gcry
 
 %if %lspp
 # LSPP support.
@@ -642,6 +645,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jun 26 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-13
+- Don't link against libgcrypt needlessly.
+
 * Wed Jun 26 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-12
 - Default to IPP/1.1 for now (bug #977813).
 
