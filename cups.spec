@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.8.%{prever}%{?dist}
+Release: 0.9.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -63,6 +63,7 @@ Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
 Patch32: cups-freebind.patch
+Patch33: cups-no-gcry.patch
 
 Patch100: cups-lspp.patch
 
@@ -241,6 +242,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch31 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
 %patch32 -p1 -b .freebind
+# Don't link against libgcrypt needlessly.
+%patch33 -p1 -b .no-gcry
 
 %if %lspp
 # LSPP support.
@@ -629,6 +632,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jun 24 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.9.b1
+- Don't link against libgcrypt needlessly.
+
 * Thu Jun 20 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.8.b1
 - Remove scriptlet for migrating to a systemd unit from a SysV initscript
 
