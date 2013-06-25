@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -230,7 +230,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch27 -p1 -b .avahi-address
 # More USB quirks for the libusb-based backend (STR #4311).
 # Fixed in 1.6.3
-%patch28 -p1 -b .quirks
+# Added usblp quirk for Canon PIXMA MP540 (bug #967873).
+%patch28 -p1 -b .usblp-quirks
 # Return from cupsEnumDests() once all records have been returned.
 %patch29 -p1 -b .enum-all
 # Prevent stringpool damage leading to memory leaks (bug #974048).
@@ -638,6 +639,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 25 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-11
+- Added usblp quirk for Canon PIXMA MP540 (bug #967873).
+
 * Tue Jun 18 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-10
 - Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 
