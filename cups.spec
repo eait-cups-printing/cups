@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.9.%{prever}%{?dist}
+Release: 0.10.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -64,6 +64,7 @@ Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
 Patch32: cups-freebind.patch
 Patch33: cups-no-gcry.patch
+Patch34: cups-libusb-quirks.patch
 
 Patch100: cups-lspp.patch
 
@@ -244,6 +245,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch32 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
 %patch33 -p1 -b .no-gcry
+# Added libusb quirk for Canon PIXMA MP540 (bug #967873).
+%patch34 -p1 -b .libusb-quirks
 
 %if %lspp
 # LSPP support.
@@ -632,6 +635,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 25 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-11
+- Added libusb quirk for Canon PIXMA MP540 (bug #967873).
+
 * Mon Jun 24 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.9.b1
 - Don't link against libgcrypt needlessly.
 
