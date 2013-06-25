@@ -12,7 +12,7 @@
 Summary: Common Unix Printing System
 Name: cups
 Version: 1.5.4
-Release: 28%{?dist}
+Release: 29%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Source: http://ftp.easysw.com/pub/cups/%{version}/cups-%{version}-source.tar.bz2
@@ -282,6 +282,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Problem is a port reset which is done by the new USB backend of CUPS 1.5.4 and 1.6.x to clean up after the job.
 # This patch adds a quirk handler for this reset so that it will not be done for all printers.
 # (bug #847923, STR #4155, STR #4191)
+# Added usblp quirk for Canon PIXMA MP540 (bug #967873).
 %patch24 -p1 -b .usblp-quirks
 # Use mode 0755 for binaries and libraries where appropriate.
 %patch25 -p1 -b .0755
@@ -765,6 +766,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 25 2013 Tim Waugh <twaugh@redhat.com> 1:1.5.4-29
+- Added usblp quirk for Canon PIXMA MP540 (bug #967873).
+
 * Thu Jun 13 2013 Tim Waugh <twaugh@redhat.com> 1:1.5.4-28
 - Prevent stringpool damage leading to memory leaks (bug #974048).
 
