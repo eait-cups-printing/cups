@@ -635,7 +635,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
-* Tue Jun 25 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-11
+* Tue Jun 25 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.10.b1
 - Added libusb quirk for Canon PIXMA MP540 (bug #967873).
 
 * Mon Jun 24 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.9.b1
