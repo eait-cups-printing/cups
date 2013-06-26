@@ -1,0 +1,12 @@
+diff -up cups-1.6.2/cups/globals.c.use-ipp1.1 cups-1.6.2/cups/globals.c
+--- cups-1.6.2/cups/globals.c.use-ipp1.1	2013-06-26 14:36:25.905364837 +0100
++++ cups-1.6.2/cups/globals.c	2013-06-26 14:36:31.554385140 +0100
+@@ -215,7 +215,7 @@ cups_globals_alloc(void)
+   cg->any_root       = 1;
+   cg->expired_certs  = 1;
+   cg->expired_root   = 1;
+-  cg->server_version = 20;
++  cg->server_version = 11;
+ 
+  /*
+   * Then set directories as appropriate...
