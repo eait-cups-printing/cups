@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.11.%{prever}%{?dist}
+Release: 0.12.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -638,6 +638,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jun 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.12.b1
+- Fix for DNSSD name resolution.
+
 * Wed Jun 26 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.11.b1
 - Default to IPP/1.1 for now (bug #977813).
 
