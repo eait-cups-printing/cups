@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -645,6 +645,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jun 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-14
+- Fix for DNSSD name resolution.
+
 * Wed Jun 26 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-13
 - Don't link against libgcrypt needlessly.
 
