@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.12.%{prever}%{?dist}
+Release: 0.13.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -66,6 +66,7 @@ Patch32: cups-freebind.patch
 Patch33: cups-no-gcry.patch
 Patch34: cups-libusb-quirks.patch
 Patch35: cups-use-ipp1.1.patch
+Patch36: cups-avahi-no-threaded.patch
 
 Patch100: cups-lspp.patch
 
@@ -250,6 +251,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch34 -p1 -b .libusb-quirks
 # Default to IPP/1.1 for now (bug #977813).
 %patch35 -p1 -b .use-ipp1.1
+# Don't use D-Bus from two threads (bug #979748).
+%patch36 -p1 -b .avahi-no-threaded
 
 %if %lspp
 # LSPP support.
@@ -638,6 +641,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jul  1 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.13.b1
+- Don't use D-Bus from two threads (bug #979748).
+
 * Fri Jun 28 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.12.b1
 - Fix for DNSSD name resolution.
 
