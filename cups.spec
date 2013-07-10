@@ -14,11 +14,11 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.14.%{prever}%{?dist}
+Release: 0.15.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
-Source: http://ftp.easysw.com/pub/cups/%{VERSION}/cups-%{VERSION}-source.tar.bz2
+Source: http://www.cups.org/software.php?VERSION=%{VERSION}&FILE=%{VERSION}/cups-%{VERSION}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -633,6 +633,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jul 10 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.15.b1
+- Fixed download URL.
+
 * Wed Jul 10 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.14.b1
 - Remove pstops cost factor tweak from conf/mime.convs.in
 
