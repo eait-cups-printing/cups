@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.2
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -252,14 +252,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
-
-# We want to use the PDF workflow in principle with one exception when the input
-# is PostScript and the printer is a native PostScript printer.
-# To avoid the PS -> PDF -> PS conversion (costs 66),
-# set the cost factor of pstops to 65.
-# This forth-and-back conversion sometimes produces PostScript files which are
-# too big for the printer's memory resulting in not getting printed.
-sed -i -r -e '/\spstops$/ { s/66/65/ }' conf/mime.convs.in
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -648,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jul 10 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.2-16
+- Remove pstops cost factor tweak from conf/mime.convs.in
+
 * Mon Jul  1 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-15
 - Don't use D-Bus from two threads (bug #979748).
 
