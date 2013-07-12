@@ -1,7 +1,7 @@
 %global use_alternatives 1
 %global lspp 1
 
-%global prever b1
+%global prever rc1
 %global VERSION %{version}%{prever}
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.16.%{prever}%{?dist}
+Release: 0.17.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -58,7 +58,6 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
-Patch28: cups-17b1-va_list.patch
 Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
@@ -236,8 +235,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
-# do not apply unary exclamation mark to va_list (bug #957737).
-%patch28 -p1 -b .va_list
 # Return from cupsEnumDests() once all records have been returned.
 %patch29 -p1 -b .enum-all
 # Prevent stringpool damage leading to memory leaks (bug #974048).
@@ -384,11 +381,6 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^\([^%].*\)/d
 ' > %{name}.lang
 
-# don't ship Russian web templates because they're broken (#960571, STR #4310)
-# will be fixed in 1.6.3
-rm -rf ${RPM_BUILD_ROOT}%{_datadir}/%{name}/www/ru
-rm -rf ${RPM_BUILD_ROOT}%{_datadir}/cups/templates/ru
-
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
@@ -532,7 +524,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/ja
-#%%dir %{_datadir}/%{name}/www/ru
+%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
@@ -543,7 +535,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
-#%%doc %{_datadir}/%{name}/www/ru/index.html
+%doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -576,14 +568,14 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
-#%%dir %{_datadir}/cups/templates/ru
+%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/cs/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
-#%%{_datadir}/cups/templates/ru/*.tmpl
+%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -630,12 +622,16 @@ rm -f %{cups_serverbin}/backend/smb
 
 %files ipptool
 %{_bindir}/ipptool
+%{_bindir}/ippfind
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ipptool.1.gz
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jul 12 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.17.rc1
+- 1.7rc1
+
 * Thu Jul 11 2013 Tim Waugh <twaugh@redhat.com> 1:1.7-0.16.b1
 - Avoid sign-extending CRCs for gz decompression (bug #983486).
 
