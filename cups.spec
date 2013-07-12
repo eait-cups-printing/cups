@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.6.2
-Release: 18%{?dist}
+Version: 1.6.3
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -232,8 +232,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
-# More USB quirks for the libusb-based backend (STR #4311).
-# Fixed in 1.6.3
 # Added usblp quirk for Canon PIXMA MP540 (bug #967873).
 %patch28 -p1 -b .usblp-quirks
 # Return from cupsEnumDests() once all records have been returned.
@@ -377,11 +375,6 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^%lang(C)/d
 /^\([^%].*\)/d
 ' > %{name}.lang
-
-# don't ship Russian web templates because they're broken (#960571, STR #4310)
-# will be fixed in 1.6.3
-rm -rf ${RPM_BUILD_ROOT}%{_datadir}/%{name}/www/ru
-rm -rf ${RPM_BUILD_ROOT}%{_datadir}/cups/templates/ru
 
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
@@ -539,7 +532,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/ja
-#%%dir %{_datadir}/%{name}/www/ru
+%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
@@ -550,7 +543,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
-#%%doc %{_datadir}/%{name}/www/ru/index.html
+%doc %{_datadir}/%{name}/www/ru/index.html
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -583,14 +576,14 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
-#%%dir %{_datadir}/cups/templates/ru
+%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/cs/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
-#%%{_datadir}/cups/templates/ru/*.tmpl
+%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -643,6 +636,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jul 12 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.6.3-1
+- 1.6.3
+
 * Thu Jul 11 2013 Tim Waugh <twaugh@redhat.com> 1:1.6.2-18
 - Avoid sign-extending CRCs for gz decompression (bug #983486).
 
