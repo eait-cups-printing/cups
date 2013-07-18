@@ -14,11 +14,11 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.17.%{prever}%{?dist}
+Release: 0.18.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
-Source: http://www.cups.org/software.php?VERSION=%{VERSION}&FILE=%{VERSION}/cups-%{VERSION}-source.tar.bz2
+Source: http://www.cups.org/software/%{version}%{prever}/cups-%{version}%{prever}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -629,6 +629,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jul 18 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.18.rc1
+- Fixed downoad URL to point to the actual source, not a download
+  page.
+
 * Fri Jul 12 2013 Jiri Popelka <jpopelka@redhat.com> - 1:1.7-0.17.rc1
 - 1.7rc1
 
