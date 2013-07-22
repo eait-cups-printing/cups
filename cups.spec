@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -77,7 +77,7 @@ Requires: /usr/sbin/alternatives
 Provides: lpd lpr cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: gnutls-devel libacl-devel
+BuildRequires: openssl-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: libusb1-devel
 BuildRequires: krb5-devel
@@ -117,7 +117,7 @@ Summary: CUPS printing system - development environment
 Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: gnutls-devel
+Requires: openssl-devel
 Requires: krb5-devel
 Requires: zlib-devel
 Provides: cupsddk-devel
@@ -280,7 +280,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi \
 	--enable-avahi \
-	--enable-threads --enable-gnutls \
+	--enable-threads --enable-openssl \
 	--enable-webif \
 	--with-xinetd=no \
 	localedir=%{_datadir}/locale
@@ -636,6 +636,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jul 22 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-3
+- Link against OpenSSL instead of GnuTLS.
+
 * Thu Jul 18 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-2
 - Fixed downoad URL to point to the actual source, not a download
   page.
