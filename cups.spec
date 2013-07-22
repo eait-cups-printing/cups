@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.19.%{prever}%{?dist}
+Release: 0.20.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -67,6 +67,7 @@ Patch34: cups-libusb-quirks.patch
 Patch35: cups-use-ipp1.1.patch
 Patch36: cups-avahi-no-threaded.patch
 Patch37: cups-gz-crc.patch
+Patch38: cups-build.patch
 
 Patch100: cups-lspp.patch
 
@@ -81,7 +82,7 @@ Requires: /usr/sbin/alternatives
 Provides: lpd lpr cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: gnutls-devel libacl-devel
+BuildRequires: openssl-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: libusb1-devel
 BuildRequires: krb5-devel
@@ -120,7 +121,7 @@ Summary: CUPS printing system - development environment
 Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: gnutls-devel
+Requires: openssl-devel
 Requires: krb5-devel
 Requires: zlib-devel
 Provides: cupsddk-devel
@@ -253,6 +254,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch36 -p1 -b .avahi-no-threaded
 # Avoid sign-extending CRCs for gz decompression (bug #983486).
 %patch37 -p1 -b .gz-crc
+# Fixed build.
+%patch38 -p1 -b .build
 
 %if %lspp
 # LSPP support.
@@ -285,7 +288,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi \
 	--enable-avahi \
-	--enable-threads --enable-gnutls \
+	--enable-threads --enable-openssl \
 	--enable-webif \
 	--with-xinetd=no \
 	localedir=%{_datadir}/locale
@@ -336,8 +339,6 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/classes.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/subscriptions.conf
-
-# This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 
 # LSB 3.2 printer driver directory
@@ -629,6 +630,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jul 22 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.20.rc1
+- Removed stale comment in spec file.
+- Link against OpenSSL instead of GnuTLS.
+
 * Mon Jul 22 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.19.rc1
 - Fixed avahi-no-threaded patch (was missing part of cupsd.h). Thanks
   to Joseph Wang for spotting it.
