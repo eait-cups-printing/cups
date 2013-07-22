@@ -331,8 +331,6 @@ touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/printers.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/classes.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/client.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/subscriptions.conf
-
-# This is %%ghost'ed, but needs to be created in %%install anyway.
 touch $RPM_BUILD_ROOT%{_sysconfdir}/cups/lpoptions
 
 # LSB 3.2 printer driver directory
@@ -637,6 +635,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Mon Jul 22 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-3
+- Removed stale comment in spec file.
 - Link against OpenSSL instead of GnuTLS.
 
 * Thu Jul 18 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-2
