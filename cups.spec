@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -634,6 +634,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jul 24 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-4
+- Fixed cups-config, broken by last change (bug #987660).
+
 * Mon Jul 22 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-3
 - Removed stale comment in spec file.
 - Link against OpenSSL instead of GnuTLS.
