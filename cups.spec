@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.22.%{prever}%{?dist}
+Release: 0.23.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -68,6 +68,7 @@ Patch35: cups-use-ipp1.1.patch
 Patch36: cups-avahi-no-threaded.patch
 Patch37: cups-gz-crc.patch
 Patch38: cups-build.patch
+Patch39: cups-ipp-multifile.patch
 
 Patch100: cups-lspp.patch
 
@@ -256,6 +257,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .gz-crc
 # Fixed build.
 %patch38 -p1 -b .build
+# Fixes for jobs with multiple files and multiple formats.
+%patch39 -p1 -b .ipp-multifile
 
 %if %lspp
 # LSPP support.
@@ -630,6 +633,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Aug  6 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.23.rc1
+- Fixes for jobs with multiple files and multiple formats.
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.7-0.22.rc1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
