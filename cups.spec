@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -63,6 +63,7 @@ Patch32: cups-use-ipp1.1.patch
 Patch33: cups-no-gcry.patch
 Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-gz-crc.patch
+Patch36: cups-ipp-multifile.patch
 
 Patch100: cups-lspp.patch
 
@@ -248,6 +249,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch34 -p1 -b .avahi-no-threaded
 # Avoid sign-extending CRCs for gz decompression (bug #983486).
 %patch35 -p1 -b .gz-crc
+# Fixes for jobs with multiple files and multiple formats.
+%patch36 -p1 -b .ipp-multifile
 
 %if %lspp
 # LSPP support.
@@ -634,6 +637,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Aug  6 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-5
+- Fixes for jobs with multiple files and multiple formats.
+
 * Wed Jul 24 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-4
 - Fixed cups-config, broken by last change (bug #987660).
 
