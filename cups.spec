@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.23.%{prever}%{?dist}
+Release: 0.24.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -69,6 +69,7 @@ Patch36: cups-avahi-no-threaded.patch
 Patch37: cups-gz-crc.patch
 Patch38: cups-build.patch
 Patch39: cups-ipp-multifile.patch
+Patch40: cups-full-relro.patch
 
 Patch100: cups-lspp.patch
 
@@ -259,6 +260,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch38 -p1 -b .build
 # Fixes for jobs with multiple files and multiple formats.
 %patch39 -p1 -b .ipp-multifile
+# Full relro (bug #996740).
+%patch40 -p1 -b .full-relro
 
 %if %lspp
 # LSPP support.
@@ -633,6 +636,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Aug 15 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.24.rc1
+- Build with full read-only relocations (bug #996740).
+
 * Tue Aug  6 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.23.rc1
 - Fixes for jobs with multiple files and multiple formats.
 
