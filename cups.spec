@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.24.%{prever}%{?dist}
+Release: 0.25.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -70,6 +70,7 @@ Patch37: cups-gz-crc.patch
 Patch38: cups-build.patch
 Patch39: cups-ipp-multifile.patch
 Patch40: cups-full-relro.patch
+Patch41: cups-web-devices-timeout.patch
 
 Patch100: cups-lspp.patch
 
@@ -262,6 +263,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch39 -p1 -b .ipp-multifile
 # Full relro (bug #996740).
 %patch40 -p1 -b .full-relro
+# Increase web interface get-devices timeout to 10s (bug #996664).
+%patch41 -p1 -b .web-devices-timeout
 
 %if %lspp
 # LSPP support.
@@ -636,6 +639,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Aug 16 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.25.rc1
+- Increase web interface get-devices timeout to 10s (bug #996664).
+
 * Thu Aug 15 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.24.rc1
 - Build with full read-only relocations (bug #996740).
 
