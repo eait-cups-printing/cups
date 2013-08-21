@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.3
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -66,6 +66,7 @@ Patch35: cups-gz-crc.patch
 Patch36: cups-ipp-multifile.patch
 Patch37: cups-full-relro.patch
 Patch38: cups-web-devices-timeout.patch
+Patch39: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -257,6 +258,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .full-relro
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch38 -p1 -b .web-devices-timeout
+# Add SyncOnClose option (bug #984883).
+%patch39 -p0 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -643,6 +646,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Aug 21 2013 Jaromír Končický <jkoncick@redhat.com> - 1:1.6.3-8
+- Add SyncOnClose option (bug #984883).
+
 * Fri Aug 16 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.3-7
 - Increase web interface get-devices timeout to 10s (bug #996664).
 
