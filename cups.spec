@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.6.3
-Release: 8%{?dist}
+Version: 1.6.4
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -66,7 +66,6 @@ Patch35: cups-gz-crc.patch
 Patch36: cups-ipp-multifile.patch
 Patch37: cups-full-relro.patch
 Patch38: cups-web-devices-timeout.patch
-Patch39: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -258,8 +257,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .full-relro
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch38 -p1 -b .web-devices-timeout
-# Add SyncOnClose option (bug #984883).
-%patch39 -p0 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -587,6 +584,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
 %dir %{_datadir}/cups/templates/ru
+%dir %{_datadir}/cups/usb
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/cs/*.tmpl
@@ -594,6 +592,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
 %{_datadir}/cups/templates/ru/*.tmpl
+%{_datadir}/cups/usb/org.cups.usb-quirks
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -646,6 +645,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Sep 25 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.4-1
+- 1.6.4.
+
 * Wed Aug 21 2013 Jaromír Končický <jkoncick@redhat.com> - 1:1.6.3-8
 - Add SyncOnClose option (bug #984883).
 
