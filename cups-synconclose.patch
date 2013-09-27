@@ -1,0 +1,134 @@
+Index: conf/cups-files.conf.in
+===================================================================
+--- conf/cups-files.conf.in	(revision 11192)
++++ conf/cups-files.conf.in	(working copy)
+@@ -8,6 +8,9 @@
+ # List of events that are considered fatal errors for the scheduler...
+ #FatalErrors @CUPS_FATAL_ERRORS@
+
++# Do we call fsync() after writing configuration or status files?
++#SyncOnClose No
++
+ # Default user and group for filters/backends/helper programs; this cannot be
+ # any user or group that resolves to ID 0 for security reasons...
+ #User @CUPS_USER@
+Index: doc/help/ref-cups-files-conf.html.in
+===================================================================
+--- doc/help/ref-cups-files-conf.html.in	(revision 11192)
++++ doc/help/ref-cups-files-conf.html.in	(working copy)
+@@ -429,6 +429,31 @@
+ default server directory is <VAR>/etc/cups</VAR>.</P>
+
+
++<H2 CLASS="title"><SPAN CLASS="info">CUPS 1.6.4</SPAN><A NAME="SyncOnClose">SyncOnClose</A></H2>
++
++<H3>Examples</H3>
++
++<PRE CLASS="command">
++SyncOnClose No
++SyncOnClose Yes
++</PRE>
++
++<H3>Description</H3>
++
++<P>The <CODE>SyncOnClose</CODE> directive determines whether the scheduler
++flushes changes to configuration and state files to disk. The default is
++<CODE>No</CODE> which relies on the operating system to schedule a suitable
++time to write changes to disk.</P>
++
++<BLOCKQUOTE><B>Note:</B>
++
++<P>Setting <CODE>SyncOnClose</CODE> to <CODE>Yes</CODE> makes the scheduler use the <CODE>fsync(2)</CODE> system call to write all changes to disk, however the drive or network file system server may still delay writing data to disk. Do not depend on this functionality to prevent data loss in the event of unexpected hardware failure.</P>
++
++<P>Enabling <CODE>SyncOnClose</CODE> may also cause the scheduler to periodically become unresponsive while it waits for changes to be written.</P>
++
++</BLOCKQUOTE>
++
++
+ <H2 CLASS="title"><A NAME="SystemGroup">SystemGroup</A></H2>
+
+ <H3>Examples</H3>
+Index: man/cups-files.conf.man.in
+===================================================================
+--- man/cups-files.conf.man.in	(revision 11192)
++++ man/cups-files.conf.man.in	(working copy)
+@@ -122,6 +122,12 @@
+ .br
+ Specifies the directory where the server configuration files can be found.
+ .TP 5
++SyncOnClose Yes
++.TP 5
++SyncOnClose No
++Specifies whether the scheduler calls \fIfsync(2)\fR after writing configuration
++or state files. The default is No.
++.TP 5
+ SystemGroup group-name [group-name ...]
+ .br
+ Specifies the group(s) to use for System class authentication.
+Index: scheduler/conf.c
+===================================================================
+--- scheduler/conf.c	(revision 11192)
++++ scheduler/conf.c	(working copy)
+@@ -174,6 +174,7 @@
+   { "ServerRoot",		&ServerRoot,		CUPSD_VARTYPE_PATHNAME },
+   { "SMBConfigFile",		&SMBConfigFile,		CUPSD_VARTYPE_STRING },
+   { "StateDir",			&StateDir,		CUPSD_VARTYPE_STRING },
++  { "SyncOnClose",		&SyncOnClose,		CUPSD_VARTYPE_BOOLEAN },
+ #ifdef HAVE_AUTHORIZATION_H
+   { "SystemGroupAuthKey",	&SystemGroupAuthKey,	CUPSD_VARTYPE_STRING },
+ #endif /* HAVE_AUTHORIZATION_H */
+@@ -734,6 +735,7 @@
+   ReloadTimeout	           = DEFAULT_KEEPALIVE;
+   RootCertDuration         = 300;
+   StrictConformance        = FALSE;
++  SyncOnClose              = FALSE;
+   Timeout                  = DEFAULT_TIMEOUT;
+   WebInterface             = CUPS_DEFAULT_WEBIF;
+
+Index: scheduler/conf.h
+===================================================================
+--- scheduler/conf.h	(revision 11192)
++++ scheduler/conf.h	(working copy)
+@@ -172,6 +172,8 @@
+ 					/* Which errors are fatal? */
+ 			StrictConformance	VALUE(FALSE),
+ 					/* Require strict IPP conformance? */
++			SyncOnClose		VALUE(FALSE),
++					/* Call fsync() when closing files? */
+ 			LogFilePerm		VALUE(0644);
+ 					/* Permissions for log files */
+ VAR cupsd_loglevel_t	LogLevel		VALUE(CUPSD_LOG_WARN);
+Index: scheduler/file.c
+===================================================================
+--- scheduler/file.c	(revision 11192)
++++ scheduler/file.c	(working copy)
+@@ -109,6 +109,29 @@
+
+
+  /*
++  * Synchronize changes to disk if SyncOnClose is enabled.
++  */
++
++  if (SyncOnClose)
++  {
++    if (cupsFileFlush(fp))
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to write changes to \"%s\": %s",
++		      filename, strerror(errno));
++      cupsFileClose(fp);
++      return (-1);
++    }
++
++    if (fsync(cupsFileNumber(fp)))
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to sync changes to \"%s\": %s",
++		      filename, strerror(errno));
++      cupsFileClose(fp);
++      return (-1);
++    }
++  }
++
++ /*
+   * First close the file...
+   */
+
