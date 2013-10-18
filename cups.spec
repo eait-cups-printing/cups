@@ -14,7 +14,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7
-Release: 0.26.%{prever}%{?dist}
+Release: 0.27.%{prever}%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -73,6 +73,7 @@ Patch40: cups-full-relro.patch
 Patch41: cups-web-devices-timeout.patch
 Patch42: cups-synconclose.patch
 Patch43: cups-final-content-type.patch
+Patch44: cups-journal.patch
 
 Patch100: cups-lspp.patch
 
@@ -272,6 +273,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
 # printing to remote CUPS servers (bug #1010580).
 %patch43 -p1 -b .final-content-type
+# Allow "journal" log type for log output to system journal.
+%patch44 -p1 -b .journal
 
 %if %lspp
 # LSPP support.
@@ -646,6 +649,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Oct 21 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.27.rc1
+- Allow "journal" log type for log output to system journal.
+
 * Fri Sep 27 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.26.rc1
 - Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
   printing to remote CUPS servers (bug #1010580).
