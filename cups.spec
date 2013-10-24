@@ -1,9 +1,6 @@
 %global use_alternatives 1
 %global lspp 1
 
-%global prever rc1
-%global VERSION %{version}%{prever}
-
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
 # It's more of a libexec-style ({_libexecdir}) usage,
@@ -13,12 +10,12 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7
-Release: 0.27.%{prever}%{?dist}
+Version: 1.7.0
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
-Source: http://www.cups.org/software/%{version}%{prever}/cups-%{version}%{prever}-source.tar.bz2
+Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -67,11 +64,9 @@ Patch34: cups-libusb-quirks.patch
 Patch35: cups-use-ipp1.1.patch
 Patch36: cups-avahi-no-threaded.patch
 Patch37: cups-gz-crc.patch
-Patch38: cups-build.patch
 Patch39: cups-ipp-multifile.patch
 Patch40: cups-full-relro.patch
 Patch41: cups-web-devices-timeout.patch
-Patch42: cups-synconclose.patch
 Patch43: cups-final-content-type.patch
 Patch44: cups-jobhistory.patch
 
@@ -186,7 +181,7 @@ lpd emulation.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q -n cups-%{VERSION}
+%setup -q
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
@@ -260,16 +255,12 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch36 -p1 -b .avahi-no-threaded
 # Avoid sign-extending CRCs for gz decompression (bug #983486).
 %patch37 -p1 -b .gz-crc
-# Fixed build.
-%patch38 -p1 -b .build
 # Fixes for jobs with multiple files and multiple formats.
 %patch39 -p1 -b .ipp-multifile
 # Full relro (bug #996740).
 %patch40 -p1 -b .full-relro
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch41 -p1 -b .web-devices-timeout
-# Add SyncOnClose option (bug #984883).
-%patch42 -p0 -b .synconclose
 # Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
 # printing to remote CUPS servers (bug #1010580).
 %patch43 -p1 -b .final-content-type
@@ -543,6 +534,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/cs
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/fr
+%dir %{_datadir}/%{name}/www/it
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
@@ -554,8 +546,11 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/cs/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/fr/index.html
+%doc %{_datadir}/%{name}/www/it/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
 %doc %{_datadir}/%{name}/www/ru/index.html
+%dir %{_datadir}/%{name}/usb
+%{_datadir}/%{name}/usb/org.cups.usb-quirks
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -587,6 +582,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/cs
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/fr
+%dir %{_datadir}/cups/templates/it
 %dir %{_datadir}/cups/templates/ja
 %dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
@@ -594,6 +590,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/templates/cs/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/fr/*.tmpl
+%{_datadir}/cups/templates/it/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
 %{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
@@ -649,6 +646,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Oct 24 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-1
+- 1.7.0.
+
 * Thu Oct 24 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7-0.27.rc1
 - Fix job history logging.
 
