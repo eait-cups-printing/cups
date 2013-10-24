@@ -1,14 +1,9 @@
-diff -up cups-1.6.3/backend/ipp.c.ipp-multifile cups-1.6.3/backend/ipp.c
---- cups-1.6.3/backend/ipp.c.ipp-multifile	2013-08-06 17:17:19.359471503 +0100
-+++ cups-1.6.3/backend/ipp.c	2013-08-06 17:19:03.346990727 +0100
-@@ -1682,10 +1682,13 @@ main(int  argc,				/* I - Number of comm
- 	  ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
-                        "requesting-user-name", NULL, argv[2]);
- 
--        if ((i + 1) >= num_files)
--	  ippAddBoolean(request, IPP_TAG_OPERATION, "last-document", 1);
-+	ippAddBoolean(request, IPP_TAG_OPERATION, "last-document",
-+        	      (i + 1) >= num_files);
+diff -up cups-1.7.0/backend/ipp.c.ipp-multifile cups-1.7.0/backend/ipp.c
+--- cups-1.7.0/backend/ipp.c.ipp-multifile	2013-10-24 15:52:00.745814354 +0100
++++ cups-1.7.0/backend/ipp.c	2013-10-24 15:53:46.463266724 +0100
+@@ -1758,7 +1758,10 @@ main(int  argc,				/* I - Number of comm
+ 	ippAddBoolean(request, IPP_TAG_OPERATION, "last-document",
+         	      (i + 1) >= num_files);
  
 -	if (document_format)
 +	if (num_files > 1)
