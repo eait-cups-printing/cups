@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -70,6 +70,7 @@ Patch41: cups-web-devices-timeout.patch
 Patch43: cups-final-content-type.patch
 Patch44: cups-jobhistory.patch
 Patch45: cups-journal.patch
+Patch46: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -269,6 +270,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch44 -p1 -b .jobhistory
 # Allow "journal" log type for log output to system journal.
 %patch45 -p1 -b .journal
+# Set the default for SyncOnClose to Yes.
+%patch46 -p1 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -649,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Oct 31 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-3
+- Set the default for SyncOnClose to Yes.
+
 * Mon Oct 28 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-2
 - Use upstream patch to fix job history.
 
