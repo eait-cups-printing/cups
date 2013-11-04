@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -652,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Nov  4 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-4
+- Adjusted commented out default for SyncOnClose in cups-files.conf.
+
 * Thu Oct 31 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-3
 - Set the default for SyncOnClose to Yes.
 

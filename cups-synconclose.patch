@@ -1,3 +1,14 @@
+--- cups-1.7.0/conf/cups-files.conf.in.synconclose	2013-11-04 11:43:27.989512747 +0000
++++ cups-1.7.0/conf/cups-files.conf.in	2013-11-04 11:43:37.830557404 +0000
+@@ -9,7 +9,7 @@
+ #FatalErrors @CUPS_FATAL_ERRORS@
+ 
+ # Do we call fsync() after writing configuration or status files?
+-#SyncOnClose No
++#SyncOnClose Yes
+ 
+ # Default user and group for filters/backends/helper programs; this cannot be
+ # any user or group that resolves to ID 0 for security reasons...
 diff -up cups-1.7.0/doc/help/man-cups-files.conf.html.synconclose cups-1.7.0/doc/help/man-cups-files.conf.html
 --- cups-1.7.0/doc/help/man-cups-files.conf.html.synconclose	2013-10-31 11:19:11.927824302 +0000
 +++ cups-1.7.0/doc/help/man-cups-files.conf.html	2013-10-31 11:19:24.061871113 +0000
