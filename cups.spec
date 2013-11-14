@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.6.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -67,6 +67,7 @@ Patch36: cups-ipp-multifile.patch
 Patch37: cups-full-relro.patch
 Patch38: cups-web-devices-timeout.patch
 Patch39: cups-final-content-type.patch
+Patch40: cups-dbus-notifier.patch
 
 Patch100: cups-lspp.patch
 
@@ -261,6 +262,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
 # printing to remote CUPS servers (bug #1010580).
 %patch39 -p1 -b .final-content-type
+# Avoid stale lockfile in dbus notifier (bug #1026949).
+%patch40 -p1 -b .dbus-notifier
 
 %if %lspp
 # LSPP support.
@@ -649,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Nov 14 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.4-3
+- Avoid stale lockfile in dbus notifier (bug #1026949).
+
 * Fri Sep 27 2013 Tim Waugh <twaugh@redhat.com> - 1:1.6.4-2
 - Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
   printing to remote CUPS servers (bug #1010580).
