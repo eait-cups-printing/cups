@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -71,6 +71,7 @@ Patch43: cups-final-content-type.patch
 Patch44: cups-jobhistory.patch
 Patch45: cups-journal.patch
 Patch46: cups-synconclose.patch
+Patch47: cups-dbus-notifier.patch
 
 Patch100: cups-lspp.patch
 
@@ -272,6 +273,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch45 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch46 -p1 -b .synconclose
+# Avoid stale lockfile in dbus notifier (bug #1026949).
+%patch47 -p1 -b .dbus-notifier
 
 %if %lspp
 # LSPP support.
@@ -652,6 +655,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Nov 14 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-5
+- Avoid stale lockfile in dbus notifier (bug #1026949).
+
 * Mon Nov  4 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-4
 - Adjusted commented out default for SyncOnClose in cups-files.conf.
 
