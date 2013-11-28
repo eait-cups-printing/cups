@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -55,6 +55,7 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
+Patch28: cups-usb-timeout.patch
 Patch29: cups-enum-all.patch
 Patch30: cups-stringpool-setprinterattr.patch
 Patch31: cups-dymo-deviceid.patch
@@ -240,6 +241,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
+# Prevent USB timeouts causing incorrect print output (bug #1026914).
+%patch28 -p1 -b .usb-timeout
 # Return from cupsEnumDests() once all records have been returned.
 %patch29 -p1 -b .enum-all
 # Prevent stringpool damage leading to memory leaks (bug #974048).
@@ -655,6 +658,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Nov 28 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-6
+- Prevent USB timeouts causing incorrect print output (bug #1026914).
+
 * Thu Nov 14 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-5
 - Avoid stale lockfile in dbus notifier (bug #1026949).
 
