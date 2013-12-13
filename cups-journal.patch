@@ -473,7 +473,7 @@ diff -up cups-1.7.0/scheduler/log.c.journal cups-1.7.0/scheduler/log.c
 +			       "CUPS_JOB_ID=%d", job->id,
 +			       NULL) ? 0 : 1);
 +    } else
-+      return (sd_journal_print (syslevels[level], message) ? 0 : 1);
++      return (sd_journal_print (syslevels[level], "%s", message) ? 0 : 1);
 +  }
 +#endif /* HAVE_JOURNAL */
  #ifdef HAVE_VSYSLOG
