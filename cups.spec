@@ -292,7 +292,7 @@ perl -pi -e "s,^.SILENT:,," Makedefs.in
 f=CREDITS.txt
 mv "$f" "$f"~
 iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
-rm "$f"~
+rm -f "$f"~
 
 aclocal -I config-scripts
 autoconf -I config-scripts
@@ -659,6 +659,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Thu Jan  2 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-9
+- Use '-f' when using rm in %%setup section.
 - Fixed avahi-no-threaded patch so it removes a call to
   avahi_threaded_poll_stop() (bug #1044602).
 
