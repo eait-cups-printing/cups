@@ -1,6 +1,6 @@
 diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
---- cups-1.7.0/notifier/dbus.c.dbus-notifier	2013-11-14 18:10:31.745121435 +0000
-+++ cups-1.7.0/notifier/dbus.c	2013-11-14 18:10:53.997227718 +0000
+--- cups-1.7.0/notifier/dbus.c.dbus-notifier	2014-01-02 17:01:06.033615950 +0000
++++ cups-1.7.0/notifier/dbus.c	2014-01-02 17:02:06.573904333 +0000
 @@ -4,7 +4,7 @@
   *   D-Bus notifier for CUPS.
   *
@@ -45,7 +45,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
    }
  
    return (0);
-@@ -661,6 +666,26 @@ main(int  argc,				/* I - Number of comm
+@@ -661,6 +666,27 @@ main(int  argc,				/* I - Number of comm
  
  
  /*
@@ -66,13 +66,14 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
 +handle_sigterm(int signum)
 +{
 +  release_lock();
++  _exit (0);
 +}
 +
 +/*
   * 'acquire_lock()' - Acquire a lock so we only have a single notifier running.
   */
  
-@@ -669,7 +694,8 @@ acquire_lock(int    *fd,		/* O - Lock fi
+@@ -669,7 +695,8 @@ acquire_lock(int    *fd,		/* O - Lock fi
               char   *lockfile,		/* I - Lock filename buffer */
  	     size_t locksize)		/* I - Size of filename buffer */
  {
@@ -82,7 +83,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
  
  
   /*
-@@ -687,8 +713,16 @@ acquire_lock(int    *fd,		/* O - Lock fi
+@@ -687,8 +714,16 @@ acquire_lock(int    *fd,		/* O - Lock fi
  
    if ((*fd = open(lockfile, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR)) < 0)
      return (-1);

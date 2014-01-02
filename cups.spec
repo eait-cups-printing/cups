@@ -659,6 +659,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Thu Jan  2 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-9
+- dbus notifier: call _exit when handling SIGTERM (STR #4314).
 - Use '-f' when using rm in %%setup section.
 - Fixed avahi-no-threaded patch so it removes a call to
   avahi_threaded_poll_stop() (bug #1044602).
