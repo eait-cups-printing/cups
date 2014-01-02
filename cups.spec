@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -658,6 +658,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jan  2 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-9
+- Fixed avahi-no-threaded patch so it removes a call to
+  avahi_threaded_poll_stop() (bug #1044602).
+
 * Fri Dec 13 2013 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-8
 - Use string literal for format string in sd_journal_print call.
 
