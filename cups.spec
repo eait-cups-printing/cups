@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -73,6 +73,7 @@ Patch44: cups-jobhistory.patch
 Patch45: cups-journal.patch
 Patch46: cups-synconclose.patch
 Patch47: cups-dbus-notifier.patch
+Patch48: cups-str4326.patch
 
 Patch100: cups-lspp.patch
 
@@ -278,6 +279,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch46 -p1 -b .synconclose
 # Avoid stale lockfile in dbus notifier (bug #1026949).
 %patch47 -p1 -b .dbus-notifier
+# Return jobs in rank order when handling IPP-Get-Jobs (STR #4326).
+%patch48 -p1 -b .str4326
 
 %if %lspp
 # LSPP support.
@@ -658,6 +661,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jan  7 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-10
+- Return jobs in rank order when handling IPP-Get-Jobs (STR #4326).
+
 * Thu Jan  2 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-9
 - dbus notifier: call _exit when handling SIGTERM (STR #4314).
 - Use '-f' when using rm in %%setup section.
