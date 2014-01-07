@@ -1,6 +1,6 @@
 diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
---- cups-1.7.0/notifier/dbus.c.dbus-notifier	2014-01-02 17:01:06.033615950 +0000
-+++ cups-1.7.0/notifier/dbus.c	2014-01-02 17:02:06.573904333 +0000
+--- cups-1.7.0/notifier/dbus.c.dbus-notifier	2012-10-01 04:01:10.000000000 +0100
++++ cups-1.7.0/notifier/dbus.c	2014-01-07 14:57:59.563591055 +0000
 @@ -4,7 +4,7 @@
   *   D-Bus notifier for CUPS.
   *
@@ -10,7 +10,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
   *   Copyright (C) 2007 Tim Waugh <twaugh@redhat.com>
   *   Copyright 1997-2005 by Easy Software Products.
   *
-@@ -157,9 +157,16 @@ enum
+@@ -154,9 +154,16 @@ enum
  
  
  /*
@@ -24,10 +24,10 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
   */
  
 +static void		release_lock(void);
- static int		acquire_lock(int *fd, char *lockfile, size_t locksize);
- static const char	*validate_utf8(const char *str);
+ static int	acquire_lock(int *fd, char *lockfile, size_t locksize);
  
-@@ -251,8 +258,6 @@ main(int  argc,				/* I - Number of comm
+ 
+@@ -176,8 +183,6 @@ main(int  argc,				/* I - Number of comm
    DBusMessage		*message;	/* Message to send */
    DBusMessageIter	iter;		/* Iterator for message data */
    int			lock_fd = -1;	/* Lock file descriptor */
@@ -36,7 +36,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
  
  
   /*
-@@ -653,7 +658,7 @@ main(int  argc,				/* I - Number of comm
+@@ -578,7 +583,7 @@ main(int  argc,				/* I - Number of comm
    if (lock_fd >= 0)
    {
      close(lock_fd);
@@ -45,7 +45,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
    }
  
    return (0);
-@@ -661,6 +666,27 @@ main(int  argc,				/* I - Number of comm
+@@ -586,6 +591,27 @@ main(int  argc,				/* I - Number of comm
  
  
  /*
@@ -73,7 +73,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
   * 'acquire_lock()' - Acquire a lock so we only have a single notifier running.
   */
  
-@@ -669,7 +695,8 @@ acquire_lock(int    *fd,		/* O - Lock fi
+@@ -594,7 +620,8 @@ acquire_lock(int    *fd,		/* O - Lock fi
               char   *lockfile,		/* I - Lock filename buffer */
  	     size_t locksize)		/* I - Size of filename buffer */
  {
@@ -83,7 +83,7 @@ diff -up cups-1.7.0/notifier/dbus.c.dbus-notifier cups-1.7.0/notifier/dbus.c
  
  
   /*
-@@ -687,8 +714,16 @@ acquire_lock(int    *fd,		/* O - Lock fi
+@@ -612,8 +639,16 @@ acquire_lock(int    *fd,		/* O - Lock fi
  
    if ((*fd = open(lockfile, O_RDWR | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR)) < 0)
      return (-1);
