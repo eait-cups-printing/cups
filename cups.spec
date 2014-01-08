@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.0
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -31,6 +31,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str4327.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -192,6 +193,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Apply upstream patch to improve cupsUser() (STR #4327).
+%patch4 -p1 -b .str4327
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -658,6 +661,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jan  8 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-11
+- Apply upstream patch to improve cupsUser() (STR #4327).
+
 * Tue Jan  7 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-10
 - Removed cups-dbus-utf8.patch as no longer needed (see STR #4314).
 - Return jobs in rank order when handling IPP-Get-Jobs (STR #4326).
