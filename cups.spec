@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7.0
-Release: 11%{?dist}
+Version: 1.7.1
+Release: 1%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -31,7 +31,6 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4327.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -55,25 +54,19 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
-Patch28: cups-usb-timeout.patch
 Patch29: cups-enum-all.patch
-Patch30: cups-stringpool-rdar15382819.patch
 Patch31: cups-dymo-deviceid.patch
 Patch32: cups-freebind.patch
 Patch33: cups-no-gcry.patch
 Patch34: cups-libusb-quirks.patch
 Patch35: cups-use-ipp1.1.patch
 Patch36: cups-avahi-no-threaded.patch
-Patch37: cups-gz-crc.patch
-Patch39: cups-ipp-multifile.patch
-Patch40: cups-full-relro.patch
-Patch41: cups-web-devices-timeout.patch
-Patch43: cups-final-content-type.patch
-Patch44: cups-jobhistory.patch
-Patch45: cups-journal.patch
-Patch46: cups-synconclose.patch
-Patch47: cups-dbus-notifier.patch
-Patch48: cups-str4326.patch
+Patch37: cups-ipp-multifile.patch
+Patch38: cups-full-relro.patch
+Patch39: cups-web-devices-timeout.patch
+Patch40: cups-final-content-type.patch
+Patch41: cups-journal.patch
+Patch42: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -193,8 +186,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Apply upstream patch to improve cupsUser() (STR #4327).
-%patch4 -p1 -b .str4327
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -242,12 +233,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch26 -p1 -b .lpd-manpage
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
-# Prevent USB timeouts causing incorrect print output (bug #1026914).
-%patch28 -p1 -b .usb-timeout
 # Return from cupsEnumDests() once all records have been returned.
 %patch29 -p1 -b .enum-all
-# Prevent stringpool damage leading to memory leaks (bug #974048).
-%patch30 -p1 -b .stringpool-rdar15382819
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch31 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
@@ -260,27 +247,19 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch35 -p1 -b .use-ipp1.1
 # Don't use D-Bus from two threads (bug #979748).
 %patch36 -p1 -b .avahi-no-threaded
-# Avoid sign-extending CRCs for gz decompression (bug #983486).
-%patch37 -p1 -b .gz-crc
 # Fixes for jobs with multiple files and multiple formats.
-%patch39 -p1 -b .ipp-multifile
+%patch37 -p1 -b .ipp-multifile
 # Full relro (bug #996740).
-%patch40 -p1 -b .full-relro
+%patch38 -p1 -b .full-relro
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch41 -p1 -b .web-devices-timeout
+%patch39 -p1 -b .web-devices-timeout
 # Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
 # printing to remote CUPS servers (bug #1010580).
-%patch43 -p1 -b .final-content-type
-# Fix job history logging.
-%patch44 -p1 -b .jobhistory
+%patch40 -p1 -b .final-content-type
 # Allow "journal" log type for log output to system journal.
-%patch45 -p1 -b .journal
+%patch41 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
-%patch46 -p1 -b .synconclose
-# Avoid stale lockfile in dbus notifier (bug #1026949).
-%patch47 -p1 -b .dbus-notifier
-# Return jobs in rank order when handling IPP-Get-Jobs (STR #4326).
-%patch48 -p1 -b .str4326
+%patch42 -p1 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -661,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jan 08 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-1
+- 1.7.1
+
 * Wed Jan  8 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.0-11
 - Apply upstream patch to improve cupsUser() (STR #4327).
 
