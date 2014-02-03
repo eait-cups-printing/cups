@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -334,8 +334,8 @@ install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -p -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 
 # Ship an rpm macro for where to put driver executables.
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
-install -m 0644 %{SOURCE8} $RPM_BUILD_ROOT%{_sysconfdir}/rpm/
+mkdir -p $RPM_BUILD_ROOT%{_rpmconfigdir}/macros.d
+install -m 0644 %{SOURCE8} $RPM_BUILD_ROOT%{_rpmconfigdir}/macros.d
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -623,7 +623,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_libdir}/*.so
 %{_includedir}/cups
 %{_mandir}/man1/cups-config.1.gz
-%{_sysconfdir}/rpm/macros.cups
+%{_rpmconfigdir}/macros.d/macros.cups
 
 %files lpd
 %{_unitdir}/cups-lpd.socket
@@ -640,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Feb 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-2
+- move macros.cups from /etc/rpm/ to /usr/lib/rpm/macros.d
+
 * Wed Jan 08 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-1
 - 1.7.1
 
