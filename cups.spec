@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -67,6 +67,7 @@ Patch39: cups-web-devices-timeout.patch
 Patch40: cups-final-content-type.patch
 Patch41: cups-journal.patch
 Patch42: cups-synconclose.patch
+Patch43: cups-avahi-browse.patch
 
 Patch100: cups-lspp.patch
 
@@ -260,6 +261,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch41 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch42 -p1 -b .synconclose
+# Prevent dnssd backend exiting too early (bug #1026940, STR #4365).
+%patch43 -p1 -b .avahi-browse
 
 %if %lspp
 # LSPP support.
@@ -640,6 +643,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 11 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-3
+- Prevent dnssd backend exiting too early (bug #1026940, STR #4365).
+
 * Mon Feb 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-2
 - move macros.cups from /etc/rpm/ to /usr/lib/rpm/macros.d
 
