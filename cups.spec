@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -69,6 +69,7 @@ Patch41: cups-journal.patch
 Patch42: cups-synconclose.patch
 Patch43: cups-avahi-browse.patch
 Patch44: cups-str4380.patch
+Patch45: cups-str4366.patch
 
 Patch100: cups-lspp.patch
 
@@ -266,6 +267,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch43 -p1 -b .avahi-browse
 # Fix for cupsEnumDest() 'removed' callbacks (bug #1054312, STR #4380).
 %patch44 -p1 -b .str4380
+# Prevent feedback loop when fetching error_log over HTTP (STR #4366).
+%patch45 -p1 -b .str4366
 
 %if %lspp
 # LSPP support.
@@ -646,6 +649,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Mar  6 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-6
+- Prevent feedback loop when fetching error_log over HTTP (STR #4366).
+
 * Wed Mar  5 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-5
 - Fix for cupsEnumDest() 'removed' callbacks (bug #1054312, STR #4380).
 
