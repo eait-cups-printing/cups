@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -88,11 +88,12 @@ Provides: lpd lpr cupsddk cupsddk-drivers
 BuildRequires: pam-devel pkgconfig
 BuildRequires: openssl-devel libacl-devel
 BuildRequires: openldap-devel
-BuildRequires: libusb1-devel
+BuildRequires: pkgconfig(libusb-1.0)
 BuildRequires: krb5-devel
-BuildRequires: avahi-devel
-BuildRequires: systemd, systemd-devel
-BuildRequires: dbus-devel
+BuildRequires: pkgconfig(avahi-client)
+BuildRequires: systemd
+BuildRequires: pkgconfig(libsystemd-daemon) pkgconfig(libsystemd-journal)
+BuildRequires: pkgconfig(dbus-1)
 BuildRequires: automake
 
 # Make sure we get postscriptdriver tags.
@@ -655,6 +656,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Mar 10 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-7
+- BuildRequires: pkgconfig(foo) instead of foo-devel
+
 * Thu Mar  6 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-6
 - Track local default in cupsEnumDests() (STR #4332).
 - libcups: avoid race condition when sending IPP requests (STR #4386).
