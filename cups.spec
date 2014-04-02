@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -74,15 +74,11 @@ Patch46: cups-str4332.patch
 
 Patch100: cups-lspp.patch
 
-Requires: /sbin/chkconfig
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-%if %use_alternatives
-Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
-Requires: /usr/sbin/alternatives
-%endif
+Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 
-Provides: lpd lpr cupsddk cupsddk-drivers
+Provides: cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
 BuildRequires: openssl-devel libacl-devel
@@ -120,9 +116,18 @@ Requires: acl
 Requires: ghostscript-cups
 Requires: cups-filters
 
+%package client
+Summary: CUPS printing system - client programs
+License: GPLv2
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+%if %use_alternatives
+Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
+Requires: /usr/sbin/alternatives
+%endif
+Provides: lpr
+
 %package devel
 Summary: CUPS printing system - development environment
-Group: Development/Libraries
 License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: openssl-devel
@@ -132,23 +137,20 @@ Provides: cupsddk-devel
 
 %package libs
 Summary: CUPS printing system - libraries
-Group: System Environment/Libraries
 License: LGPLv2 and zlib
 
 %package filesystem
 Summary: CUPS printing system - directory layout
-Group: System Environment/Base
 BuildArch: noarch
 
 %package lpd
 Summary: CUPS printing system - lpd emulation
-Group: System Environment/Daemons
-Requires: %{name} = %{epoch}:%{version}-%{release}
+Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+Provides: lpd
 
 %package ipptool
 Summary: CUPS printing system - tool for performing IPP requests
-Group: System Environment/Daemons
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description
@@ -156,6 +158,11 @@ CUPS printing system provides a portable printing layer for
 UNIX® operating systems. It has been developed by Apple Inc.
 to promote a standard printing solution for all UNIX vendors and users.
 CUPS provides the System V and Berkeley command-line interfaces.
+
+%description client
+CUPS printing system provides a portable printing layer for
+UNIX® operating systems. This package contains command-line client
+programs.
 
 %description devel
 CUPS printing system provides a portable printing layer for
@@ -404,23 +411,7 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 
 # Remove old-style certs directory; new-style is /var/run
 # (see bug #194581 for why this is necessary).
-/bin/rm -rf %{_sysconfdir}/cups/certs
-%if %use_alternatives
-/usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
-	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
-	 --slave %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
-	 --slave %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
-	 --slave %{_bindir}/lpstat print-lpstat %{_bindir}/lpstat.cups \
-	 --slave %{_bindir}/cancel print-cancel %{_bindir}/cancel.cups \
-	 --slave %{_sbindir}/lpc print-lpc %{_sbindir}/lpc.cups \
-	 --slave %{_mandir}/man1/cancel.1.gz print-cancelman %{_mandir}/man1/cancel-cups.1.gz \
-	 --slave %{_mandir}/man1/lp.1.gz print-lpman %{_mandir}/man1/lp-cups.1.gz \
-	 --slave %{_mandir}/man8/lpc.8.gz print-lpcman %{_mandir}/man8/lpc-cups.8.gz \
-	 --slave %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
-	 --slave %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
-	 --slave %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
-	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz
-%endif
+rm -rf %{_sysconfdir}/cups/certs
 rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
 
 # Deal with config migration due to CVE-2012-5519 (STR #4223)
@@ -462,6 +453,25 @@ done
 
 exit 0
 
+%post client
+%if %use_alternatives
+/usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
+	 --slave %{_bindir}/lp print-lp %{_bindir}/lp.cups \
+	 --slave %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
+	 --slave %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
+	 --slave %{_bindir}/lpstat print-lpstat %{_bindir}/lpstat.cups \
+	 --slave %{_bindir}/cancel print-cancel %{_bindir}/cancel.cups \
+	 --slave %{_sbindir}/lpc print-lpc %{_sbindir}/lpc.cups \
+	 --slave %{_mandir}/man1/cancel.1.gz print-cancelman %{_mandir}/man1/cancel-cups.1.gz \
+	 --slave %{_mandir}/man1/lp.1.gz print-lpman %{_mandir}/man1/lp-cups.1.gz \
+	 --slave %{_mandir}/man8/lpc.8.gz print-lpcman %{_mandir}/man8/lpc-cups.8.gz \
+	 --slave %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
+	 --slave %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
+	 --slave %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
+	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz
+%endif
+exit 0
+
 %post lpd
 %systemd_post cups-lpd.socket
 exit 0
@@ -472,13 +482,14 @@ exit 0
 
 %preun
 %systemd_preun %{name}.path %{name}.socket %{name}.service
+exit 0
 
+%preun client
 %if %use_alternatives
 if [ $1 -eq 0 ] ; then
 	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
 fi
 %endif
-
 exit 0
 
 %preun lpd
@@ -563,8 +574,6 @@ rm -f %{cups_serverbin}/backend/smb
 %{_unitdir}/%{name}.path
 %{_bindir}/cupstestppd
 %{_bindir}/cupstestdsc
-%{_bindir}/cancel*
-%{_bindir}/lp*
 %{_bindir}/ppd*
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
@@ -576,6 +585,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{cups_serverbin}/filter/*
 %{cups_serverbin}/monitor
 %{_mandir}/man[1578]/*
+# client subpackage
+%exclude %{_mandir}/man1/lp*.1.gz
+%exclude %{_mandir}/man1/cancel-cups.1.gz
+%exclude %{_mandir}/man8/lpc-cups.8.gz
 # devel subpackage
 %exclude %{_mandir}/man1/cups-config.1.gz
 # ipptool subpackage
@@ -584,6 +597,8 @@ rm -f %{cups_serverbin}/backend/smb
 # lpd subpackage
 %exclude %{_mandir}/man8/cups-lpd.8.gz
 %{_sbindir}/*
+# client subpackage
+%exclude %{_sbindir}/lpc.cups
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/ca
 %dir %{_datadir}/cups/templates/cs
@@ -611,6 +626,14 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/mime/mime.convs
 %{_datadir}/cups/ppdc/*.defs
 %{_datadir}/cups/ppdc/*.h
+
+%files client
+%{_sbindir}/lpc.cups
+%{_bindir}/cancel*
+%{_bindir}/lp*
+%{_mandir}/man1/lp*.1.gz
+%{_mandir}/man1/cancel-cups.1.gz
+%{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
 %doc LICENSE.txt
@@ -653,6 +676,12 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Apr 02 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-9
+- New client subpackage containing command line client tools (bug #1002342).
+- Removed unneeded Group tags.
+- Removed 'Requires: /sbin/chkconfig'.
+- Moved 'Provides: lpd' to lpd subpackage.
+
 * Tue Mar 18 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-8
 - Removed patch for STR #4386 as it does not work and causes problems
   instead (bug #1077239).
