@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -31,6 +31,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str4386.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -198,6 +199,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# libcups: avoid race condition when sending IPP requests (STR #4386,
+# bug #1072952).
+%patch4 -p1 -b .str4386
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -676,6 +680,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Apr  3 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-10
+- libcups: avoid race condition when sending IPP requests (STR #4386,
+  bug #1072952).
+
 * Wed Apr 02 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.1-9
 - New client subpackage containing command line client tools (bug #1002342).
 - Removed unneeded Group tags.
