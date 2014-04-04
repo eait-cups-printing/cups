@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.1
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Group: System Environment/Daemons
 Url: http://www.cups.org/
@@ -291,6 +291,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %endif
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
+
+# Log to the system journal by default (bug #1078781).
+sed -i -e 's,^ErrorLog .*$,ErrorLog journal,' conf/cups-files.conf.in
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -680,6 +683,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Apr  4 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-11
+- Log to the system journal by default (bug #1078781).
+
 * Thu Apr  3 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-10
 - libcups: avoid race condition when sending IPP requests (STR #4386,
   bug #1072952).
