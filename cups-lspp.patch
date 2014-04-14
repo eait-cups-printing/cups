@@ -411,14 +411,6 @@ diff -up cups-1.7.1/Makedefs.in.lspp cups-1.7.1/Makedefs.in
 diff -up cups-1.7.1/scheduler/client.c.lspp cups-1.7.1/scheduler/client.c
 --- cups-1.7.1/scheduler/client.c.lspp	2013-09-27 16:09:25.000000000 +0200
 +++ cups-1.7.1/scheduler/client.c	2014-01-08 18:43:27.298821568 +0100
-@@ -41,6 +41,7 @@
-  *   valid_host()	    - Is the Host: field valid?
-  *   write_file()	    - Send a file via HTTP.
-  *   write_pipe()	    - Flag that data is available on the CGI pipe.
-+ *   client_pid_to_auid()   - Get the audit login uid of the client.
-  */
- 
- /*
 @@ -49,6 +50,7 @@
  
  #include "cupsd.h"
@@ -1825,15 +1817,6 @@ diff -up cups-1.7.1/scheduler/job.h.lspp cups-1.7.1/scheduler/job.h
 diff -up cups-1.7.1/scheduler/main.c.lspp cups-1.7.1/scheduler/main.c
 --- cups-1.7.1/scheduler/main.c.lspp	2014-01-08 18:43:27.265822025 +0100
 +++ cups-1.7.1/scheduler/main.c	2014-01-08 18:43:27.308821430 +0100
-@@ -38,6 +38,8 @@
-  *   usage()               - Show scheduler usage.
-  */
- 
-+/* (c) Copyright 2005-2006 Hewlett-Packard Development Company, L.P. */
-+
- /*
-  * Include necessary headers...
-  */
 @@ -80,6 +82,9 @@
  #  include <sys/param.h>
  #endif /* HAVE_SYS_PARAM_H */

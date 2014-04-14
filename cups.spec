@@ -10,10 +10,9 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7.1
-Release: 11%{?dist}
+Version: 1.7.2
+Release: 1%{?dist}
 License: GPLv2
-Group: System Environment/Daemons
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
@@ -31,7 +30,6 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4386.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -55,23 +53,18 @@ Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch26: cups-lpd-manpage.patch
 Patch27: cups-avahi-address.patch
-Patch29: cups-enum-all.patch
-Patch31: cups-dymo-deviceid.patch
-Patch32: cups-freebind.patch
-Patch33: cups-no-gcry.patch
-Patch34: cups-libusb-quirks.patch
-Patch35: cups-use-ipp1.1.patch
-Patch36: cups-avahi-no-threaded.patch
-Patch37: cups-ipp-multifile.patch
-Patch38: cups-full-relro.patch
-Patch39: cups-web-devices-timeout.patch
-Patch40: cups-final-content-type.patch
-Patch41: cups-journal.patch
-Patch42: cups-synconclose.patch
-Patch43: cups-avahi-browse.patch
-Patch44: cups-str4380.patch
-Patch45: cups-str4366.patch
-Patch46: cups-str4332.patch
+Patch28: cups-enum-all.patch
+Patch29: cups-dymo-deviceid.patch
+Patch30: cups-freebind.patch
+Patch31: cups-no-gcry.patch
+Patch32: cups-libusb-quirks.patch
+Patch33: cups-use-ipp1.1.patch
+Patch34: cups-avahi-no-threaded.patch
+Patch35: cups-ipp-multifile.patch
+Patch36: cups-web-devices-timeout.patch
+Patch37: cups-final-content-type.patch
+Patch38: cups-journal.patch
+Patch39: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -199,9 +192,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# libcups: avoid race condition when sending IPP requests (STR #4386,
-# bug #1072952).
-%patch4 -p1 -b .str4386
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -250,40 +240,30 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
 # Return from cupsEnumDests() once all records have been returned.
-%patch29 -p1 -b .enum-all
+%patch28 -p1 -b .enum-all
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch31 -p1 -b .dymo-deviceid
+%patch29 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch32 -p1 -b .freebind
+%patch30 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
-%patch33 -p1 -b .no-gcry
+%patch31 -p1 -b .no-gcry
 # Added libusb quirk for Canon PIXMA MP540 (bug #967873).
-%patch34 -p1 -b .libusb-quirks
+%patch32 -p1 -b .libusb-quirks
 # Default to IPP/1.1 for now (bug #977813).
-%patch35 -p1 -b .use-ipp1.1
+%patch33 -p1 -b .use-ipp1.1
 # Don't use D-Bus from two threads (bug #979748).
-%patch36 -p1 -b .avahi-no-threaded
+%patch34 -p1 -b .avahi-no-threaded
 # Fixes for jobs with multiple files and multiple formats.
-%patch37 -p1 -b .ipp-multifile
-# Full relro (bug #996740).
-%patch38 -p1 -b .full-relro
+%patch35 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch39 -p1 -b .web-devices-timeout
+%patch36 -p1 -b .web-devices-timeout
 # Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
 # printing to remote CUPS servers (bug #1010580).
-%patch40 -p1 -b .final-content-type
+%patch37 -p1 -b .final-content-type
 # Allow "journal" log type for log output to system journal.
-%patch41 -p1 -b .journal
+%patch38 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
-%patch42 -p1 -b .synconclose
-# Prevent dnssd backend exiting too early (bug #1026940, STR #4365).
-%patch43 -p1 -b .avahi-browse
-# Fix for cupsEnumDest() 'removed' callbacks (bug #1054312, STR #4380).
-%patch44 -p1 -b .str4380
-# Prevent feedback loop when fetching error_log over HTTP (STR #4366).
-%patch45 -p1 -b .str4366
-# Track local default in cupsEnumDests() (STR #4332).
-%patch46 -p1 -b .str4332
+%patch39 -p1 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -557,6 +537,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/ca
 %dir %{_datadir}/%{name}/www/cs
+%dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/it
@@ -569,6 +550,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/robots.txt
 %doc %{_datadir}/%{name}/www/ca/index.html
 %doc %{_datadir}/%{name}/www/cs/index.html
+%doc %{_datadir}/%{name}/www/de/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/it/index.html
@@ -609,6 +591,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/ca
 %dir %{_datadir}/cups/templates/cs
+%dir %{_datadir}/cups/templates/de
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/it
@@ -617,6 +600,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
 %{_datadir}/cups/templates/cs/*.tmpl
+%{_datadir}/cups/templates/de/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/it/*.tmpl
@@ -683,6 +667,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Apr 14 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.2-1
+- 1.7.2
+
 * Fri Apr  4 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.1-11
 - Log to the system journal by default (bug #1078781).
 
