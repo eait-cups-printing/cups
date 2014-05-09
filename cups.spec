@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -30,6 +30,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str4386.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -180,6 +181,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Apply patch to fix cupsSendRequest() race condition (bug #1072952,
+# STR #4386).
+%patch4 -p1 -b .str4386
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -636,6 +640,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri May  9 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.2-2
+- Another attempt at avoiding race condition when sending IPP requests
+  (STR #4386, bug #1072952).
+
 * Mon Apr 14 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.2-1
 - 1.7.2
 
