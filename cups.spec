@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7.2
-Release: 2%{?dist}
+Version: 1.7.3
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -30,7 +30,6 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4386.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -181,9 +180,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Apply patch to fix cupsSendRequest() race condition (bug #1072952,
-# STR #4386).
-%patch4 -p1 -b .str4386
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -527,6 +523,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/it
 %dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/pt_BR
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
@@ -540,6 +537,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/fr/index.html
 %doc %{_datadir}/%{name}/www/it/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
+%doc %{_datadir}/%{name}/www/pt_BR/index.html
 %doc %{_datadir}/%{name}/www/ru/index.html
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
@@ -577,6 +575,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/it
 %dir %{_datadir}/cups/templates/ja
+%dir %{_datadir}/cups/templates/pt_BR
 %dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/ca/*.tmpl
@@ -586,6 +585,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/it/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
+%{_datadir}/cups/templates/pt_BR/*.tmpl
 %{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
@@ -640,6 +640,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed May 28 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.3-1
+- 1.7.3
+- str4386.patch merged upstream in STR #4403
+
 * Fri May  9 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.2-2
 - Another attempt at avoiding race condition when sending IPP requests
   (STR #4386, bug #1072952).
