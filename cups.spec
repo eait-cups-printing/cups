@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -671,6 +671,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.7.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Wed May 28 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.3-1
 - 1.7.3
 - str4386.patch merged upstream in STR #4403
