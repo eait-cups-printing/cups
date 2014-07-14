@@ -10,7 +10,7 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7.3
+Version: 1.7.4
 Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
@@ -640,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jul 14 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.4-1
+- 1.7.4: CVE-2014-3537
+
 * Wed May 28 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.3-1
 - 1.7.3
 - str4386.patch merged upstream in STR #4403
