@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -66,6 +66,7 @@ Patch37: cups-final-content-type.patch
 Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
 Patch40: cups-cgi.patch
+Patch41: cups-CVE-2014-5029-5030-5031.patch
 
 Patch100: cups-lspp.patch
 
@@ -255,6 +256,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch39 -p1 -b .synconclose
 # Fix CGI handling (STR #4454).
 %patch40 -p1 -b .cgi
+# CVE-2014-5029, CVE-2014-5030, CVE-2014-5031 (#1122601)
+%patch41 -p1 -b .CVE-2014-5029-5030-5031
 
 %if %lspp
 # LSPP support.
@@ -643,6 +646,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jul 23 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.4-3
+- CVE-2014-5029, CVE-2014-5030, CVE-2014-5031 (#1122601)
+
 * Wed Jul 23 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.4-2
 - Fix CGI handling (STR #4454).
 
