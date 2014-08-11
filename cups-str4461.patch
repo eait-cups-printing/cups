@@ -1,0 +1,24 @@
+diff -up cups-1.7.4/scheduler/client.c.str4461 cups-1.7.4/scheduler/client.c
+--- cups-1.7.4/scheduler/client.c.str4461	2014-08-11 16:30:04.695889827 +0100
++++ cups-1.7.4/scheduler/client.c	2014-08-11 16:30:04.697889838 +0100
+@@ -3360,8 +3360,18 @@ get_file(cupsd_client_t *con,		/* I  - C
+ 
+   if (!status && !(filestats->st_mode & S_IROTH))
+   {
+-    cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
+-    return (NULL);
++   /*
++    * The exception is for cupsd.conf and log files for
++    * authenticated access.
++    */
++
++    if ((strcmp(con->uri, "/admin/conf/cupsd.conf") &&
++	 strncmp(con->uri, "/admin/log/", 11)) ||
++	cupsdIsAuthorized(con, NULL) != HTTP_OK)
++    {
++      cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
++      return (NULL);
++    }
+   }
+ 
+  /*
