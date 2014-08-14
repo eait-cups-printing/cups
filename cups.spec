@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -65,6 +65,7 @@ Patch36: cups-web-devices-timeout.patch
 Patch37: cups-final-content-type.patch
 Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
+Patch40: cups-str4461.patch
 
 Patch100: cups-lspp.patch
 
@@ -264,6 +265,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch38 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch39 -p1 -b .synconclose
+# Fix conf/log file reading for authenticated users (STR #4461).
+%patch40 -p1 -b .str4461
 
 %if %lspp
 # LSPP support.
@@ -671,6 +674,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Aug 11 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-2
+- Fix conf/log file reading for authenticated users (STR #4461).
+
 * Fri Aug 01 2014 Jiri Popelka <jpopelka@redhat.com> - 1:1.7.5-1
 - 1.7.5
 
