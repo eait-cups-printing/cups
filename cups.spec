@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -487,18 +487,12 @@ exit 0
 exit 0
 
 %postun
-%systemd_postun_with_restart %{name}.service
+%systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service
 exit 0
 
 %postun lpd
 %systemd_postun_with_restart cups-lpd.socket
 exit 0
-
-%triggerun -- %{name} < 1:1.5.0-22
-# This package is allowed to autostart; however, the upgrade trigger
-# in Fedora 16 final failed to actually do this.  Do it now as a
-# one-off fix for bug #748841.
-/bin/systemctl --no-reload enable %{name}.{service,socket,path} >/dev/null 2>&1 || :
 
 %triggerin -- samba-client
 ln -sf ../../../bin/smbspool %{cups_serverbin}/backend/smb || :
@@ -674,6 +668,11 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Aug 20 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-4
+- Removed old one-off trigger now it's no longer needed.
+- Run systemd postun script for path and socket unit files as well as
+  the main service unit file.
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.7.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
