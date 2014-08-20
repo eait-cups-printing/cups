@@ -30,6 +30,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str4396.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -66,6 +67,7 @@ Patch37: cups-final-content-type.patch
 Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
 Patch40: cups-str4461.patch
+Patch41: cups-str2913.patch
 
 Patch100: cups-lspp.patch
 
@@ -193,6 +195,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
+%patch4 -p1 -b .str4396
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -267,6 +271,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch39 -p1 -b .synconclose
 # Fix conf/log file reading for authenticated users (STR #4461).
 %patch40 -p1 -b .str4461
+# Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
+# (bug #421671).
+%patch41 -p1 -b .str2913
 
 %if %lspp
 # LSPP support.
@@ -672,6 +679,9 @@ rm -f %{cups_serverbin}/backend/smb
 - Removed old one-off trigger now it's no longer needed.
 - Run systemd postun script for path and socket unit files as well as
   the main service unit file.
+- Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
+- Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
+  (bug #421671).
 
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.7.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
