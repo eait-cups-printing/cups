@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -30,6 +30,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-str4396.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -66,6 +67,7 @@ Patch37: cups-final-content-type.patch
 Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
 Patch40: cups-str4461.patch
+Patch41: cups-str2913.patch
 
 Patch100: cups-lspp.patch
 
@@ -181,6 +183,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
+%patch4 -p1 -b .str4396
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -255,6 +259,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch39 -p1 -b .synconclose
 # Fix conf/log file reading for authenticated users (STR #4461).
 %patch40 -p1 -b .str4461
+# Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
+# (bug #421671).
+%patch41 -p1 -b .str2913
 
 %if %lspp
 # LSPP support.
@@ -643,6 +650,11 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Aug 20 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-3
+- Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
+- Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
+  (bug #421671).
+
 * Mon Aug 11 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-2
 - Fix conf/log file reading for authenticated users (STR #4461).
 
