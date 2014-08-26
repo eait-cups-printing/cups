@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -681,6 +681,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Aug 26 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-5
+- Use upstream patch for STR #4461.
+
 * Wed Aug 20 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-4
 - Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
 - Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
