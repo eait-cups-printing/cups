@@ -1,24 +1,97 @@
-diff -up cups-1.7.4/scheduler/client.c.str4461 cups-1.7.4/scheduler/client.c
---- cups-1.7.4/scheduler/client.c.str4461	2014-08-11 16:30:04.695889827 +0100
-+++ cups-1.7.4/scheduler/client.c	2014-08-11 16:30:04.697889838 +0100
-@@ -3360,8 +3360,18 @@ get_file(cupsd_client_t *con,		/* I  - C
+diff -up cups-1.7.5/scheduler/client.c.str4461 cups-1.7.5/scheduler/client.c
+--- cups-1.7.5/scheduler/client.c.str4461	2014-07-22 15:03:19.000000000 +0100
++++ cups-1.7.5/scheduler/client.c	2014-08-26 14:58:04.461055778 +0100
+@@ -3263,6 +3263,7 @@ get_file(cupsd_client_t *con,		/* I  - C
+   char		*ptr;			/* Pointer info filename */
+   int		plen;			/* Remaining length after pointer */
+   char		language[7];		/* Language subdirectory, if any */
++  int		perm_check = 1;		/* Do permissions check? */
  
-   if (!status && !(filestats->st_mode & S_IROTH))
-   {
--    cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
--    return (NULL);
-+   /*
-+    * The exception is for cupsd.conf and log files for
-+    * authenticated access.
-+    */
-+
-+    if ((strcmp(con->uri, "/admin/conf/cupsd.conf") &&
-+	 strncmp(con->uri, "/admin/log/", 11)) ||
-+	cupsdIsAuthorized(con, NULL) != HTTP_OK)
-+    {
-+      cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
-+      return (NULL);
-+    }
-   }
  
   /*
+@@ -3272,17 +3273,27 @@ get_file(cupsd_client_t *con,		/* I  - C
+   language[0] = '\0';
+ 
+   if (!strncmp(con->uri, "/ppd/", 5) && !strchr(con->uri + 5, '/'))
++  {
+     snprintf(filename, len, "%s%s", ServerRoot, con->uri);
++
++    perm_check = 0;
++  }
+   else if (!strncmp(con->uri, "/icons/", 7) && !strchr(con->uri + 7, '/'))
+   {
+     snprintf(filename, len, "%s/%s", CacheDir, con->uri + 7);
+     if (access(filename, F_OK) < 0)
+       snprintf(filename, len, "%s/images/generic.png", DocumentRoot);
++
++    perm_check = 0;
+   }
+   else if (!strncmp(con->uri, "/rss/", 5) && !strchr(con->uri + 5, '/'))
+     snprintf(filename, len, "%s/rss/%s", CacheDir, con->uri + 5);
+-  else if (!strncmp(con->uri, "/admin/conf/", 12))
+-    snprintf(filename, len, "%s%s", ServerRoot, con->uri + 11);
++  else if (!strcmp(con->uri, "/admin/conf/cupsd.conf"))
++  {
++    strlcpy(filename, ConfigurationFile, len);
++
++    perm_check = 0;
++  }
+   else if (!strncmp(con->uri, "/admin/log/", 11))
+   {
+     if (!strncmp(con->uri + 11, "access_log", 10) && AccessLog[0] == '/')
+@@ -3293,6 +3304,8 @@ get_file(cupsd_client_t *con,		/* I  - C
+       strlcpy(filename, PageLog, len);
+     else
+       return (NULL);
++
++    perm_check = 0;
+   }
+   else if (con->language)
+   {
+@@ -3358,7 +3371,7 @@ get_file(cupsd_client_t *con,		/* I  - C
+   * not allow access...
+   */
+ 
+-  if (!status && !(filestats->st_mode & S_IROTH))
++  if (!status && perm_check && !(filestats->st_mode & S_IROTH))
+   {
+     cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
+     return (NULL);
+@@ -3466,7 +3479,7 @@ get_file(cupsd_client_t *con,		/* I  - C
+     * not allow access...
+     */
+ 
+-    if (!status && !(filestats->st_mode & S_IROTH))
++    if (!status && perm_check && !(filestats->st_mode & S_IROTH))
+     {
+       cupsdLogMessage(CUPSD_LOG_INFO, "[Client %d] Files/directories such as \"%s\" must be world-readable.", con->http.fd, filename);
+       return (NULL);
+diff -up cups-1.7.5/scheduler/ipp.c.str4461 cups-1.7.5/scheduler/ipp.c
+--- cups-1.7.5/scheduler/ipp.c.str4461	2014-08-26 14:57:56.387013559 +0100
++++ cups-1.7.5/scheduler/ipp.c	2014-08-26 14:58:04.467055810 +0100
+@@ -2743,7 +2743,6 @@ add_printer(cupsd_client_t  *con,	/* I -
+ 
+       cupsdLogMessage(CUPSD_LOG_DEBUG,
+ 		      "Copied PPD file successfully");
+-      chmod(dstfile, 0644);
+     }
+   }
+ 
+@@ -4650,7 +4649,7 @@ copy_model(cupsd_client_t *con,		/* I -
+   * Open the destination file for a copy...
+   */
+ 
+-  if ((dst = cupsFileOpen(to, "wb")) == NULL)
++  if ((dst = cupsdCreateConfFile(to, ConfigFilePerm)) == NULL)
+   {
+     cupsFreeOptions(num_defaults, defaults);
+     cupsFileClose(src);
+@@ -4705,7 +4704,7 @@ copy_model(cupsd_client_t *con,		/* I -
+ 
+   unlink(tempfile);
+ 
+-  return (cupsFileClose(dst));
++  return (cupsdCloseCreatedConfFile(dst, to));
+ }
+ 
+ 
