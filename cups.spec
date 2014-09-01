@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -68,6 +68,7 @@ Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
 Patch40: cups-str4461.patch
 Patch41: cups-str2913.patch
+Patch42: cups-str4475.patch
 
 Patch100: cups-lspp.patch
 
@@ -262,6 +263,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
 # (bug #421671).
 %patch41 -p1 -b .str2913
+# Fix icon display in web interface during server restart (STR #4475).
+%patch42 -p1 -b .str4475
 
 %if %lspp
 # LSPP support.
@@ -650,6 +653,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Sep  1 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-6
+- Fix icon display in web interface during server restart (STR #4475).
+
 * Mon Sep  1 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-5
 - More STR #4461 fixes from upstream.
 
