@@ -7,14 +7,19 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
+%global prever rc1
+
+#%%global VERSION %%{version}
+%global VERSION %{version}%{prever}
+
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 1.7.5
-Release: 7%{?dist}
+Version: 2.0
+Release: 0.1.%{prever}%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
+Source: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -30,7 +35,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4396.patch
+
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -52,7 +57,7 @@ Patch22: cups-hp-deviceid-oid.patch
 Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
-Patch26: cups-lpd-manpage.patch
+
 Patch27: cups-avahi-address.patch
 Patch28: cups-enum-all.patch
 Patch29: cups-dymo-deviceid.patch
@@ -66,9 +71,6 @@ Patch36: cups-web-devices-timeout.patch
 Patch37: cups-final-content-type.patch
 Patch38: cups-journal.patch
 Patch39: cups-synconclose.patch
-Patch40: cups-str4461.patch
-Patch41: cups-str2913.patch
-Patch42: cups-str4475.patch
 
 Patch100: cups-lspp.patch
 
@@ -189,15 +191,15 @@ lpd emulation.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q
+%setup -q -n cups-%{VERSION}
+
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Upstream patch for STR #4396, pre-requisite for STR #2913 patch.
-%patch4 -p1 -b .str4396
+
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -238,11 +240,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch23 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch24 -p1 -b .ricoh-deviceid-oid
-# Add support for systemd socket activation (patch from Lennart
-# Poettering).
+# Make cups.service Type=notify (bug #1088918).
 %patch25 -p1 -b .systemd-socket
-# Talk about systemd in cups-lpd manpage (part of bug #884641).
-%patch26 -p1 -b .lpd-manpage
+
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
 # Return from cupsEnumDests() once all records have been returned.
@@ -250,7 +250,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch29 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch30 -p1 -b .freebind
+#%%patch30 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
 %patch31 -p1 -b .no-gcry
 # Added libusb quirk for Canon PIXMA MP540 (bug #967873).
@@ -270,13 +270,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch38 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch39 -p1 -b .synconclose
-# Fix conf/log file reading for authenticated users (STR #4461).
-%patch40 -p1 -b .str4461
-# Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
-# (bug #421671).
-%patch41 -p1 -b .str2913
-# Fix icon display in web interface during server restart (STR #4475).
-%patch42 -p1 -b .str4475
 
 %if %lspp
 # LSPP support.
@@ -346,10 +339,14 @@ mv lpc.8 lpc-cups.8
 popd
 %endif
 
+mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.path $RPM_BUILD_ROOT%{_unitdir}/cups.path
+mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.service $RPM_BUILD_ROOT%{_unitdir}/cups.service
+mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.socket $RPM_BUILD_ROOT%{_unitdir}/cups.socket
+
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -p -m 644 %{SOURCE3} %{buildroot}%{_unitdir}
-install -p -m 644 %{SOURCE4} %{buildroot}%{_unitdir}
+install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_unitdir}
+install -p -m 644 %{SOURCE4} $RPM_BUILD_ROOT%{_unitdir}
 install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -p -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 
@@ -542,29 +539,12 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
-%dir %{_datadir}/%{name}/www/ca
-%dir %{_datadir}/%{name}/www/cs
-%dir %{_datadir}/%{name}/www/de
-%dir %{_datadir}/%{name}/www/es
-%dir %{_datadir}/%{name}/www/fr
-%dir %{_datadir}/%{name}/www/it
-%dir %{_datadir}/%{name}/www/ja
-%dir %{_datadir}/%{name}/www/pt_BR
-%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
-%doc %{_datadir}/%{name}/www/ca/index.html
-%doc %{_datadir}/%{name}/www/cs/index.html
-%doc %{_datadir}/%{name}/www/de/index.html
-%doc %{_datadir}/%{name}/www/es/index.html
-%doc %{_datadir}/%{name}/www/fr/index.html
-%doc %{_datadir}/%{name}/www/it/index.html
-%doc %{_datadir}/%{name}/www/ja/index.html
-%doc %{_datadir}/%{name}/www/pt_BR/index.html
-%doc %{_datadir}/%{name}/www/ru/index.html
+%doc %{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
 %{_unitdir}/%{name}.service
@@ -598,25 +578,7 @@ rm -f %{cups_serverbin}/backend/smb
 # client subpackage
 %exclude %{_sbindir}/lpc.cups
 %dir %{_datadir}/cups/templates
-%dir %{_datadir}/cups/templates/ca
-%dir %{_datadir}/cups/templates/cs
-%dir %{_datadir}/cups/templates/de
-%dir %{_datadir}/cups/templates/es
-%dir %{_datadir}/cups/templates/fr
-%dir %{_datadir}/cups/templates/it
-%dir %{_datadir}/cups/templates/ja
-%dir %{_datadir}/cups/templates/pt_BR
-%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
-%{_datadir}/cups/templates/ca/*.tmpl
-%{_datadir}/cups/templates/cs/*.tmpl
-%{_datadir}/cups/templates/de/*.tmpl
-%{_datadir}/cups/templates/es/*.tmpl
-%{_datadir}/cups/templates/fr/*.tmpl
-%{_datadir}/cups/templates/it/*.tmpl
-%{_datadir}/cups/templates/ja/*.tmpl
-%{_datadir}/cups/templates/pt_BR/*.tmpl
-%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -678,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Sep 12 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0-0.1.rc1
+- 2.0rc1
+
 * Mon Sep  1 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-7
 - Fix icon display in web interface during server restart (STR #4475).
 
