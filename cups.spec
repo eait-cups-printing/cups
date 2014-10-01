@@ -7,19 +7,14 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global prever rc1
-
-#%%global VERSION %%{version}
-%global VERSION %{version}%{prever}
-
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0
-Release: 0.1.%{prever}%{?dist}
+Version: 2.0.0
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.bz2
+Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # socket unit for cups-lpd service
@@ -191,7 +186,7 @@ lpd emulation.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q -n cups-%{VERSION}
+%setup -q
 
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
@@ -539,11 +534,13 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
+%dir %{_datadir}/%{name}/www/es
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
+%doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
@@ -578,7 +575,9 @@ rm -f %{cups_serverbin}/backend/smb
 # client subpackage
 %exclude %{_sbindir}/lpc.cups
 %dir %{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates/es
 %{_datadir}/cups/templates/*.tmpl
+%{_datadir}/cups/templates/es/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -640,6 +639,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 01 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-1
+- 2.0.0
+
 * Fri Sep 12 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0-0.1.rc1
 - 2.0rc1
 
