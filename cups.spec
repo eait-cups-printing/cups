@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -337,6 +337,7 @@ popd
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.path $RPM_BUILD_ROOT%{_unitdir}/cups.path
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.service $RPM_BUILD_ROOT%{_unitdir}/cups.service
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.socket $RPM_BUILD_ROOT%{_unitdir}/cups.socket
+/bin/sed -i -e "s,org.cups.cupsd,cups,g" $RPM_BUILD_ROOT%{_unitdir}/cups.service
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
@@ -639,6 +640,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Oct 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-2
+- s/org.cups.cupsd/cups/ cups.service
+
 * Wed Oct 01 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-1
 - 2.0.0
 
