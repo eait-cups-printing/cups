@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -407,41 +407,11 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 rm -rf %{_sysconfdir}/cups/certs
 rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
 
-# Deal with config migration due to CVE-2012-5519 (STR #4223)
-IN=%{_sysconfdir}/cups/cupsd.conf
-OUT=%{_sysconfdir}/cups/cups-files.conf
-copiedany=no
-for keyword in AccessLog CacheDir ConfigFilePerm	\
-    DataDir DocumentRoot ErrorLog FatalErrors		\
-    FileDevice FontPath Group LogFilePerm		\
-    LPDConfigFile PageLog Printcap PrintcapFormat	\
-    RemoteRoot RequestRoot ServerBin ServerCertificate	\
-    ServerKey ServerRoot SMBConfigFile StateDir		\
-    SystemGroup SystemGroupAuthKey TempDir User; do
-    if ! [ -f "$IN" ] || ! /bin/grep -iq ^$keyword "$IN"; then continue; fi
-    copy=yes
-    if /bin/grep -iq ^$keyword "$OUT"; then
-	if [ "`/bin/grep -i ^$keyword "$IN"`" ==	\
-	     "`/bin/grep -i ^$keyword "$OUT"`" ]; then
-	    copy=no
-	else
-	    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$OUT" || :
-	fi
-    fi
-    if [ "$copy" == "yes" ]; then
-	if [ "$copiedany" == "no" ]; then
-	    (cat >> "$OUT" <<EOF
-
-# Settings automatically moved from cupsd.conf by RPM package:
-EOF
-	    ) || :
-	fi
-
-	(/bin/grep -i ^$keyword "$IN" >> "$OUT") || :
-	copiedany=yes
-    fi
-
-    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$IN" || :
+# Previous migration script unnecessarily put PageLogFormat into cups-files.conf
+# (see bug #1148995)
+FILE=%{_sysconfdir}/cups/cups-files.conf
+for keyword in PageLogFormat; do
+    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$FILE" || :
 done
 
 exit 0
@@ -640,6 +610,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Oct 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-3
+- comment out unnecessary PageLogFormat from cups-files.conf (#1148995)
+
 * Fri Oct 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-2
 - s/org.cups.cupsd/cups/ cups.service
 
