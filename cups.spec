@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -63,12 +63,11 @@ Patch33: cups-use-ipp1.1.patch
 Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
-Patch37: cups-final-content-type.patch
-Patch38: cups-journal.patch
-Patch39: cups-synconclose.patch
-Patch40: cups-str4461.patch
-Patch41: cups-str2913.patch
-Patch42: cups-str4475.patch
+Patch37: cups-journal.patch
+Patch38: cups-synconclose.patch
+Patch39: cups-str4461.patch
+Patch40: cups-str2913.patch
+Patch41: cups-str4475.patch
 
 Patch100: cups-lspp.patch
 
@@ -263,20 +262,17 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch35 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch36 -p1 -b .web-devices-timeout
-# Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
-# printing to remote CUPS servers (bug #1010580).
-%patch37 -p1 -b .final-content-type
 # Allow "journal" log type for log output to system journal.
-%patch38 -p1 -b .journal
+%patch37 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
-%patch39 -p1 -b .synconclose
+%patch38 -p1 -b .synconclose
 # Fix conf/log file reading for authenticated users (STR #4461).
-%patch40 -p1 -b .str4461
+%patch39 -p1 -b .str4461
 # Upstream patch for STR #2913 to limit Get-Jobs replies to 500 jobs
 # (bug #421671).
-%patch41 -p1 -b .str2913
+%patch40 -p1 -b .str2913
 # Fix icon display in web interface during server restart (STR #4475).
-%patch42 -p1 -b .str4475
+%patch41 -p1 -b .str4475
 
 %if %lspp
 # LSPP support.
@@ -684,6 +680,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 15 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-8
+- Can no longer reproduce bug #1010580 so removing final-content-type
+  patch as it causes issues for some backends (bug #1149244).
+
 * Mon Sep  1 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-7
 - Fix icon display in web interface during server restart (STR #4475).
 
