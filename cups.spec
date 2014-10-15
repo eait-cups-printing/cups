@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -65,6 +65,7 @@ Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-journal.patch
 Patch38: cups-synconclose.patch
+Patch39: cups-str4500.patch
 
 Patch100: cups-lspp.patch
 
@@ -261,6 +262,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch38 -p1 -b .synconclose
+# Fix cupsGetPPD3() so it doesn't give the caller an unreadable file
+# (bug #1150917, STR #4500).
+%patch39 -p1 -b .str4500
 
 %if %lspp
 # LSPP support.
@@ -606,6 +610,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 15 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-5
+- Fix cupsGetPPD3() so it doesn't give the caller an unreadable file
+  (bug #1150917, STR #4500).
+
 * Wed Oct 15 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-4
 - Can no longer reproduce bug #1010580 so removing final-content-type
   patch as it causes issues for some backends (bug #1149244).
