@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -63,9 +63,8 @@ Patch33: cups-use-ipp1.1.patch
 Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
-Patch37: cups-final-content-type.patch
-Patch38: cups-journal.patch
-Patch39: cups-synconclose.patch
+Patch37: cups-journal.patch
+Patch38: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -258,13 +257,10 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch35 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch36 -p1 -b .web-devices-timeout
-# Reverted upstream change to FINAL_CONTENT_TYPE in order to fix
-# printing to remote CUPS servers (bug #1010580).
-%patch37 -p1 -b .final-content-type
 # Allow "journal" log type for log output to system journal.
-%patch38 -p1 -b .journal
+%patch37 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
-%patch39 -p1 -b .synconclose
+%patch38 -p1 -b .synconclose
 
 %if %lspp
 # LSPP support.
@@ -610,6 +606,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 15 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-4
+- Can no longer reproduce bug #1010580 so removing final-content-type
+  patch as it causes issues for some backends (bug #1149244).
+
 * Fri Oct 03 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.0-3
 - comment out unnecessary PageLogFormat from cups-files.conf (#1148995)
 
