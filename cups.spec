@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -610,6 +610,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Oct 16 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-6
+- Start cupsd systemd service after network.target (bug #1153660).
+
 * Wed Oct 15 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-5
 - Fix cupsGetPPD3() so it doesn't give the caller an unreadable file
   (bug #1150917, STR #4500).
