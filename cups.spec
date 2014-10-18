@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -684,6 +684,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Sat Oct 18 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-11
+- Fix for last fix (bug #1153660, bug #1154284).
+
 * Thu Oct 16 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-10
 - Start cups.service after network.target (bug #1153660).
 

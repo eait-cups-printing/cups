@@ -100,6 +100,7 @@
 @@ -0,0 +1,12 @@
 +[Unit]
 +Description=CUPS Printing Service
++After=network.target
 +
 +[Service]
 +Type=notify
@@ -109,7 +110,6 @@
 +[Install]
 +Also=cups.socket cups.path
 +WantedBy=printer.target
-+After=network.target
 --- cups-1.7.2/data/cups.socket.in.systemd-socket	2014-04-17 14:05:04.105472002 +0200
 +++ cups-1.7.2/data/cups.socket.in	2014-04-17 14:05:04.105472002 +0200
 @@ -0,0 +1,8 @@
