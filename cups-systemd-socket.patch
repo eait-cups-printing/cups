@@ -43,6 +43,7 @@ diff -up cups-2.0.0/scheduler/org.cups.cupsd.service.in.systemd-socket cups-2.0.
 +++ cups-2.0.0/scheduler/org.cups.cupsd.service.in	2014-10-16 14:39:28.636650224 +0100
 @@ -2,9 +2,10 @@
  Description=CUPS Scheduler
++After=network.target
  
  [Service]
 -ExecStart=@sbindir@/cupsd -l
@@ -53,4 +54,3 @@ diff -up cups-2.0.0/scheduler/org.cups.cupsd.service.in.systemd-socket cups-2.0.
  [Install]
  Also=org.cups.cupsd.socket org.cups.cupsd.path
  WantedBy=printer.target
-+After=network.target
