@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -69,6 +69,7 @@ Patch39: cups-str4461.patch
 Patch40: cups-str2913.patch
 Patch41: cups-str4475.patch
 Patch42: cups-str4500.patch
+Patch43: cups-str4496.patch
 
 Patch100: cups-lspp.patch
 
@@ -277,6 +278,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Fix cupsGetPPD3() so it doesn't give the caller an unreadable file
 # (bug #1150917, STR #4500).
 %patch42 -p1 -b .str4500
+# Upstream fix for cupsd crash on restart when colord not available
+# (STR #4496).
+%patch43 -p1 -b .str4496
 
 %if %lspp
 # LSPP support.
@@ -684,6 +688,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 22 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-12
+- Upstream fix for cupsd crash on restart when colord not available
+- (STR #4496).
+
 * Sat Oct 18 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-11
 - Fix for last fix (bug #1153660, bug #1154284).
 
