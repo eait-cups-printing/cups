@@ -1,50 +1,55 @@
-diff -up cups-1.7.1/config.h.in.journal cups-1.7.1/config.h.in
---- cups-1.7.1/config.h.in.journal	2014-02-17 16:48:19.089795987 +0000
-+++ cups-1.7.1/config.h.in	2014-02-17 16:48:19.136796218 +0000
-@@ -458,6 +458,13 @@
+diff -up cups-1.7.5/conf/cups-files.conf.in.journal cups-1.7.5/conf/cups-files.conf.in
+--- cups-1.7.5/conf/cups-files.conf.in.journal	2013-07-26 22:27:27.000000000 +0100
++++ cups-1.7.5/conf/cups-files.conf.in	2014-11-05 17:57:42.011621332 +0000
+@@ -30,9 +30,10 @@ SystemGroup @CUPS_SYSTEM_GROUPS@
+ #ConfigFilePerm 0@CUPS_CONFIG_FILE_PERM@
+ #LogFilePerm 0@CUPS_LOG_FILE_PERM@
  
+-# Location of the file logging all access to the scheduler; may be the name
+-# "syslog". If not an absolute path, the value of ServerRoot is used as the
+-# root directory.  Also see the "AccessLogLevel" directive in cupsd.conf.
++# Location of the file logging all access to the scheduler; may be the
++# name "syslog" or "journal". If not an absolute path, the value of
++# ServerRoot is used as the root directory.  Also see the
++# "AccessLogLevel" directive in cupsd.conf.
+ AccessLog @CUPS_LOGDIR@/access_log
  
- /*
-+ * Do we have systemd-journal support?
-+ */
-+
-+#undef HAVE_JOURNAL
-+
-+
-+/*
-  * Various scripting languages...
-  */
+ # Location of cache files used by the scheduler...
+@@ -44,11 +45,11 @@ AccessLog @CUPS_LOGDIR@/access_log
+ # Location of the static web content served by the scheduler...
+ #DocumentRoot @CUPS_DOCROOT@
  
-diff -up cups-1.7.1/config-scripts/cups-systemd.m4.journal cups-1.7.1/config-scripts/cups-systemd.m4
---- cups-1.7.1/config-scripts/cups-systemd.m4.journal	2014-02-17 16:48:19.089795987 +0000
-+++ cups-1.7.1/config-scripts/cups-systemd.m4	2014-02-17 16:48:19.136796218 +0000
-@@ -22,6 +22,15 @@ if test "x$with_systemdsystemunitdir" !=
- 	fi
- fi
+-# Location of the file logging all messages produced by the scheduler and any
+-# helper programs; may be the name "syslog". If not an absolute path, the value
+-# of ServerRoot is used as the root directory.  Also see the "LogLevel"
+-# directive in cupsd.conf.
+-ErrorLog @CUPS_LOGDIR@/error_log
++# Location of the file logging all messages produced by the scheduler
++# and any helper programs; may be the name "syslog" or "journal". If
++# not an absolute path, the value of ServerRoot is used as the root
++# directory.  Also see the "LogLevel" # directive in cupsd.conf.
++ErrorLog journal
  
-+SDJLIBS=""
-+AC_MSG_CHECKING(for libsystemd-journal)
-+if $PKGCONFIG --exists libsystemd-journal; then
-+	AC_MSG_RESULT(yes)
-+	SDJLIBS=`$PKGCONFIG --libs libsystemd-journal`
-+	AC_DEFINE(HAVE_JOURNAL)
-+else
-+	AC_MSG_RESULT(no)
-+fi
- if test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != xno ; then
-         SYSTEMD_UNITS="cups.service cups.socket cups.path"
- else
-@@ -30,6 +39,7 @@ fi
+ # Location of fonts used by older print filters...
+ #FontPath @CUPS_FONTPATH@
+@@ -56,10 +57,10 @@ ErrorLog @CUPS_LOGDIR@/error_log
+ # Location of LPD configuration
+ #LPDConfigFile @CUPS_DEFAULT_LPD_CONFIG_FILE@
  
- AC_SUBST(SYSTEMD_UNITS)
- AC_SUBST(SDLIBS)
-+AC_SUBST(SDJLIBS)
+-# Location of the file logging all pages printed by the scheduler and any
+-# helper programs; may be the name "syslog". If not an absolute path, the value
+-# of ServerRoot is used as the root directory.  Also see the "PageLogFormat"
+-# directive in cupsd.conf.
++# Location of the file logging all pages printed by the scheduler and
++# any helper programs; may be the name "syslog" or "journal". If not
++# an absolute path, the value of ServerRoot is used as the root
++# directory.  Also see the "PageLogFormat" directive in cupsd.conf.
+ PageLog @CUPS_LOGDIR@/page_log
  
- dnl
- dnl "$Id$"
-diff -up cups-1.7.1/doc/help/ref-cups-files-conf.html.in.journal cups-1.7.1/doc/help/ref-cups-files-conf.html.in
---- cups-1.7.1/doc/help/ref-cups-files-conf.html.in.journal	2014-02-17 17:06:11.652078495 +0000
-+++ cups-1.7.1/doc/help/ref-cups-files-conf.html.in	2014-02-17 17:11:50.675752398 +0000
+ # Location of the file listing all of the local printers...
+diff -up cups-1.7.5/doc/help/ref-cups-files-conf.html.in.journal cups-1.7.5/doc/help/ref-cups-files-conf.html.in
+--- cups-1.7.5/doc/help/ref-cups-files-conf.html.in.journal	2013-07-26 22:27:27.000000000 +0100
++++ cups-1.7.5/doc/help/ref-cups-files-conf.html.in	2014-11-05 17:57:42.012621337 +0000
 @@ -18,6 +18,7 @@
  AccessLog /var/log/cups/access_log
  AccessLog /var/log/cups/access_log-%s
@@ -58,7 +63,7 @@ diff -up cups-1.7.1/doc/help/ref-cups-files-conf.html.in.journal cups-1.7.1/doc/
  information to the system log instead of a plain file.</P>
  
 +<P>The special name "journal" can be used to send the access
-+information to the system log instead of a plain file.</P>
++information to the systemd journal instead of a plain file.</P>
 +
  <P>The default access log file is
  <VAR>/var/log/access_log</VAR>.</P>
@@ -76,7 +81,7 @@ diff -up cups-1.7.1/doc/help/ref-cups-files-conf.html.in.journal cups-1.7.1/doc/
  information to the system log instead of a plain file.</P>
  
 +<P>The special name "journal" can be used to send the error
-+information to the system journal instead of a plain file. Information
++information to the systemd journal instead of a plain file. Information
 +relating to a specific job is logged with the field
 +<CODE>CUPS_JOB_ID</CODE> filled in.</P>
 +
@@ -103,20 +108,9 @@ diff -up cups-1.7.1/doc/help/ref-cups-files-conf.html.in.journal cups-1.7.1/doc/
  
  <H2 CLASS="title"><A NAME="Printcap">Printcap</A></H2>
  
-diff -up cups-1.7.1/Makedefs.in.journal cups-1.7.1/Makedefs.in
---- cups-1.7.1/Makedefs.in.journal	2014-02-17 16:48:19.090795992 +0000
-+++ cups-1.7.1/Makedefs.in	2014-02-17 16:48:19.136796218 +0000
-@@ -143,6 +143,7 @@ IPPFIND_BIN	=	@IPPFIND_BIN@
- IPPFIND_MAN	=	@IPPFIND_MAN@
- LAUNCHDLIBS	=	@LAUNCHDLIBS@
- SDLIBS		=	@SDLIBS@
-+SDJLIBS		=	@SDJLIBS@
- LDFLAGS		=	-L../cgi-bin -L../cups -L../filter -L../ppdc \
- 			-L../scheduler @LDARCHFLAGS@ \
- 			@LDFLAGS@ @RELROFLAGS@ @PIEFLAGS@ $(OPTIM)
-diff -up cups-1.7.1/man/cups-files.conf.man.in.journal cups-1.7.1/man/cups-files.conf.man.in
---- cups-1.7.1/man/cups-files.conf.man.in.journal	2014-02-17 17:05:08.103764935 +0000
-+++ cups-1.7.1/man/cups-files.conf.man.in	2014-02-17 17:06:48.131258521 +0000
+diff -up cups-1.7.5/man/cups-files.conf.man.in.journal cups-1.7.5/man/cups-files.conf.man.in
+--- cups-1.7.5/man/cups-files.conf.man.in.journal	2013-07-26 22:27:27.000000000 +0100
++++ cups-1.7.5/man/cups-files.conf.man.in	2014-11-05 17:57:42.013621342 +0000
 @@ -29,6 +29,8 @@ on-line help for detailed descriptions:
  AccessLog filename
  .TP 5
@@ -144,9 +138,9 @@ diff -up cups-1.7.1/man/cups-files.conf.man.in.journal cups-1.7.1/man/cups-files
  .br
  Specifies the page log filename.
  .TP 5
-diff -up cups-1.7.1/scheduler/conf.c.journal cups-1.7.1/scheduler/conf.c
---- cups-1.7.1/scheduler/conf.c.journal	2014-02-17 16:48:19.047795781 +0000
-+++ cups-1.7.1/scheduler/conf.c	2014-02-17 16:48:19.137796223 +0000
+diff -up cups-1.7.5/scheduler/conf.c.journal cups-1.7.5/scheduler/conf.c
+--- cups-1.7.5/scheduler/conf.c.journal	2014-11-05 17:57:41.938620961 +0000
++++ cups-1.7.5/scheduler/conf.c	2014-11-05 17:57:42.013621342 +0000
 @@ -950,9 +950,9 @@ cupsdReadConfiguration(void)
    */
  
@@ -177,22 +171,93 @@ diff -up cups-1.7.1/scheduler/conf.c.journal cups-1.7.1/scheduler/conf.c
      cupsdCheckLogFile(&PageFile, PageLog);
  
   /*
-diff -up cups-1.7.1/scheduler/conf.h.journal cups-1.7.1/scheduler/conf.h
---- cups-1.7.1/scheduler/conf.h.journal	2014-02-17 16:48:19.048795786 +0000
-+++ cups-1.7.1/scheduler/conf.h	2014-02-17 16:48:19.138796228 +0000
-@@ -297,6 +297,8 @@ extern int	cupsdLogMessage(int level, co
+diff -up cups-1.7.5/scheduler/conf.h.journal cups-1.7.5/scheduler/conf.h
+--- cups-1.7.5/scheduler/conf.h.journal	2014-11-05 17:57:41.938620961 +0000
++++ cups-1.7.5/scheduler/conf.h	2014-11-05 17:57:42.014621347 +0000
+@@ -290,16 +290,69 @@ extern int	cupsdLogGSSMessage(int level,
+ 		                   int minor_status,
+ 		                   const char *message, ...);
+ #endif /* HAVE_GSSAPI */
+-extern int	cupsdLogJob(cupsd_job_t *job, int level, const char *message,
+-		            ...) __attribute__((__format__(__printf__, 3, 4)));
+-extern int	cupsdLogMessage(int level, const char *message, ...)
+-		__attribute__ ((__format__ (__printf__, 2, 3)));
++extern int	_cupsdLogJobWithLocation(const char *file,
++					 const char *line,
++					 const char *func,
++					 cupsd_job_t *job,
++					 int level,
++					 const char *message,
++					 ...)
++		__attribute__((__format__(__printf__, 6, 7)));
++extern int	_cupsdLogMessageWithLocation(const char *file,
++					     const char *line,
++					     const char *func,
++					     int level,
++					     const char *message,
++					     ...)
++		__attribute__ ((__format__ (__printf__, 5, 6)));
  extern int	cupsdLogPage(cupsd_job_t *job, const char *page);
  extern int	cupsdLogRequest(cupsd_client_t *con, http_status_t code);
  extern int	cupsdReadConfiguration(void);
-+extern int	cupsdWriteErrorLogJob(cupsd_job_t *job, int level,
-+				      const char *message);
- extern int	cupsdWriteErrorLog(int level, const char *message);
+-extern int	cupsdWriteErrorLog(int level, const char *message);
++extern int	_cupsdWriteErrorLogJobWithLocation(const char *file,
++						   const char *line,
++						   const char *func,
++						   cupsd_job_t *job,
++						   int level,
++						   const char *message);
++extern int	_cupsdWriteErrorLogWithLocation(const char *file,
++						const char *line,
++						const char *func,
++						int level, const char *message);
  
  
-diff -up cups-1.7.1/scheduler/log.c.journal cups-1.7.1/scheduler/log.c
---- cups-1.7.1/scheduler/log.c.journal	2014-02-17 16:48:19.073795909 +0000
-+++ cups-1.7.1/scheduler/log.c	2014-02-17 16:48:19.138796228 +0000
-@@ -21,6 +21,7 @@
++#ifndef _CUPSD_STRINGIFY
++#define _CUPSD_XSTRINGIFY(x) #x
++#define _CUPSD_STRINGIFY(x) _CUPSD_XSTRINGIFY(x)
++#endif /* !defined(_CUPSD_STRINGIFY) */
++
++#define cupsdLogJob(...)						\
++	_cupsdLogJobWithLocation("CODE_FILE=" __FILE__,			\
++				 "CODE_LINE="				\
++				 _CUPSD_STRINGIFY(__LINE__),		\
++				 __func__,				\
++				 __VA_ARGS__)
++
++#define cupsdLogMessage(...)						\
++	_cupsdLogMessageWithLocation("CODE_FILE=" __FILE__,		\
++				     "CODE_LINE="			\
++				     _CUPSD_STRINGIFY(__LINE__),	\
++				     __func__,				\
++				     __VA_ARGS__)
++
++#define cupsdWriteErrorLogJob(...)					\
++	_cupsdWriteErrorLogJobWithLocation("CODE_FILE=" __FILE__,	\
++			       "CODE_LINE="				\
++			       _CUPSD_STRINGIFY(__LINE__),		\
++			       __func__,				\
++			       __VA_ARGS__)
++
++#define cupsdWriteErrorLog(...)					\
++	_cupsdWriteErrorLogWithLocation("CODE_FILE=" __FILE__,	\
++			    "CODE_LINE="			\
++			    _CUPSD_STRINGIFY(__LINE__),		\
++			    __func__,				\
++			    __VA_ARGS__)
++
+ /*
+  * End of "$Id: conf.h 11202 2013-07-26 21:31:54Z msweet $".
+  */
+diff -up cups-1.7.5/scheduler/log.c.journal cups-1.7.5/scheduler/log.c
+--- cups-1.7.5/scheduler/log.c.journal	2014-11-05 17:57:41.967621108 +0000
++++ cups-1.7.5/scheduler/log.c	2014-11-05 17:58:18.297805575 +0000
+@@ -17,10 +17,11 @@
+  *   cupsdCheckLogFile()     - Open/rotate a log file if it needs it.
+  *   cupsdGetDateTime()   - Returns a pointer to a date/time string.
+  *   cupsdLogGSSMessage() - Log a GSSAPI error...
+- *   cupsdLogJob()        - Log a job message.
++ *   _cupsdLogJobWithLocation() - Log a job message.
   *   cupsdLogMessage()    - Log a message to the error log file.
   *   cupsdLogPage()       - Log a page to the page log file.
   *   cupsdLogRequest()    - Log an HTTP request in Common Log Format.
@@ -200,53 +265,235 @@ diff -up cups-1.7.1/scheduler/log.c.journal cups-1.7.1/scheduler/log.c
   *   cupsdWriteErrorLog() - Write a line to the ErrorLog.
   *   format_log_line()    - Format a line for a log file.
   */
-@@ -35,6 +36,9 @@
+@@ -34,7 +35,13 @@
+ #include <syslog.h>
  #include <sys/types.h>
  #include <sys/stat.h>
++#include <sys/uio.h>
  #include <unistd.h>
-+#ifdef HAVE_JOURNAL
++#ifdef HAVE_SYSTEMD
++/* We handle location fields ourselves */
++# define SD_JOURNAL_SUPPRESS_LOCATION
 +# include <systemd/sd-journal.h>
-+#endif /* HAVE_JOURNAL */
++#endif /* HAVE_SYSTEMD */
  
  
  /*
-@@ -559,8 +563,17 @@ cupsdLogJob(cupsd_job_t *job,		/* I - Jo
+@@ -465,21 +472,140 @@ cupsdLogGSSMessage(
+ #endif /* HAVE_GSSAPI */
+ 
+ 
++#ifdef HAVE_SYSTEMD
++static int
++dup_iovec_string(struct iovec *vec,
++		 const char *str)
++{
++  vec->iov_base = strdup (str);
++  vec->iov_len = strlen (str);
++  return (vec->iov_base ? 1 : 0);
++}
++
++
++/*
++ * '_cupsdLogToJournal()' - Log to journal with fields
++ */
++static int				/* O - 1 on success, 0 on error */
++_cupsdLogToJournal(const char	*file,	/* I - Code file */
++		   const char	*line,	/* I - Code line */
++		   const char	*func,	/* I - Code func */
++		   cupsd_job_t	*job,	/* I - Job or NULL */
++		   int		level,	/* I - Log level */
++		   const char	*message)/* I - Formatted message */
++{
++  size_t		n_journal_fields;
++  struct iovec		*journal_fields = NULL;
++  char			buffer[256];
++  int			result = 1;
++
++ /*
++  * There will be at least 5 fields:
++  * CODE_FILE, CODE_LINE, CODE_FUNC, MESSAGE, PRIORITY
++  */
++
++  n_journal_fields = 5;
++
++  if (job)
++  {
++    n_journal_fields++; /* CUPS_JOB_ID */
++
++    if (job->dest)
++      n_journal_fields++; /* CUPS_DEST */
++
++    if (job->printer)
++      n_journal_fields++; /* CUPS_PRINTER */
++  }
++
++  journal_fields = calloc (n_journal_fields, sizeof (struct iovec));
++  if (!journal_fields)
++    return (0);
++
++  n_journal_fields = 0;
++
++  result = dup_iovec_string (&journal_fields[n_journal_fields], file);
++
++  if (result)
++  {
++    n_journal_fields++;
++    result = dup_iovec_string (&journal_fields[n_journal_fields], line);
++  }
++
++  if (result)
++  {
++    n_journal_fields++;
++    snprintf (buffer, sizeof (buffer), "CODE_FUNC=%s", func);
++    result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++  }
++
++  if (result)
++  {
++    n_journal_fields++;
++    snprintf (buffer, sizeof (buffer), "MESSAGE=%s", log_line);
++    result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++  }
++
++  if (result)
++  {
++    n_journal_fields++;
++    snprintf (buffer, sizeof (buffer), "PRIORITY=%i", syslevels[level]);
++    result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++  }
++
++  if (result && job)
++  {
++    n_journal_fields++;
++    snprintf (buffer, sizeof (buffer), "CUPS_JOB_ID=%d", job->id);
++    result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++
++    if (result && job->dest)
++    {
++      n_journal_fields++;
++      snprintf (buffer, sizeof (buffer), "CUPS_DEST=%s", job->dest);
++      result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++    }
++
++    if (result && job->printer)
++    {
++      n_journal_fields++;
++      snprintf (buffer, sizeof (buffer), "CUPS_PRINTER=%s",
++		job->printer->name);
++      result = dup_iovec_string (&journal_fields[n_journal_fields], buffer);
++    }
++  }
++
++  if (result)
++  {
++    n_journal_fields++;
++    result = sd_journal_sendv (journal_fields, n_journal_fields);
++  }
++
++  while (n_journal_fields > 0)
++    free (journal_fields[--n_journal_fields].iov_base);
++
++  free (journal_fields);
++  return (result);
++}
++#endif /* HAVE_SYSTEMD */
++
++
+ /*
+  * 'cupsdLogJob()' - Log a job message.
+  */
+ 
+-int					/* O - 1 on success, 0 on error */
+-cupsdLogJob(cupsd_job_t *job,		/* I - Job */
+-            int         level,		/* I - Log level */
+-	    const char  *message,	/* I - Printf-style message string */
+-	    ...)			/* I - Additional arguments as needed */
++int						/* O - 1 on success, 0 on error */
++_cupsdLogJobWithLocation(const char *file,	/* I - Code file */
++			 const char *line,	/* I - Code line */
++			 const char *func,	/* I - Code func */
++			 cupsd_job_t *job,	/* I - Job */
++			 int         level,	/* I - Log level */
++			 const char  *message,	/* I - Printf-style message string */
++			 ...)			/* I - Additional arguments as needed */
+ {
+   va_list		ap, ap2;	/* Argument pointers */
+   char			jobmsg[1024];	/* Format string for job message */
+   int			status;		/* Formatting status */
+ 
+-
+  /*
+   * See if we want to log this message...
+   */
+@@ -559,8 +685,14 @@ cupsdLogJob(cupsd_job_t *job,		/* I - Jo
      }
      else if (level <= LogLevel &&
               (level != CUPSD_LOG_INFO || LogLevel >= CUPSD_LOG_DEBUG))
 -      return (cupsdWriteErrorLog(level, log_line));
 -    else
 +    {
++#ifdef HAVE_SYSTEMD
 +      if (!strcmp (ErrorLog, "journal"))
-+#ifdef HAVE_JOURNAL
-+	return (sd_journal_send ("MESSAGE=%s", log_line,
-+				 "PRIORITY=%d", syslevels[level],
-+				 "CUPS_JOB_ID=%d", job ? job->id : -1,
-+				 NULL)) ? 0 : 1;
++	return (_cupsdLogToJournal (file, line, func, job, level, log_line));
 +      else
-+#endif /* HAVE_JOURNAL */
++#endif /* HAVE_SYSTEMD */
 +	return (cupsdWriteErrorLog(level, log_line));
 +    } else
        return (1);
    }
    else
-@@ -789,6 +802,15 @@ cupsdLogPage(cupsd_job_t *job,		/* I - J
+@@ -573,10 +705,13 @@ cupsdLogJob(cupsd_job_t *job,		/* I - Jo
+  * 'cupsdLogMessage()' - Log a message to the error log file.
+  */
+ 
+-int					/* O - 1 on success, 0 on error */
+-cupsdLogMessage(int        level,	/* I - Log level */
+-                const char *message,	/* I - printf-style message string */
+-	        ...)			/* I - Additional args as needed */
++int						/* O - 1 on success, 0 on error */
++_cupsdLogMessageWithLocation(const char *file,	/* I - Code file */
++			     const char *line,	/* I - Code line */
++			     const char *func,	/* I - Code func */
++			     int        level,	/* I - Log level */
++			     const char *message, /* I - printf-style message string */
++			     ...)		/* I - Additional args as needed */
+ {
+   va_list		ap, ap2;	/* Argument pointers */
+   int			status;		/* Formatting status */
+@@ -620,10 +755,10 @@ cupsdLogMessage(int        level,	/* I -
+   va_end(ap);
+ 
+   if (status > 0)
+-    return (cupsdWriteErrorLog(level, log_line));
++    return (_cupsdWriteErrorLogWithLocation(file, line, func, level, log_line));
+   else
+-    return (cupsdWriteErrorLog(CUPSD_LOG_ERROR,
+-                               "Unable to allocate memory for log line!"));
++    return (_cupsdWriteErrorLogWithLocation(file, line, func, CUPSD_LOG_ERROR,
++					    "Unable to allocate memory for log line!"));
+ }
+ 
+ 
+@@ -789,6 +924,17 @@ cupsdLogPage(cupsd_job_t *job,		/* I - J
  
    *bufptr = '\0';
  
-+#ifdef HAVE_JOURNAL
++#ifdef HAVE_SYSTEMD
 +  if (!strcmp(PageLog, "journal"))
 +    return (sd_journal_send ("MESSAGE=%s", buffer,
 +			     "PRIORITY=%d", LOG_INFO,
 +			     "CUPS_JOB_ID=%d", job->id,
++			     "CUPS_DEST=%s", job->dest,
++			     "CUPS_PRINTER=%s", job->printer->name,
 +			     "CUPS_PAGE_NUMBER=%s", number,
 +			     NULL) ? 0 : 1);
-+#endif /* HAVE_JOURNAL */
++#endif /* HAVE_SYSTEMD */
 +
  #ifdef HAVE_VSYSLOG
   /*
    * See if we are logging pages via syslog...
-@@ -964,7 +986,7 @@ cupsdLogRequest(cupsd_client_t *con,	/*
+@@ -964,7 +1110,7 @@ cupsdLogRequest(cupsd_client_t *con,	/*
    * See if we are logging accesses via syslog...
    */
  
@@ -255,46 +502,33 @@ diff -up cups-1.7.1/scheduler/log.c.journal cups-1.7.1/scheduler/log.c
    {
      syslog(LOG_INFO,
             "REQUEST %s - %s \"%s %s HTTP/%d.%d\" %d " CUPS_LLFMT " %s %s\n",
-@@ -1018,8 +1040,9 @@ cupsdLogRequest(cupsd_client_t *con,	/*
+@@ -1018,8 +1164,12 @@ cupsdLogRequest(cupsd_client_t *con,	/*
   */
  
  int					/* O - 1 on success, 0 on failure */
 -cupsdWriteErrorLog(int        level,	/* I - Log level */
 -                   const char *message)	/* I - Message string */
-+cupsdWriteErrorLogJob(cupsd_job_t *job,	/* I - Job or NULL */
-+		      int          level, /* I - Log level */
-+		      const char  *message) /* I - Message string */
++_cupsdWriteErrorLogJobWithLocation(const char *file,	/* I - Code file */
++				   const char *line,	/* I - Code line */
++				   const char *func,	/* I - Code func */
++				   cupsd_job_t *job,	/* I - Job or NULL */
++				   int         level,	/* I - Log level */
++				   const char *message) /* I - Message string */
  {
    static const char	levels[] =	/* Log levels... */
  		{
-@@ -1036,12 +1059,25 @@ cupsdWriteErrorLog(int        level,	/*
+@@ -1036,6 +1186,10 @@ cupsdWriteErrorLog(int        level,	/*
  		};
  
  
-+#ifdef HAVE_JOURNAL
++#ifdef HAVE_SYSTEMD
 +  if (!strcmp(ErrorLog, "journal"))
-+  {
-+    if (job)
-+    {
-+      return (sd_journal_send ("MESSAGE=%s", message,
-+			       "PRIORITY=%d", syslevels[level],
-+			       "CUPS_JOB_ID=%d", job->id,
-+			       NULL) ? 0 : 1);
-+    } else
-+      return (sd_journal_print (syslevels[level], "%s", message) ? 0 : 1);
-+  }
-+#endif /* HAVE_JOURNAL */
++    return (_cupsdLogToJournal (file, line, func, job, level, message));
++#endif /* HAVE_SYSTEMD */
  #ifdef HAVE_VSYSLOG
   /*
    * See if we are logging errors via syslog...
-   */
- 
--  if (!strcmp(ErrorLog, "syslog"))
-+  if (!strcmp(ErrorLog, "syslog") || !strcmp(ErrorLog, "journal"))
-   {
-     syslog(syslevels[level], "%s", message);
-     return (1);
-@@ -1067,6 +1103,18 @@ cupsdWriteErrorLog(int        level,	/*
+@@ -1067,6 +1221,22 @@ cupsdWriteErrorLog(int        level,	/*
  }
  
  
@@ -303,80 +537,18 @@ diff -up cups-1.7.1/scheduler/log.c.journal cups-1.7.1/scheduler/log.c
 + */
 +
 +int					/* O - 1 on success, 0 on failure */
-+cupsdWriteErrorLog(int          level,	/* I - Log level */
-+		   const char  *message) /* I - Message string */
++_cupsdWriteErrorLogWithLocation(const char *file,	/* I - Code file */
++				const char *line,	/* I - Code line */
++				const char *func,	/* I - Code func */
++				int          level,	/* I - Log level */
++				const char  *message)	/* I - Message string */
 +{
-+  return (cupsdWriteErrorLogJob(NULL, level, message));
++  return (_cupsdWriteErrorLogJobWithLocation(file, line, func,
++					     NULL, level, message));
 +}
 +
 +
  /*
   * 'format_log_line()' - Format a line for a log file.
   *
-diff -up cups-1.7.1/scheduler/Makefile.journal cups-1.7.1/scheduler/Makefile
---- cups-1.7.1/scheduler/Makefile.journal	2014-02-17 16:48:19.124796159 +0000
-+++ cups-1.7.1/scheduler/Makefile	2014-02-17 16:48:19.137796223 +0000
-@@ -383,7 +383,7 @@ cupsd:	$(CUPSDOBJS) $(LIBCUPSMIME) ../cu
- 	$(CC) $(LDFLAGS) -o cupsd $(CUPSDOBJS) -L. -lcupsmime \
- 		$(LIBZ) $(SSLLIBS) $(LIBSLP) $(LIBLDAP) $(PAMLIBS) \
- 		$(LIBPAPER) $(LIBMALLOC) $(SERVERLIBS) $(DNSSDLIBS) $(LIBS) \
--		$(LIBGSSAPI) $(LIBWRAP) $(SDLIBS)
-+		$(LIBGSSAPI) $(LIBWRAP) $(SDLIBS) $(SDJLIBS)
- 
- cupsd-static:	$(CUPSDOBJS) libcupsmime.a ../cups/$(LIBCUPSSTATIC)
- 	echo Linking $@...
-@@ -391,7 +391,7 @@ cupsd-static:	$(CUPSDOBJS) libcupsmime.a
- 		$(LIBZ) $(SSLLIBS) $(LIBSLP) $(LIBLDAP) $(PAMLIBS) \
- 		../cups/$(LIBCUPSSTATIC) $(COMMONLIBS) $(LIBZ) $(LIBPAPER) \
- 		$(LIBMALLOC) $(SERVERLIBS) $(DNSSDLIBS) $(LIBGSSAPI) \
--		$(LIBWRAP)  $(SDLIBS)
-+		$(LIBWRAP)  $(SDLIBS) $(SDJLIBS)
- 
- tls.o:	tls-darwin.c tls-gnutls.c tls-openssl.c
- 
---- cups-1.7.1/conf/cups-files.conf.in.journal	2014-04-04 13:12:13.923185140 +0100
-+++ cups-1.7.1/conf/cups-files.conf.in	2014-04-04 13:13:10.633430876 +0100
-@@ -30,9 +30,10 @@ SystemGroup @CUPS_SYSTEM_GROUPS@
- #ConfigFilePerm 0@CUPS_CONFIG_FILE_PERM@
- #LogFilePerm 0@CUPS_LOG_FILE_PERM@
- 
--# Location of the file logging all access to the scheduler; may be the name
--# "syslog". If not an absolute path, the value of ServerRoot is used as the
--# root directory.  Also see the "AccessLogLevel" directive in cupsd.conf.
-+# Location of the file logging all access to the scheduler; may be the
-+# name "syslog" or "journal". If not an absolute path, the value of
-+# ServerRoot is used as the root directory.  Also see the
-+# "AccessLogLevel" directive in cupsd.conf.
- AccessLog @CUPS_LOGDIR@/access_log
- 
- # Location of cache files used by the scheduler...
-@@ -44,10 +45,10 @@ AccessLog @CUPS_LOGDIR@/access_log
- # Location of the static web content served by the scheduler...
- #DocumentRoot @CUPS_DOCROOT@
- 
--# Location of the file logging all messages produced by the scheduler and any
--# helper programs; may be the name "syslog". If not an absolute path, the value
--# of ServerRoot is used as the root directory.  Also see the "LogLevel"
--# directive in cupsd.conf.
-+# Location of the file logging all messages produced by the scheduler
-+# and any helper programs; may be the name "syslog" or "journal". If
-+# not an absolute path, the value of ServerRoot is used as the root
-+# directory.  Also see the "LogLevel" # directive in cupsd.conf.
- ErrorLog @CUPS_LOGDIR@/error_log
- 
- # Location of fonts used by older print filters...
-@@ -56,10 +57,10 @@ ErrorLog @CUPS_LOGDIR@/error_log
- # Location of LPD configuration
- #LPDConfigFile @CUPS_DEFAULT_LPD_CONFIG_FILE@
- 
--# Location of the file logging all pages printed by the scheduler and any
--# helper programs; may be the name "syslog". If not an absolute path, the value
--# of ServerRoot is used as the root directory.  Also see the "PageLogFormat"
--# directive in cupsd.conf.
-+# Location of the file logging all pages printed by the scheduler and
-+# any helper programs; may be the name "syslog" or "journal". If not
-+# an absolute path, the value of ServerRoot is used as the root
-+# directory.  Also see the "PageLogFormat" directive in cupsd.conf.
- PageLog @CUPS_LOGDIR@/page_log
- 
- # Location of the file listing all of the local printers...
+

@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 1.7.5
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -688,6 +688,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Nov  6 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-14
+- New systemd journal fields CUPS_DEST and CUPS_PRINTER, as well as
+  accurate code location fields.
+
 * Wed Oct 22 2014 Tim Waugh <twaugh@redhat.com> - 1:1.7.5-13
 - Upstream fix for cupsd crash on restart when colord not available
 - (STR #4496).
