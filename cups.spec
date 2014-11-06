@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.0
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -33,7 +33,6 @@ Patch3: cups-multilib.patch
 
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
-Patch7: cups-no-export-ssllibs.patch
 Patch8: cups-direct-usb.patch
 Patch9: cups-lpr-help.patch
 Patch10: cups-peercred.patch
@@ -77,7 +76,6 @@ Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: openssl-devel libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: pkgconfig(libusb-1.0)
 BuildRequires: krb5-devel
@@ -126,7 +124,6 @@ Provides: lpr
 Summary: CUPS printing system - development environment
 License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: openssl-devel
 Requires: krb5-devel
 Requires: zlib-devel
 Provides: cupsddk-devel
@@ -200,8 +197,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
 %patch6 -p1 -b .serverbin-compat
-# Don't export SSLLIBS to cups-config.
-%patch7 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
 %patch8 -p1 -b .direct-usb
 # Add --help option to lpr.
@@ -304,7 +299,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
 	--with-php=/usr/bin/php-cgi \
 	--enable-avahi \
-	--enable-threads --enable-openssl \
+	--enable-threads \
 	--enable-webif \
 	--with-xinetd=no \
 	localedir=%{_datadir}/locale
@@ -614,6 +609,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Nov  6 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-11
+- Removed openssl requirements from spec file as it is no longer
+  supported upstream (see bug #1161235).
+
 * Thu Nov  6 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-10
 - cups-lspp.patch: use cupsdLogJob() when appropriate.
 - Fixed some warnings in cups-lspp.patch.
