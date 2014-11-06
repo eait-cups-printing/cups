@@ -1,6 +1,6 @@
 diff -up cups-2.0.0/config.h.in.lspp cups-2.0.0/config.h.in
 --- cups-2.0.0/config.h.in.lspp	2014-08-30 02:51:22.000000000 +0100
-+++ cups-2.0.0/config.h.in	2014-11-06 14:39:49.112120299 +0000
++++ cups-2.0.0/config.h.in	2014-11-06 14:49:08.220421810 +0000
 @@ -709,6 +709,13 @@ static __inline int _cups_abs(int i) { r
  #  endif /* __GNUC__ || __STDC_VERSION__ */
  #endif /* !HAVE_ABS && !abs */
@@ -16,8 +16,8 @@ diff -up cups-2.0.0/config.h.in.lspp cups-2.0.0/config.h.in
  
  /*
 diff -up cups-2.0.0/config-scripts/cups-lspp.m4.lspp cups-2.0.0/config-scripts/cups-lspp.m4
---- cups-2.0.0/config-scripts/cups-lspp.m4.lspp	2014-11-06 14:39:49.112120299 +0000
-+++ cups-2.0.0/config-scripts/cups-lspp.m4	2014-11-06 14:39:49.112120299 +0000
+--- cups-2.0.0/config-scripts/cups-lspp.m4.lspp	2014-11-06 14:49:08.220421810 +0000
++++ cups-2.0.0/config-scripts/cups-lspp.m4	2014-11-06 14:49:08.220421810 +0000
 @@ -0,0 +1,36 @@
 +dnl
 +dnl   LSPP code for the Common UNIX Printing System (CUPS).
@@ -57,7 +57,7 @@ diff -up cups-2.0.0/config-scripts/cups-lspp.m4.lspp cups-2.0.0/config-scripts/c
 +fi
 diff -up cups-2.0.0/configure.ac.lspp cups-2.0.0/configure.ac
 --- cups-2.0.0/configure.ac.lspp	2014-04-21 13:22:03.000000000 +0100
-+++ cups-2.0.0/configure.ac	2014-11-06 14:39:49.112120299 +0000
++++ cups-2.0.0/configure.ac	2014-11-06 14:49:08.220421810 +0000
 @@ -36,6 +36,8 @@ sinclude(config-scripts/cups-startup.m4)
  sinclude(config-scripts/cups-defaults.m4)
  sinclude(config-scripts/cups-scripting.m4)
@@ -69,7 +69,7 @@ diff -up cups-2.0.0/configure.ac.lspp cups-2.0.0/configure.ac
  LANGFILES=""
 diff -up cups-2.0.0/filter/common.c.lspp cups-2.0.0/filter/common.c
 --- cups-2.0.0/filter/common.c.lspp	2014-02-06 18:33:34.000000000 +0000
-+++ cups-2.0.0/filter/common.c	2014-11-06 14:39:49.112120299 +0000
++++ cups-2.0.0/filter/common.c	2014-11-06 14:49:08.220421810 +0000
 @@ -19,6 +19,12 @@
   * Include necessary headers...
   */
@@ -240,7 +240,7 @@ diff -up cups-2.0.0/filter/common.c.lspp cups-2.0.0/filter/common.c
  /*
 diff -up cups-2.0.0/filter/pstops.c.lspp cups-2.0.0/filter/pstops.c
 --- cups-2.0.0/filter/pstops.c.lspp	2014-02-06 18:33:34.000000000 +0000
-+++ cups-2.0.0/filter/pstops.c	2014-11-06 14:39:49.113120305 +0000
++++ cups-2.0.0/filter/pstops.c	2014-11-06 14:49:08.221421819 +0000
 @@ -3173,6 +3173,18 @@ write_label_prolog(pstops_doc_t *doc,	/*
  {
    const char	*classification;	/* CLASSIFICATION environment variable */
@@ -397,8 +397,8 @@ diff -up cups-2.0.0/filter/pstops.c.lspp cups-2.0.0/filter/pstops.c
  
  /*
 diff -up cups-2.0.0/Makedefs.in.lspp cups-2.0.0/Makedefs.in
---- cups-2.0.0/Makedefs.in.lspp	2014-11-06 14:39:49.072120084 +0000
-+++ cups-2.0.0/Makedefs.in	2014-11-06 14:39:49.129120391 +0000
+--- cups-2.0.0/Makedefs.in.lspp	2014-11-06 14:49:08.186421483 +0000
++++ cups-2.0.0/Makedefs.in	2014-11-06 14:49:08.232421926 +0000
 @@ -145,7 +145,7 @@ LDFLAGS		=	-L../cgi-bin -L../cups -L../f
  			@LDFLAGS@ @RELROFLAGS@ @PIEFLAGS@ $(OPTIM)
  LINKCUPS	=	@LINKCUPS@ $(LIBGSSAPI) $(DNSSDLIBS) $(LIBZ)
@@ -410,7 +410,7 @@ diff -up cups-2.0.0/Makedefs.in.lspp cups-2.0.0/Makedefs.in
  OPTIM		=	@OPTIM@
 diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
 --- cups-2.0.0/scheduler/client.c.lspp	2014-08-28 16:37:22.000000000 +0100
-+++ cups-2.0.0/scheduler/client.c	2014-11-06 14:47:11.530298121 +0000
++++ cups-2.0.0/scheduler/client.c	2014-11-06 14:54:15.305993839 +0000
 @@ -24,12 +24,20 @@
  #define _HTTP_NO_PRIVATE
  #include "cupsd.h"
@@ -432,7 +432,7 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
  
  
  /*
-@@ -265,6 +273,57 @@ cupsdAcceptClient(cupsd_listener_t *lis)
+@@ -265,6 +273,59 @@ cupsdAcceptClient(cupsd_listener_t *lis)
    }
  #endif /* HAVE_TCPD_H */
  
@@ -451,18 +451,20 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
 +      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
 +      {
 +        httpClose(con->http);
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: "
-+                        "unable to determine client auid for client pid=%d", cr.pid);
++        cupsdLogClient(con, CUPSD_LOG_ERROR,
++		       "Unable to determine client auid for client pid=%d",
++		       cr.pid);
 +        free(con);
 +        return;
 +      }
-+      cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: peer's pid=%d, uid=%d, gid=%d, auid=%d",
-+                      cr.pid, cr.uid, cr.gid, con->auid);
++      cupsdLogClient(con, CUPSD_LOG_INFO,
++		     "peer's pid=%d, uid=%d, gid=%d, auid=%d",
++		     cr.pid, cr.uid, cr.gid, con->auid);
 +    }
 +    else
 +    {
 +      httpClose(con->http);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getsockopt() failed");
++      cupsdLogClient(con, CUPSD_LOG_ERROR, "getsockopt() failed");
 +      free(con);
 +      return; 
 +    }
@@ -473,16 +475,16 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
 +    if (getpeercon(httpGetFd(con->http), &con->scon))
 +    {
 +      httpClose(con->http);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdAcceptClient: getpeercon() failed");
++      cupsdLogClient(con, CUPSD_LOG_ERROR, "getpeercon() failed");
 +      free(con);
 +      return; 
 +    }
 +
-+    cupsdLogMessage(CUPSD_LOG_INFO, "cupsdAcceptClient: client context=%s", con->scon);
++    cupsdLogClient(con, CUPSD_LOG_INFO, "client context=%s", con->scon);
 +  }
 +  else
 +  {
-+    cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdAcceptClient: skipping getpeercon()");
++    cupsdLogClient(con, CUPSD_LOG_DEBUG, "skipping getpeercon()");
 +    cupsdSetString(&con->scon, UNKNOWN_SL);
 +  }
 +#endif /* WITH_LSPP */
@@ -490,7 +492,7 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
  #ifdef AF_LOCAL
    if (httpAddrFamily(httpGetAddress(con->http)) == AF_LOCAL)
    {
-@@ -555,6 +614,13 @@ cupsdReadClient(cupsd_client_t *con)	/*
+@@ -555,6 +616,13 @@ cupsdReadClient(cupsd_client_t *con)	/*
    mime_type_t		*type;		/* MIME type of file */
    cupsd_printer_t	*p;		/* Printer */
    static unsigned	request_id = 0;	/* Request ID for temp files */
@@ -504,7 +506,7 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
  
  
    status = HTTP_STATUS_CONTINUE;
-@@ -1923,6 +1989,73 @@ cupsdReadClient(cupsd_client_t *con)	/*
+@@ -1923,6 +1991,73 @@ cupsdReadClient(cupsd_client_t *con)	/*
              fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
  	  }
  
@@ -568,8 +570,8 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
 +	      cupsdCloseClient(con);
 +	      return;
 +	    }
-+	    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdReadClient: %s set to %s", 
-+			    con->filename, context_str(tmpcon));
++	    cupsdLogClient(con, CUPSD_LOG_DEBUG2, "%s set to %s", 
++			   con->filename, context_str(tmpcon));
 +	    context_free(tmpcon);
 +	    context_free(clicon);
 +	  }
@@ -578,7 +580,7 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
  	  if (httpGetState(con->http) != HTTP_STATE_POST_SEND)
  	  {
  	    if (!httpWait(con->http, 0))
-@@ -3423,6 +3556,49 @@ is_path_absolute(const char *path)	/* I
+@@ -3423,6 +3558,49 @@ is_path_absolute(const char *path)	/* I
    return (1);
  }
  
@@ -630,7 +632,7 @@ diff -up cups-2.0.0/scheduler/client.c.lspp cups-2.0.0/scheduler/client.c
   * 'pipe_command()' - Pipe the output of a command to the remote client.
 diff -up cups-2.0.0/scheduler/client.h.lspp cups-2.0.0/scheduler/client.h
 --- cups-2.0.0/scheduler/client.h.lspp	2014-03-21 16:42:53.000000000 +0000
-+++ cups-2.0.0/scheduler/client.h	2014-11-06 14:39:49.114120310 +0000
++++ cups-2.0.0/scheduler/client.h	2014-11-06 14:49:08.222421829 +0000
 @@ -18,6 +18,13 @@
  #endif /* HAVE_AUTHORIZATION_H */
  
@@ -667,8 +669,8 @@ diff -up cups-2.0.0/scheduler/client.h.lspp cups-2.0.0/scheduler/client.h
  #ifdef HAVE_SSL
  extern int	cupsdEndTLS(cupsd_client_t *con);
 diff -up cups-2.0.0/scheduler/conf.c.lspp cups-2.0.0/scheduler/conf.c
---- cups-2.0.0/scheduler/conf.c.lspp	2014-11-06 14:39:49.106120267 +0000
-+++ cups-2.0.0/scheduler/conf.c	2014-11-06 14:39:49.114120310 +0000
+--- cups-2.0.0/scheduler/conf.c.lspp	2014-11-06 14:49:08.215421762 +0000
++++ cups-2.0.0/scheduler/conf.c	2014-11-06 14:49:08.222421829 +0000
 @@ -36,6 +36,9 @@
  #  define INADDR_NONE	0xffffffff
  #endif /* !INADDR_NONE */
@@ -766,8 +768,8 @@ diff -up cups-2.0.0/scheduler/conf.c.lspp cups-2.0.0/scheduler/conf.c
  /*
   * 'read_policy()' - Read a <Policy name> definition.
 diff -up cups-2.0.0/scheduler/conf.h.lspp cups-2.0.0/scheduler/conf.h
---- cups-2.0.0/scheduler/conf.h.lspp	2014-11-06 14:39:49.103120251 +0000
-+++ cups-2.0.0/scheduler/conf.h	2014-11-06 14:39:49.114120310 +0000
+--- cups-2.0.0/scheduler/conf.h.lspp	2014-11-06 14:49:08.212421733 +0000
++++ cups-2.0.0/scheduler/conf.h	2014-11-06 14:49:08.222421829 +0000
 @@ -248,6 +248,13 @@ VAR char		*ServerKeychain		VALUE(NULL);
  					/* Keychain holding cert + key */
  #endif /* HAVE_SSL */
@@ -793,8 +795,8 @@ diff -up cups-2.0.0/scheduler/conf.h.lspp cups-2.0.0/scheduler/conf.h
  /*
   * Prototypes...
 diff -up cups-2.0.0/scheduler/cupsd.h.lspp cups-2.0.0/scheduler/cupsd.h
---- cups-2.0.0/scheduler/cupsd.h.lspp	2014-11-06 14:39:49.095120208 +0000
-+++ cups-2.0.0/scheduler/cupsd.h	2014-11-06 14:39:49.115120315 +0000
+--- cups-2.0.0/scheduler/cupsd.h.lspp	2014-11-06 14:49:08.205421665 +0000
++++ cups-2.0.0/scheduler/cupsd.h	2014-11-06 14:49:08.222421829 +0000
 @@ -13,6 +13,8 @@
   * file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -827,8 +829,8 @@ diff -up cups-2.0.0/scheduler/cupsd.h.lspp cups-2.0.0/scheduler/cupsd.h
   * Some OS's don't have hstrerror(), most notably Solaris...
   */
 diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
---- cups-2.0.0/scheduler/ipp.c.lspp	2014-11-06 14:39:49.057120004 +0000
-+++ cups-2.0.0/scheduler/ipp.c	2014-11-06 14:39:49.117120326 +0000
+--- cups-2.0.0/scheduler/ipp.c.lspp	2014-11-06 14:49:08.175421377 +0000
++++ cups-2.0.0/scheduler/ipp.c	2014-11-06 15:07:01.724894473 +0000
 @@ -16,6 +16,9 @@
   * file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -1093,7 +1095,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +#ifdef WITH_LSPP
 +	override = 1;
 +#endif /* WITH_LSPP */
-+      }
+       }
 +#ifdef WITH_LSPP
 +      if (is_lspp_config() && AuditLog != -1)
 +      {
@@ -1127,7 +1129,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +	  }
 +          cupsdClearString(&audit_message);
 +	}
-       }
++      }
 +
 +      if (userheader)
 +        free(userheader);
@@ -1139,7 +1141,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
  
     /*
      * See if we need to add the starting sheet...
-@@ -3630,6 +3861,111 @@ check_rss_recipient(
+@@ -3630,6 +3861,128 @@ check_rss_recipient(
  }
  
  
@@ -1174,10 +1176,13 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +
 +  if ((enforcing = security_getenforce()) == -1)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "Error while determining SELinux enforcement");
++    cupsdLogJob(job, CUPSD_LOG_ERROR,
++		"Error while determining SELinux enforcement");
 +    return -1;
 +  }
-+  cupsdLogMessage(CUPSD_LOG_DEBUG, "check_context: client context %s job context %s", con->scon, job->scon);
++  cupsdLogJob(job, CUPSD_LOG_DEBUG,
++	      "check_context: client context %s job context %s",
++	      con->scon, job->scon);
 +
 +
 + /*
@@ -1189,18 +1194,22 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +  {
 +    if (avc_init("cupsd", NULL, NULL, NULL, NULL) < 0)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable avc_init");
++      cupsdLogJob(job, CUPSD_LOG_ERROR, "check_context: unable avc_init");
 +      return -1;
 +    } 
 +  } 
 +  if (avc_context_to_sid(con->scon, &clisid) != 0)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", con->scon);
++    cupsdLogJob(job, CUPSD_LOG_ERROR,
++		"check_context: unable to convert %s to SELinux sid",
++		con->scon);
 +    return -1;
 +  }
 +  if (avc_context_to_sid(job->scon, &jobsid) != 0)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: unable to convert %s to SELinux sid", job->scon);
++    cupsdLogJob(job, CUPSD_LOG_ERROR,
++		"check_context: unable to convert %s to SELinux sid",
++		job->scon);
 +    return -1;
 +  }
 +  avc_entry_ref_init(&avcref);
@@ -1214,34 +1223,44 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +
 +  if (avc_has_perm_noaudit(clisid, jobsid, tclass, avr, &avcref, NULL) != 0)
 +  {
-+    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access based on the client context");
++    cupsdLogJob(job, CUPSD_LOG_INFO,
++		"check_context: SELinux denied access "
++		"based on the client context");
 +
 +    snprintf(filename, sizeof(filename), "%s/c%05d", RequestRoot, job->id);
 +    if (getfilecon(filename, &spoolfilecon) == -1)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to get spoolfile context");
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "check_context: Unable to get spoolfile context");
 +      return -1;
 +    }
 +    if (avc_context_to_sid(spoolfilecon, &filesid) != 0)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "check_context: Unable to determine the SELinux sid for the spool file");
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "check_context: Unable to determine the "
++		  "SELinux sid for the spool file");
 +      freecon(spoolfilecon);
 +      return -1;
 +    }
 +    freecon(spoolfilecon);
 +    if (avc_has_perm_noaudit(clisid, filesid, tclass, avr, &avcref, NULL) != 0)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux denied access to the spool file");
++      cupsdLogJob(job, CUPSD_LOG_INFO,
++		  "check_context: SELinux denied access to the spool file");
 +      return 0;
 +    }
-+    cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access to the spool file");
++    cupsdLogJob(job, CUPSD_LOG_INFO,
++		"check_context: SELinux allowed access to the spool file");
 +    return 1;
 +  }
 +  else
 +    if (enforcing == 0)
-+        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: allowing operation due to permissive mode");
++      cupsdLogJob(job, CUPSD_LOG_INFO,
++		  "check_context: allowing operation due to permissive mode");
 +    else
-+        cupsdLogMessage(CUPSD_LOG_INFO, "check_context: SELinux allowed access based on the client context");
++      cupsdLogJob(job, CUPSD_LOG_INFO,
++		  "check_context: SELinux allowed access based on the "
++		  "client context");
 +
 +  return 1;
 +}
@@ -1251,7 +1270,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
  /*
   * 'check_quotas()' - Check quotas for a printer and user.
   */
-@@ -4086,6 +4422,15 @@ copy_banner(cupsd_client_t *con,	/* I -
+@@ -4086,6 +4439,15 @@ copy_banner(cupsd_client_t *con,	/* I -
    char		attrname[255],		/* Name of attribute */
  		*s;			/* Pointer into name */
    ipp_attribute_t *attr;		/* Attribute */
@@ -1267,7 +1286,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2,
-@@ -4121,6 +4466,82 @@ copy_banner(cupsd_client_t *con,	/* I -
+@@ -4121,6 +4483,85 @@ copy_banner(cupsd_client_t *con,	/* I -
  
    fchmod(cupsFileNumber(out), 0640);
    fchown(cupsFileNumber(out), RunUser, Group);
@@ -1277,9 +1296,9 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +  {
 +    if (getfilecon(filename, &spoolcon) == -1)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to get the context of the banner file %s - %s",
-+                      filename, strerror(errno));
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "Unable to get the context of the banner file %s - %s",
++		  filename, strerror(errno));
 +      job->num_files --;
 +      return (0);
 +    }
@@ -1292,8 +1311,8 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +        context_free(tmpcon);
 +      if (jobcon)
 +        context_free(jobcon);
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to get the SELinux contexts");
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "copy_banner: Unable to get the SELinux contexts");
 +      job->num_files --;
 +      return (0);
 +    }
@@ -1305,9 +1324,10 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +      {
 +	if (context_range_set(tmpcon, jobclearance) == -1)
 +	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "copy_banner: Unable to set the level of the context for file %s - %s",
-+			  filename, strerror(errno));
++	  cupsdLogJob(job, CUPSD_LOG_ERROR,
++		      "copy_banner: Unable to set the "
++		      "level of the context for file %s - %s",
++		      filename, strerror(errno));
 +	  free(jobrange);
 +	  context_free(jobcon);
 +	  context_free(tmpcon);
@@ -1319,9 +1339,10 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +      {
 +	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
 +	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "copy_banner: Unable to set the level of the context for file %s - %s",
-+			  filename, strerror(errno));
++	  cupsdLogJob(job, CUPSD_LOG_ERROR,
++		      "copy_banner: Unable to set the "
++		      "level of the context for file %s - %s",
++		      filename, strerror(errno));
 +	  free(jobrange);
 +	  context_free(jobcon);
 +	  context_free(tmpcon);
@@ -1333,16 +1354,17 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
 +    }
 +    if (setfilecon(filename, context_str(tmpcon)) == -1)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "copy_banner: Unable to set the context of the banner file %s - %s",
-+                      filename, strerror(errno));
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "copy_banner: Unable to set the "
++		  "context of the banner file %s - %s",
++		  filename, strerror(errno));
 +      context_free(jobcon);
 +      context_free(tmpcon);
 +      job->num_files --;
 +      return (0);
 +    }
-+    cupsdLogMessage(CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
-+                    filename, context_str(tmpcon));
++    cupsdLogJob(job, CUPSD_LOG_DEBUG2, "copy_banner: %s set to %s",
++		filename, context_str(tmpcon));
 +    context_free(jobcon);
 +    context_free(tmpcon);
 +  }
@@ -1350,7 +1372,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
  
   /*
    * Try the localized banner file under the subdirectory...
-@@ -4215,6 +4636,24 @@ copy_banner(cupsd_client_t *con,	/* I -
+@@ -4215,6 +4656,24 @@ copy_banner(cupsd_client_t *con,	/* I -
        else
          s = attrname;
  
@@ -1375,7 +1397,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
        if (!strcmp(s, "printer-name"))
        {
          cupsFilePuts(out, job->dest);
-@@ -6125,6 +6564,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
+@@ -6125,6 +6584,22 @@ get_job_attrs(cupsd_client_t  *con,	/* I
  
    exclude = cupsdGetPrivateAttrs(policy, con, printer, job->username);
  
@@ -1398,7 +1420,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
   /*
    * Copy attributes...
    */
-@@ -6524,6 +6979,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
+@@ -6524,6 +6999,11 @@ get_jobs(cupsd_client_t  *con,		/* I - C
        if (username[0] && _cups_strcasecmp(username, job->username))
  	continue;
  
@@ -1410,7 +1432,7 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
        if (count > 0)
  	ippAddSeparator(con->response);
  
-@@ -11093,6 +11553,11 @@ validate_user(cupsd_job_t    *job,	/* I
+@@ -11093,6 +11573,11 @@ validate_user(cupsd_job_t    *job,	/* I
  
    strlcpy(username, get_username(con), userlen);
  
@@ -1423,8 +1445,8 @@ diff -up cups-2.0.0/scheduler/ipp.c.lspp cups-2.0.0/scheduler/ipp.c
    * Check the username against the owner...
    */
 diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
---- cups-2.0.0/scheduler/job.c.lspp	2014-11-06 14:39:49.068120063 +0000
-+++ cups-2.0.0/scheduler/job.c	2014-11-06 14:39:49.118120331 +0000
+--- cups-2.0.0/scheduler/job.c.lspp	2014-11-06 14:49:08.182421444 +0000
++++ cups-2.0.0/scheduler/job.c	2014-11-06 15:07:38.589074429 +0000
 @@ -13,6 +13,9 @@
   * file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -1533,7 +1555,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
    if (Classification && !banner_page)
    {
      if ((attr = ippFindAttribute(job->attrs, "job-sheets",
-@@ -1857,6 +1937,20 @@ cupsdLoadJob(cupsd_job_t *job)		/* I - J
+@@ -1857,6 +1937,22 @@ cupsdLoadJob(cupsd_job_t *job)		/* I - J
        ippSetString(job->attrs, &job->reasons, 0, "none");
    }
  
@@ -1545,8 +1567,10 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +   /*
 +    * There was no security context so delete the job
 +    */
-+    cupsdLogMessage(CUPSD_LOG_ERROR, "LoadAllJobs: Missing or bad security-context attribute in control file \"%s\"!",
-+                    jobfile);
++    cupsdLogJob(job, CUPSD_LOG_ERROR,
++		"Missing or bad security-context attribute "
++		"in control file \"%s\"!",
++		jobfile);
 +    goto error;
 +  }
 +#endif /* WITH_LSPP */
@@ -1554,7 +1578,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
    job->sheets     = ippFindAttribute(job->attrs, "job-media-sheets-completed",
                                       IPP_TAG_INTEGER);
    job->job_sheets = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
-@@ -2258,6 +2352,14 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
+@@ -2258,6 +2354,14 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
  {
    char		filename[1024];		/* Job control filename */
    cups_file_t	*fp;			/* Job file */
@@ -1569,7 +1593,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p(%d)): job->attrs=%p",
-@@ -2270,6 +2372,76 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
+@@ -2270,6 +2374,78 @@ cupsdSaveJob(cupsd_job_t *job)		/* I - J
  
    fchown(cupsFileNumber(fp), RunUser, Group);
  
@@ -1578,9 +1602,9 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +  {
 +    if (getfilecon(filename, &spoolcon) == -1)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "Unable to get context of job control file \"%s\" - %s.",
-+                      filename, strerror(errno));
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "Unable to get context of job control file \"%s\" - %s.",
++		  filename, strerror(errno));
 +      return;
 +    }
 +    jobcon = context_new(job->scon);
@@ -1592,7 +1616,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +        context_free(jobcon);
 +      if (tmpcon)
 +        context_free(tmpcon);
-+      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to get SELinux contexts");
++      cupsdLogJob(job, CUPSD_LOG_ERROR, "Unable to get SELinux contexts");
 +      return;
 +    }
 +    jobrange = context_range_get(jobcon);
@@ -1603,9 +1627,10 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +      {
 +	if (context_range_set(tmpcon, jobclearance) == -1)
 +	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "Unable to set the range for job control file \"%s\" - %s.",
-+			  filename, strerror(errno));
++	  cupsdLogJob(job, CUPSD_LOG_ERROR,
++		      "Unable to set the range for "
++		      "job control file \"%s\" - %s.",
++		      filename, strerror(errno));
 +	  free(jobrange_copy);
 +	  context_free(tmpcon);
 +	  context_free(jobcon);
@@ -1616,9 +1641,10 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +      {
 +	if (context_range_set(tmpcon, (context_range_get(jobcon))) == -1)
 +	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR,
-+			  "Unable to set the range for job control file \"%s\" - %s.",
-+			  filename, strerror(errno));
++	  cupsdLogJob(job, CUPSD_LOG_ERROR,
++		      "Unable to set the range for "
++		      "job control file \"%s\" - %s.",
++		      filename, strerror(errno));
 +	  free(jobrange_copy);
 +	  context_free(tmpcon);
 +	  context_free(jobcon);
@@ -1629,15 +1655,15 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +    }
 +    if (setfilecon(filename, context_str(tmpcon)) == -1)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_ERROR,
-+                      "Unable to set context of job control file \"%s\" - %s.",
-+                      filename, strerror(errno));
++      cupsdLogJob(job, CUPSD_LOG_ERROR,
++		  "Unable to set context of job control file \"%s\" - %s.",
++		  filename, strerror(errno));
 +      context_free(tmpcon);
 +      context_free(jobcon);
 +      return;
 +    }
-+    cupsdLogMessage(CUPSD_LOG_DEBUG2, "cupsdSaveJob(job=%p): new spool file context=%s",
-+                    job, context_str(tmpcon));
++    cupsdLogJob(job, CUPSD_LOG_DEBUG2, "New spool file context=%s",
++		job, context_str(tmpcon));
 +    context_free(tmpcon);
 +    context_free(jobcon);
 +  }
@@ -1646,7 +1672,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
    job->attrs->state = IPP_IDLE;
  
    if (ippWriteIO(fp, (ipp_iocb_t)cupsFileWrite, 1, NULL,
-@@ -3852,6 +4024,18 @@ get_options(cupsd_job_t *job,		/* I - Jo
+@@ -3852,6 +4028,19 @@ get_options(cupsd_job_t *job,		/* I - Jo
  	  banner_page)
          continue;
  
@@ -1657,7 +1683,8 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +      if (is_lspp_config() &&
 +          !strcmp(attr->name, "page-label"))
 +      {
-+        cupsdLogMessage(CUPSD_LOG_DEBUG, "Ignoring page-label option due to LSPP mode");
++        cupsdLogJob(job, CUPSD_LOG_DEBUG,
++		    "Ignoring page-label option due to LSPP mode");
 +        continue;
 +      }
 +#endif /* WITH_LSPP */
@@ -1665,7 +1692,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
       /*
        * Otherwise add them to the list...
        */
-@@ -4601,6 +4785,18 @@ start_job(cupsd_job_t     *job,		/* I -
+@@ -4601,6 +4790,18 @@ start_job(cupsd_job_t     *job,		/* I -
            cupsd_printer_t *printer)	/* I - Printer to print job */
  {
    const char	*filename;		/* Support filename */
@@ -1684,7 +1711,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
    ipp_attribute_t *cancel_after = ippFindAttribute(job->attrs,
  						   "job-cancel-after",
  						   IPP_TAG_INTEGER);
-@@ -4777,6 +4973,108 @@ start_job(cupsd_job_t     *job,		/* I -
+@@ -4777,6 +4978,113 @@ start_job(cupsd_job_t     *job,		/* I -
    fcntl(job->side_pipes[1], F_SETFD,
  	fcntl(job->side_pipes[1], F_GETFD) | FD_CLOEXEC);
  
@@ -1700,13 +1727,15 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +
 +    if (printerfile != NULL)
 +    {
-+      cupsdLogMessage(CUPSD_LOG_DEBUG,
-+                      "StartJob: Attempting to check access on printer device %s", printerfile);
++      cupsdLogJob(job, CUPSD_LOG_DEBUG,
++		  "Attempting to check access on printer device %s",
++		  printerfile);
 +      if (lstat(printerfile, &printerstat) < 0)
 +      {
 +	if (errno != ENOENT)
 +	{
-+	  cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to stat the printer");
++	  cupsdLogJob(job, CUPSD_LOG_ERROR,
++		      "Unable to stat the printer");
 +	  cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
 +	  return ;
 +	}
@@ -1728,8 +1757,9 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +      }
 +      else
 +      {
-+	cupsdLogMessage(CUPSD_LOG_ERROR,
-+			"StartJob: Printer is not a character device or regular file");
++	cupsdLogJob(job, CUPSD_LOG_ERROR,
++		    "StartJob: Printer is not a character device or "
++		    "regular file");
 +	cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
 +	return ;
 +      }
@@ -1739,27 +1769,29 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
 +      avc_entry_ref_init(&avcref);
 +      if (avc_context_to_sid(job->scon, &clisid) != 0)
 +      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR,
-+                        "StartJob: Unable to determine the SELinux sid for the job");
++        cupsdLogJob(job, CUPSD_LOG_ERROR,
++		    "Unable to determine the SELinux sid for the job");
 +        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
 +        return ;
 +      }
 +      if (getfilecon(printerfile, &devcon) == -1)
 +      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR, "StartJob: Unable to get the SELinux context of %s",
-+                        printerfile);
++        cupsdLogJob(job, CUPSD_LOG_ERROR,
++		    "Unable to get the SELinux context of %s",
++		    printerfile);
 +        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
 +        return ;
 +      }
 +      printercon = context_new(devcon);
-+      cupsdLogMessage(CUPSD_LOG_DEBUG, "StartJob: printer context %s client context %s",
-+                      context_str(printercon), job->scon);
++      cupsdLogJob(job, CUPSD_LOG_DEBUG,
++		  "Printer context %s client context %s",
++		  context_str(printercon), job->scon);
 +      context_free(printercon);
 +
 +      if (avc_context_to_sid(devcon, &psid) != 0)
 +      {
-+        cupsdLogMessage(CUPSD_LOG_ERROR,
-+                        "StartJob: Unable to determine the SELinux sid for the printer");
++        cupsdLogJob(job, CUPSD_LOG_ERROR,
++		    "Unable to determine the SELinux sid for the printer");
 +        freecon(devcon);
 +        cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_DEFAULT, NULL);
 +        return ;
@@ -1795,7 +1827,7 @@ diff -up cups-2.0.0/scheduler/job.c.lspp cups-2.0.0/scheduler/job.c
    */
 diff -up cups-2.0.0/scheduler/job.h.lspp cups-2.0.0/scheduler/job.h
 --- cups-2.0.0/scheduler/job.h.lspp	2014-07-31 01:02:30.000000000 +0100
-+++ cups-2.0.0/scheduler/job.h	2014-11-06 14:39:49.118120331 +0000
++++ cups-2.0.0/scheduler/job.h	2014-11-06 14:49:08.225421858 +0000
 @@ -13,6 +13,13 @@
   * file is missing or damaged, see the license at "http://www.cups.org/".
   */
@@ -1822,8 +1854,8 @@ diff -up cups-2.0.0/scheduler/job.h.lspp cups-2.0.0/scheduler/job.h
  
  typedef struct cupsd_joblog_s		/**** Job log message ****/
 diff -up cups-2.0.0/scheduler/main.c.lspp cups-2.0.0/scheduler/main.c
---- cups-2.0.0/scheduler/main.c.lspp	2014-11-06 14:39:49.096120213 +0000
-+++ cups-2.0.0/scheduler/main.c	2014-11-06 14:39:49.118120331 +0000
+--- cups-2.0.0/scheduler/main.c.lspp	2014-11-06 14:49:08.206421675 +0000
++++ cups-2.0.0/scheduler/main.c	2014-11-06 14:49:08.225421858 +0000
 @@ -56,6 +56,9 @@ extern int launch_activate_socket(const
  #  include <sys/param.h>
  #endif /* HAVE_SYS_PARAM_H */
@@ -1883,8 +1915,8 @@ diff -up cups-2.0.0/scheduler/main.c.lspp cups-2.0.0/scheduler/main.c
  }
  
 diff -up cups-2.0.0/scheduler/printers.c.lspp cups-2.0.0/scheduler/printers.c
---- cups-2.0.0/scheduler/printers.c.lspp	2014-11-06 14:39:49.039119907 +0000
-+++ cups-2.0.0/scheduler/printers.c	2014-11-06 14:39:49.119120337 +0000
+--- cups-2.0.0/scheduler/printers.c.lspp	2014-11-06 14:49:08.160421232 +0000
++++ cups-2.0.0/scheduler/printers.c	2014-11-06 14:49:08.226421868 +0000
 @@ -13,6 +13,8 @@
   * file is missing or damaged, see the license at "http://www.cups.org/".
   */

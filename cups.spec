@@ -615,6 +615,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Thu Nov  6 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-10
+- cups-lspp.patch: use cupsdLogJob() when appropriate.
 - Fixed some warnings in cups-lspp.patch.
 - New systemd journal fields CUPS_DEST and CUPS_PRINTER, as well as
   accurate code location fields.
