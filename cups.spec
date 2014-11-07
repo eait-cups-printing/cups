@@ -76,6 +76,7 @@ Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
+BuildRequires: libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: pkgconfig(libusb-1.0)
 BuildRequires: krb5-devel
