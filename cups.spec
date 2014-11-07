@@ -30,7 +30,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-
+Patch4: cups-str4476.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -196,7 +196,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-
+# Re-introduce SSLOptions configuration directive, disable SSL3 by
+# default (STR #4476).
+%patch4 -p1 -b .str4476
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -617,6 +619,8 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Fri Nov  7 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-12
+- Re-introduce SSLOptions configuration directive, disable SSL3 by
+  default (STR #4476).
 - Enable SSL again via GnuTLS (bug #1161235).
 
 * Thu Nov  6 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-11
