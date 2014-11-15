@@ -10,17 +10,13 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0.0
-Release: 12%{?dist}
+Version: 2.0.1
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
+Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
-# socket unit for cups-lpd service
-Source3: cups-lpd.socket
-# cups-lpd service unit configuration
-Source4: cups-lpd@.service
 # Logrotate configuration
 Source6: cups.logrotate
 # Backend for NCP protocol
@@ -30,7 +26,6 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4476.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -65,8 +60,6 @@ Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-journal.patch
 Patch38: cups-synconclose.patch
-Patch39: cups-str4500.patch
-Patch40: cups-str4496.patch
 
 Patch100: cups-lspp.patch
 
@@ -196,9 +189,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Re-introduce SSLOptions configuration directive, disable SSL3 by
-# default (STR #4476).
-%patch4 -p1 -b .str4476
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -266,12 +256,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
 %patch38 -p1 -b .synconclose
-# Fix cupsGetPPD3() so it doesn't give the caller an unreadable file
-# (bug #1150917, STR #4500).
-%patch39 -p1 -b .str4500
-# Upstream fix for cupsd crash on restart when colord not available
-# (STR #4496).
-%patch40 -p1 -b .str4496
 
 %if %lspp
 # LSPP support.
@@ -345,12 +329,12 @@ popd
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.path $RPM_BUILD_ROOT%{_unitdir}/cups.path
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.service $RPM_BUILD_ROOT%{_unitdir}/cups.service
 mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cupsd.socket $RPM_BUILD_ROOT%{_unitdir}/cups.socket
+mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cups-lpd.socket $RPM_BUILD_ROOT%{_unitdir}/cups-lpd.socket
+mv $RPM_BUILD_ROOT%{_unitdir}/org.cups.cups-lpd@.service $RPM_BUILD_ROOT%{_unitdir}/cups-lpd@.service
 /bin/sed -i -e "s,org.cups.cupsd,cups,g" $RPM_BUILD_ROOT%{_unitdir}/cups.service
 
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/pixmaps $RPM_BUILD_ROOT%{_sysconfdir}/X11/sysconfig $RPM_BUILD_ROOT%{_sysconfdir}/X11/applnk/System $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_datadir}/pixmaps
-install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_unitdir}
-install -p -m 644 %{SOURCE4} $RPM_BUILD_ROOT%{_unitdir}
 install -p -m 644 %{SOURCE6} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/cups
 install -p -m 755 %{SOURCE7} $RPM_BUILD_ROOT%{cups_serverbin}/backend/ncp
 
@@ -618,6 +602,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Sat Nov 15 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.1-1
+- 2.0.1
+
 * Fri Nov  7 2014 Tim Waugh <twaugh@redhat.com> - 1:2.0.0-12
 - Re-introduce SSLOptions configuration directive, disable SSL3 by
   default (STR #4476).
