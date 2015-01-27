@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -231,7 +231,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch24 -p1 -b .ricoh-deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
 %patch25 -p1 -b .systemd-socket
-
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
 # Return from cupsEnumDests() once all records have been returned.
@@ -602,6 +601,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jan 27 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.1-2
+- Fixed systemd notify support (bug #1184453).
+
 * Sat Nov 15 2014 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.1-1
 - 2.0.1
 
