@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0.1
-Release: 2%{?dist}
+Version: 2.0.2
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -238,7 +238,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch29 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-#%%patch30 -p1 -b .freebind
+%patch30 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
 %patch31 -p1 -b .no-gcry
 # Added libusb quirk for Canon PIXMA MP540 (bug #967873).
@@ -497,12 +497,14 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/ja
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
 %doc %{_datadir}/%{name}/www/es/index.html
+%doc %{_datadir}/%{name}/www/ja/index.html
 %doc %{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
@@ -538,8 +540,10 @@ rm -f %{cups_serverbin}/backend/smb
 %exclude %{_sbindir}/lpc.cups
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/ja
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
+%{_datadir}/cups/templates/ja/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -601,6 +605,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 10 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.2-1
+- 2.0.2
+
 * Tue Jan 27 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.1-2
 - Fixed systemd notify support (bug #1184453).
 
