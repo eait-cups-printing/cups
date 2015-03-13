@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -295,6 +295,9 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--enable-webif \
 	--with-xinetd=no \
 	localedir=%{_datadir}/locale
+
+# Avoid epoll for the moment (bug #1179596).
+sed -i -e 's,\(HAVE_EPOLL\) 1,\1 0,' config.h
 
 # If we got this far, all prerequisite libraries must be here.
 make %{?_smp_mflags}
@@ -605,6 +608,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Mar 13 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.2-3
+- Avoid epoll for the moment (bug #1179596).
+
 * Mon Feb 16 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.2-2
 - Fixed multilib.patch to check for gnutls instead of openssl.
 
