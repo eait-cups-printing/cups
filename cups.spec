@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -26,6 +26,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
+Patch4: cups-busy-loop.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -189,6 +190,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
+# Avoid busy loop in cupsd when connection is closed after request
+# sent (bug #1179596).
+%patch4 -p1 -b .busy-loop
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -295,9 +299,6 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--enable-webif \
 	--with-xinetd=no \
 	localedir=%{_datadir}/locale
-
-# Avoid epoll for the moment (bug #1179596).
-sed -i -e 's,\(define HAVE_EPOLL 1\),undef HAVE_EPOLL,' config.h
 
 # If we got this far, all prerequisite libraries must be here.
 make %{?_smp_mflags}
@@ -608,8 +609,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
-* Sun Mar 15 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.2-4
-- Avoid epoll for the moment (bug #1179596).
+* Mon Mar 16 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.2-5
+- Avoid busy loop in cupsd when connection is closed after request
+  sent (bug #1179596).
 
 * Mon Feb 16 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.2-2
 - Fixed multilib.patch to check for gnutls instead of openssl.
