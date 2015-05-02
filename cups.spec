@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -609,6 +609,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 1:2.0.2-6
+- Rebuilt for GCC 5 C++11 ABI change
+
 * Mon Mar 16 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.2-5
 - Avoid busy loop in cupsd when connection is closed after request
   sent (bug #1179596).
