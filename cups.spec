@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0.2
-Release: 6%{?dist}
+Version: 2.0.3
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -26,7 +26,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-busy-loop.patch
+
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -190,9 +190,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Avoid busy loop in cupsd when connection is closed after request
-# sent (bug #1179596).
-%patch4 -p1 -b .busy-loop
+
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -500,15 +498,19 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
+%dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 %doc %{_datadir}/%{name}/www/index.html
 %doc %{_datadir}/%{name}/www/help
 %doc %{_datadir}/%{name}/www/robots.txt
+%doc %{_datadir}/%{name}/www/de/index.html
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
+%doc %{_datadir}/%{name}/www/ru/index.html
 %doc %{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
@@ -543,11 +545,15 @@ rm -f %{cups_serverbin}/backend/smb
 # client subpackage
 %exclude %{_sbindir}/lpc.cups
 %dir %{_datadir}/cups/templates
+%dir %{_datadir}/cups/templates/de
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/ja
+%dir %{_datadir}/cups/templates/ru
 %{_datadir}/cups/templates/*.tmpl
+%{_datadir}/cups/templates/de/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
+%{_datadir}/cups/templates/ru/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -609,6 +615,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 09 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-1
+- 2.0.3
+
 * Sat May 02 2015 Kalev Lember <kalevlember@gmail.com> - 1:2.0.2-6
 - Rebuilt for GCC 5 C++11 ABI change
 
