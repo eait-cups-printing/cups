@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -26,7 +26,7 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-
+Patch4: cups-str4538.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -190,7 +190,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-
+# Fix redirection from CGI scripts (bug #1232030, STR #4538).
+%patch4 -p1 -b .str4538
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -615,6 +616,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Jun 25 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.3-2
+- Fix redirection from CGI scripts (bug #1232030, STR #4538).
+
 * Tue Jun 09 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-1
 - 2.0.3
 
