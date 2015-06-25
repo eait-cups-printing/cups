@@ -48,7 +48,7 @@ Patch22: cups-hp-deviceid-oid.patch
 Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
-
+Patch26: cups-str4646.patch
 Patch27: cups-avahi-address.patch
 Patch28: cups-enum-all.patch
 Patch29: cups-dymo-deviceid.patch
@@ -234,6 +234,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch24 -p1 -b .ricoh-deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
 %patch25 -p1 -b .systemd-socket
+# Fix slow resume of jobs after restart (STR #4646).
+%patch26 -p1 -b .str4646
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
 # Return from cupsEnumDests() once all records have been returned.
@@ -617,6 +619,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Thu Jun 25 2015 Tim Waugh <twaugh@redhat.com> - 1:2.0.3-2
+- Fix slow resume of jobs after restart (STR #4646).
 - Fix redirection from CGI scripts (bug #1232030, STR #4538).
 
 * Tue Jun 09 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-1
