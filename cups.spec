@@ -7,14 +7,17 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
+%global prever rc1
+%global VERSION %{version}%{prever}
+
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0.4
-Release: 1%{?dist}
+Version: 2.1
+Release: 0.1%{prever}%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
+Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.bz2
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # Logrotate configuration
@@ -180,7 +183,7 @@ lpd emulation.
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
 %prep
-%setup -q
+%setup -q -n cups-%{VERSION}
 
 # Don't gzip man pages in the Makefile, let rpmbuild do it.
 %patch1 -p1 -b .no-gzip-man
@@ -263,7 +266,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
 # Log to the system journal by default (bug #1078781).
-sed -i -e 's,^ErrorLog .*$,ErrorLog journal,' conf/cups-files.conf.in
+sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -404,6 +407,10 @@ for keyword in PageLogFormat; do
     /bin/sed -i -e "s,^$keyword,#$keyword,i" "$FILE" || :
 done
 
+# We've been using 'journal' name in our journal.patch for couple releases,
+# but upstream decided not to use 'journal', but 'syslog'.
+sed -i -e 's,^ErrorLog journal,ErrorLog syslog,' %{_sysconfdir}/cups/cups-files.conf
+
 exit 0
 
 %post client
@@ -481,12 +488,14 @@ rm -f %{cups_serverbin}/backend/smb
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/printers.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/subscriptions.conf
 %{_sysconfdir}/cups/interfaces
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
@@ -612,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Aug 10 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.1-0.1rc1
+- 2.1rc1
+
 * Mon Aug 10 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.4-1
 - 2.0.4
 
