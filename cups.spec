@@ -11,7 +11,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.0.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -71,7 +71,7 @@ Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 Provides: cupsddk cupsddk-drivers
 
 BuildRequires: pam-devel pkgconfig
-BuildRequires: gnutls-devel
+BuildRequires: pkgconfig(gnutls)
 BuildRequires: libacl-devel
 BuildRequires: openldap-devel
 BuildRequires: pkgconfig(libusb-1.0)
@@ -618,6 +618,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jul 28 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-5
+- BuildRequires: gnutls-devel -> pkgconfig(gnutls)
+
 * Tue Jul 07 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-4
 - RPM_BUILD_ROOT -> %%{buildroot}, put braces around lspp and use_alternatives
 
