@@ -10,8 +10,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.0.3
-Release: 5%{?dist}
+Version: 2.0.4
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{version}/cups-%{version}-source.tar.bz2
@@ -26,7 +26,6 @@ Source8: macros.cups
 Patch1: cups-no-gzip-man.patch
 Patch2: cups-system-auth.patch
 Patch3: cups-multilib.patch
-Patch4: cups-str4538.patch
 Patch5: cups-banners.patch
 Patch6: cups-serverbin-compat.patch
 Patch7: cups-no-export-ssllibs.patch
@@ -48,7 +47,6 @@ Patch22: cups-hp-deviceid-oid.patch
 Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
-Patch26: cups-str4646.patch
 Patch27: cups-avahi-address.patch
 Patch28: cups-enum-all.patch
 Patch29: cups-dymo-deviceid.patch
@@ -190,8 +188,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch2 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
 %patch3 -p1 -b .multilib
-# Fix redirection from CGI scripts (bug #1232030, STR #4538).
-%patch4 -p1 -b .str4538
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
@@ -234,8 +230,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch24 -p1 -b .ricoh-deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
 %patch25 -p1 -b .systemd-socket
-# Fix slow resume of jobs after restart (STR #4646).
-%patch26 -p1 -b .str4646
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
 # Return from cupsEnumDests() once all records have been returned.
@@ -618,6 +612,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Aug 10 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.4-1
+- 2.0.4
+
 * Tue Jul 28 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.0.3-5
 - BuildRequires: gnutls-devel -> pkgconfig(gnutls)
 
