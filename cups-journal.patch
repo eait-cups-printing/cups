@@ -1,12 +1,25 @@
-diff -up cups-2.1rc1/scheduler/log.c.journal cups-2.1rc1/scheduler/log.c
---- cups-2.1rc1/scheduler/log.c.journal	2015-08-10 15:06:15.000000000 +0200
-+++ cups-2.1rc1/scheduler/log.c	2015-08-10 15:07:30.046368863 +0200
-@@ -690,7 +690,7 @@ cupsdLogJob(cupsd_job_t *job,		/* I - Jo
- 
-     va_end(ap);
- 
--    if (job)
-+    if (job && printer)
-       sd_journal_send("MESSAGE=%s", log_line,
- 		      "PRIORITY=%i", log_levels[level],
+From d6474c395e14b3079dd198fadf7427c67412e816 Mon Sep 17 00:00:00 2001
+From: Jiri Popelka <jpopelka@redhat.com>
+Date: Mon, 10 Aug 2015 17:12:32 +0200
+Subject: [PATCH] Fix index out of range in cupsdLogJob()
+
+---
+ scheduler/log.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scheduler/log.c b/scheduler/log.c
+index cef0219..21489d5 100644
+--- a/scheduler/log.c
++++ b/scheduler/log.c
+@@ -667,7 +667,7 @@ cupsdLogJob(cupsd_job_t *job,		/* I - Job */
  		      PWG_Event"=JobStateChanged",
+ 		      PWG_ServiceURI"=%s", printer ? printer->uri : "",
+ 		      PWG_JobID"=%d", job->id,
+-		      PWG_JobState"=%s", job_states[job->state_value - IPP_JSTATE_PENDING],
++		      PWG_JobState"=%s", job->state_value >= IPP_JSTATE_PENDING ? job_states[job->state_value - IPP_JSTATE_PENDING] : "",
+ 		      PWG_JobImpressionsCompleted"=%d", ippGetInteger(job->impressions, 0),
+ 		      NULL);
+     else
+-- 
+2.5.0
+
