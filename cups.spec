@@ -7,14 +7,15 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global prever rc1
-%global VERSION %{version}%{prever}
+#%%global prever rc1
+#%%global VERSION %{version}%{prever}
+%global VERSION %{version}
 
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.1
-Release: 0.3%{prever}%{?dist}
+Version: 2.1.0
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.bz2
@@ -60,8 +61,7 @@ Patch33: cups-use-ipp1.1.patch
 Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
-Patch37: cups-journal.patch
-Patch38: cups-synconclose.patch
+Patch37: cups-synconclose.patch
 
 Patch100: cups-lspp.patch
 
@@ -253,10 +253,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch35 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch36 -p1 -b .web-devices-timeout
-# Allow "journal" log type for log output to system journal.
-%patch37 -p1 -b .journal
 # Set the default for SyncOnClose to Yes.
-%patch38 -p1 -b .synconclose
+%patch37 -p1 -b .synconclose
 
 %if %{lspp}
 # LSPP support.
@@ -621,6 +619,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Sep 01 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.1.0-1
+- 2.1.0
+
 * Thu Aug 13 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.1-0.3rc1
 - fix crash in scheduler (#1253135)
 
