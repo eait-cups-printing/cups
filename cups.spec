@@ -14,7 +14,7 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.1.1
+Version: 2.1.2
 Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
@@ -495,6 +495,7 @@ rm -f %{cups_serverbin}/backend/smb
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
+%{_sysconfdir}/cups/interfaces
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
@@ -618,6 +619,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Dec 02 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.1.2-1
+- 2.1.2 - interface scripts support is back (until 2.2)
+
 * Tue Dec 01 2015 Jiri Popelka <jpopelka@redhat.com> - 1:2.1.1-1
 - 2.1.1 - interface scripts no longer supported.
 
