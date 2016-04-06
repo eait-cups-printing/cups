@@ -579,7 +579,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
-%doc LICENSE.txt
+%{license} LICENSE.txt
 %{_libdir}/*.so.*
 
 %files filesystem
