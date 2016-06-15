@@ -14,11 +14,11 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.1.3
+Version: 2.1.4
 Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.bz2
+Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # Logrotate configuration
@@ -463,18 +463,10 @@ exit 0
 exit 0
 
 %triggerin -- samba-client
-ln -sf ../../../bin/smbspool %{cups_serverbin}/backend/smb || :
+ln -sf %{_libexecdir}/samba/cups_backend_smb %{cups_serverbin}/backend/smb || :
 exit 0
 
 %triggerun -- samba-client
-[ $2 = 0 ] || exit 0
-rm -f %{cups_serverbin}/backend/smb
-
-%triggerin -- samba4-client
-ln -sf %{_bindir}/smbspool %{cups_serverbin}/backend/smb || :
-exit 0
-
-%triggerun -- samba4-client
 [ $2 = 0 ] || exit 0
 rm -f %{cups_serverbin}/backend/smb
 
@@ -515,6 +507,7 @@ rm -f %{cups_serverbin}/backend/smb
 %doc %{_datadir}/%{name}/www/es/index.html
 %doc %{_datadir}/%{name}/www/ja/index.html
 %doc %{_datadir}/%{name}/www/ru/index.html
+%doc %{_datadir}/%{name}/www/pt_BR/index.html
 %doc %{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
@@ -553,11 +546,13 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/es
 %dir %{_datadir}/cups/templates/ja
 %dir %{_datadir}/cups/templates/ru
+%dir %{_datadir}/cups/templates/pt_BR
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/de/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
 %{_datadir}/cups/templates/ru/*.tmpl
+%{_datadir}/cups/templates/pt_BR/*.tmpl
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
@@ -619,6 +614,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jun 15 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-1
+- 2.1.4, 1346668 - Change symlink for smb backend to /usr/libexec/samba/cups_backend_smb
+
 * Mon Feb 08 2016 Jiri Popelka <jpopelka@redhat.com> - 1:2.1.3-1
 - 2.1.3
 
