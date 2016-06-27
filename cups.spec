@@ -79,7 +79,7 @@ BuildRequires: pkgconfig(libusb-1.0)
 BuildRequires: krb5-devel
 BuildRequires: pkgconfig(avahi-client)
 BuildRequires: systemd
-BuildRequires: pkgconfig(libsystemd-daemon) pkgconfig(libsystemd-journal)
+BuildRequires: pkgconfig(libsystemd)
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: automake
 
@@ -614,6 +614,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jun 27 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-1
+- substitution BuildRequires: pkgconfig(libsystemd-*) for BuildRequires: pkgconfig(libsystemd)
+
 * Wed Jun 15 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-1
 - 2.1.4, 1346668 - Change symlink for smb backend to /usr/libexec/samba/cups_backend_smb
 
