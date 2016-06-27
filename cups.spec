@@ -79,7 +79,7 @@ BuildRequires: pkgconfig(libusb-1.0)
 BuildRequires: krb5-devel
 BuildRequires: pkgconfig(avahi-client)
 BuildRequires: systemd
-BuildRequires: pkgconfig(libsystemd-daemon) pkgconfig(libsystemd-journal)
+BuildRequires: pkgconfig(libsystemd)
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: automake
 
