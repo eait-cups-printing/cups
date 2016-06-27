@@ -1,5 +1,5 @@
 %global use_alternatives 1
-%global lspp 1
+%global lspp 1 
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -7,18 +7,18 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-#%%global prever rc1
-#%%global VERSION %{version}%{prever}
-%global VERSION %{version}
+%global prever b2
+%global VERSION %{version}%{prever}
+#%%global VERSION %{version}
 
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.1.4
-Release: 1%{?dist}
+Version: 2.2
+Release: 0.1%{prever}%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
-Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.gz
+Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
 Source2: cupsprinter.png
 # Logrotate configuration
@@ -487,7 +487,7 @@ rm -f %{cups_serverbin}/backend/smb
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
-%{_sysconfdir}/cups/interfaces
+#%{_sysconfdir}/cups/interfaces
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
@@ -614,6 +614,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Jun 27 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.1b2
+- Rebase to 2.2b2, editing patches and spec (no need for /etc/cups/interfaces)
+
 * Mon Jun 27 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-1
 - substitution BuildRequires: pkgconfig(libsystemd-*) for BuildRequires: pkgconfig(libsystemd)
 
