@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.1.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -265,6 +265,9 @@ sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
 # Log to the system journal by default (bug #1078781).
 sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
+
+# Add comment text mentioning syslog is systemd journal (bug #1358589)
+sed -i -e 's,\"syslog\",\"syslog\" \(syslog means systemd journal by default\),' conf/cups-files.conf.in
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -614,6 +617,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Aug 03 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-2
+- bug 1358589 - added information about syslog means systemd journal by default
+
 * Wed Jun 15 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-1
 - 2.1.4, 1346668 - Change symlink for smb backend to /usr/libexec/samba/cups_backend_smb
 
