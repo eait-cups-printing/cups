@@ -7,7 +7,7 @@
 # but we use lib for compatibility with 3rd party drivers (at upstream request).
 %global cups_serverbin %{_exec_prefix}/lib/cups
 
-%global prever b2
+%global prever rc1
 %global VERSION %{version}%{prever}
 #%%global VERSION %{version}
 
@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2
-Release: 0.2%{prever}%{?dist}
+Release: 0.1%{prever}%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -617,6 +617,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Aug 09 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.2rc1
+- rebase to cups-2.2rc1
+
 * Wed Aug 03 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.2b2
 - bug 1358589 - added information about syslog means systemd journal by default
 
