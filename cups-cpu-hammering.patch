@@ -1,7 +1,6 @@
-diff -up cups-2.2.0/CHANGES.txt.cpu-hammering cups-2.2.0/CHANGES.txt
 diff -up cups-2.2.0/cups/http-addrlist.c.cpu-hammering cups-2.2.0/cups/http-addrlist.c
---- cups-2.2.0/cups/http-addrlist.c.cpu-hammering	2016-09-19 19:56:54.074866957 +0200
-+++ cups-2.2.0/cups/http-addrlist.c	2016-09-21 11:45:22.264775409 +0200
+--- cups-2.2.0/cups/http-addrlist.c.cpu-hammering	2016-10-04 18:54:55.697172885 +0200
++++ cups-2.2.0/cups/http-addrlist.c	2016-10-04 18:56:41.038252500 +0200
 @@ -304,6 +304,8 @@ httpAddrConnect2(
  
      if (result > 0)
@@ -28,7 +27,7 @@ diff -up cups-2.2.0/cups/http-addrlist.c.cpu-hammering cups-2.2.0/cups/http-addr
 +# ifdef HAVE_POLL
 +	else if (pfds[i].revents & (POLLERR | POLLHUP))
 +# else
-+	else if (FD_SET(fds[i], &error))
++	else if (FD_ISSET(fds[i], &error))
 +# endif /* HAVE_POLL */
 +        {
 +         /*

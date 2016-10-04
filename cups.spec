@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -620,6 +620,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Oct 04 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-3
+- fixing typo in cups-cpu-hammering.patch
+
 * Thu Sep 22 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-2
 - fixing looping in partial failing service (bug #1366775)
 
