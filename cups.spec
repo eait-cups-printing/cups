@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.0
-Release: 2%{?dist}
+Version: 2.2.1
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,7 +62,6 @@ Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
-Patch38: cups-cpu-hammering.patch
 
 Patch100: cups-lspp.patch
 
@@ -256,8 +255,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch36 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
 %patch37 -p1 -b .synconclose
-# fixing looping in partial failing service (bug #1366775)
-%patch38 -p1 -b .cpu-hammering
 
 %if %{lspp}
 # LSPP support.
@@ -620,6 +617,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Oct 04 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.1-1
+- rebase to 2.2.1
+
 * Thu Sep 22 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-2
 - fixing looping in partial failing service (bug #1366775)
 
