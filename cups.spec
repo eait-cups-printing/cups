@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,6 +62,7 @@ Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
+Patch38: cups-iso88591.patch
 
 Patch100: cups-lspp.patch
 
@@ -255,6 +256,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch36 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
 %patch37 -p1 -b .synconclose
+# Unable to print from Windows (7) on a Cups-Server(2.2.1-1) with german umlauts in the filename (bug #1386751)
+%patch38 -p1 -b .iso88591
+
 
 %if %{lspp}
 # LSPP support.
@@ -617,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Nov 11 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.1-3
+- Unable to print from Windows (7) on a Cups-Server(2.2.1-1) with german umlauts in the filename (bug #1386751)
+
 * Mon Nov 07 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.1-2
 - #873123 - (cups-usb-quirks) usb printer doesn't print (usblp0: USB Bidirectional printer dev)
 
