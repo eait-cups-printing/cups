@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.0
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -271,6 +271,9 @@ sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
 
 # Add comment text mentioning syslog is systemd journal (bug #1358589)
 sed -i -e 's,\"syslog\",\"syslog\" \(syslog means systemd journal by default\),' conf/cups-files.conf.in
+
+# Add group wheel to SystemGroups (bug #1405669)
+sed -i -e 's,^SystemGroup .*$, SystemGroup sys root wheel,' conf/cups-files.conf.in
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -620,6 +623,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jan 11 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-5
+- bug 1405669 - adding group wheel to SystemGroup
+
 * Mon Nov 07 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-4
 - #873123 - (cups-usb-quirks) usb printer doesn't print (usblp0: USB Bidirectional printer dev)
 
