@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.1.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: http://www.cups.org/software/%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,6 +62,7 @@ Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
+Patch38: cups-resolv_reload.patch
 
 Patch100: cups-lspp.patch
 
@@ -255,6 +256,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch36 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
 %patch37 -p1 -b .synconclose
+# CUPS does not recognize changes to /etc/resolv.conf until CUPS restart (bug #1437065)
+%patch38 -p1 -b .resolv_reload
 
 %if %{lspp}
 # LSPP support.
@@ -620,6 +623,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Mar 30 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-4
+- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart 
+
 * Wed Jan 11 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.1.4-3
 - bug 1405669 - adding group wheel to SystemGroup
 
