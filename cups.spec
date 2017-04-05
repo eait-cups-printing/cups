@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,7 +62,7 @@ Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
-#Patch38: cups-resolv_reload.patch
+Patch38: cups-resolv_reload.patch
 
 Patch100: cups-lspp.patch
 
@@ -257,7 +257,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Set the default for SyncOnClose to Yes.
 %patch37 -p1 -b .synconclose
 # CUPS does not recognize changes to /etc/resolv.conf until CUPS restart (bug #1437065)
-#%%patch38 -p1 -b .resolv_reload
+%patch38 -p1 -b .resolv_reload
 
 %if %{lspp}
 # LSPP support.
@@ -623,6 +623,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Apr 05 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-4
+- fixing issue with #1437065 - makes res_init() call to local resolver and keeps error message, but no hard exit for cupsd
+
 * Tue Apr 04 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-3
 - disable patch for #1437065 for now until issue with stat is solved
 
