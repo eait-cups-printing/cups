@@ -1,6 +1,6 @@
 diff -up cups-2.2.0/cups/auth.c.resolv_reload cups-2.2.0/cups/auth.c
 --- cups-2.2.0/cups/auth.c.resolv_reload	2016-09-14 01:39:47.000000000 +0200
-+++ cups-2.2.0/cups/auth.c	2017-03-30 13:08:06.436258996 +0200
++++ cups-2.2.0/cups/auth.c	2017-04-05 19:26:04.525464662 +0200
 @@ -519,6 +519,16 @@ cups_gss_getname(
    DEBUG_printf(("7cups_gss_getname(http=%p, service_name=\"%s\")", http,
                  service_name));
@@ -19,8 +19,8 @@ diff -up cups-2.2.0/cups/auth.c.resolv_reload cups-2.2.0/cups/auth.c
   /*
    * Get the hostname...
 diff -up cups-2.2.0/cups/http-addr.c.resolv_reload cups-2.2.0/cups/http-addr.c
---- cups-2.2.0/cups/http-addr.c.resolv_reload	2017-03-30 13:08:06.422259148 +0200
-+++ cups-2.2.0/cups/http-addr.c	2017-03-30 13:08:06.436258996 +0200
+--- cups-2.2.0/cups/http-addr.c.resolv_reload	2017-04-05 19:26:04.513464779 +0200
++++ cups-2.2.0/cups/http-addr.c	2017-04-05 19:26:04.526464653 +0200
 @@ -361,6 +361,17 @@ httpAddrLookup(
  
  #ifdef HAVE_RES_INIT
@@ -40,8 +40,8 @@ diff -up cups-2.2.0/cups/http-addr.c.resolv_reload cups-2.2.0/cups/http-addr.c
    *
    * If the previous lookup failed, re-initialize the resolver to prevent
 diff -up cups-2.2.0/cups/http-addrlist.c.resolv_reload cups-2.2.0/cups/http-addrlist.c
---- cups-2.2.0/cups/http-addrlist.c.resolv_reload	2017-03-30 13:08:06.434259017 +0200
-+++ cups-2.2.0/cups/http-addrlist.c	2017-03-30 13:08:06.436258996 +0200
+--- cups-2.2.0/cups/http-addrlist.c.resolv_reload	2017-04-05 19:26:04.524464672 +0200
++++ cups-2.2.0/cups/http-addrlist.c	2017-04-05 19:26:04.526464653 +0200
 @@ -483,6 +483,17 @@ httpAddrGetList(const char *hostname,	/*
  
  #ifdef HAVE_RES_INIT
@@ -62,7 +62,7 @@ diff -up cups-2.2.0/cups/http-addrlist.c.resolv_reload cups-2.2.0/cups/http-addr
    * If the previous lookup failed, re-initialize the resolver to prevent
 diff -up cups-2.2.0/cups/http.c.resolv_reload cups-2.2.0/cups/http.c
 --- cups-2.2.0/cups/http.c.resolv_reload	2016-09-14 01:39:47.000000000 +0200
-+++ cups-2.2.0/cups/http.c	2017-03-30 13:12:38.411379288 +0200
++++ cups-2.2.0/cups/http.c	2017-04-05 19:28:20.601146820 +0200
 @@ -107,6 +107,9 @@ static const char * const http_fields[]
  			  "Allow",
  			  "Server"
@@ -73,7 +73,7 @@ diff -up cups-2.2.0/cups/http.c.resolv_reload cups-2.2.0/cups/http.c
  
  
  /*
-@@ -4811,3 +4814,34 @@ http_write_chunk(http_t     *http,	/* I
+@@ -4811,3 +4814,44 @@ http_write_chunk(http_t     *http,	/* I
  
    return (bytes);
  }
@@ -81,7 +81,9 @@ diff -up cups-2.2.0/cups/http.c.resolv_reload cups-2.2.0/cups/http.c
 +#ifdef HAVE_RES_INIT
 +/*
 + * Function to check modification time of resolv.conf. 
-+ * If time is changed, it reloads resolver.
++ * If time is changed, it reloads resolver. 
++ * If /etc/resolv.conf doesn't exist, it tries to reload local resolver.
++ * If even reloading local resolver doesn't work, it ends with error.
 + */
 +
 +http_resolv_check_t
@@ -92,6 +94,14 @@ diff -up cups-2.2.0/cups/http.c.resolv_reload cups-2.2.0/cups/http.c
 +
 +  status = stat(HTTP_RESOLV_CONF_PATH, &resolv_conf_status);
 +
++  /* /etc/resolv.conf couldn't be stated because it doesn't exist, try resolver on localhost */
++  if (status == HTTP_RESOLV_CHECK_ERROR && errno == ENOENT)
++  {
++    status = res_init();
++    return (status);
++  }
++
++  /* If stat ends with different errno, return status */
 +  if (status == HTTP_RESOLV_CHECK_ERROR)
 +    return (status);
 +
@@ -110,7 +120,7 @@ diff -up cups-2.2.0/cups/http.c.resolv_reload cups-2.2.0/cups/http.c
 +
 diff -up cups-2.2.0/cups/http.h.resolv_reload cups-2.2.0/cups/http.h
 --- cups-2.2.0/cups/http.h.resolv_reload	2016-09-14 01:39:47.000000000 +0200
-+++ cups-2.2.0/cups/http.h	2017-03-30 13:08:06.437258985 +0200
++++ cups-2.2.0/cups/http.h	2017-04-05 19:26:04.526464653 +0200
 @@ -55,6 +55,12 @@ typedef off_t ssize_t;			/* @private@ */
  #      define SO_PEERCRED LOCAL_PEERCRED
  #    endif /* LOCAL_PEERCRED && !SO_PEERCRED */
@@ -177,8 +187,8 @@ diff -up cups-2.2.0/cups/http.h.resolv_reload cups-2.2.0/cups/http.h
   * C++ magic...
   */
 diff -up cups-2.2.0/cups/http-support.c.resolv_reload cups-2.2.0/cups/http-support.c
---- cups-2.2.0/cups/http-support.c.resolv_reload	2017-03-30 13:08:06.437258985 +0200
-+++ cups-2.2.0/cups/http-support.c	2017-03-30 13:19:01.559533564 +0200
+--- cups-2.2.0/cups/http-support.c.resolv_reload	2017-04-05 19:26:04.509464817 +0200
++++ cups-2.2.0/cups/http-support.c	2017-04-05 19:26:04.527464643 +0200
 @@ -2258,6 +2258,16 @@ http_resolve_cb(
      http_addrlist_t	*addrlist,	/* List of addresses */
  			*addr;		/* Current address */
@@ -197,8 +207,8 @@ diff -up cups-2.2.0/cups/http-support.c.resolv_reload cups-2.2.0/cups/http-suppo
  
      snprintf(fqdn, sizeof(fqdn), "%d", ntohs(port));
 diff -up cups-2.2.0/scheduler/conf.c.resolv_reload cups-2.2.0/scheduler/conf.c
---- cups-2.2.0/scheduler/conf.c.resolv_reload	2017-03-30 13:08:06.433259028 +0200
-+++ cups-2.2.0/scheduler/conf.c	2017-03-30 13:08:06.439258963 +0200
+--- cups-2.2.0/scheduler/conf.c.resolv_reload	2017-04-05 19:26:04.523464682 +0200
++++ cups-2.2.0/scheduler/conf.c	2017-04-05 19:26:04.527464643 +0200
 @@ -937,6 +937,12 @@ cupsdReadConfiguration(void)
    if (!RemotePort)
      BrowseLocalProtocols = 0;		/* Disable sharing - no remote access */
@@ -213,9 +223,9 @@ diff -up cups-2.2.0/scheduler/conf.c.resolv_reload cups-2.2.0/scheduler/conf.c
    * See if the ServerName is an IP address...
    */
 diff -up cups-2.2.0/scheduler/main.c.resolv_reload cups-2.2.0/scheduler/main.c
---- cups-2.2.0/scheduler/main.c.resolv_reload	2017-03-30 13:08:06.440258952 +0200
-+++ cups-2.2.0/scheduler/main.c	2017-03-30 13:23:38.886665663 +0200
-@@ -136,6 +136,17 @@ main(int  argc,				/* I - Number of comm
+--- cups-2.2.0/scheduler/main.c.resolv_reload	2017-04-05 19:26:04.518464730 +0200
++++ cups-2.2.0/scheduler/main.c	2017-04-05 19:26:04.528464633 +0200
+@@ -136,6 +136,14 @@ main(int  argc,				/* I - Number of comm
    long			tmo_delay;	/* Time before it must be called */
  #endif /* HAVE_AVAHI */
  
@@ -224,10 +234,7 @@ diff -up cups-2.2.0/scheduler/main.c.resolv_reload cups-2.2.0/scheduler/main.c
 +
 +  status = httpCheckResolv();
 +  if (status == HTTP_RESOLV_CHECK_ERROR)
-+  {
-+    fputs("cupsd: Cannot get a status of /etc/resolv.conf\n", stderr);
-+	return (1);
-+  }
++    fputs("cupsd: Cannot reload a resolver, using old configuration now.\n", stderr);
 +#endif /* HAVE_RES_INIT */
 +
  #ifdef HAVE_GETEUID
