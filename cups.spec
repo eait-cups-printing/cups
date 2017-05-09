@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.0
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -626,6 +626,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Apr 27 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-9
+- copying cups-resolv_reload.patch from RHEL
+
 * Wed Apr 05 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.0-8
 - fixing issue with #1437065 - makes res_init() call to local resolver and keeps error message, but no hard exit for cupsd
 
