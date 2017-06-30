@@ -1,6 +1,6 @@
-diff -up cups-2.2b2/scheduler/avahi.c.avahi-no-threaded cups-2.2b2/scheduler/avahi.c
---- cups-2.2b2/scheduler/avahi.c.avahi-no-threaded	2016-06-27 17:55:19.568728958 +0200
-+++ cups-2.2b2/scheduler/avahi.c	2016-06-27 17:55:19.568728958 +0200
+diff -up cups-2.2.4/scheduler/avahi.c.avahi-no-threaded cups-2.2.4/scheduler/avahi.c
+--- cups-2.2.4/scheduler/avahi.c.avahi-no-threaded	2017-06-30 21:04:37.013278512 +0200
++++ cups-2.2.4/scheduler/avahi.c	2017-06-30 21:04:37.013278512 +0200
 @@ -0,0 +1,441 @@
 +/*
 + * "$Id$"
@@ -443,9 +443,9 @@ diff -up cups-2.2b2/scheduler/avahi.c.avahi-no-threaded cups-2.2b2/scheduler/ava
 +/*
 + * End of "$Id$".
 + */
-diff -up cups-2.2b2/scheduler/avahi.h.avahi-no-threaded cups-2.2b2/scheduler/avahi.h
---- cups-2.2b2/scheduler/avahi.h.avahi-no-threaded	2016-06-27 17:55:19.568728958 +0200
-+++ cups-2.2b2/scheduler/avahi.h	2016-06-27 17:55:19.568728958 +0200
+diff -up cups-2.2.4/scheduler/avahi.h.avahi-no-threaded cups-2.2.4/scheduler/avahi.h
+--- cups-2.2.4/scheduler/avahi.h.avahi-no-threaded	2017-06-30 21:04:37.013278512 +0200
++++ cups-2.2.4/scheduler/avahi.h	2017-06-30 21:04:37.013278512 +0200
 @@ -0,0 +1,69 @@
 +/*
 + * "$Id$"
@@ -516,9 +516,9 @@ diff -up cups-2.2b2/scheduler/avahi.h.avahi-no-threaded cups-2.2b2/scheduler/ava
 +/*
 + * End of "$Id$".
 + */
-diff -up cups-2.2b2/scheduler/cupsd.h.avahi-no-threaded cups-2.2b2/scheduler/cupsd.h
---- cups-2.2b2/scheduler/cupsd.h.avahi-no-threaded	2016-06-24 17:43:35.000000000 +0200
-+++ cups-2.2b2/scheduler/cupsd.h	2016-06-27 17:57:45.476572827 +0200
+diff -up cups-2.2.4/scheduler/cupsd.h.avahi-no-threaded cups-2.2.4/scheduler/cupsd.h
+--- cups-2.2.4/scheduler/cupsd.h.avahi-no-threaded	2017-06-30 17:44:38.000000000 +0200
++++ cups-2.2.4/scheduler/cupsd.h	2017-06-30 21:04:37.013278512 +0200
 @@ -118,6 +118,7 @@ extern const char *cups_hstrerror(int);
  #include "colorman.h"
  #include "conf.h"
@@ -570,9 +570,9 @@ diff -up cups-2.2b2/scheduler/cupsd.h.avahi-no-threaded cups-2.2b2/scheduler/cup
 +extern void     cupsdRemoveTimeout (cupsd_timeout_t *timeout);
 +#endif /* HAVE_AVAHI */
 \ No newline at end of file
-diff -up cups-2.2b2/scheduler/dirsvc.c.avahi-no-threaded cups-2.2b2/scheduler/dirsvc.c
---- cups-2.2b2/scheduler/dirsvc.c.avahi-no-threaded	2016-06-24 17:43:35.000000000 +0200
-+++ cups-2.2b2/scheduler/dirsvc.c	2016-06-27 17:55:19.569728950 +0200
+diff -up cups-2.2.4/scheduler/dirsvc.c.avahi-no-threaded cups-2.2.4/scheduler/dirsvc.c
+--- cups-2.2.4/scheduler/dirsvc.c.avahi-no-threaded	2017-06-30 17:44:38.000000000 +0200
++++ cups-2.2.4/scheduler/dirsvc.c	2017-06-30 21:04:37.051278174 +0200
 @@ -193,7 +193,7 @@ cupsdStartBrowsing(void)
      cupsdUpdateDNSSDName();
  
@@ -673,9 +673,9 @@ diff -up cups-2.2b2/scheduler/dirsvc.c.avahi-no-threaded cups-2.2b2/scheduler/di
      DNSSDMaster = NULL;
    }
  #  endif /* HAVE_DNSSD */
-diff -up cups-2.2b2/scheduler/dirsvc.h.avahi-no-threaded cups-2.2b2/scheduler/dirsvc.h
---- cups-2.2b2/scheduler/dirsvc.h.avahi-no-threaded	2016-06-24 17:43:35.000000000 +0200
-+++ cups-2.2b2/scheduler/dirsvc.h	2016-06-27 17:55:19.569728950 +0200
+diff -up cups-2.2.4/scheduler/dirsvc.h.avahi-no-threaded cups-2.2.4/scheduler/dirsvc.h
+--- cups-2.2.4/scheduler/dirsvc.h.avahi-no-threaded	2017-06-30 17:44:38.000000000 +0200
++++ cups-2.2.4/scheduler/dirsvc.h	2017-06-30 21:04:37.051278174 +0200
 @@ -49,7 +49,7 @@ VAR cups_array_t	*DNSSDPrinters	VALUE(NU
  VAR DNSServiceRef	DNSSDMaster	VALUE(NULL);
  					/* Master DNS-SD service reference */
@@ -685,10 +685,10 @@ diff -up cups-2.2b2/scheduler/dirsvc.h.avahi-no-threaded cups-2.2b2/scheduler/di
  					/* Master polling interface for Avahi */
  VAR AvahiClient		*DNSSDClient	VALUE(NULL);
  					/* Client information */
-diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main.c
---- cups-2.2b2/scheduler/main.c.avahi-no-threaded	2016-06-27 17:55:19.555729061 +0200
-+++ cups-2.2b2/scheduler/main.c	2016-06-27 17:58:44.350106330 +0200
-@@ -131,7 +131,10 @@ main(int  argc,				/* I - Number of comm
+diff -up cups-2.2.4/scheduler/main.c.avahi-no-threaded cups-2.2.4/scheduler/main.c
+--- cups-2.2.4/scheduler/main.c.avahi-no-threaded	2017-06-30 21:04:37.002278610 +0200
++++ cups-2.2.4/scheduler/main.c	2017-06-30 21:05:55.015584932 +0200
+@@ -133,7 +133,10 @@ main(int  argc,				/* I - Number of comm
    int			service_idle_exit;
  					/* Idle exit on select timeout? */
  #endif /* HAVE_ONDEMAND */
@@ -700,7 +700,7 @@ diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main
  
  #ifdef HAVE_GETEUID
   /*
-@@ -609,6 +612,14 @@ main(int  argc,				/* I - Number of comm
+@@ -611,6 +614,14 @@ main(int  argc,				/* I - Number of comm
  
    httpInitialize();
  
@@ -715,7 +715,7 @@ diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main
    cupsdStartServer();
  
   /*
-@@ -930,6 +941,16 @@ main(int  argc,				/* I - Number of comm
+@@ -926,6 +937,16 @@ main(int  argc,				/* I - Number of comm
      }
  #endif /* __APPLE__ */
  
@@ -732,9 +732,9 @@ diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main
  #ifndef __APPLE__
     /*
      * Update the network interfaces once a minute...
-@@ -1620,6 +1641,10 @@ select_timeout(int fds)			/* I - Number
-   cupsd_client_t	*con;		/* Client information */
+@@ -1630,6 +1651,10 @@ select_timeout(int fds)			/* I - Number
    cupsd_job_t		*job;		/* Job information */
+   cupsd_printer_t       *printer;       /* Printer information */
    const char		*why;		/* Debugging aid */
 +#ifdef HAVE_AVAHI
 +  cupsd_timeout_t	*tmo;		/* Timed callback */
@@ -743,7 +743,7 @@ diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main
  
  
    cupsdLogMessage(CUPSD_LOG_DEBUG2, "select_timeout: JobHistoryUpdate=%ld",
-@@ -1665,6 +1690,19 @@ select_timeout(int fds)			/* I - Number
+@@ -1675,6 +1700,19 @@ select_timeout(int fds)			/* I - Number
    }
  #endif /* __APPLE__ */
  
@@ -763,9 +763,9 @@ diff -up cups-2.2b2/scheduler/main.c.avahi-no-threaded cups-2.2b2/scheduler/main
   /*
    * Check whether we are accepting new connections...
    */
-diff -up cups-2.2b2/scheduler/Makefile.avahi-no-threaded cups-2.2b2/scheduler/Makefile
---- cups-2.2b2/scheduler/Makefile.avahi-no-threaded	2016-06-24 17:43:35.000000000 +0200
-+++ cups-2.2b2/scheduler/Makefile	2016-06-27 17:55:19.569728950 +0200
+diff -up cups-2.2.4/scheduler/Makefile.avahi-no-threaded cups-2.2.4/scheduler/Makefile
+--- cups-2.2.4/scheduler/Makefile.avahi-no-threaded	2017-06-30 17:44:38.000000000 +0200
++++ cups-2.2.4/scheduler/Makefile	2017-06-30 21:04:37.053278156 +0200
 @@ -15,6 +15,7 @@ include ../Makedefs
  
  CUPSDOBJS =	\
@@ -784,9 +784,9 @@ diff -up cups-2.2b2/scheduler/Makefile.avahi-no-threaded cups-2.2b2/scheduler/Ma
  LIBOBJS =	\
  		filter.o \
  		mime.o \
-diff -up cups-2.2b2/scheduler/timeout.c.avahi-no-threaded cups-2.2b2/scheduler/timeout.c
---- cups-2.2b2/scheduler/timeout.c.avahi-no-threaded	2016-06-27 17:55:19.569728950 +0200
-+++ cups-2.2b2/scheduler/timeout.c	2016-06-27 17:55:19.569728950 +0200
+diff -up cups-2.2.4/scheduler/timeout.c.avahi-no-threaded cups-2.2.4/scheduler/timeout.c
+--- cups-2.2.4/scheduler/timeout.c.avahi-no-threaded	2017-06-30 21:04:37.053278156 +0200
++++ cups-2.2.4/scheduler/timeout.c	2017-06-30 21:04:37.053278156 +0200
 @@ -0,0 +1,235 @@
 +/*
 + * "$Id$"

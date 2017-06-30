@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.3
-Release: 6%{?dist}
+Version: 2.2.4
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -52,7 +52,6 @@ Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
 Patch25: cups-systemd-socket.patch
 Patch27: cups-avahi-address.patch
-Patch28: cups-enum-all.patch
 Patch29: cups-dymo-deviceid.patch
 Patch30: cups-freebind.patch
 Patch31: cups-no-gcry.patch
@@ -236,8 +235,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch25 -p1 -b .systemd-socket
 # Use IP address when resolving DNSSD URIs (bug #948288).
 %patch27 -p1 -b .avahi-address
-# Return from cupsEnumDests() once all records have been returned.
-%patch28 -p1 -b .enum-all
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch29 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
@@ -278,7 +275,7 @@ sed -i -e 's,^SystemGroup .*$, SystemGroup sys root wheel,' conf/cups-files.conf
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
-f=CREDITS.txt
+f=CREDITS.md
 mv "$f" "$f"~
 iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
 rm -f "$f"~
@@ -480,7 +477,7 @@ exit 0
 rm -f %{cups_serverbin}/backend/smb
 
 %files -f %{name}.lang
-%doc README.txt CREDITS.txt CHANGES.txt
+%doc README.md CREDITS.md CHANGES.md
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
 %dir %attr(0755,root,lp) %{_localstatedir}/run/cups
 %dir %attr(0511,lp,sys) %{_localstatedir}/run/cups/certs
@@ -623,6 +620,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Jun 30 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.4-1
+- rebase to 2.2.4
+
 * Thu Jun 29 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-6
 - update python dependencies accordingly Fedora Guideline for Python (python-cups -> python3-cups)
 
