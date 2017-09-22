@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,6 +62,7 @@ Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 Patch38: cups-resolv_reload.patch
+Patch39: cups-ypbind.patch
 
 Patch100: cups-lspp.patch
 
@@ -255,6 +256,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .synconclose
 # CUPS does not recognize changes to /etc/resolv.conf until CUPS restart (bug #1437065)
 %patch38 -p1 -b .resolv_reload
+# CUPS may fail to start if NIS groups are used (bug #1494558)
+%patch39 -p1 -b .ypbind
 
 %if %{lspp}
 # LSPP support.
@@ -620,6 +623,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Sep 22 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.4-4
+- 1494558 - CUPS may fail to start if NIS groups are used
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.2.4-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
