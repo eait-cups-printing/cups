@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -108,7 +108,6 @@ Requires: systemd
 Requires: acl
 
 # Make sure we have some filters for converting to raster format.
-Requires: ghostscript-cups
 Requires: cups-filters
 
 %package client
@@ -629,6 +628,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Oct 09 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.4-7
+- removing ghostscript-cups dependency - cups-filters ships it
+
 * Wed Oct 04 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.4-6
 - 1498091 - Cannot browse CUPS servers in GNOME Control Panel Printers
 
