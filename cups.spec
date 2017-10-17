@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.4
-Release: 7%{?dist}
+Version: 2.2.5
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -46,7 +46,7 @@ Patch17: cups-res_init.patch
 Patch18: cups-filter-debug.patch
 Patch19: cups-uri-compat.patch
 Patch20: cups-str3382.patch
-Patch21: cups-0755.patch
+#Patch21: cups-0755.patch
 Patch22: cups-hp-deviceid-oid.patch
 Patch23: cups-dnssd-deviceid.patch
 Patch24: cups-ricoh-deviceid-oid.patch
@@ -54,7 +54,7 @@ Patch25: cups-systemd-socket.patch
 Patch27: cups-avahi-address.patch
 Patch29: cups-dymo-deviceid.patch
 Patch30: cups-freebind.patch
-Patch31: cups-no-gcry.patch
+#Patch31: cups-no-gcry.patch
 Patch32: cups-libusb-quirks.patch
 Patch33: cups-use-ipp1.1.patch
 Patch34: cups-avahi-no-threaded.patch
@@ -63,8 +63,6 @@ Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 Patch38: cups-resolv_reload.patch
 Patch39: cups-ypbind.patch
-Patch40: cups-no-dest.patch
-Patch41: cups-cupsenumdests2.patch
 
 Patch100: cups-lspp.patch
 
@@ -226,7 +224,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Fix temporary filename creation.
 %patch20 -p1 -b .str3382
 # Use mode 0755 for binaries and libraries where appropriate.
-%patch21 -p1 -b .0755
+#%%patch21 -p1 -b .0755
 # Add an SNMP query for HP's device ID OID (STR #3552).
 %patch22 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
@@ -242,7 +240,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
 %patch30 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
-%patch31 -p1 -b .no-gcry
+#%%patch31 -p1 -b .no-gcry
 # Added libusb quirk for Canon PIXMA MP540 (bug #967873).
 %patch32 -p1 -b .libusb-quirks
 # Default to IPP/1.1 for now (bug #977813).
@@ -259,10 +257,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch38 -p1 -b .resolv_reload
 # CUPS may fail to start if NIS groups are used (bug #1494558)
 %patch39 -p1 -b .ypbind
-# Can not get destinations from CUPS server (bug #1484916)
-%patch40 -p1 -b .no-dest
-# Cannot browse CUPS servers in GNOME Control Panel Printers (bug #1498091)
-%patch41 -p1 -b .cupsenumdests2
 
 %if %{lspp}
 # LSPP support.
@@ -298,6 +292,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 %if %{lspp}
 	--enable-lspp \
 %endif
+  --with-exe-file-perm=0755 \
 	--with-cupsd-file-perm=0755 \
 	--with-log-file-perm=0600 \
 	--enable-relro \
@@ -501,7 +496,7 @@ rm -f %{cups_serverbin}/backend/smb
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
-#%{_sysconfdir}/cups/interfaces
+#%%{_sysconfdir}/cups/interfaces
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
@@ -563,6 +558,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates/pt_BR
 %{_datadir}/cups/templates/*.tmpl
 %{_datadir}/cups/templates/de/*.tmpl
+%{_datadir}/cups/templates/fr/*.tmpl
 %{_datadir}/cups/templates/es/*.tmpl
 %{_datadir}/cups/templates/ja/*.tmpl
 %{_datadir}/cups/templates/ru/*.tmpl
@@ -628,6 +624,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Oct 17 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.5-1
+- rebase to 2.2.5
+
 * Mon Oct 09 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.4-7
 - removing ghostscript-cups dependency - cups-filters ships it
 
