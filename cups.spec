@@ -14,7 +14,7 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.5
+Version: 2.2.6
 Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
@@ -55,7 +55,6 @@ Patch27: cups-avahi-address.patch
 Patch29: cups-dymo-deviceid.patch
 Patch30: cups-freebind.patch
 #Patch31: cups-no-gcry.patch
-Patch32: cups-libusb-quirks.patch
 Patch33: cups-use-ipp1.1.patch
 Patch34: cups-avahi-no-threaded.patch
 Patch35: cups-ipp-multifile.patch
@@ -241,8 +240,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch30 -p1 -b .freebind
 # Don't link against libgcrypt needlessly.
 #%%patch31 -p1 -b .no-gcry
-# Added libusb quirk for Canon PIXMA MP540 (bug #967873).
-%patch32 -p1 -b .libusb-quirks
 # Default to IPP/1.1 for now (bug #977813).
 %patch33 -p1 -b .use-ipp1.1
 # Don't use D-Bus from two threads (bug #979748).
@@ -624,6 +621,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Nov 03 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-1
+- rebase to 2.2.6
+
 * Tue Oct 17 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.5-1
 - rebase to 2.2.5
 
