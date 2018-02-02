@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -437,9 +437,7 @@ exit 0
 %systemd_post cups-lpd.socket
 exit 0
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %preun
 %systemd_preun %{name}.path %{name}.socket %{name}.service
@@ -618,6 +616,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Feb 02 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1:2.2.6-4
+- Switch to %%ldconfig_scriptlets
+
 * Sat Jan 20 2018 Björn Esser <besser82@fedoraproject.org> - 1:2.2.6-3
 - Rebuilt for switch to libxcrypt
 
