@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -61,6 +61,7 @@ Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 Patch38: cups-ypbind.patch
+Patch39: cups-moved-logs.patch
 
 Patch100: cups-lspp.patch
 
@@ -263,10 +264,15 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch100 -p1 -b .lspp
 %endif
 
+# Move log files into journal (bug #1519331)
+%patch39 -p1 -b .moved-logs
+
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
-# Log to the system journal by default (bug #1078781).
+# Log to the system journal by default (bug #1078781, bug #1519331).
 sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
+sed -i -e 's,^AccessLog .*$,AccessLog syslog,' conf/cups-files.conf.in
+sed -i -e 's,^PageLog .*,PageLog syslog,' conf/cups-files.conf.in
 
 # Add comment text mentioning syslog is systemd journal (bug #1358589)
 sed -i -e 's,\"syslog\",\"syslog\" \(syslog means systemd journal by default\),' conf/cups-files.conf.in
@@ -303,6 +309,8 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--enable-gnutls \
 	--enable-webif \
 	--with-xinetd=no \
+	--with-access-log-level=actions \
+	--enable-page-logging \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -414,9 +422,20 @@ for keyword in PageLogFormat; do
     /bin/sed -i -e "s,^$keyword,#$keyword,i" "$FILE" || :
 done
 
-# We've been using 'journal' name in our journal.patch for couple releases,
-# but upstream decided not to use 'journal', but 'syslog'.
-sed -i -e 's,^ErrorLog journal,ErrorLog syslog,' %{_sysconfdir}/cups/cups-files.conf
+# Because of moving logs to journal, we need to create placeholder files
+# at /var/log/cups for users, whose are going to install CUPS on new OS
+# machine with info message
+%if 0%{?rhel} > 7 || 0%{?fedora} > 27
+message="This CUPS log has been moved into journal by default unless changes have been made in /etc/cups/cups-files.conf. Log messages can be got by \"$ journalctl -u cups -e\""
+for i in error_log access_log page_log
+do
+  if [ ! -f %{_localstatedir}/log/cups/$i ]
+  then
+    %{_bindir}/touch %{_localstatedir}/log/cups/$i || :
+    %{_bindir}/echo $message >> %{_localstatedir}/log/cups/$i || :
+  fi
+done
+%endif
 
 exit 0
 
@@ -476,6 +495,20 @@ exit 0
 %triggerun -- samba-client
 [ $2 = 0 ] || exit 0
 rm -f %{cups_serverbin}/backend/smb
+
+# This trigger is for putting info message to /var/log/cups files, if user is
+# going to update to newer OS
+%if 0%{?rhel} > 7 || 0%{?fedora} > 27
+%triggerin -- cups < 2.2.4-7
+for i in error_log access_log page_log
+do
+  if [ -f %{_localstatedir}/log/cups/$i ]
+  then
+    %{_bindir}/echo $message >> %{_localstatedir}/log/cups/$i || :
+  fi
+done
+exit 0
+%endif
 
 %files -f %{name}.lang
 %doc README.md CREDITS.md CHANGES.md
@@ -622,6 +655,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 20 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-7
+- 1499261 - Move log files into journal
+
 * Mon Feb 19 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-6
 - gcc and gcc-c++ is not in buildroot by default now
 
