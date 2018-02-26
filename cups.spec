@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -71,7 +71,7 @@ Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 
 Provides: cupsddk cupsddk-drivers
 
-BuildRequires: pam-devel pkgconfig
+BuildRequires: pam-devel pkgconf-pkg-config
 BuildRequires: pkgconfig(gnutls)
 BuildRequires: libacl-devel
 BuildRequires: openldap-devel
@@ -655,6 +655,9 @@ exit 0
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Feb 26 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-8
+- pkgconfig is now shipped in pkgconf-pkg-config package
+
 * Tue Feb 20 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-7
 - 1499261 - Move log files into journal
 
