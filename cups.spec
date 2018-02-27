@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -292,6 +292,8 @@ aclocal -I config-scripts
 autoconf -I config-scripts
 
 %build
+# add Fedora specific flags to DSOFLAGS
+export DSOFLAGS="$DSOFLAGS -L../cgi-bin -L../filter -L../ppdc -L../scheduler -Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-z,relro,-z,now -fPIE -pie" 
 export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 # --enable-debug to avoid stripping binaries
 %configure --with-docdir=%{_datadir}/%{name}/www --enable-debug \
@@ -655,6 +657,9 @@ exit 0
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 27 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-9
+- 1548120 - cups: Partial injection of Fedora build flags
+
 * Mon Feb 26 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-8
 - pkgconfig is now shipped in pkgconf-pkg-config package
 
