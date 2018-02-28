@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -428,13 +428,23 @@ done
 # at /var/log/cups for users, whose are going to install CUPS on new OS
 # machine with info message
 %if 0%{?rhel} > 7 || 0%{?fedora} > 27
-message="This CUPS log has been moved into journal by default unless changes have been made in /etc/cups/cups-files.conf. Log messages can be got by \"$ journalctl -u cups -e\""
-for i in error_log access_log page_log
+confignames=( "ErrorLog" "AccessLog" "PageLog" )
+lognames=( "error_log" "access_log" "page_log" )
+message="This CUPS log has been moved into journal by default unless changes have     been made in /etc/cups/cups-files.conf. Log messages can be got by \"$ journalctl -u  cups -e\""
+for ((i=0;i<${#confignames[@]};i++));
 do
-  if [ ! -f %{_localstatedir}/log/cups/$i ]
+  found=`grep -i "${confignames[i]} syslog" /etc/cups/cups-files.conf`
+  if [ ! -z "$found" ]
   then
-    %{_bindir}/touch %{_localstatedir}/log/cups/$i || :
-    %{_bindir}/echo $message >> %{_localstatedir}/log/cups/$i || :
+    if [ ! -f %{_localstatedir}/log/cups/${lognames[i]} ]
+    then
+      %{_bindir}/touch %{_localstatedir}/log/cups/${lognames[i]} || :
+    fi
+    lastmessage=`%{_bindir}/tail -n 1 %{_localstatedir}/log/cups/${lognames[i]} | grep "$message"`
+    if [ -z "$lastmessage" ]
+    then
+      %{_bindir}/echo $message >> %{_localstatedir}/log/cups/${lognames[i]} || :
+    fi
   fi
 done
 %endif
@@ -497,20 +507,6 @@ exit 0
 %triggerun -- samba-client
 [ $2 = 0 ] || exit 0
 rm -f %{cups_serverbin}/backend/smb
-
-# This trigger is for putting info message to /var/log/cups files, if user is
-# going to update to newer OS
-%if 0%{?rhel} > 7 || 0%{?fedora} > 27
-%triggerin -- cups < 2.2.4-7
-for i in error_log access_log page_log
-do
-  if [ -f %{_localstatedir}/log/cups/$i ]
-  then
-    %{_bindir}/echo $message >> %{_localstatedir}/log/cups/$i || :
-  fi
-done
-exit 0
-%endif
 
 %files -f %{name}.lang
 %doc README.md CREDITS.md CHANGES.md
@@ -661,6 +657,9 @@ exit 0
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Feb 28 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-11
+- remake of 1499261
+
 * Wed Feb 28 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-10
 - mention library names explicitly to warn about soname change
 
