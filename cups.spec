@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.6
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -618,7 +618,11 @@ exit 0
 
 %files libs
 %{license} LICENSE.txt
-%{_libdir}/*.so.*
+%{_libdir}/libcups.so.2
+%{_libdir}/libcupscgi.so.1
+%{_libdir}/libcupsimage.so.2
+%{_libdir}/libcupsmime.so.1
+%{_libdir}/libcupsppdc.so.1
 
 %files filesystem
 %dir %{cups_serverbin}
@@ -657,6 +661,9 @@ exit 0
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Feb 28 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-10
+- mention library names explicitly to warn about soname change
+
 * Tue Feb 27 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.6-9
 - 1548120 - cups: Partial injection of Fedora build flags
 
