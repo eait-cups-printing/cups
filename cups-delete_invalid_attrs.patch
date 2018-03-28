@@ -1,0 +1,54 @@
+diff --git a/scheduler/ipp.c b/scheduler/ipp.c
+index 02dc392..0fc2d07 100644
+--- a/scheduler/ipp.c
++++ b/scheduler/ipp.c
+@@ -1615,15 +1615,30 @@
+                     _("Bad job-name value: Wrong type or count."));
+     if ((attr = ippCopyAttribute(con->response, attr, 0)) != NULL)
+       attr->group_tag = IPP_TAG_UNSUPPORTED_GROUP;
++
++    if (StrictConformance)
+     return (NULL);
++
++    /* Don't use invalid attribute */
++    ippDeleteAttribute(con->request, attr);
++
++    ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL, "Untitled");
+   }
+   else if (!ippValidateAttribute(attr))
+   {
+     send_ipp_status(con, IPP_ATTRIBUTES, _("Bad job-name value: %s"),
+                     cupsLastErrorString());
++
+     if ((attr = ippCopyAttribute(con->response, attr, 0)) != NULL)
+       attr->group_tag = IPP_TAG_UNSUPPORTED_GROUP;
++
++    if (StrictConformance)
+     return (NULL);
++
++    /* Don't use invalid attribute */
++    ippDeleteAttribute(con->request, attr);
++
++    ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", NULL, "Untitled");
+   }
+ 
+   attr = ippFindAttribute(con->request, "requesting-user-name", IPP_TAG_NAME);
+@@ -1631,9 +1646,17 @@ add_job(cupsd_client_t  *con,		/* I - Client connection */
+   if (attr && !ippValidateAttribute(attr))
+   {
+     send_ipp_status(con, IPP_ATTRIBUTES, _("Bad requesting-user-name value: %s"), cupsLastErrorString());
++
+     if ((attr = ippCopyAttribute(con->response, attr, 0)) != NULL)
+       attr->group_tag = IPP_TAG_UNSUPPORTED_GROUP;
+-    return (NULL);
++
++    if (StrictConformance)
++      return (NULL);
++
++    /* Don't use invalid attribute */
++    ippDeleteAttribute(con->request, attr);
++
++    attr = ippAddString(con->request, IPP_TAG_JOB, IPP_TAG_NAME, "reqeusting-user-name", NULL, "anonymous");
+   }
+ 
+ #ifdef WITH_LSPP
