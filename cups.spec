@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.6
-Release: 13%{?dist}
+Version: 2.2.7
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -61,8 +61,7 @@ Patch35: cups-ipp-multifile.patch
 Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 Patch38: cups-ypbind.patch
-Patch39: cups-moved-logs.patch
-Patch40: cups-dbus_crash.patch
+Patch39: cups-substitute-bad-attrs.patch
 
 Patch100: cups-lspp.patch
 
@@ -264,10 +263,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch100 -p1 -b .lspp
 %endif
 
-# Move log files into journal (bug #1519331)
-%patch39 -p1 -b .moved-logs
-
-%patch40 -p1 -b .dbus_notify
+# substitute default values for invalid job attributes (upstream issues #5229 and #5186)
+%patch39 -p1 -b .substitute-bad-attrs
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -659,6 +656,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
+- rebase to 2.2.7 
+- substitute default values for invalid job attributes (upstream issues #5229 and #5186)
+
 * Thu Mar 29 2018 Pavel Zhukov <pzhukov@redhat.com> - 1:2.2.6-13
 - Use dbus fix instead of general attr delete (upstream)
 
