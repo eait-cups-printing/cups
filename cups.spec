@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -62,6 +62,10 @@ Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 Patch38: cups-ypbind.patch
 Patch39: cups-substitute-bad-attrs.patch
+# cupsd LogLevel ignored when logging to journald (syslog) (#1589593) - 
+# cups logging ignored log level when logging was set to syslog and
+# it did not support job logging history
+Patch40: cups-journal-history.patch
 
 Patch100: cups-lspp.patch
 
@@ -265,6 +269,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 # substitute default values for invalid job attributes (upstream issues #5229 and #5186)
 %patch39 -p1 -b .substitute-bad-attrs
+# cupsd LogLevel ignored when logging to journald (syslog) (bug #1589593)
+%patch40 -p1 -b .journal-history
 
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
@@ -656,6 +662,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jun 12 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-2
+- 1589593 - cupsd LogLevel ignored when logging to journald (syslog)
+
 * Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
 - rebase to 2.2.7 
 - substitute default values for invalid job attributes (upstream issues #5229 and #5186)
