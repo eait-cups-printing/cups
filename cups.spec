@@ -86,6 +86,8 @@ BuildRequires: systemd
 BuildRequires: pkgconfig(libsystemd)
 BuildRequires: pkgconfig(dbus-1)
 BuildRequires: automake
+# needed for decompressing functions when reading from gzipped ppds
+BuildRequires: zlib-devel
 
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
@@ -664,6 +666,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Tue Jun 12 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-2
 - 1589593 - cupsd LogLevel ignored when logging to journald (syslog)
+- 1590123 - cups-driverd doesn't recognize static gzipped ppds
 
 * Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
 - rebase to 2.2.7 
