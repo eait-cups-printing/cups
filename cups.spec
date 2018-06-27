@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.7
-Release: 2%{?dist}
+Version: 2.2.8
+Release: 1%{?dist}
 License: GPLv2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -27,47 +27,119 @@ Source6: cups.logrotate
 Source7: ncp.backend
 Source8: macros.cups
 
+# some man pages are shipped gzipped, don't do it 
 Patch1: cups-no-gzip-man.patch
+# PAM enablement, very old patch, not even git can track when or why
+# the patch was added.
 Patch2: cups-system-auth.patch
+# cups-config from devel package conflicted on multilib arches,
+# fixed hack with pkg-config calling for gnutls' libdir variable
 Patch3: cups-multilib.patch
+# if someone makes a change to banner files, then there will <banner>.rpmnew
+# with next update of cups-filters - this patch makes sure the banner file 
+# changed by user is used and .rpmnew or .rpmsave is ignored
+# Note: This could be rewrite with use a kind of #define and send to upstream
 Patch5: cups-banners.patch
-Patch6: cups-serverbin-compat.patch
+# don't export ssl libs to cups-config - can't find the reason.
 Patch7: cups-no-export-ssllibs.patch
+# enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
 Patch8: cups-direct-usb.patch
-Patch9: cups-lpr-help.patch
-Patch10: cups-peercred.patch
-Patch11: cups-pid.patch
+# fix for redhat dbus spooler - adding new dbus functions to backend/ipp.c
+# -> initialize dbus connection and sending dbus broadcast about job queued
+# on remote queue with QueueChanged type for PRINTER_CHANGED, JOB_STATE_CHANGED
+# and PRINTER_STATE_CHANGED events 
 Patch12: cups-eggcups.patch
+# when system workload is high, timeout for cups-driverd can be reached -
+# increase the timeout
 Patch13: cups-driverd-timeout.patch
-Patch14: cups-strict-ppd-line-length.patch
+# cupsd implement its own logrotate, but when MaxLogSize 0 is used, logrotated
+# takes care of it
 Patch15: cups-logrotate.patch
+# usb backend didn't get any notification about out-of-paper because of kernel 
 Patch16: cups-usb-paperout.patch
-Patch17: cups-res_init.patch
-Patch18: cups-filter-debug.patch
+# uri compatibility with old Fedoras
 Patch19: cups-uri-compat.patch
-Patch20: cups-str3382.patch
-#Patch21: cups-0755.patch
+# fixing snmp oid for hp printer - upstream doesn't want to support too much
+# snmp backend, because it's deprecated
 Patch22: cups-hp-deviceid-oid.patch
-Patch23: cups-dnssd-deviceid.patch
+# same as HP OID
 Patch24: cups-ricoh-deviceid-oid.patch
+# change to notify type, because when it fails to start, it gives a error
+# message
 Patch25: cups-systemd-socket.patch
-Patch27: cups-avahi-address.patch
-Patch29: cups-dymo-deviceid.patch
+# use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
+# by default
 Patch30: cups-freebind.patch
-#Patch31: cups-no-gcry.patch
-Patch33: cups-use-ipp1.1.patch
-Patch34: cups-avahi-no-threaded.patch
+# add support of multifile
 Patch35: cups-ipp-multifile.patch
+# prolongs web ui timeout
 Patch36: cups-web-devices-timeout.patch
+# needs to be set to Yes to avoid race conditions
 Patch37: cups-synconclose.patch
+# ypbind must be started before cups if NIS configured
 Patch38: cups-ypbind.patch
-Patch39: cups-substitute-bad-attrs.patch
+
+# selinux and audit enablement for CUPS - needs work and CUPS upstream wants
+# to have these features implemented their way in the future
+Patch100: cups-lspp.patch
+
+# reported upstream or upstream patches - possible removal later
+# adding --help option to lpr command
+Patch9: cups-lpr-help.patch
+# adds logs when job fails due bad conversion
+Patch18: cups-filter-debug.patch
+# add device id for dymo printer
+Patch29: cups-dymo-deviceid.patch
 # cupsd LogLevel ignored when logging to journald (syslog) (#1589593) - 
 # cups logging ignored log level when logging was set to syslog and
-# it did not support job logging history
+# it did not support job logging history (upstream https://github.com/apple/cups/pull/5337)
 Patch40: cups-journal-history.patch
+# cupsd crashes when AccessLog is NULL (upstream https://github.com/apple/cups/issues/5309)
+Patch41: cups-accesslog-null.patch
+# printing with epson crashes when page size is A4/A6 (upstream https://github.com/apple/cups/issues/5323)
+Patch42: cups-epson-A6-crash.patch
+# gnome-control-center eats a lot CPU - regression in ippValidateAttribute (upstream https://github.com/apple/cups/issues/5330 , https://github.com/apple/cups/issues/5322)
+Patch43: cups-ippvalidateattr-regression.patch
+# IPP everywhere driver isn't in web UI (upstream https://github.com/apple/cups/issues/5338)
+Patch44: cups-ippeve-webui.patch
 
-Patch100: cups-lspp.patch
+##### Patches removed because IMHO they aren't no longer needed
+##### but still I'll leave them in git in case their removal
+##### breaks something. 
+# every filter and backend should be in /usr/lib/cups, the patch for
+# for /usr/lib64/cups is not needed
+#Patch6: cups-serverbin-compat.patch
+# <sys/socket.h> is included in http-private.h, which is included in 
+# cups-private.h and cups-private.h is included in cupsd.h
+#Patch10: cups-peercred.patch
+# cupsd doesn't save its pid number by default - the patch was introduced for
+# initscripts, which are deprecated - I'll remove this patch for now
+#Patch11: cups-pid.patch
+# enforce ppd line length only when PPD_CONFORM_STRICT is set for old 
+# foomatic (from RHEL 3/4)
+#Patch14: cups-strict-ppd-line-length.patch
+# glibc's getaddrinfo now reacts on changes in /etc/resolv.conf and restarts
+# resolver by itself (https://bugzilla.redhat.com/show_bug.cgi?id=1374239)
+#Patch17: cups-res_init.patch
+# upstream especially doesn't want to use mkstemp because of bad API and 
+# portability - because it is patch because of depreacated cups-lpd,
+# I remove it because of divergence from upstream
+#Patch20: cups-str3382.patch
+# now done by configure option
+#Patch21: cups-0755.patch
+# markes fuzzy device ids - created from mdns message - with FZY, not in upstream
+# not clear benefit - removing for now
+#Patch23: cups-dnssd-deviceid.patch
+# upstream rejected this patch, don't diverge from upstream - when trying to use
+# dnssd uri discovered by dnssd backend then printing failed
+#Patch27: cups-avahi-address.patch
+# seems unnecessary derivation from upstream
+#Patch31: cups-no-gcry.patch
+# Removing this patch, because we want to default to IPP 2.0, which is needed
+# by IPP Everywhere
+#Patch33: cups-use-ipp1.1.patch
+# rejected by upstream, possibly fixed by str4347.patch according upstream
+#Patch34: cups-avahi-no-threaded.patch
 
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
@@ -204,7 +276,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Ignore rpm save/new files in the banners directory.
 %patch5 -p1 -b .banners
 # Use compatibility fallback path for ServerBin.
-%patch6 -p1 -b .serverbin-compat
+#%%patch6 -p1 -b .serverbin-compat
 # Don't export SSLLIBS to cups-config.
 %patch7 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
@@ -212,39 +284,39 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Add --help option to lpr.
 %patch9 -p1 -b .lpr-help
 # Fix compilation of peer credentials support.
-%patch10 -p1 -b .peercred
+#%%patch10 -p1 -b .peercred
 # Maintain a cupsd.pid file.
-%patch11 -p1 -b .pid
+#%%patch11 -p1 -b .pid
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
 %patch12 -p1 -b .eggcups
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch13 -p1 -b .driverd-timeout
 # Only enforce maximum PPD line length when in strict mode.
-%patch14 -p1 -b .strict-ppd-line-length
+#%%patch14 -p1 -b .strict-ppd-line-length
 # Re-open the log if it has been logrotated under us.
 %patch15 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
 %patch16 -p1 -b .usb-paperout
 # Re-initialise the resolver on failure in httpAddrGetList() (bug #567353).
-%patch17 -p1 -b .res_init
+#%%patch17 -p1 -b .res_init
 # Log extra debugging information if no filters are available.
 %patch18 -p1 -b .filter-debug
 # Allow the usb backend to understand old-style URI formats.
 %patch19 -p1 -b .uri-compat
 # Fix temporary filename creation.
-%patch20 -p1 -b .str3382
+#%%patch20 -p1 -b .str3382
 # Use mode 0755 for binaries and libraries where appropriate.
 #%%patch21 -p1 -b .0755
 # Add an SNMP query for HP's device ID OID (STR #3552).
 %patch22 -p1 -b .hp-deviceid-oid
 # Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-%patch23 -p1 -b .dnssd-deviceid
+#%%patch23 -p1 -b .dnssd-deviceid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
 %patch24 -p1 -b .ricoh-deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
 %patch25 -p1 -b .systemd-socket
 # Use IP address when resolving DNSSD URIs (bug #948288).
-%patch27 -p1 -b .avahi-address
+#%%patch27 -p1 -b .avahi-address
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch29 -p1 -b .dymo-deviceid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
@@ -252,9 +324,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # Don't link against libgcrypt needlessly.
 #%%patch31 -p1 -b .no-gcry
 # Default to IPP/1.1 for now (bug #977813).
-%patch33 -p1 -b .use-ipp1.1
+#%%patch33 -p1 -b .use-ipp1.1
 # Don't use D-Bus from two threads (bug #979748).
-%patch34 -p1 -b .avahi-no-threaded
+#%%patch34 -p1 -b .avahi-no-threaded
 # Fixes for jobs with multiple files and multiple formats.
 %patch35 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
@@ -269,11 +341,15 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch100 -p1 -b .lspp
 %endif
 
-# substitute default values for invalid job attributes (upstream issues #5229 and #5186)
-%patch39 -p1 -b .substitute-bad-attrs
 # cupsd LogLevel ignored when logging to journald (syslog) (bug #1589593)
 %patch40 -p1 -b .journal-history
+%patch41 -p1 -b .accesslog-null
+%patch42 -p1 -b .epson-A6-crash
+%patch43 -p1 -b .ippvalidateattr-regression
+%patch44 -p1 -b .ippeve-webui
 
+# if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
+# in cupsd.conf to disable cupsd logrotate functionality and use logrotated
 sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -664,6 +740,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Jun 27 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-1
+- 2.2.8, removing several downstream patches, adding some upstream patches
+
 * Tue Jun 12 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-2
 - 1589593 - cupsd LogLevel ignored when logging to journald (syslog)
 - 1590123 - cups-driverd doesn't recognize static gzipped ppds
