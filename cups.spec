@@ -15,8 +15,8 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 2%{?dist}
-License: GPLv2
+Release: 3%{?dist}
+License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
@@ -740,6 +740,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Jul 24 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-3
+- correcting license
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.2.8-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
