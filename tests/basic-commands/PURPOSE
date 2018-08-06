@@ -1,0 +1,11 @@
+Test Name: basic commands
+Author: Yulia Kopkova <ykopkova@redhat.com>
+Location: /CoreOS/cups/Sanity/basic_commands/Makefile
+
+Short Description: Test for basic CUPS commands
+
+
+Long Description:
+
+Test covers basic commands such as: lpadmin, lp, lpr, lpstat, cancel, lpinfo, lpq, lpc, lprm
+Test based on CUPS test plan from http://www.cups.org
