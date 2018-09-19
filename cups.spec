@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -65,7 +65,8 @@ Patch22: cups-hp-deviceid-oid.patch
 # same as HP OID
 Patch24: cups-ricoh-deviceid-oid.patch
 # change to notify type, because when it fails to start, it gives a error
-# message
+# message + renaming org.cups.cupsd names, because we have cups units in
+# in older Fedoras
 Patch25: cups-systemd-socket.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
@@ -740,6 +741,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Sep 19 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-4
+- 1618018 - Make cups systemd unit files more upstream-like
+
 * Tue Jul 24 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-3
 - correcting license
 
