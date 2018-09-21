@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -103,6 +103,8 @@ Patch42: cups-epson-A6-crash.patch
 Patch43: cups-ippvalidateattr-regression.patch
 # IPP everywhere driver isn't in web UI (upstream https://github.com/apple/cups/issues/5338)
 Patch44: cups-ippeve-webui.patch
+# fixed covscan issues from upstream
+Patch45: 0001-Fix-memory-leaks-found-by-Coverity-Issue-5375.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -348,6 +350,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch42 -p1 -b .epson-A6-crash
 %patch43 -p1 -b .ippvalidateattr-regression
 %patch44 -p1 -b .ippeve-webui
+# fixed covscan issues from upstream
+%patch45 -p1 -b .covscan
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -741,6 +745,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Sep 21 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-5
+- fixed coverity issues
+
 * Wed Sep 19 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-4
 - 1618018 - Make cups systemd unit files more upstream-like
 
