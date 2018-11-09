@@ -149,6 +149,7 @@ Patch46: 0001-Fix-stuck-multi-file-jobs-Issue-5359-Issue-5413.patch
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-ipptool%{?_isa} = %{epoch}:%{version}-%{release}
 
 Provides: cupsddk cupsddk-drivers
 
@@ -750,6 +751,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Fri Nov 09 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-6
 - 1622432 - Jobs with multiple files don't complete when backend fails
+- 1648396 - 'cupsd[998]: [CGI] Unable to execute ippfind utility: No such file or directory' in journal
 
 * Fri Sep 21 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-5
 - fixed coverity issues
