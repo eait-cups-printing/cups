@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -107,6 +107,8 @@ Patch44: cups-ippeve-webui.patch
 Patch45: 0001-Fix-memory-leaks-found-by-Coverity-Issue-5375.patch
 # 1622432 - multiple file job can stuck when data transfer is interrupted, so now it is aborted (https://github.com/apple/cups/pull/5413)
 Patch46: 0001-Fix-stuck-multi-file-jobs-Issue-5359-Issue-5413.patch
+# 1657750 - CVE-2018-4700 cups: Predictable session cookie breaks CSRF protection [fedora-all]
+Patch47: 0001-CVE-2018-4700-Linux-session-cookies-used-a-predictab.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -356,6 +358,7 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # fixed covscan issues from upstream
 %patch45 -p1 -b .covscan
 %patch46 -p1 -b .multifile-stuck
+%patch47 -p1 -b .predictable-cookie
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -749,6 +752,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Dec 10 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-7
+- 1657750 - CVE-2018-4700 cups: Predictable session cookie breaks CSRF protection [fedora-all]
+
 * Fri Nov 09 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-6
 - 1622432 - Jobs with multiple files don't complete when backend fails
 - 1648396 - 'cupsd[998]: [CGI] Unable to execute ippfind utility: No such file or directory' in journal
