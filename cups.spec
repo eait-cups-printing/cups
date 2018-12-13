@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -534,6 +534,8 @@ do
     if [ ! -f %{_localstatedir}/log/cups/${lognames[i]} ]
     then
       %{_bindir}/touch %{_localstatedir}/log/cups/${lognames[i]} || :
+      %{_bindir}/chown root:lp %{_localstatedir}/log/cups/${lognames[i]} || :
+      %{_bindir}/chmod 600 %{_localstatedir}/log/cups/${lognames[i]} || :
     fi
     lastmessage=`%{_bindir}/tail -n 1 %{_localstatedir}/log/cups/${lognames[i]} | grep "$message"`
     if [ -z "$lastmessage" ]
@@ -755,6 +757,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Thu Dec 13 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-9
+- logs need to have correct permissions
+
 * Wed Dec 12 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-8
 - 1658673 - Main index.html of web interface doesn't get installed when not installing documentation
 
