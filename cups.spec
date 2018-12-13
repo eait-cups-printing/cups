@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -633,15 +633,18 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
-%doc %{_datadir}/%{name}/www/index.html
-%doc %{_datadir}/%{name}/www/help
-%doc %{_datadir}/%{name}/www/robots.txt
-%doc %{_datadir}/%{name}/www/de/index.html
-%doc %{_datadir}/%{name}/www/es/index.html
-%doc %{_datadir}/%{name}/www/ja/index.html
-%doc %{_datadir}/%{name}/www/ru/index.html
-%doc %{_datadir}/%{name}/www/pt_BR/index.html
-%doc %{_datadir}/%{name}/www/apple-touch-icon.png
+# 1658673 - html files cannot be docs, because CUPS web ui will not have
+# introduction page on Fedora Docker image (because rpms are installed
+# without docs there because of space reasons)
+%{_datadir}/%{name}/www/index.html
+%{_datadir}/%{name}/www/help
+%{_datadir}/%{name}/www/robots.txt
+%{_datadir}/%{name}/www/de/index.html
+%{_datadir}/%{name}/www/es/index.html
+%{_datadir}/%{name}/www/ja/index.html
+%{_datadir}/%{name}/www/ru/index.html
+%{_datadir}/%{name}/www/pt_BR/index.html
+%{_datadir}/%{name}/www/apple-touch-icon.png
 %dir %{_datadir}/%{name}/usb
 %{_datadir}/%{name}/usb/org.cups.usb-quirks
 %{_unitdir}/%{name}.service
@@ -752,6 +755,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Dec 12 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-8
+- 1658673 - Main index.html of web interface doesn't get installed when not installing documentation
+
 * Mon Dec 10 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-7
 - 1657750 - CVE-2018-4700 cups: Predictable session cookie breaks CSRF protection [fedora-all]
 
