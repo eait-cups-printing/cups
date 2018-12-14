@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.8
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -528,16 +528,24 @@ lognames=( "error_log" "access_log" "page_log" )
 message="This CUPS log has been moved into journal by default unless changes have     been made in /etc/cups/cups-files.conf. Log messages can be got by \"$ journalctl -u  cups -e\""
 for ((i=0;i<${#confignames[@]};i++));
 do
-  found=`grep -i "${confignames[i]} syslog" /etc/cups/cups-files.conf`
+  found=`%{_bindir}/grep -i "${confignames[i]} syslog" /etc/cups/cups-files.conf`
   if [ ! -z "$found" ]
   then
     if [ ! -f %{_localstatedir}/log/cups/${lognames[i]} ]
     then
       %{_bindir}/touch %{_localstatedir}/log/cups/${lognames[i]} || :
+    fi
+    perms=`%{_bindir}/ls -lah %{_localstatedir}/log/cups/${lognames[i]} | %{_bindir}/grep -v -e "\-rw-------" -e "root lp"`
+    if [ ! -z "$perms" ]
+    then
+      # we need to set correct permissions and ownership because of possible
+      # security issues
+      # we need to have it here, because previous CUPS releases had the bug.
+      # Checking permissions and ownership here fixes it.
       %{_bindir}/chown root:lp %{_localstatedir}/log/cups/${lognames[i]} || :
       %{_bindir}/chmod 600 %{_localstatedir}/log/cups/${lognames[i]} || :
     fi
-    lastmessage=`%{_bindir}/tail -n 1 %{_localstatedir}/log/cups/${lognames[i]} | grep "$message"`
+    lastmessage=`%{_bindir}/tail -n 1 %{_localstatedir}/log/cups/${lognames[i]} | %{_bindir}/grep "$message"`
     if [ -z "$lastmessage" ]
     then
       %{_bindir}/echo $message >> %{_localstatedir}/log/cups/${lognames[i]} || :
@@ -757,6 +765,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Dec 14 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-10
+- previous commit - fix for previous releases
+
 * Thu Dec 13 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-9
 - logs need to have correct permissions
 
