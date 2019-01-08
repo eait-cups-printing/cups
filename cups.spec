@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.8
-Release: 10%{?dist}
+Version: 2.2.10
+Release: 1%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -91,24 +91,6 @@ Patch9: cups-lpr-help.patch
 Patch18: cups-filter-debug.patch
 # add device id for dymo printer
 Patch29: cups-dymo-deviceid.patch
-# cupsd LogLevel ignored when logging to journald (syslog) (#1589593) - 
-# cups logging ignored log level when logging was set to syslog and
-# it did not support job logging history (upstream https://github.com/apple/cups/pull/5337)
-Patch40: cups-journal-history.patch
-# cupsd crashes when AccessLog is NULL (upstream https://github.com/apple/cups/issues/5309)
-Patch41: cups-accesslog-null.patch
-# printing with epson crashes when page size is A4/A6 (upstream https://github.com/apple/cups/issues/5323)
-Patch42: cups-epson-A6-crash.patch
-# gnome-control-center eats a lot CPU - regression in ippValidateAttribute (upstream https://github.com/apple/cups/issues/5330 , https://github.com/apple/cups/issues/5322)
-Patch43: cups-ippvalidateattr-regression.patch
-# IPP everywhere driver isn't in web UI (upstream https://github.com/apple/cups/issues/5338)
-Patch44: cups-ippeve-webui.patch
-# fixed covscan issues from upstream
-Patch45: 0001-Fix-memory-leaks-found-by-Coverity-Issue-5375.patch
-# 1622432 - multiple file job can stuck when data transfer is interrupted, so now it is aborted (https://github.com/apple/cups/pull/5413)
-Patch46: 0001-Fix-stuck-multi-file-jobs-Issue-5359-Issue-5413.patch
-# 1657750 - CVE-2018-4700 cups: Predictable session cookie breaks CSRF protection [fedora-all]
-Patch47: 0001-CVE-2018-4700-Linux-session-cookies-used-a-predictab.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -348,17 +330,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
-
-# cupsd LogLevel ignored when logging to journald (syslog) (bug #1589593)
-%patch40 -p1 -b .journal-history
-%patch41 -p1 -b .accesslog-null
-%patch42 -p1 -b .epson-A6-crash
-%patch43 -p1 -b .ippvalidateattr-regression
-%patch44 -p1 -b .ippeve-webui
-# fixed covscan issues from upstream
-%patch45 -p1 -b .covscan
-%patch46 -p1 -b .multifile-stuck
-%patch47 -p1 -b .predictable-cookie
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -723,10 +694,7 @@ rm -f %{cups_serverbin}/backend/smb
 %files libs
 %{license} LICENSE.txt
 %{_libdir}/libcups.so.2
-%{_libdir}/libcupscgi.so.1
 %{_libdir}/libcupsimage.so.2
-%{_libdir}/libcupsmime.so.1
-%{_libdir}/libcupsppdc.so.1
 
 %files filesystem
 %dir %{cups_serverbin}
@@ -765,6 +733,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Dec 14 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-1
+- 2.2.10, libcupsmime, libcupsppdc and libcupscgi libraries were removed
+
 * Fri Dec 14 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.8-10
 - previous commit - fix for previous releases
 
