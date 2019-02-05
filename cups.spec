@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -358,6 +358,9 @@ aclocal -I config-scripts
 autoconf -I config-scripts
 
 %build
+# cups can use different compiler if it is installed, so set to GCC for to be sure
+export CC=gcc
+export CXX=g++
 # add Fedora specific flags to DSOFLAGS
 export DSOFLAGS="$DSOFLAGS -L../cgi-bin -L../filter -L../ppdc -L../scheduler -Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-z,relro,-z,now -fPIE -pie" 
 export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
@@ -733,6 +736,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 05 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-3
+- 1672715 - cups fails to build if clang is installed
+
 * Thu Jan 31 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.2.10-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
