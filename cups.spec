@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -355,7 +355,7 @@ iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
 rm -f "$f"~
 
 aclocal -I config-scripts
-autoconf -I config-scripts
+autoconf -f -I config-scripts
 
 %build
 # cups can use different compiler if it is installed, so set to GCC for to be sure
@@ -736,6 +736,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Feb 19 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-4
+- automake sometimes fails to generate correct macros - so force it
+
 * Tue Feb 05 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-3
 - 1672715 - cups fails to build if clang is installed
 
