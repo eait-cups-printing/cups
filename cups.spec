@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.10
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -79,6 +79,9 @@ Patch36: cups-web-devices-timeout.patch
 Patch37: cups-synconclose.patch
 # ypbind must be started before cups if NIS configured
 Patch38: cups-ypbind.patch
+# failover backend for implementing failover functionality
+# TODO: move it to the cups-filters upstream
+Patch39: cups-failover-backend.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
@@ -325,6 +328,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch37 -p1 -b .synconclose
 # CUPS may fail to start if NIS groups are used (bug #1494558)
 %patch38 -p1 -b .ypbind
+# Add failover backend (bug #1689209)
+%patch39 -p1 -b .failover
 
 %if %{lspp}
 # LSPP support.
@@ -736,6 +741,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Mar 15 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-5
+- 1689209 - Add failover backend
+
 * Tue Feb 19 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-4
 - automake sometimes fails to generate correct macros - so force it
 
