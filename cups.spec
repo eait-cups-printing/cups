@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.10
-Release: 5%{?dist}
+Version: 2.2.11
+Release: 1%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -741,6 +741,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Tue Mar 26 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.11-1
+- 2.2.11
+
 * Fri Mar 15 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.10-5
 - 1689209 - Add failover backend
 
