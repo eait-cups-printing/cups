@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -94,6 +94,13 @@ Patch9: cups-lpr-help.patch
 Patch18: cups-filter-debug.patch
 # add device id for dymo printer
 Patch29: cups-dymo-deviceid.patch
+
+#### UPSTREAM PATCHES ####
+# possible security issue - all answers tell to
+# possible attacker supported options, which
+# can narrow the attack vector - do not send it
+# in regular message
+Patch40: cups-dont-send-http-options-field.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -335,6 +342,9 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
+
+#### UPSTREAMED PATCHES ####
+%patch40 -p1 -b .dont-send-http-options-field
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -741,6 +751,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Apr 17 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.11-2
+- 1700664 - Stop advertising the HTTP methods that are supported
+
 * Tue Mar 26 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.11-1
 - 2.2.11
 
