@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.11
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -101,6 +101,8 @@ Patch29: cups-dymo-deviceid.patch
 # can narrow the attack vector - do not send it
 # in regular message
 Patch40: cups-dont-send-http-options-field.patch
+# support Emulator ppd keyword, because Samsung drivers depend on it
+Patch41: 0001-Add-a-workaround-for-old-Samsung-drivers-Issue-5562.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -345,6 +347,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 
 #### UPSTREAMED PATCHES ####
 %patch40 -p1 -b .dont-send-http-options-field
+# Samsung depends on Emulator ppd keyword - this is temporary workaround
+%patch41 -p1 -b .samsung-workaround
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -751,6 +755,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri May 31 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.11-3
+- 1708988 - Samsung ML-1676P Laser printer fails to print document
+
 * Wed Apr 17 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.11-2
 - 1700664 - Stop advertising the HTTP methods that are supported
 
