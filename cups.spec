@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.11
-Release: 4%{?dist}
+Version: 2.2.12
+Release: 1%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -96,13 +96,6 @@ Patch18: cups-filter-debug.patch
 Patch29: cups-dymo-deviceid.patch
 
 #### UPSTREAM PATCHES ####
-# possible security issue - all answers tell to
-# possible attacker supported options, which
-# can narrow the attack vector - do not send it
-# in regular message
-Patch40: cups-dont-send-http-options-field.patch
-# support Emulator ppd keyword, because Samsung drivers depend on it
-Patch41: 0001-Add-a-workaround-for-old-Samsung-drivers-Issue-5562.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -346,9 +339,6 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %endif
 
 #### UPSTREAMED PATCHES ####
-%patch40 -p1 -b .dont-send-http-options-field
-# Samsung depends on Emulator ppd keyword - this is temporary workaround
-%patch41 -p1 -b .samsung-workaround
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -755,6 +745,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Mon Aug 19 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-1
+- 2.2.12
+
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.2.11-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
