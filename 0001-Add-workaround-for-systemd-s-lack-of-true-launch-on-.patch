@@ -4,23 +4,6 @@ Date: Thu, 5 Sep 2019 12:43:58 -0400
 Subject: [PATCH] Add workaround for systemd's lack of true launch-on-demand
  support (Issue #5640)
 
----
- CHANGES.md       | 1 +
- scheduler/main.c | 2 ++
- 2 files changed, 3 insertions(+)
-
-diff --git a/CHANGES.md b/CHANGES.md
-index 3d7271f67..b9c8d81a2 100644
---- a/CHANGES.md
-+++ b/CHANGES.md
-@@ -5,6 +5,7 @@ CHANGES - 2.3.1 - 2019-09-05
- Changes in CUPS v2.3.1
- ----------------------
- 
-+- Added a workaround for the scheduler's systemd support (Issue #5640)
- - Fixed spelling of "fold-accordion".
- - Fixed the default common name for TLS certificates used by `ippeveprinter`.
- 
 diff --git a/scheduler/main.c b/scheduler/main.c
 index 842b00a42..d5fdf971a 100644
 --- a/scheduler/main.c
