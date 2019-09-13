@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.12
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -96,6 +96,8 @@ Patch18: cups-filter-debug.patch
 Patch29: cups-dymo-deviceid.patch
 
 #### UPSTREAM PATCHES ####
+# cupsctl does not work in 2.2.12, because systemd does not have launch-on-demand feature
+Patch40: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -339,6 +341,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %endif
 
 #### UPSTREAMED PATCHES ####
+# issue saw in upstream #5640
+%patch40 -p1 -b .cupsctl-not-working
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -745,6 +749,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Fri Sep 13 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-2
+- fix cupsctl usage
+
 * Mon Aug 19 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-1
 - 2.2.12
 
