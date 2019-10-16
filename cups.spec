@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.2.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+ and LGPLv2+ with exceptions and AML
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -98,6 +98,8 @@ Patch29: cups-dymo-deviceid.patch
 #### UPSTREAM PATCHES ####
 # cupsctl does not work in 2.2.12, because systemd does not have launch-on-demand feature
 Patch40: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
+# SIGSEGV in web ui
+Patch41: 0001-SIGSEGV-in-CUPS-web-ui-when-adding-a-printer.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -343,6 +345,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 #### UPSTREAMED PATCHES ####
 # issue saw in upstream #5640
 %patch40 -p1 -b .cupsctl-not-working
+# 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
+%patch41 -p1 -b .webui-sigsegv
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -749,6 +753,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man5/ipptoolfile.5.gz
 
 %changelog
+* Wed Oct 16 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-3
+- 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
+
 * Fri Sep 13 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-2
 - fix cupsctl usage
 
