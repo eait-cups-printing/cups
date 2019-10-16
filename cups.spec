@@ -100,6 +100,10 @@ Patch29: cups-dymo-deviceid.patch
 Patch40: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
 # SIGSEGV in web ui
 Patch41: 0001-SIGSEGV-in-CUPS-web-ui-when-adding-a-printer.patch
+# some ppds use custom keyword, which is incorrect - the correct is 'Custom Size' and ppd
+# parser ended with error when encountered it. Now the parser adds underscore to incorrect
+# keyword and continues
+Patch42: 0001-PPD-files-containing-custom-option-keywords-did-not-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -347,6 +351,8 @@ Sends IPP requests to the specified URI and tests and/or displays the results.
 %patch40 -p1 -b .cupsctl-not-working
 # 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
 %patch41 -p1 -b .webui-sigsegv
+# 1750904 - cups is unable to add ppd with custom/Custom option
+%patch42 -p1 -b .ppd-custom-option
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -755,6 +761,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Oct 16 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-3
 - 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
+- 1750904 - cups is unable to add ppd with custom/Custom option
 
 * Fri Sep 13 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-2
 - fix cupsctl usage

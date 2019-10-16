@@ -3,10 +3,6 @@ From: Zdenek Dohnal <zdohnal@redhat.com>
 Date: Mon, 29 Jul 2019 10:33:06 +0200
 Subject: [PATCH] SIGSEGV in CUPS web ui when adding a printer
 
----
- cgi-bin/var.c | 3 +++
- 1 file changed, 3 insertions(+)
-
 diff --git a/cgi-bin/var.c b/cgi-bin/var.c
 index 306375bd6..fb9d051c0 100644
 --- a/cgi-bin/var.c
@@ -21,6 +17,3 @@ index 306375bd6..fb9d051c0 100644
    return (strdup(var->values[element]));
  }
  
--- 
-2.21.0
-
