@@ -14,134 +14,98 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.2.12
-Release: 3%{?dist}
-License: GPLv2+ and LGPLv2+ with exceptions and AML
+Version: 2.3.0
+Release: 1%{?dist}
+License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
-Source2: cupsprinter.png
+Source1: cupsprinter.png
 # Logrotate configuration
-Source6: cups.logrotate
+Source2: cups.logrotate
 # Backend for NCP protocol
-Source7: ncp.backend
-Source8: macros.cups
+Source3: ncp.backend
+Source4: macros.cups
 
-# some man pages are shipped gzipped, don't do it 
-Patch1: cups-no-gzip-man.patch
 # PAM enablement, very old patch, not even git can track when or why
 # the patch was added.
-Patch2: cups-system-auth.patch
+Patch1: cups-system-auth.patch
 # cups-config from devel package conflicted on multilib arches,
 # fixed hack with pkg-config calling for gnutls' libdir variable
-Patch3: cups-multilib.patch
+Patch2: cups-multilib.patch
 # if someone makes a change to banner files, then there will <banner>.rpmnew
 # with next update of cups-filters - this patch makes sure the banner file 
 # changed by user is used and .rpmnew or .rpmsave is ignored
 # Note: This could be rewrite with use a kind of #define and send to upstream
-Patch5: cups-banners.patch
+Patch3: cups-banners.patch
 # don't export ssl libs to cups-config - can't find the reason.
-Patch7: cups-no-export-ssllibs.patch
+Patch4: cups-no-export-ssllibs.patch
 # enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
-Patch8: cups-direct-usb.patch
+Patch5: cups-direct-usb.patch
 # fix for redhat dbus spooler - adding new dbus functions to backend/ipp.c
 # -> initialize dbus connection and sending dbus broadcast about job queued
 # on remote queue with QueueChanged type for PRINTER_CHANGED, JOB_STATE_CHANGED
 # and PRINTER_STATE_CHANGED events 
-Patch12: cups-eggcups.patch
+Patch6: cups-eggcups.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
-Patch13: cups-driverd-timeout.patch
+Patch7: cups-driverd-timeout.patch
 # cupsd implement its own logrotate, but when MaxLogSize 0 is used, logrotated
 # takes care of it
-Patch15: cups-logrotate.patch
+Patch8: cups-logrotate.patch
 # usb backend didn't get any notification about out-of-paper because of kernel 
-Patch16: cups-usb-paperout.patch
+Patch9: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
-Patch19: cups-uri-compat.patch
+Patch10: cups-uri-compat.patch
 # fixing snmp oid for hp printer - upstream doesn't want to support too much
 # snmp backend, because it's deprecated
-Patch22: cups-hp-deviceid-oid.patch
+Patch11: cups-hp-deviceid-oid.patch
 # same as HP OID
-Patch24: cups-ricoh-deviceid-oid.patch
+Patch12: cups-ricoh-deviceid-oid.patch
 # change to notify type, because when it fails to start, it gives a error
 # message + renaming org.cups.cupsd names, because we have cups units in
 # in older Fedoras
-Patch25: cups-systemd-socket.patch
+Patch13: cups-systemd-socket.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch30: cups-freebind.patch
+Patch14: cups-freebind.patch
 # add support of multifile
-Patch35: cups-ipp-multifile.patch
+Patch15: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch36: cups-web-devices-timeout.patch
+Patch16: cups-web-devices-timeout.patch
 # needs to be set to Yes to avoid race conditions
-Patch37: cups-synconclose.patch
+Patch17: cups-synconclose.patch
 # ypbind must be started before cups if NIS configured
-Patch38: cups-ypbind.patch
+Patch18: cups-ypbind.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch39: cups-failover-backend.patch
+Patch19: cups-failover-backend.patch
+
+# reported upstream
+# adds logs when job fails due bad conversion
+Patch20: cups-filter-debug.patch
+# add device id for dymo printer
+Patch21: cups-dymo-deviceid.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
 Patch100: cups-lspp.patch
 
-# reported upstream or upstream patches - possible removal later
-# adding --help option to lpr command
-Patch9: cups-lpr-help.patch
-# adds logs when job fails due bad conversion
-Patch18: cups-filter-debug.patch
-# add device id for dymo printer
-Patch29: cups-dymo-deviceid.patch
-
 #### UPSTREAM PATCHES ####
 # cupsctl does not work in 2.2.12, because systemd does not have launch-on-demand feature
-Patch40: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
-# SIGSEGV in web ui
-Patch41: 0001-SIGSEGV-in-CUPS-web-ui-when-adding-a-printer.patch
+Patch1001: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
+# cannot modify printer uri or create raw print queue
+Patch1002: 0001-Fix-handling-of-printer-resource-files-Issue-5652.patch
 # some ppds use custom keyword, which is incorrect - the correct is 'Custom Size' and ppd
 # parser ended with error when encountered it. Now the parser adds underscore to incorrect
 # keyword and continues
-Patch42: 0001-PPD-files-containing-custom-option-keywords-did-not-.patch
+Patch1003: 0001-PPD-files-containing-custom-option-keywords-did-not-.patch
+# SIGSEGV in web ui
+Patch1004: 0001-SIGSEGV-in-CUPS-web-ui-when-adding-a-printer.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
 ##### breaks something. 
-# every filter and backend should be in /usr/lib/cups, the patch for
-# for /usr/lib64/cups is not needed
-#Patch6: cups-serverbin-compat.patch
-# <sys/socket.h> is included in http-private.h, which is included in 
-# cups-private.h and cups-private.h is included in cupsd.h
-#Patch10: cups-peercred.patch
-# cupsd doesn't save its pid number by default - the patch was introduced for
-# initscripts, which are deprecated - I'll remove this patch for now
-#Patch11: cups-pid.patch
-# enforce ppd line length only when PPD_CONFORM_STRICT is set for old 
-# foomatic (from RHEL 3/4)
-#Patch14: cups-strict-ppd-line-length.patch
-# glibc's getaddrinfo now reacts on changes in /etc/resolv.conf and restarts
-# resolver by itself (https://bugzilla.redhat.com/show_bug.cgi?id=1374239)
-#Patch17: cups-res_init.patch
-# upstream especially doesn't want to use mkstemp because of bad API and 
-# portability - because it is patch because of depreacated cups-lpd,
-# I remove it because of divergence from upstream
-#Patch20: cups-str3382.patch
-# now done by configure option
-#Patch21: cups-0755.patch
-# markes fuzzy device ids - created from mdns message - with FZY, not in upstream
-# not clear benefit - removing for now
-#Patch23: cups-dnssd-deviceid.patch
-# upstream rejected this patch, don't diverge from upstream - when trying to use
-# dnssd uri discovered by dnssd backend then printing failed
-#Patch27: cups-avahi-address.patch
-# seems unnecessary derivation from upstream
-#Patch31: cups-no-gcry.patch
-# Removing this patch, because we want to default to IPP 2.0, which is needed
-# by IPP Everywhere
-#Patch33: cups-use-ipp1.1.patch
-# rejected by upstream, possibly fixed by str4347.patch according upstream
-#Patch34: cups-avahi-no-threaded.patch
 
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
@@ -231,6 +195,14 @@ Provides: lpd
 Summary: CUPS printing system - tool for performing IPP requests
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 
+%package printerapp
+Summary: CUPS printing system - tools for printer application
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+# ippeveprinter needs avahi for registering and sharing printer
+Requires: avahi
+# needed for mdns hostname translation
+Requires: nss-mdns
+
 %description
 CUPS printing system provides a portable printing layer for
 UNIX® operating systems. It has been developed by Apple Inc.
@@ -268,91 +240,74 @@ lpd emulation.
 %description ipptool
 Sends IPP requests to the specified URI and tests and/or displays the results.
 
+%description printerapp
+Provides IPP everywhere printer application ippeveprinter and tools for printing
+PostScript and HP PCL document formats - ippevepcl and ippeveps. The printer
+application enables older printers for IPP everywhere standard - so if older printer
+is installed with a printer application, its print queue acts as IPP everywhere printer
+to CUPS daemon. This solution will substitute printer drivers and raw queues in the future.
+
 %prep
 %setup -q -n cups-%{VERSION}
-# Don't gzip man pages in the Makefile, let rpmbuild do it.
-%patch1 -p1 -b .no-gzip-man
 # Use the system pam configuration.
-%patch2 -p1 -b .system-auth
+%patch1 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
-%patch3 -p1 -b .multilib
+%patch2 -p1 -b .multilib
 # Ignore rpm save/new files in the banners directory.
-%patch5 -p1 -b .banners
-# Use compatibility fallback path for ServerBin.
-#%%patch6 -p1 -b .serverbin-compat
+%patch3 -p1 -b .banners
 # Don't export SSLLIBS to cups-config.
-%patch7 -p1 -b .no-export-ssllibs
+%patch4 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
-%patch8 -p1 -b .direct-usb
-# Add --help option to lpr.
-%patch9 -p1 -b .lpr-help
-# Fix compilation of peer credentials support.
-#%%patch10 -p1 -b .peercred
-# Maintain a cupsd.pid file.
-#%%patch11 -p1 -b .pid
-# Fix implementation of com.redhat.PrinterSpooler D-Bus object.
-%patch12 -p1 -b .eggcups
+%patch5 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch13 -p1 -b .driverd-timeout
-# Only enforce maximum PPD line length when in strict mode.
-#%%patch14 -p1 -b .strict-ppd-line-length
+%patch7 -p1 -b .driverd-timeout
 # Re-open the log if it has been logrotated under us.
-%patch15 -p1 -b .logrotate
+%patch8 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch16 -p1 -b .usb-paperout
-# Re-initialise the resolver on failure in httpAddrGetList() (bug #567353).
-#%%patch17 -p1 -b .res_init
-# Log extra debugging information if no filters are available.
-%patch18 -p1 -b .filter-debug
+%patch9 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
-%patch19 -p1 -b .uri-compat
-# Fix temporary filename creation.
-#%%patch20 -p1 -b .str3382
-# Use mode 0755 for binaries and libraries where appropriate.
-#%%patch21 -p1 -b .0755
+%patch10 -p1 -b .uri-compat
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch22 -p1 -b .hp-deviceid-oid
-# Mark DNS-SD Device IDs that have been guessed at with "FZY:1;".
-#%%patch23 -p1 -b .dnssd-deviceid
+%patch11 -p1 -b .hp-deviceid-oid
 # Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch24 -p1 -b .ricoh-deviceid-oid
+%patch12 -p1 -b .ricoh-deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
-%patch25 -p1 -b .systemd-socket
-# Use IP address when resolving DNSSD URIs (bug #948288).
-#%%patch27 -p1 -b .avahi-address
-# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch29 -p1 -b .dymo-deviceid
+%patch13 -p1 -b .systemd-socket
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch30 -p1 -b .freebind
-# Don't link against libgcrypt needlessly.
-#%%patch31 -p1 -b .no-gcry
-# Default to IPP/1.1 for now (bug #977813).
-#%%patch33 -p1 -b .use-ipp1.1
-# Don't use D-Bus from two threads (bug #979748).
-#%%patch34 -p1 -b .avahi-no-threaded
+%patch14 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-%patch35 -p1 -b .ipp-multifile
+%patch15 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch36 -p1 -b .web-devices-timeout
+%patch16 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
-%patch37 -p1 -b .synconclose
+%patch17 -p1 -b .synconclose
 # CUPS may fail to start if NIS groups are used (bug #1494558)
-%patch38 -p1 -b .ypbind
+%patch18 -p1 -b .ypbind
 # Add failover backend (bug #1689209)
-%patch39 -p1 -b .failover
+%patch19 -p1 -b .failover
 
 %if %{lspp}
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
 
+# Log extra debugging information if no filters are available.
+%patch20 -p1 -b .filter-debug
+# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+%patch21 -p1 -b .dymo-deviceid
+
 #### UPSTREAMED PATCHES ####
-# issue saw in upstream #5640
-%patch40 -p1 -b .cupsctl-not-working
-# 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
-%patch41 -p1 -b .webui-sigsegv
+%patch1001 -p1 -b .cupsctl-not-working
+# unable to modify device uri
+%patch1002 -p1 -b .cannot-modify-uri
 # 1750904 - cups is unable to add ppd with custom/Custom option
-%patch42 -p1 -b .ppd-custom-option
+%patch1003 -p1 -b .ppd-custom-option
+# 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
+%patch1004 -p1 -b .webui-sigsegv
+
+# removed dbus patch - seems breaking things
+# Fix implementation of com.redhat.PrinterSpooler D-Bus object.
+#%%patch6 -p1 -b .eggcups
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -444,13 +399,13 @@ mv %{buildroot}%{_unitdir}/org.cups.cups-lpd@.service %{buildroot}%{_unitdir}/cu
 /bin/sed -i -e "s,org.cups.cupsd,cups,g" %{buildroot}%{_unitdir}/cups.service
 
 mkdir -p %{buildroot}%{_datadir}/pixmaps %{buildroot}%{_sysconfdir}/X11/sysconfig %{buildroot}%{_sysconfdir}/X11/applnk/System %{buildroot}%{_sysconfdir}/logrotate.d
-install -p -m 644 %{SOURCE2} %{buildroot}%{_datadir}/pixmaps
-install -p -m 644 %{SOURCE6} %{buildroot}%{_sysconfdir}/logrotate.d/cups
-install -p -m 755 %{SOURCE7} %{buildroot}%{cups_serverbin}/backend/ncp
+install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/pixmaps
+install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/cups
+install -p -m 755 %{SOURCE3} %{buildroot}%{cups_serverbin}/backend/ncp
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d
-install -m 0644 %{SOURCE8} %{buildroot}%{_rpmconfigdir}/macros.d
+install -m 0644 %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -658,7 +613,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
 %{_bindir}/cupstestppd
-%{_bindir}/cupstestdsc
+#%%{_bindir}/cupstestdsc
 %{_bindir}/ppd*
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
@@ -718,7 +673,8 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
-%{license} LICENSE.txt
+%{license} LICENSE
+%{license} NOTICE
 %{_libdir}/libcups.so.2
 %{_libdir}/libcupsimage.so.2
 
@@ -758,7 +714,18 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man1/ipptool.1.gz
 %{_mandir}/man5/ipptoolfile.5.gz
 
+%files printerapp
+%{_bindir}/ippeveprinter
+%dir %{cups_serverbin}/command
+%{cups_serverbin}/command/ippevepcl
+%{cups_serverbin}/command/ippeveps
+%{_mandir}/man1/ippeveprinter.1.gz
+%{_mandir}/man7/ippevepcl.7.gz
+
 %changelog
+* Mon Nov 18 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.0-1
+- 2.3.0 - new printerapp subpackage
+
 * Wed Oct 16 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.12-3
 - 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
 - 1750904 - cups is unable to add ppd with custom/Custom option

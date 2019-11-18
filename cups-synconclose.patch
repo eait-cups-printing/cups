@@ -23,8 +23,8 @@ diff -up cups-2.2.12/doc/help/man-cups-files.conf.html.synconclose cups-2.2.12/d
  <dd style="margin-left: 5.0em">Specifies the group(s) to use for <i>@SYSTEM</i> group authentication.
  The default contains "admin", "lpadmin", "root", "sys", and/or "system".
 diff -up cups-2.2.12/man/cups-files.conf.man.in.synconclose cups-2.2.12/man/cups-files.conf.man.in
---- cups-2.2.12/man/cups-files.conf.man.in.synconclose	2019-08-16 00:35:30.000000000 +0200
-+++ cups-2.2.12/man/cups-files.conf.man.in	2019-08-19 09:58:14.646567949 +0200
+--- cups-2.2.12/man/cups-files.conf.5.synconclose	2019-08-16 00:35:30.000000000 +0200
++++ cups-2.2.12/man/cups-files.conf.5	2019-08-19 09:58:14.646567949 +0200
 @@ -214,7 +214,7 @@ The default is "/var/run/cups" or "/etc/
  Specifies whether the scheduler calls
  .BR fsync (2)
