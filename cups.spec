@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -360,6 +360,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-xinetd=no \
 	--with-access-log-level=actions \
 	--enable-page-logging \
+	--with-rundir=/run/cups \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -568,8 +569,8 @@ rm -f %{cups_serverbin}/backend/smb
 %files -f %{name}.lang
 %doc README.md CREDITS.md CHANGES.md
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
-%dir %attr(0755,root,lp) %{_localstatedir}/run/cups
-%dir %attr(0511,lp,sys) %{_localstatedir}/run/cups/certs
+%dir %attr(0755,root,lp) /run/cups
+%dir %attr(0511,lp,sys) /run/cups/certs
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
@@ -723,6 +724,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Fri Nov 29 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.0-2
+- 1777921 - cups unit file makes systemd to complain
+
 * Mon Nov 18 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.0-1
 - 2.3.0 - new printerapp subpackage
 
