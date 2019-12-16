@@ -599,7 +599,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cupstestppd
 #%%{_bindir}/cupstestdsc
 %{_bindir}/ppd*
-%attr{755,root,root} %{cups_serverbin}/backend/ipp
+%attr(755,root,root) %{cups_serverbin}/backend/ipp
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
