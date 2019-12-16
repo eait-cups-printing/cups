@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.3.0
-Release: 2%{?dist}
+Version: 2.3.1
+Release: 1%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -92,16 +92,6 @@ Patch21: cups-dymo-deviceid.patch
 Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
-# cupsctl does not work in 2.2.12, because systemd does not have launch-on-demand feature
-Patch1001: 0001-Add-workaround-for-systemd-s-lack-of-true-launch-on-.patch
-# cannot modify printer uri or create raw print queue
-Patch1002: 0001-Fix-handling-of-printer-resource-files-Issue-5652.patch
-# some ppds use custom keyword, which is incorrect - the correct is 'Custom Size' and ppd
-# parser ended with error when encountered it. Now the parser adds underscore to incorrect
-# keyword and continues
-Patch1003: 0001-PPD-files-containing-custom-option-keywords-did-not-.patch
-# SIGSEGV in web ui
-Patch1004: 0001-SIGSEGV-in-CUPS-web-ui-when-adding-a-printer.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -297,13 +287,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch21 -p1 -b .dymo-deviceid
 
 #### UPSTREAMED PATCHES ####
-%patch1001 -p1 -b .cupsctl-not-working
-# unable to modify device uri
-%patch1002 -p1 -b .cannot-modify-uri
-# 1750904 - cups is unable to add ppd with custom/Custom option
-%patch1003 -p1 -b .ppd-custom-option
-# 1720688 - [abrt] cups: __strlen_avx2(): printers.cgi killed by SIGSEGV
-%patch1004 -p1 -b .webui-sigsegv
 
 # removed dbus patch - seems breaking things
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
@@ -616,6 +599,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cupstestppd
 #%%{_bindir}/cupstestdsc
 %{_bindir}/ppd*
+%attr{755,root,root} %{cups_serverbin}/backend/ipp
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
@@ -724,6 +708,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Mon Dec 16 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-1
+- 2.3.1
+
 * Fri Nov 29 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.0-2
 - 1777921 - cups unit file makes systemd to complain
 
