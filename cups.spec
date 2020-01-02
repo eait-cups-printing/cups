@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -599,7 +599,6 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cupstestppd
 #%%{_bindir}/cupstestdsc
 %{_bindir}/ppd*
-%attr(755,root,root) %{cups_serverbin}/backend/ipp
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
 %dir %{cups_serverbin}/daemon
@@ -708,6 +707,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Thu Jan 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-2
+- do not ship ipp backend as 755, breaks kerberized printing
+- https://github.com/apple/cups/pull/5710
+
 * Mon Dec 16 2019 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-1
 - 2.3.1
 
