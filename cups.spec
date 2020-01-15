@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -126,6 +126,9 @@ Buildrequires: gcc-c++
 
 # Make sure we get postscriptdriver tags.
 BuildRequires: python3-cups
+
+# needed for systemd rpm macros according FPG
+BuildRequires: systemd-rpm-macros
 
 %if %{lspp}
 BuildRequires: libselinux-devel
@@ -707,6 +710,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Wed Jan 15 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-3
+- add buildrequires on systemd-rpm-macros
+
 * Thu Jan 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-2
 - do not ship ipp backend as 755, breaks kerberized printing
 - https://github.com/apple/cups/pull/5710
