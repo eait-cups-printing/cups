@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -323,8 +323,8 @@ autoconf -f -I config-scripts
 
 %build
 # cups can use different compiler if it is installed, so set to GCC for to be sure
-export CC=gcc
-export CXX=g++
+export CC=%{__cc}
+export CXX=%{__cxx}
 # add Fedora specific flags to DSOFLAGS
 export DSOFLAGS="$DSOFLAGS -L../cgi-bin -L../filter -L../ppdc -L../scheduler -Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-z,relro,-z,now -fPIE -pie" 
 export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
@@ -710,6 +710,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Sat Jan 18 2020 Tom Stellard <tstellar@redhat.com> - 1:2.3.1-4
+- Replace hard-coded gcc and g++ with __cc and __cxx macros
+
 * Wed Jan 15 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-3
 - add buildrequires on systemd-rpm-macros
 
