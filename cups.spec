@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -710,6 +710,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.3.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Sat Jan 18 2020 Tom Stellard <tstellar@redhat.com> - 1:2.3.1-4
 - Replace hard-coded gcc and g++ with __cc and __cxx macros
 
