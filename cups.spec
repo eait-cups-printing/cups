@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -150,6 +150,9 @@ Requires: acl
 
 # Make sure we have some filters for converting to raster format.
 Requires: cups-filters
+
+# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
+Requires: nss-mdns
 
 %package client
 Summary: CUPS printing system - client programs
@@ -710,6 +713,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Fri Mar 20 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-6
+- add requires on nss-mdns, because getaddrinfo needs it for resolving .local addresses
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.3.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
