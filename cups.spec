@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -86,6 +86,9 @@ Patch19: cups-failover-backend.patch
 Patch20: cups-filter-debug.patch
 # add device id for dymo printer
 Patch21: cups-dymo-deviceid.patch
+# 1822154 - cups.service doesn't execute automatically on request
+# https://github.com/apple/cups/issues/5708
+Patch22: cups-autostart-when-enabled.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
@@ -294,6 +297,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch20 -p1 -b .filter-debug
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch21 -p1 -b .dymo-deviceid
+# 1822154 - cups.service doesn't execute automatically on request
+%patch22 -p1 -b .autostart-when-enabled
 
 #### UPSTREAMED PATCHES ####
 
@@ -498,6 +503,12 @@ do
   fi
 done
 %endif
+
+# needed for #1822154 for upgrade path, remove in newer releases
+if [ -e /etc/systemd/system/printer.target.wants/cups.service ]
+then
+  %{_bindir}/systemctl enable cups.service > /dev/null 2>&1
+fi
 
 exit 0
 
@@ -716,6 +727,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Wed Apr 08 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-8
+- 1822154 - cups.service doesn't execute automatically on request
+
 * Mon Apr 06 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-7
 - make avahi and nss-mdns recommended in main package - so users with older printers
   can install cups without it
