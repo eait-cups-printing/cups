@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -95,6 +95,8 @@ Patch22: cups-autostart-when-enabled.patch
 Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
+# 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
+Patch23: cups-ppdopen-heap-overflow.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -301,6 +303,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch22 -p1 -b .autostart-when-enabled
 
 #### UPSTREAMED PATCHES ####
+# 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
+%patch23 -p1 -b .ppdopen-heap-overflow
 
 # removed dbus patch - seems breaking things
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
@@ -727,6 +731,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue Apr 21 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-9
+- 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
+
 * Wed Apr 08 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-8
 - 1822154 - cups.service doesn't execute automatically on request
 
