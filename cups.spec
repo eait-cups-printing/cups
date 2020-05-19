@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.3.1
-Release: 9%{?dist}
+Version: 2.3.3
+Release: 1%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -89,14 +89,23 @@ Patch21: cups-dymo-deviceid.patch
 # 1822154 - cups.service doesn't execute automatically on request
 # https://github.com/apple/cups/issues/5708
 Patch22: cups-autostart-when-enabled.patch
+# needed for correct color support of Canon printers, which
+# reports better options in print-color-mode-supported than
+# in pwg-raster-document-type-supported
+# https://github.com/apple/cups/pull/5722/
+Patch23: cups-prioritize-print-color-mode.patch
+# leaks ppd struct in ppdc
+# https://github.com/apple/cups/pull/5738/
+Patch24: cups-ppdleak.patch
+# crashes with wide roll printers in rastertopwg filter
+# https://github.com/apple/cups/pull/5773/
+Patch25: cups-rastertopwg-crash.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
 Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
-# 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
-Patch23: cups-ppdopen-heap-overflow.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -301,10 +310,11 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch21 -p1 -b .dymo-deviceid
 # 1822154 - cups.service doesn't execute automatically on request
 %patch22 -p1 -b .autostart-when-enabled
+%patch23 -p1 -b .print-color-mode
+%patch24 -p1 -b .ppdleak
+%patch25 -p1 -b .rastertopwg-crash
 
 #### UPSTREAMED PATCHES ####
-# 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
-%patch23 -p1 -b .ppdopen-heap-overflow
 
 # removed dbus patch - seems breaking things
 # Fix implementation of com.redhat.PrinterSpooler D-Bus object.
@@ -731,6 +741,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue May 19 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-1
+- 2.3.3
+
 * Tue Apr 21 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.1-9
 - 1826330 - CVE-2020-3898 cups: heap based buffer overflow in libcups's ppdFindOption() in ppd-mark.c
 
