@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -377,7 +377,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-xinetd=no \
 	--with-access-log-level=actions \
 	--enable-page-logging \
-	--with-rundir=/run/cups \
+	--with-rundir=%{_rundir}/cups \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -449,8 +449,8 @@ mkdir -p ${RPM_BUILD_ROOT}%{_tmpfilesdir}
 cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups.conf <<EOF
 # See tmpfiles.d(5) for details
 
-d /run/cups 0755 root lp -
-d /run/cups/certs 0511 lp sys -
+d %{_rundir}/cups 0755 root lp -
+d %{_rundir}/cups/certs 0511 lp sys -
 
 d /var/spool/cups/tmp - - - 30d
 EOF
@@ -592,8 +592,8 @@ rm -f %{cups_serverbin}/backend/smb
 %files -f %{name}.lang
 %doc README.md CREDITS.md CHANGES.md
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
-%dir %attr(0755,root,lp) /run/cups
-%dir %attr(0511,lp,sys) /run/cups/certs
+%dir %attr(0755,root,lp) %{_rundir}/cups
+%dir %attr(0511,lp,sys) %{_rundir}/cups/certs
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
@@ -747,6 +747,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Thu May 21 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-3
+- use _rundir instead of hardcode /run
+
 * Wed May 20 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-2
 - 1838455 - ipp/socket backends connect to turned off device for eternity (contimeout is not applied)
 
