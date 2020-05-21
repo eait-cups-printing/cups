@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -100,6 +100,9 @@ Patch24: cups-ppdleak.patch
 # crashes with wide roll printers in rastertopwg filter
 # https://github.com/apple/cups/pull/5773/
 Patch25: cups-rastertopwg-crash.patch
+# job for disconnected devices are processing for eternity
+# https://github.com/apple/cups/pull/5782
+Patch26: cups-etimedout.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
@@ -313,6 +316,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch23 -p1 -b .print-color-mode
 %patch24 -p1 -b .ppdleak
 %patch25 -p1 -b .rastertopwg-crash
+# job for disconnected devices are processing for eternity
+# https://github.com/apple/cups/pull/5782
+%patch26 -p1 -b .etimedout
 
 #### UPSTREAMED PATCHES ####
 
@@ -741,6 +747,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Wed May 20 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-2
+- 1838455 - ipp/socket backends connect to turned off device for eternity (contimeout is not applied)
+
 * Tue May 19 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-1
 - 2.3.3
 
