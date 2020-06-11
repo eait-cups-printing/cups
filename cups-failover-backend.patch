@@ -1,42 +1,6 @@
-diff --git a/backend/Makefile b/backend/Makefile
-index 3038682..6642016 100644
---- a/backend/Makefile
-+++ b/backend/Makefile
-@@ -28,6 +28,7 @@ include ../Makedefs
- RBACKENDS =	\
- 		ipp \
- 		lpd \
-+		failover \
- 		$(DNSSD_BACKEND)
- UBACKENDS =	\
- 		snmp \
-@@ -51,6 +52,7 @@ LIBOBJS	=	\
- OBJS	=	\
- 		ipp.o \
- 		lpd.o \
-+		failover.o \
- 		dnssd.o \
- 		snmp.o \
- 		socket.o \
-@@ -275,6 +277,13 @@ lpd:	lpd.o ../cups/$(LIBCUPS) libbackend.a
- 	echo Linking $@...
- 	$(LD_CC) $(LDFLAGS) -o lpd lpd.o libbackend.a $(LIBS)
- 
-+#
-+# failover
-+#
-+
-+failover:	failover.o ../cups/$(LIBCUPS) libbackend.a
-+	echo Linking $@...
-+	$(LD_CC) $(LDFLAGS) -o failover failover.o libbackend.a $(LIBS)
- 
- #
- # snmp
-diff --git a/backend/failover.c b/backend/failover.c
-new file mode 100644
-index 0000000..9affd8f
---- /dev/null
-+++ b/backend/failover.c
+diff -up cups-2.3.3/backend/failover.c.failover cups-2.3.3/backend/failover.c
+--- cups-2.3.3/backend/failover.c.failover	2020-06-11 08:49:20.515264358 +0200
++++ cups-2.3.3/backend/failover.c	2020-06-11 08:49:20.515264358 +0200
 @@ -0,0 +1,837 @@
 +/*
 + * Failover Backend for the Common UNIX Printing System (CUPS).
@@ -875,3 +839,38 @@ index 0000000..9affd8f
 +  else
 +    return (NULL);
 +}
+diff -up cups-2.3.3/backend/Makefile.failover cups-2.3.3/backend/Makefile
+--- cups-2.3.3/backend/Makefile.failover	2020-04-27 20:04:29.000000000 +0200
++++ cups-2.3.3/backend/Makefile	2020-06-11 08:52:31.212642019 +0200
+@@ -22,6 +22,7 @@ include ../Makedefs
+ RBACKENDS =	\
+ 		ipp \
+ 		lpd \
++		failover \
+ 		$(DNSSD_BACKEND)
+ UBACKENDS =	\
+ 		snmp \
+@@ -45,6 +46,7 @@ LIBOBJS	=	\
+ OBJS	=	\
+ 		ipp.o \
+ 		lpd.o \
++		failover.o \
+ 		dnssd.o \
+ 		snmp.o \
+ 		socket.o \
+@@ -276,6 +278,15 @@ lpd:	lpd.o ../cups/$(LIBCUPS) libbackend
+ 
+ 
+ #
++# failover
++#
++
++failover:	failover.o ../cups/$(LIBCUPS) libbackend.a
++	echo Linking $@...
++	$(LD_CC) $(ALL_LDFLAGS) -o failover failover.o libbackend.a $(LINKCUPS)
++
++
++#
+ # snmp
+ #
+ 

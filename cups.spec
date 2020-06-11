@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -747,6 +747,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Thu Jun 11 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-6
+- fix patch errors in failover patch
+
 * Tue Jun 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-5
 - remove os ci tests, we use baseos ci
 
