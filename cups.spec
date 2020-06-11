@@ -106,6 +106,9 @@ Patch26: cups-etimedout.patch
 # cgi script creates a bad uri in web ui
 # https://github.com/apple/cups/pull/5792
 Patch27: cups-webui-uri.patch
+# ipptool doesn't support mdns uris
+# https://github.com/apple/cups/pull/5793
+Patch28: cups-ipptool-mdns-uri.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
@@ -323,6 +326,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # https://github.com/apple/cups/pull/5782
 %patch26 -p1 -b .etimedout
 %patch27 -p1 -b .webui-uri
+%patch28 -p1 -b .ipptool-mdns-uri
 
 #### UPSTREAMED PATCHES ####
 
@@ -754,6 +758,7 @@ rm -f %{cups_serverbin}/backend/smb
 * Thu Jun 11 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-6
 - fix patch errors in failover patch
 - cgi script creates a bad uri in web ui
+- ipptool doesn't support mdns uris
 
 * Tue Jun 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-5
 - remove os ci tests, we use baseos ci
