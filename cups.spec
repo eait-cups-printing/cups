@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -197,7 +197,6 @@ Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
 Requires: zlib-devel
-Provides: cupsddk-devel
 
 %package libs
 Summary: CUPS printing system - libraries
@@ -614,7 +613,6 @@ rm -f %{cups_serverbin}/backend/smb
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
 %attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
-#%%{_sysconfdir}/cups/interfaces
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
@@ -645,7 +643,6 @@ rm -f %{cups_serverbin}/backend/smb
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
 %{_bindir}/cupstestppd
-#%%{_bindir}/cupstestdsc
 %{_bindir}/ppd*
 %{cups_serverbin}/backend/*
 %{cups_serverbin}/cgi-bin
@@ -716,8 +713,6 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{cups_serverbin}/driver
 %dir %{cups_serverbin}/filter
 %dir %{_datadir}/cups
-#%%dir %%{_datadir}/cups/banners
-#%%dir %%{_datadir}/cups/charsets
 %dir %{_datadir}/cups/data
 %dir %{_datadir}/cups/drv
 %dir %{_datadir}/cups/mime
@@ -755,6 +750,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Fri Jul 17 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-7
+- spec cleanup
+
 * Thu Jun 11 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-6
 - fix patch errors in failover patch
 - cgi script creates a bad uri in web ui
