@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -109,6 +109,10 @@ Patch27: cups-webui-uri.patch
 # ipptool doesn't support mdns uris
 # https://github.com/apple/cups/pull/5793
 Patch28: cups-ipptool-mdns-uri.patch
+# ppd generator creates invalid cupsManualCopies entry, causing
+# printing only one copy everytime
+# https://github.com/apple/cups/pull/5807
+Patch29: cups-manual-copies.patch
 
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
@@ -326,6 +330,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch26 -p1 -b .etimedout
 %patch27 -p1 -b .webui-uri
 %patch28 -p1 -b .ipptool-mdns-uri
+%patch29 -p1 -b .manual-copies
 
 #### UPSTREAMED PATCHES ####
 
@@ -750,6 +755,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Mon Jul 20 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-8
+- 1848575 - [cups, cups-filters] PPD generators creates invalid cupsManualCopies entry
+
 * Fri Jul 17 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-7
 - spec cleanup
 
