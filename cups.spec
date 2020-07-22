@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -393,10 +393,14 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
-make %{?_smp_mflags}
+%make_build
 
 %install
-make BUILDROOT=%{buildroot} install
+# %%make_install macro results into permission error during install phase,
+# because it sets INSTALL env to 'install -p'.
+# use the old make invocation for now, fix this upstream when upstream will
+# have a time for github issues
+make install DESTDIR=%%{buildroot}
 
 rm -rf	%{buildroot}%{_initddir} \
 	%{buildroot}%{_sysconfdir}/init.d \
@@ -755,6 +759,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Wed Jul 22 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-9
+- use %%make_build and %%make_install macros
+
 * Mon Jul 20 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-8
 - 1848575 - [cups, cups-filters] PPD generators creates invalid cupsManualCopies entry
 
