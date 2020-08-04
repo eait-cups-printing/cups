@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -400,7 +400,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 # because it sets INSTALL env to 'install -p'.
 # use the old make invocation for now, fix this upstream when upstream will
 # have a time for github issues
-make install DESTDIR=%%{buildroot}
+make install DESTDIR=%{buildroot}
 
 rm -rf	%{buildroot}%{_initddir} \
 	%{buildroot}%{_sysconfdir}/init.d \
@@ -759,6 +759,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue Aug 04 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-12
+- typo in DESTDIR during 'make install'
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.3.3-11
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
