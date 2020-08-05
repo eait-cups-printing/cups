@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: ASL 2.0 with exceptions for GPL2/LGPL2
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -631,6 +631,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
 %dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/pt_BR
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
@@ -680,6 +681,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/templates
 %dir %{_datadir}/cups/templates/de
 %dir %{_datadir}/cups/templates/es
+%dir %{_datadir}/cups/templates/fr
 %dir %{_datadir}/cups/templates/ja
 %dir %{_datadir}/cups/templates/ru
 %dir %{_datadir}/cups/templates/pt_BR
@@ -759,6 +761,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Wed Aug 05 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-13
+- own 'new' directories
+
 * Tue Aug 04 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-12
 - typo in DESTDIR during 'make install'
 
