@@ -15,8 +15,8 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 13%{?dist}
-License: ASL 2.0 with exceptions for GPL2/LGPL2
+Release: 14%{?dist}
+License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
@@ -761,6 +761,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Mon Aug 10 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
+- CUPS exception isn't in spdx database, use only ASL 2.0
+
 * Wed Aug 05 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-13
 - own 'new' directories
 
