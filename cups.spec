@@ -178,6 +178,11 @@ Requires: acl
 # Make sure we have some filters for converting to raster format.
 Requires: cups-filters
 
+# replaced by systemd-resolved in F34
+# remove after F33 EOL
+%if 0%{?fedora} <= 33 || 0%{?rhel} <= 8
+Recommends: nss-mdns
+%endif
 # avahi is needed for mDNS discovery
 Recommends: avahi
 
@@ -222,8 +227,11 @@ Summary: CUPS printing system - tools for printer application
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 # ippeveprinter needs avahi for registering and sharing printer
 Requires: avahi
-# needed for mdns hostname translation
+# needed for mdns hostname translation - replaced by systemd-resolved in F34
+# remove after F33 EOL
+%if 0%{?fedora} <= 33 || 0%{?rhel} <= 8
 Requires: nss-mdns
+%endif
 
 %description
 CUPS printing system provides a portable printing layer for
