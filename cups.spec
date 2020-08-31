@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -178,10 +178,7 @@ Requires: acl
 # Make sure we have some filters for converting to raster format.
 Requires: cups-filters
 
-# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
-# it is needed only for new devices (2012+), so make it only recommended for
-# users with older devices
-Recommends: nss-mdns
+# avahi is needed for mDNS discovery
 Recommends: avahi
 
 %package client
@@ -761,6 +758,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Mon Aug 31 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-15
+- MDNS resolving should be done by systemd-resolved now
+
 * Mon Aug 10 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
 - CUPS exception isn't in spdx database, use only ASL 2.0
 
