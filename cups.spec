@@ -178,11 +178,10 @@ Requires: acl
 # Make sure we have some filters for converting to raster format.
 Requires: cups-filters
 
-# replaced by systemd-resolved in F34
-# remove after F33 EOL
-%if 0%{?fedora} <= 33 || 0%{?rhel} <= 8
+# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
+# it is needed only for new devices (2012+), so make it only recommended for
+# users with older devices
 Recommends: nss-mdns
-%endif
 # avahi is needed for mDNS discovery
 Recommends: avahi
 
@@ -766,7 +765,11 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
-* Mon Aug 31 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-15
+* Thu Sep 03 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
+- revert previous commit - resolved doesn't work with avahi due missing link
+  in NetworkManager
+
+* Mon Aug 31 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
 - MDNS resolving should be done by systemd-resolved now
 
 * Mon Aug 10 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
