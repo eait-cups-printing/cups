@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -765,6 +765,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Mon Nov 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-16
+- backport cups-ipptool-mdns-uri.patch from upstream
+
 * Thu Sep 03 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
 - revert previous commit - resolved doesn't work with avahi due missing link
   in NetworkManager
