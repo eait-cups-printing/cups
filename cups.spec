@@ -767,6 +767,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Mon Nov 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-16
 - backport cups-ipptool-mdns-uri.patch from upstream
+- backport cups-prioritize-print-color-mode.patch from upstream
 
 * Thu Sep 03 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-14
 - revert previous commit - resolved doesn't work with avahi due missing link

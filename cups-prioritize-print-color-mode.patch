@@ -1,15 +1,16 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 5965e38..94a125a 100644
+index 167e1df..6c05735 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
-@@ -3735,8 +3735,8 @@ _ppdCreateFromIPP(char   *buffer,	/* I - Filename buffer */
-   */
+@@ -3790,6 +3790,11 @@ _ppdCreateFromIPP(char   *buffer,	/* I - Filename buffer */
+ 	PRINTF_COLOROPTION("RGB", _("Color"), CUPS_CSPACE_SRGB, 8)
  
-   if ((attr = ippFindAttribute(response, "urf-supported", IPP_TAG_KEYWORD)) == NULL)
--    if ((attr = ippFindAttribute(response, "pwg-raster-document-type-supported", IPP_TAG_KEYWORD)) == NULL)
--      if ((attr = ippFindAttribute(response, "print-color-mode-supported", IPP_TAG_KEYWORD)) == NULL)
-+    if ((attr = ippFindAttribute(response, "print-color-mode-supported", IPP_TAG_KEYWORD)) == NULL)
-+      if ((attr = ippFindAttribute(response, "pwg-raster-document-type-supported", IPP_TAG_KEYWORD)) == NULL)
-         attr = ippFindAttribute(response, "output-mode-supported", IPP_TAG_KEYWORD);
- 
-   if (attr)
+ 	default_color = "RGB";
++
++        // Apparently some printers only advertise color support, so make sure
++        // we also do grayscale for these printers...
++	if (!ippContainsString(attr, "sgray_8") && !ippContainsString(attr, "black_1") && !ippContainsString(attr, "black_8"))
++	  PRINTF_COLOROPTION("Gray", _("GrayScale"), CUPS_CSPACE_SW, 8)
+       }
+       else if (!strcasecmp(keyword, "adobe-rgb_16") || !strcmp(keyword, "ADOBERGB48") || !strcmp(keyword, "ADOBERGB24-48"))
+       {
