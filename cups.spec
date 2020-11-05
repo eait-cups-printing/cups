@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -150,6 +150,8 @@ BuildRequires: zlib-devel
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
 Buildrequires: gcc-c++ 
+# make is used for compilation
+BuildRequires: make
 
 # Make sure we get postscriptdriver tags.
 BuildRequires: python3-cups
@@ -765,6 +767,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Thu Nov 05 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-17
+- make is no longer in buildroot
+
 * Mon Nov 02 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-16
 - backport cups-ipptool-mdns-uri.patch from upstream
 - backport cups-prioritize-print-color-mode.patch from upstream
