@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -89,6 +89,12 @@ Patch21: cups-dymo-deviceid.patch
 # 1822154 - cups.service doesn't execute automatically on request
 # https://github.com/apple/cups/issues/5708
 Patch22: cups-autostart-when-enabled.patch
+
+# selinux and audit enablement for CUPS - needs work and CUPS upstream wants
+# to have these features implemented their way in the future
+Patch100: cups-lspp.patch
+
+#### UPSTREAM PATCHES ####
 # needed for correct color support of Canon printers, which
 # reports better options in print-color-mode-supported than
 # in pwg-raster-document-type-supported
@@ -113,12 +119,10 @@ Patch28: cups-ipptool-mdns-uri.patch
 # printing only one copy everytime
 # https://github.com/apple/cups/pull/5807
 Patch29: cups-manual-copies.patch
-
-# selinux and audit enablement for CUPS - needs work and CUPS upstream wants
-# to have these features implemented their way in the future
-Patch100: cups-lspp.patch
-
-#### UPSTREAM PATCHES ####
+# invalid free for printer-alert IPP attribute, because it was
+# freed as a different attribute type than it was allocated
+# backported from upstream https://github.com/OpenPrinting/cups/pull/43
+Patch30: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -337,12 +341,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch27 -p1 -b .webui-uri
 %patch28 -p1 -b .ipptool-mdns-uri
 %patch29 -p1 -b .manual-copies
+%patch30 -p1 -b .printer-alert
 
-#### UPSTREAMED PATCHES ####
-
-# removed dbus patch - seems breaking things
-# Fix implementation of com.redhat.PrinterSpooler D-Bus object.
-#%%patch6 -p1 -b .eggcups
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
 # in cupsd.conf to disable cupsd logrotate functionality and use logrotated
@@ -767,6 +767,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue Nov 10 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-18
+- 1892426 - Crash:free(): invalid pointer in cups backend
+
 * Thu Nov 05 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-17
 - make is no longer in buildroot
 
