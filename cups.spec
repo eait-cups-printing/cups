@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -596,7 +596,8 @@ exit 0
 exit 0
 
 %postun
-%systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service
+# ignore the messages due #1614751 (systemd bug) and #1897023 (CUPS unit file design)
+%systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service > /dev/null 2>&1
 exit 0
 
 %postun lpd
@@ -767,6 +768,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
+- 1897023 - Cups service restart sequence during upgrade incorrect
+
 * Tue Nov 10 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-18
 - 1892426 - Crash:free(): invalid pointer in cups backend
 
