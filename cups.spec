@@ -46,11 +46,6 @@ Patch7: cups-driverd-timeout.patch
 Patch9: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
 Patch10: cups-uri-compat.patch
-# fixing snmp oid for hp printer - upstream doesn't want to support too much
-# snmp backend, because it's deprecated
-Patch11: cups-hp-deviceid-oid.patch
-# same as HP OID
-Patch12: cups-ricoh-deviceid-oid.patch
 # change to notify type, because when it fails to start, it gives a error
 # message + renaming org.cups.cupsd names, because we have cups units in
 # in older Fedoras
@@ -84,6 +79,8 @@ Patch22: cups-autostart-when-enabled.patch
 Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
+# fixing snmp oid for hp and ricoh printers - taken from upstream
+Patch11: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
 # needed for correct color support of Canon printers, which
 # reports better options in print-color-mode-supported than
 # in pwg-raster-document-type-supported
@@ -287,9 +284,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # Allow the usb backend to understand old-style URI formats.
 %patch10 -p1 -b .uri-compat
 # Add an SNMP query for HP's device ID OID (STR #3552).
-%patch11 -p1 -b .hp-deviceid-oid
-# Add an SNMP query for Ricoh's device ID OID (STR #3552).
-%patch12 -p1 -b .ricoh-deviceid-oid
+%patch11 -p1 -b .deviceid-oid
 # Make cups.service Type=notify (bug #1088918).
 %patch13 -p1 -b .systemd-socket
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
@@ -739,6 +734,7 @@ rm -f %{cups_serverbin}/backend/smb
 - remove old scripts for older migrations
 - CREDITS is now in markdown format, so we don't need to convert
 - fix requires on nss-mdns for cups-printerapp
+- take SNMP OID from upstream
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
