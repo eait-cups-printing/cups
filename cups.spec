@@ -661,6 +661,10 @@ rm -f %{cups_serverbin}/backend/smb
 %exclude %{_mandir}/man5/ipptoolfile.5.gz
 # lpd subpackage
 %exclude %{_mandir}/man8/cups-lpd.8.gz
+# printerapp
+%exclude %{_mandir}/man1/ippeveprinter.1.gz
+%exclude %{_mandir}/man7/ippevepcl.7.gz
+%exclude %{_mandir}/man7/ippeveps.7.gz
 %{_sbindir}/*
 # client subpackage
 %exclude %{_sbindir}/lpc.cups
@@ -745,6 +749,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{cups_serverbin}/command/ippeveps
 %{_mandir}/man1/ippeveprinter.1.gz
 %{_mandir}/man7/ippevepcl.7.gz
+%{_mandir}/man7/ippeveps.7.gz
 
 %changelog
 * Tue Nov 24 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
@@ -752,6 +757,7 @@ rm -f %{cups_serverbin}/backend/smb
 - remove logrotate patches and support - journal is now default
 - remove eggcups patch - seems to cause no harm
 - journal is in Fedora for long time - no need to mention it is Fedora syslog
+- fix packaging of printerapp manpages
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
