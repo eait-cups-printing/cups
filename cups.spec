@@ -338,9 +338,6 @@ sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
 sed -i -e 's,^AccessLog .*$,AccessLog syslog,' conf/cups-files.conf.in
 sed -i -e 's,^PageLog .*,PageLog syslog,' conf/cups-files.conf.in
 
-# Add comment text mentioning syslog is systemd journal (bug #1358589)
-sed -i -e 's,\"syslog\",\"syslog\" \(syslog means systemd journal by default\),' conf/cups-files.conf.in
-
 # Add group wheel to SystemGroups (bug #1405669)
 sed -i -e 's,^SystemGroup .*$, SystemGroup sys root wheel,' conf/cups-files.conf.in
 
@@ -754,6 +751,7 @@ rm -f %{cups_serverbin}/backend/smb
 - fix memory leak during device discovery
 - remove logrotate patches and support - journal is now default
 - remove eggcups patch - seems to cause no harm
+- journal is in Fedora for long time - no need to mention it is Fedora syslog
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
