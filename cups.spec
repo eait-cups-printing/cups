@@ -23,8 +23,8 @@ Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERS
 Source1: cupsprinter.png
 # Logrotate configuration
 Source2: cups.logrotate
-# Backend for NCP protocol
-Source4: macros.cups
+# cups_serverbin macro definition for use during builds
+Source3: macros.cups
 
 # PAM enablement, very old patch, not even git can track when or why
 # the patch was added.
