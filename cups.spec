@@ -21,10 +21,8 @@ Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
 Source1: cupsprinter.png
-# Logrotate configuration
-Source2: cups.logrotate
 # cups_serverbin macro definition for use during builds
-Source3: macros.cups
+Source2: macros.cups
 
 # PAM enablement, very old patch, not even git can track when or why
 # the patch was added.
@@ -49,9 +47,6 @@ Patch6: cups-eggcups.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
 Patch7: cups-driverd-timeout.patch
-# cupsd implement its own logrotate, but when MaxLogSize 0 is used, logrotated
-# takes care of it
-Patch8: cups-logrotate.patch
 # usb backend didn't get any notification about out-of-paper because of kernel 
 Patch9: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
@@ -296,8 +291,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch5 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch7 -p1 -b .driverd-timeout
-# Re-open the log if it has been logrotated under us.
-%patch8 -p1 -b .logrotate
 # Support for errno==ENOSPACE-based USB paper-out reporting.
 %patch9 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
@@ -344,10 +337,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch30 -p1 -b .printer-alert
 %patch31 -p1 -b .avahi-leak
 
-
-# if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
-# in cupsd.conf to disable cupsd logrotate functionality and use logrotated
-sed -i -e '1iMaxLogSize 0' conf/cupsd.conf.in
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
 sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
@@ -439,13 +428,12 @@ mv %{buildroot}%{_unitdir}/org.cups.cups-lpd.socket %{buildroot}%{_unitdir}/cups
 mv %{buildroot}%{_unitdir}/org.cups.cups-lpd@.service %{buildroot}%{_unitdir}/cups-lpd@.service
 /bin/sed -i -e "s,org.cups.cupsd,cups,g" %{buildroot}%{_unitdir}/cups.service
 
-mkdir -p %{buildroot}%{_datadir}/pixmaps %{buildroot}%{_sysconfdir}/X11/sysconfig %{buildroot}%{_sysconfdir}/X11/applnk/System %{buildroot}%{_sysconfdir}/logrotate.d
+mkdir -p %{buildroot}%{_datadir}/pixmaps %{buildroot}%{_sysconfdir}/X11/sysconfig %{buildroot}%{_sysconfdir}/X11/applnk/System
 install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/pixmaps
-install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/cups
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d
-install -m 0644 %{SOURCE4} %{buildroot}%{_rpmconfigdir}/macros.d
+install -m 0644 %{SOURCE2} %{buildroot}%{_rpmconfigdir}/macros.d
 
 # Ship a printers.conf file, and a client.conf file.  That way, they get
 # their SELinux file contexts set correctly.
@@ -633,7 +621,6 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 %config(noreplace) %{_sysconfdir}/pam.d/cups
-%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %dir %{_datadir}/%{name}/www
 %dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
