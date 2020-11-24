@@ -39,11 +39,6 @@ Patch3: cups-banners.patch
 Patch4: cups-no-export-ssllibs.patch
 # enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
 Patch5: cups-direct-usb.patch
-# fix for redhat dbus spooler - adding new dbus functions to backend/ipp.c
-# -> initialize dbus connection and sending dbus broadcast about job queued
-# on remote queue with QueueChanged type for PRINTER_CHANGED, JOB_STATE_CHANGED
-# and PRINTER_STATE_CHANGED events 
-Patch6: cups-eggcups.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
 Patch7: cups-driverd-timeout.patch
@@ -757,6 +752,8 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Tue Nov 24 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - fix memory leak during device discovery
+- remove logrotate patches and support - journal is now default
+- remove eggcups patch - seems to cause no harm
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
