@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3
-Release: 19%{?dist}
+Release: 20%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
@@ -123,6 +123,7 @@ Patch29: cups-manual-copies.patch
 # freed as a different attribute type than it was allocated
 # backported from upstream https://github.com/OpenPrinting/cups/pull/43
 Patch30: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
+Patch31: 0001-Fix-memory-leak-Issue-49.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -342,6 +343,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch28 -p1 -b .ipptool-mdns-uri
 %patch29 -p1 -b .manual-copies
 %patch30 -p1 -b .printer-alert
+%patch31 -p1 -b .avahi-leak
 
 
 # if cupsd is set to log into /var/log/cups, then 'MaxLogSize 0' needs to be
@@ -768,6 +770,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippevepcl.7.gz
 
 %changelog
+* Tue Nov 24 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
+- fix memory leak during device discovery
+
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
 

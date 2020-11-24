@@ -1,0 +1,47 @@
+From e38d6dc448dcb19247280b4adf63b89d673b8666 Mon Sep 17 00:00:00 2001
+From: Michael R Sweet <msweet@msweet.org>
+Date: Mon, 23 Nov 2020 22:15:26 -0500
+Subject: [PATCH] Fix memory leak (Issue #49)
+
+---
+ CHANGES-OPENPRINTING.md | 1 +
+ cups/http-support.c     | 9 +++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/cups/http-support.c b/cups/http-support.c
+index 521b7e06b..b0506c976 100644
+--- a/cups/http-support.c
++++ b/cups/http-support.c
+@@ -1,8 +1,9 @@
+ /*
+  * HTTP support routines for CUPS.
+  *
+- * Copyright 2007-2019 by Apple Inc.
+- * Copyright 1997-2007 by Easy Software Products, all rights reserved.
++ * Copyright © 2020 by Michael R Sweet
++ * Copyright © 2007-2019 by Apple Inc.
++ * Copyright © 1997-2007 by Easy Software Products, all rights reserved.
+  *
+  * Licensed under Apache License v2.0.  See the file "LICENSE" for more
+  * information.
+@@ -2545,6 +2546,8 @@ http_resolve_cb(
+     memcpy(uuid, value, valueLen);
+     uuid[valueLen] = '\0';
+ 
++    avahi_free(value);
++
+     if (_cups_strcasecmp(uuid, uribuf->uuid))
+     {
+       if (uribuf->options & _HTTP_RESOLVE_STDERR)
+@@ -2629,6 +2632,8 @@ http_resolve_cb(
+       memcpy(resource + 1, value, valueLen);
+       resource[valueLen + 1] = '\0';
+     }
++
++    avahi_free(value);
+   }
+   else
+   {
+-- 
+2.26.2
+
