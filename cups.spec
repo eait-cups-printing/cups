@@ -476,18 +476,6 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
-# Remove old-style certs directory; new-style is /var/run
-# (see bug #194581 for why this is necessary).
-rm -rf %{_sysconfdir}/cups/certs
-rm -f %{_localstatedir}/cache/cups/*.ipp %{_localstatedir}/cache/cups/*.cache
-
-# Previous migration script unnecessarily put PageLogFormat into cups-files.conf
-# (see bug #1148995)
-FILE=%{_sysconfdir}/cups/cups-files.conf
-for keyword in PageLogFormat; do
-    /bin/sed -i -e "s,^$keyword,#$keyword,i" "$FILE" || :
-done
-
 # Because of moving logs to journal, we need to create placeholder files
 # at /var/log/cups for users, whose are going to install CUPS on new OS
 # machine with info message
@@ -756,6 +744,7 @@ rm -f %{cups_serverbin}/backend/smb
 - journal is in Fedora for long time - no need to mention it is Fedora syslog
 - fix packaging of printerapp manpages
 - wheel is now in system groups by default
+- remove old scripts for older migrations
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
