@@ -222,11 +222,7 @@ Summary: CUPS printing system - tools for printer application
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 # ippeveprinter needs avahi for registering and sharing printer
 Requires: avahi
-# needed for mdns hostname translation - replaced by systemd-resolved in F34
-# remove after F33 EOL
-%if 0%{?fedora} <= 33 || 0%{?rhel} <= 8
 Requires: nss-mdns
-%endif
 
 %description
 CUPS printing system provides a portable printing layer for
@@ -742,6 +738,7 @@ rm -f %{cups_serverbin}/backend/smb
 - wheel is now in system groups by default
 - remove old scripts for older migrations
 - CREDITS is now in markdown format, so we don't need to convert
+- fix requires on nss-mdns for cups-printerapp
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
