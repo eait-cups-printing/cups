@@ -341,11 +341,7 @@ sed -i -e 's,^PageLog .*,PageLog syslog,' conf/cups-files.conf.in
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
 
-f=CREDITS.md
-mv "$f" "$f"~
-iconv -f MACINTOSH -t UTF-8 "$f"~ > "$f"
-rm -f "$f"~
-
+# remove this once we don't have any patches changing configure stuff
 aclocal -I config-scripts
 autoconf -f -I config-scripts
 
@@ -745,6 +741,7 @@ rm -f %{cups_serverbin}/backend/smb
 - fix packaging of printerapp manpages
 - wheel is now in system groups by default
 - remove old scripts for older migrations
+- CREDITS is now in markdown format, so we don't need to convert
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
