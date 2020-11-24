@@ -24,7 +24,6 @@ Source1: cupsprinter.png
 # Logrotate configuration
 Source2: cups.logrotate
 # Backend for NCP protocol
-Source3: ncp.backend
 Source4: macros.cups
 
 # PAM enablement, very old patch, not even git can track when or why
@@ -443,7 +442,6 @@ mv %{buildroot}%{_unitdir}/org.cups.cups-lpd@.service %{buildroot}%{_unitdir}/cu
 mkdir -p %{buildroot}%{_datadir}/pixmaps %{buildroot}%{_sysconfdir}/X11/sysconfig %{buildroot}%{_sysconfdir}/X11/applnk/System %{buildroot}%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/pixmaps
 install -p -m 644 %{SOURCE2} %{buildroot}%{_sysconfdir}/logrotate.d/cups
-install -p -m 755 %{SOURCE3} %{buildroot}%{cups_serverbin}/backend/ncp
 
 # Ship an rpm macro for where to put driver executables.
 mkdir -p %{buildroot}%{_rpmconfigdir}/macros.d
