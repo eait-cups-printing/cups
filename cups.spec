@@ -124,47 +124,55 @@ Patch33: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
 ##### but still I'll leave them in git in case their removal
 ##### breaks something. 
 
-Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
-Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
-Requires: %{name}-ipptool%{?_isa} = %{epoch}:%{version}-%{release}
 
-Provides: cupsddk cupsddk-drivers
-
-BuildRequires: pam-devel pkgconf-pkg-config
-BuildRequires: pkgconfig(gnutls)
-BuildRequires: libacl-devel
-BuildRequires: openldap-devel
-BuildRequires: pkgconfig(libusb-1.0)
-BuildRequires: krb5-devel
-BuildRequires: pkgconfig(avahi-client)
-BuildRequires: systemd
-BuildRequires: pkgconfig(libsystemd)
-BuildRequires: pkgconfig(dbus-1)
 BuildRequires: automake
-# needed for decompressing functions when reading from gzipped ppds
-BuildRequires: zlib-devel
-
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
 Buildrequires: gcc-c++ 
+BuildRequires: krb5-devel
+BuildRequires: libacl-devel
 # make is used for compilation
 BuildRequires: make
-
+BuildRequires: openldap-devel
+BuildRequires: pam-devel
+BuildRequires: pkgconf-pkg-config
+BuildRequires: pkgconfig(avahi-client)
+BuildRequires: pkgconfig(dbus-1)
+BuildRequires: pkgconfig(gnutls)
+BuildRequires: pkgconfig(libsystemd)
+BuildRequires: pkgconfig(libusb-1.0)
 # Make sure we get postscriptdriver tags.
 BuildRequires: python3-cups
-
+BuildRequires: systemd
 # needed for systemd rpm macros according FPG
 BuildRequires: systemd-rpm-macros
+# needed for decompressing functions when reading from gzipped ppds
+BuildRequires: zlib-devel
 
 %if %{lspp}
 BuildRequires: libselinux-devel
 BuildRequires: audit-libs-devel
 %endif
 
+# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
+# it is needed only for new devices (2012+), so make it only recommended for
+# users with older devices
+Recommends: nss-mdns
+# avahi is needed for mDNS discovery
+Recommends: avahi
+
+# We ship udev rules which use setfacl.
+Requires: acl
+Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
+# Make sure we have some filters for converting to raster format.
+Requires: cups-filters
+Requires: %{name}-ipptool%{?_isa} = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: dbus
+Requires: systemd
 
 # Requires working PrivateTmp (bug #807672)
 Requires(pre): systemd
@@ -173,19 +181,6 @@ Requires(post): grep, sed
 Requires(preun): systemd
 Requires(postun): systemd
 
-# We ship udev rules which use setfacl.
-Requires: systemd
-Requires: acl
-
-# Make sure we have some filters for converting to raster format.
-Requires: cups-filters
-
-# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
-# it is needed only for new devices (2012+), so make it only recommended for
-# users with older devices
-Recommends: nss-mdns
-# avahi is needed for mDNS discovery
-Recommends: avahi
 
 %package client
 Summary: CUPS printing system - client programs
@@ -571,31 +566,43 @@ rm -f %{cups_serverbin}/backend/smb
 
 %files -f %{name}.lang
 %doc README.md CREDITS.md CHANGES.md
-%dir %attr(0755,root,lp) %{_sysconfdir}/cups
-%dir %attr(0755,root,lp) %{_rundir}/cups
-%dir %attr(0511,lp,sys) %{_rundir}/cups/certs
-%{_tmpfilesdir}/cups.conf
-%{_tmpfilesdir}/cups-lp.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
-%attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
-%attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf.default
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/printers.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
-%attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
-%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
-%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
-%dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
-%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
-%config(noreplace) %{_sysconfdir}/pam.d/cups
+%{_bindir}/cupstestppd
+%{_bindir}/ppd*
+%{_sbindir}/*
+# client subpackage
+%exclude %{_sbindir}/lpc.cups
+%dir %{cups_serverbin}/daemon
+%{cups_serverbin}/daemon/cups-deviced
+%{cups_serverbin}/daemon/cups-driverd
+%{cups_serverbin}/daemon/cups-exec
+%{cups_serverbin}/backend/*
+%{cups_serverbin}/cgi-bin
+%{cups_serverbin}/filter/*
+%{cups_serverbin}/monitor
+%{cups_serverbin}/notifier
+%{_datadir}/cups/drv/sample.drv
+%{_datadir}/cups/examples
+%{_datadir}/cups/mime/mime.types
+%{_datadir}/cups/mime/mime.convs
+%{_datadir}/cups/ppdc/*.defs
+%{_datadir}/cups/ppdc/*.h
+%dir %{_datadir}/cups/templates
+%{_datadir}/cups/templates/*.tmpl
+%dir %{_datadir}/cups/templates/de
+%{_datadir}/cups/templates/de/*.tmpl
+%dir %{_datadir}/cups/templates/es
+%{_datadir}/cups/templates/es/*.tmpl
+%dir %{_datadir}/cups/templates/fr
+%{_datadir}/cups/templates/fr/*.tmpl
+%dir %{_datadir}/cups/templates/ja
+%{_datadir}/cups/templates/ja/*.tmpl
+%dir %{_datadir}/cups/templates/pt_BR
+%{_datadir}/cups/templates/pt_BR/*.tmpl
+%dir %{_datadir}/cups/templates/ru
+%{_datadir}/cups/templates/ru/*.tmpl
+%dir %{_datadir}/%{name}/usb
+%{_datadir}/%{name}/usb/org.cups.usb-quirks
 %dir %{_datadir}/%{name}/www
-%dir %{_datadir}/%{name}/www/de
-%dir %{_datadir}/%{name}/www/es
-%dir %{_datadir}/%{name}/www/ja
-%dir %{_datadir}/%{name}/www/pt_BR
-%dir %{_datadir}/%{name}/www/ru
 %{_datadir}/%{name}/www/images
 %{_datadir}/%{name}/www/*.css
 # 1658673 - html files cannot be docs, because CUPS web ui will not have
@@ -610,22 +617,15 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/%{name}/www/ru/index.html
 %{_datadir}/%{name}/www/pt_BR/index.html
 %{_datadir}/%{name}/www/apple-touch-icon.png
-%dir %{_datadir}/%{name}/usb
-%{_datadir}/%{name}/usb/org.cups.usb-quirks
-%{_unitdir}/%{name}.service
-%{_unitdir}/%{name}.socket
-%{_unitdir}/%{name}.path
-%{_bindir}/cupstestppd
-%{_bindir}/ppd*
-%{cups_serverbin}/backend/*
-%{cups_serverbin}/cgi-bin
-%dir %{cups_serverbin}/daemon
-%{cups_serverbin}/daemon/cups-deviced
-%{cups_serverbin}/daemon/cups-driverd
-%{cups_serverbin}/daemon/cups-exec
-%{cups_serverbin}/notifier
-%{cups_serverbin}/filter/*
-%{cups_serverbin}/monitor
+%dir %{_datadir}/%{name}/www/de
+%dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/ja
+%dir %{_datadir}/%{name}/www/pt_BR
+%dir %{_datadir}/%{name}/www/ru
+%{_datadir}/pixmaps/cupsprinter.png
+%dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
+%dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
+%dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
 %{_mandir}/man[1578]/*
 # client subpackage
 %exclude %{_mandir}/man1/lp*.1.gz
@@ -642,41 +642,36 @@ rm -f %{cups_serverbin}/backend/smb
 %exclude %{_mandir}/man1/ippeveprinter.1.gz
 %exclude %{_mandir}/man7/ippevepcl.7.gz
 %exclude %{_mandir}/man7/ippeveps.7.gz
-%{_sbindir}/*
-# client subpackage
-%exclude %{_sbindir}/lpc.cups
-%dir %{_datadir}/cups/templates
-%dir %{_datadir}/cups/templates/de
-%dir %{_datadir}/cups/templates/es
-%dir %{_datadir}/cups/templates/fr
-%dir %{_datadir}/cups/templates/ja
-%dir %{_datadir}/cups/templates/ru
-%dir %{_datadir}/cups/templates/pt_BR
-%{_datadir}/cups/templates/*.tmpl
-%{_datadir}/cups/templates/de/*.tmpl
-%{_datadir}/cups/templates/fr/*.tmpl
-%{_datadir}/cups/templates/es/*.tmpl
-%{_datadir}/cups/templates/ja/*.tmpl
-%{_datadir}/cups/templates/ru/*.tmpl
-%{_datadir}/cups/templates/pt_BR/*.tmpl
-%dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
-%dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
-%dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
-%{_datadir}/pixmaps/cupsprinter.png
+%dir %attr(0755,root,lp) %{_rundir}/cups
+%dir %attr(0511,lp,sys) %{_rundir}/cups/certs
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups
+%attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cupsd.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/cups-files.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/client.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/classes.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0600,root,lp) %{_sysconfdir}/cups/printers.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/snmp.conf
+%attr(0640,root,lp) %{_sysconfdir}/cups/snmp.conf.default
+%verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
+%verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
+%dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
+%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
-%{_datadir}/cups/drv/sample.drv
-%{_datadir}/cups/examples
-%{_datadir}/cups/mime/mime.types
-%{_datadir}/cups/mime/mime.convs
-%{_datadir}/cups/ppdc/*.defs
-%{_datadir}/cups/ppdc/*.h
+%config(noreplace) %{_sysconfdir}/pam.d/cups
+%{_tmpfilesdir}/cups.conf
+%{_tmpfilesdir}/cups-lp.conf
+%{_unitdir}/%{name}.service
+%{_unitdir}/%{name}.socket
+%{_unitdir}/%{name}.path
 
 %files client
-%{_sbindir}/lpc.cups
 %{_bindir}/cancel*
 %{_bindir}/lp*
-%{_mandir}/man1/lp*.1.gz
+%{_sbindir}/lpc.cups
 %{_mandir}/man1/cancel-cups.1.gz
+%{_mandir}/man1/lp*.1.gz
 %{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
@@ -700,20 +695,20 @@ rm -f %{cups_serverbin}/backend/smb
 
 %files devel
 %{_bindir}/cups-config
-%{_libdir}/*.so
 %{_includedir}/cups
+%{_libdir}/*.so
 %{_mandir}/man1/cups-config.1.gz
 %{_rpmconfigdir}/macros.d/macros.cups
 
 %files lpd
-%{_unitdir}/cups-lpd.socket
-%{_unitdir}/cups-lpd@.service
 %{cups_serverbin}/daemon/cups-lpd
 %{_mandir}/man8/cups-lpd.8.gz
+%{_unitdir}/cups-lpd.socket
+%{_unitdir}/cups-lpd@.service
 
 %files ipptool
-%{_bindir}/ipptool
 %{_bindir}/ippfind
+%{_bindir}/ipptool
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ipptool.1.gz
