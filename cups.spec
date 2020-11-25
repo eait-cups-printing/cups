@@ -41,84 +41,86 @@ Patch4: cups-no-export-ssllibs.patch
 Patch5: cups-direct-usb.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
-Patch7: cups-driverd-timeout.patch
+Patch6: cups-driverd-timeout.patch
 # usb backend didn't get any notification about out-of-paper because of kernel 
-Patch9: cups-usb-paperout.patch
+Patch7: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
-Patch10: cups-uri-compat.patch
-# change to notify type, because when it fails to start, it gives a error
-# message + renaming org.cups.cupsd names, because we have cups units in
-# in older Fedoras
-# https://github.com/OpenPrinting/cups/pull/51
-Patch13: cups-systemd-socket.patch
+Patch8: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch14: cups-freebind.patch
+Patch9: cups-freebind.patch
 # add support of multifile
-Patch15: cups-ipp-multifile.patch
+Patch10: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch16: cups-web-devices-timeout.patch
+Patch11: cups-web-devices-timeout.patch
 # needs to be set to Yes to avoid race conditions
-Patch17: cups-synconclose.patch
-# ypbind must be started before cups if NIS configured
-# https://github.com/OpenPrinting/cups/pull/51
-Patch18: cups-ypbind.patch
+Patch12: cups-synconclose.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch19: cups-failover-backend.patch
+Patch13: cups-failover-backend.patch
 
 # reported upstream
 # adds logs when job fails due bad conversion
-Patch20: cups-filter-debug.patch
+Patch14: cups-filter-debug.patch
 # add device id for dymo printer
-Patch21: cups-dymo-deviceid.patch
-# 1822154 - cups.service doesn't execute automatically on request
-# https://github.com/apple/cups/issues/5708
-Patch22: cups-autostart-when-enabled.patch
+Patch15: cups-dymo-deviceid.patch
 
+%if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
 # to have these features implemented their way in the future
 Patch100: cups-lspp.patch
+%endif
 
 #### UPSTREAM PATCHES ####
 # fixing snmp oid for hp and ricoh printers - taken from upstream
-Patch11: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
+Patch16: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
 # needed for correct color support of Canon printers, which
 # reports better options in print-color-mode-supported than
 # in pwg-raster-document-type-supported
 # https://github.com/apple/cups/pull/5722/
-Patch23: cups-prioritize-print-color-mode.patch
+Patch17: cups-prioritize-print-color-mode.patch
 # leaks ppd struct in ppdc
 # https://github.com/apple/cups/pull/5738/
-Patch24: cups-ppdleak.patch
+Patch18: cups-ppdleak.patch
 # crashes with wide roll printers in rastertopwg filter
 # https://github.com/apple/cups/pull/5773/
-Patch25: cups-rastertopwg-crash.patch
+Patch19: cups-rastertopwg-crash.patch
 # job for disconnected devices are processing for eternity
 # https://github.com/apple/cups/pull/5782
-Patch26: cups-etimedout.patch
+Patch20: cups-etimedout.patch
 # cgi script creates a bad uri in web ui
 # https://github.com/apple/cups/pull/5792
-Patch27: cups-webui-uri.patch
+Patch21: cups-webui-uri.patch
 # ipptool doesn't support mdns uris
 # https://github.com/apple/cups/pull/5793
-Patch28: cups-ipptool-mdns-uri.patch
+Patch22: cups-ipptool-mdns-uri.patch
 # ppd generator creates invalid cupsManualCopies entry, causing
 # printing only one copy everytime
 # https://github.com/apple/cups/pull/5807
-Patch29: cups-manual-copies.patch
+Patch23: cups-manual-copies.patch
 # invalid free for printer-alert IPP attribute, because it was
 # freed as a different attribute type than it was allocated
 # backported from upstream https://github.com/OpenPrinting/cups/pull/43
-Patch30: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
+Patch24: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
 # https://github.com/OpenPrinting/cups/pull/49
 # https://github.com/OpenPrinting/cups/pull/52
-Patch31: 0001-Fix-memory-leak-Issue-49.patch
+Patch25: 0001-Fix-memory-leak-Issue-49.patch
 # https://github.com/OpenPrinting/cups/commit/a72b0140ee9ad72f7ffc1f46fbe962bde159cbb8
 # https://github.com/OpenPrinting/cups/commit/4999193d4778288e6bbddbbb86dbbb70835ea982
-Patch32: cups-unit-files.patch
+Patch26: cups-unit-files.patch
+# change to notify type, because when it fails to start, it gives a error
+# message + renaming org.cups.cupsd names, because we have cups units in
+# in older Fedoras
+# https://github.com/OpenPrinting/cups/pull/51
+Patch27: cups-systemd-socket.patch
+# ypbind must be started before cups if NIS configured
+# https://github.com/OpenPrinting/cups/pull/51
+Patch28: cups-ypbind.patch
 # https://github.com/OpenPrinting/cups/pull/31
-Patch33: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
+Patch29: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
+# 1822154 - cups.service doesn't execute automatically on request
+# https://github.com/apple/cups/issues/5708
+Patch30: cups-autostart-when-enabled.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -131,6 +133,8 @@ BuildRequires: automake
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
 Buildrequires: gcc-c++ 
+# require git-core for autosetup
+BuildRequires: git-core
 BuildRequires: krb5-devel
 BuildRequires: libacl-devel
 # make is used for compilation
@@ -270,65 +274,65 @@ is installed with a printer application, its print queue acts as IPP everywhere 
 to CUPS daemon. This solution will substitute printer drivers and raw queues in the future.
 
 %prep
-%setup -q -n cups-%{VERSION}
-# Use the system pam configuration.
-%patch1 -p1 -b .system-auth
-# Prevent multilib conflict in cups-config script.
-%patch2 -p1 -b .multilib
-# Ignore rpm save/new files in the banners directory.
-%patch3 -p1 -b .banners
-# Don't export SSLLIBS to cups-config.
-%patch4 -p1 -b .no-export-ssllibs
-# Allow file-based usb device URIs.
-%patch5 -p1 -b .direct-usb
-# Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch7 -p1 -b .driverd-timeout
-# Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch9 -p1 -b .usb-paperout
-# Allow the usb backend to understand old-style URI formats.
-%patch10 -p1 -b .uri-compat
-# Add an SNMP query for HP's device ID OID (STR #3552).
-%patch11 -p1 -b .deviceid-oid
-# Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch14 -p1 -b .freebind
-# Fixes for jobs with multiple files and multiple formats.
-%patch15 -p1 -b .ipp-multifile
-# Increase web interface get-devices timeout to 10s (bug #996664).
-%patch16 -p1 -b .web-devices-timeout
-# Set the default for SyncOnClose to Yes.
-%patch17 -p1 -b .synconclose
-# Add failover backend (bug #1689209)
-%patch19 -p1 -b .failover
-
-%if %{lspp}
-# LSPP support.
-%patch100 -p1 -b .lspp
-%endif
-
-# Log extra debugging information if no filters are available.
-%patch20 -p1 -b .filter-debug
-# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch21 -p1 -b .dymo-deviceid
-%patch23 -p1 -b .print-color-mode
-%patch24 -p1 -b .ppdleak
-%patch25 -p1 -b .rastertopwg-crash
-# job for disconnected devices are processing for eternity
-# https://github.com/apple/cups/pull/5782
-%patch26 -p1 -b .etimedout
-%patch27 -p1 -b .webui-uri
-%patch28 -p1 -b .ipptool-mdns-uri
-%patch29 -p1 -b .manual-copies
-%patch30 -p1 -b .printer-alert
-%patch31 -p1 -b .avahi-leak
-%patch32 -p1 -b .unit-files
-# Make cups.service Type=notify (bug #1088918).
-%patch13 -p1 -b .systemd-socket
-# CUPS may fail to start if NIS groups are used (bug #1494558)
-%patch18 -p1 -b .ypbind
-# https://github.com/OpenPrinting/cups/pull/31
-%patch33 -p1 -b .require-socket
-# 1822154 - cups.service doesn't execute automatically on request
-%patch22 -p1 -b .autostart-when-enabled
+%autosetup -n cups-%{VERSION} -S git
+## Use the system pam configuration.
+#%patch1 -p1 -b .system-auth
+## Prevent multilib conflict in cups-config script.
+#%patch2 -p1 -b .multilib
+## Ignore rpm save/new files in the banners directory.
+#%patch3 -p1 -b .banners
+## Don't export SSLLIBS to cups-config.
+#%patch4 -p1 -b .no-export-ssllibs
+## Allow file-based usb device URIs.
+#%patch5 -p1 -b .direct-usb
+## Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
+#%patch7 -p1 -b .driverd-timeout
+## Support for errno==ENOSPACE-based USB paper-out reporting.
+#%patch9 -p1 -b .usb-paperout
+## Allow the usb backend to understand old-style URI formats.
+#%patch10 -p1 -b .uri-compat
+## Add an SNMP query for HP's device ID OID (STR #3552).
+#%patch11 -p1 -b .deviceid-oid
+## Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
+#%patch14 -p1 -b .freebind
+## Fixes for jobs with multiple files and multiple formats.
+#%patch15 -p1 -b .ipp-multifile
+## Increase web interface get-devices timeout to 10s (bug #996664).
+#%patch16 -p1 -b .web-devices-timeout
+## Set the default for SyncOnClose to Yes.
+#%patch17 -p1 -b .synconclose
+## Add failover backend (bug #1689209)
+#%patch19 -p1 -b .failover
+#
+#%if %{lspp}
+## LSPP support.
+#%patch100 -p1 -b .lspp
+#%endif
+#
+## Log extra debugging information if no filters are available.
+#%patch20 -p1 -b .filter-debug
+## Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+#%patch21 -p1 -b .dymo-deviceid
+#%patch23 -p1 -b .print-color-mode
+#%patch24 -p1 -b .ppdleak
+#%patch25 -p1 -b .rastertopwg-crash
+## job for disconnected devices are processing for eternity
+## https://github.com/apple/cups/pull/5782
+#%patch26 -p1 -b .etimedout
+#%patch27 -p1 -b .webui-uri
+#%patch28 -p1 -b .ipptool-mdns-uri
+#%patch29 -p1 -b .manual-copies
+#%patch30 -p1 -b .printer-alert
+#%patch31 -p1 -b .avahi-leak
+#%patch32 -p1 -b .unit-files
+## Make cups.service Type=notify (bug #1088918).
+#%patch13 -p1 -b .systemd-socket
+## CUPS may fail to start if NIS groups are used (bug #1494558)
+#%patch18 -p1 -b .ypbind
+## https://github.com/OpenPrinting/cups/pull/31
+#%patch33 -p1 -b .require-socket
+## 1822154 - cups.service doesn't execute automatically on request
+#%patch22 -p1 -b .autostart-when-enabled
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
