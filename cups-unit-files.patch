@@ -1,0 +1,265 @@
+diff --git a/configure b/configure
+index 6f34f65..e57e603 100755
+--- a/configure
++++ b/configure
+@@ -9993,7 +9993,7 @@ fi
+ 
+ 
+ 
+-ac_config_files="$ac_config_files Makedefs conf/cups-files.conf conf/cupsd.conf conf/mime.convs conf/pam.std conf/snmp.conf cups-config desktop/cups.desktop doc/index.html scheduler/cups-lpd.xinetd scheduler/cups.sh scheduler/cups.xml scheduler/org.cups.cups-lpd.plist scheduler/org.cups.cups-lpdAT.service scheduler/org.cups.cupsd.path scheduler/org.cups.cupsd.service scheduler/org.cups.cupsd.socket templates/header.tmpl packaging/cups.list $LANGFILES"
++ac_config_files="$ac_config_files Makedefs conf/cups-files.conf conf/cupsd.conf conf/mime.convs conf/pam.std conf/snmp.conf cups-config desktop/cups.desktop doc/index.html scheduler/cups-lpd.xinetd scheduler/cups.sh scheduler/cups.xml scheduler/org.cups.cups-lpd.plist scheduler/cups-lpdAT.service scheduler/cups.path scheduler/cups.service scheduler/cups.socket templates/header.tmpl packaging/cups.list $LANGFILES"
+ 
+ cat >confcache <<\_ACEOF
+ # This file is a shell script that caches the results of configure
+@@ -10700,10 +10700,10 @@ do
+     "scheduler/cups.sh") CONFIG_FILES="$CONFIG_FILES scheduler/cups.sh" ;;
+     "scheduler/cups.xml") CONFIG_FILES="$CONFIG_FILES scheduler/cups.xml" ;;
+     "scheduler/org.cups.cups-lpd.plist") CONFIG_FILES="$CONFIG_FILES scheduler/org.cups.cups-lpd.plist" ;;
+-    "scheduler/org.cups.cups-lpdAT.service") CONFIG_FILES="$CONFIG_FILES scheduler/org.cups.cups-lpdAT.service" ;;
+-    "scheduler/org.cups.cupsd.path") CONFIG_FILES="$CONFIG_FILES scheduler/org.cups.cupsd.path" ;;
+-    "scheduler/org.cups.cupsd.service") CONFIG_FILES="$CONFIG_FILES scheduler/org.cups.cupsd.service" ;;
+-    "scheduler/org.cups.cupsd.socket") CONFIG_FILES="$CONFIG_FILES scheduler/org.cups.cupsd.socket" ;;
++    "scheduler/cups-lpdAT.service") CONFIG_FILES="$CONFIG_FILES scheduler/cups-lpdAT.service" ;;
++    "scheduler/cups.path") CONFIG_FILES="$CONFIG_FILES scheduler/cups.path" ;;
++    "scheduler/cups.service") CONFIG_FILES="$CONFIG_FILES scheduler/cups.service" ;;
++    "scheduler/cups.socket") CONFIG_FILES="$CONFIG_FILES scheduler/cups.socket" ;;
+     "templates/header.tmpl") CONFIG_FILES="$CONFIG_FILES templates/header.tmpl" ;;
+     "packaging/cups.list") CONFIG_FILES="$CONFIG_FILES packaging/cups.list" ;;
+     "$LANGFILES") CONFIG_FILES="$CONFIG_FILES $LANGFILES" ;;
+diff --git a/configure.ac b/configure.ac
+index 44bf6eb..78b318e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -72,10 +72,10 @@ AC_OUTPUT(Makedefs
+ 	  scheduler/cups.sh
+ 	  scheduler/cups.xml
+ 	  scheduler/org.cups.cups-lpd.plist
+-	  scheduler/org.cups.cups-lpdAT.service
+-	  scheduler/org.cups.cupsd.path
+-	  scheduler/org.cups.cupsd.service
+-	  scheduler/org.cups.cupsd.socket
++	  scheduler/cups-lpdAT.service
++	  scheduler/cups.path
++	  scheduler/cups.service
++	  scheduler/cups.socket
+  	  templates/header.tmpl
+           packaging/cups.list
+ 	  $LANGFILES)
+diff --git a/packaging/cups.list.in b/packaging/cups.list.in
+index 537c194..a167a99 100644
+--- a/packaging/cups.list.in
++++ b/packaging/cups.list.in
+@@ -1,6 +1,7 @@
+ #
+ # ESP Package Manager (EPM) file list for CUPS.
+ #
++# Copyright © 2020 by Michael R Sweet
+ # Copyright © 2007-2019 by Apple Inc.
+ # Copyright © 1997-2007 by Easy Software Products, all rights reserved.
+ #
+@@ -10,8 +11,8 @@
+ 
+ # Product information
+ %product CUPS
+-%copyright 2007-2019 by Apple Inc.
+-%vendor Apple Inc.
++%copyright 2020 by Michael R Sweet, 2007-2019 by Apple Inc.
++%vendor OpenPrinting
+ #%license LICENSE
+ %readme LICENSE
+ %format rpm
+@@ -20,8 +21,9 @@
+ %format !rpm
+ %version @CUPS_VERSION@
+ %format all
+-%description CUPS is the standards-based, open source printing system developed by
+-%description Apple Inc. for macOS® and other UNIX®-like operating systems.
++%description CUPS is the standards-based, open source printing system developed
++%description by Apple Inc. and maintained by OpenPrinting for macOS® and other
++%description UNIX®-like operating systems.
+ 
+ %format rpm
+ %provides lpd
+diff --git a/packaging/cups.spec.in b/packaging/cups.spec.in
+index d37103c..59caee0 100644
+--- a/packaging/cups.spec.in
++++ b/packaging/cups.spec.in
+@@ -3,6 +3,7 @@
+ #
+ # Original version by Jason McMullan <jmcc@ontv.com>.
+ #
++# Copyright © 2020 by Michael R Sweet
+ # Copyright © 2007-2019 by Apple Inc.
+ # Copyright © 1999-2007 by Easy Software Products, all rights reserved.
+ #
+@@ -48,7 +49,7 @@ Group: System Environment/Daemons
+ Source: https://github.com/apple/cups/releases/download/v%{version}/cups-%{version}-source.tar.gz
+ Url: http://www.cups.org
+ Packager: Anonymous <anonymous@example.com>
+-Vendor: Example Corp
++Vendor: OpenPrinting
+ 
+ # Package names are as defined for Red Hat (and clone) distributions
+ BuildRequires: gnutls-devel, pam-devel
+@@ -97,7 +98,8 @@ Requires: %{name} = %{epoch}:%{version} xinetd
+ 
+ %description
+ CUPS is the standards-based, open source printing system developed by
+-Apple Inc. for macOS® and other UNIX®-like operating systems.
++Apple Inc. and maintained by OpenPrinting for macOS® and other UNIX®-like
++operating systems.
+ 
+ %description devel
+ This package provides the CUPS headers and development environment.
+@@ -126,11 +128,11 @@ rm -rf $RPM_BUILD_ROOT/usr/share/cups/banners $RPM_BUILD_ROOT/usr/share/cups/dat
+ 
+ %post
+ %if %{?_with_systemd:1}%{!?_with_systemd:0}
+-/bin/systemctl enable org.cups.cupsd.service
++/bin/systemctl enable cups.service
+ 
+ if test $1 -ge 1; then
+-	/bin/systemctl stop org.cups.cupsd.service
+-	/bin/systemctl start org.cups.cupsd.service
++	/bin/systemctl stop cups.service
++	/bin/systemctl start cups.service
+ fi
+ 
+ %else
+@@ -150,8 +152,8 @@ fi
+ %preun
+ %if %{?_with_systemd:1}%{!?_with_systemd:0}
+ if test $1 -ge 1; then
+-	/bin/systemctl stop org.cups.cupsd.service
+-	/bin/systemctl disable org.cups.cupsd.service
++	/bin/systemctl stop cups.service
++	/bin/systemctl disable cups.service
+ fi
+ 
+ %else
+@@ -164,8 +166,8 @@ fi
+ %postun
+ %if %{?_with_systemd:1}%{!?_with_systemd:0}
+ if test $1 -ge 1; then
+-	/bin/systemctl stop org.cups.cupsd.service
+-	/bin/systemctl start org.cups.cupsd.service
++	/bin/systemctl stop cups.service
++	/bin/systemctl start cups.service
+ fi
+ 
+ %else
+@@ -203,7 +205,7 @@ rm -rf $RPM_BUILD_ROOT
+ 
+ %if %{?_with_systemd:1}%{!?_with_systemd:0}
+ # SystemD
+-/usr/lib/systemd/system/org.cups.cupsd.*
++/usr/lib/systemd/system/cups.*
+ 
+ %else
+ # Legacy init support on Linux
+@@ -425,7 +427,7 @@ rm -rf $RPM_BUILD_ROOT
+ %defattr(-,root,root)
+ %if %{?_with_systemd:1}%{!?_with_systemd:0}
+ # SystemD
+-/usr/lib/systemd/system/org.cups.cups-lpd*
++/usr/lib/systemd/system/cups-lpd*
+ %else
+ # Legacy xinetd
+ /etc/xinetd.d/cups-lpd
+diff --git a/scheduler/Makefile b/scheduler/Makefile
+index b50bd0a..a9b6ad6 100644
+--- a/scheduler/Makefile
++++ b/scheduler/Makefile
+@@ -194,11 +194,11 @@ install-data:
+ 	if test "x$(SYSTEMD_DIR)" != x; then \
+ 		echo Installing systemd configuration files...; \
+ 		$(INSTALL_DIR) $(BUILDROOT)$(SYSTEMD_DIR); \
+-		$(INSTALL_DATA) org.cups.cupsd.path $(BUILDROOT)$(SYSTEMD_DIR); \
+-		$(INSTALL_DATA) org.cups.cupsd.service $(BUILDROOT)$(SYSTEMD_DIR); \
+-		$(INSTALL_DATA) org.cups.cupsd.socket $(BUILDROOT)$(SYSTEMD_DIR); \
+-		$(INSTALL_DATA) org.cups.cups-lpdAT.service $(BUILDROOT)$(SYSTEMD_DIR)/org.cups.cups-lpd@.service; \
+-		$(INSTALL_DATA) org.cups.cups-lpd.socket $(BUILDROOT)$(SYSTEMD_DIR); \
++		$(INSTALL_DATA) cups.path $(BUILDROOT)$(SYSTEMD_DIR); \
++		$(INSTALL_DATA) cups.service $(BUILDROOT)$(SYSTEMD_DIR); \
++		$(INSTALL_DATA) cups.socket $(BUILDROOT)$(SYSTEMD_DIR); \
++		$(INSTALL_DATA) cups-lpdAT.service $(BUILDROOT)$(SYSTEMD_DIR)/cups-lpd@.service; \
++		$(INSTALL_DATA) cups-lpd.socket $(BUILDROOT)$(SYSTEMD_DIR); \
+ 	elif test "x$(XINETD)" != x; then \
+ 		echo Installing xinetd configuration file for cups-lpd...; \
+ 		$(INSTALL_DIR) -m 755 $(BUILDROOT)$(XINETD); \
+@@ -294,9 +294,9 @@ uninstall:
+ 	fi
+ 	if test "x$SYSTEMD_DIR" != x; then \
+ 		echo Uninstalling systemd files...; \
+-		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/org.cups.cupsd.path; \
+-		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/org.cups.cupsd.service; \
+-		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/org.cups.cupsd.socket; \
++		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/cups.path; \
++		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/cups.service; \
++		$(RM) $(BUILDROOT)$(SYSTEMD_DIR)/cups.socket; \
+ 	fi
+ 	if test "x$(SMFMANIFESTDIR)" != x; then \
+ 		echo Uninstalling SMF manifest file...;\
+diff --git a/scheduler/org.cups.cups-lpd.socket b/scheduler/cups-lpd.socket
+similarity index 77%
+rename from scheduler/org.cups.cups-lpd.socket
+rename to scheduler/cups-lpd.socket
+index ed23f9d..eb84459 100644
+--- a/scheduler/org.cups.cups-lpd.socket
++++ b/scheduler/cups-lpd.socket
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=CUPS LPD Server Socket
+-PartOf=org.cups.cups-lpd.service
++PartOf=cups-lpd.service
+ 
+ [Socket]
+ ListenStream=515
+diff --git a/scheduler/org.cups.cups-lpdAT.service.in b/scheduler/cups-lpdAT.service.in
+similarity index 100%
+rename from scheduler/org.cups.cups-lpdAT.service.in
+rename to scheduler/cups-lpdAT.service.in
+diff --git a/scheduler/org.cups.cupsd.path.in b/scheduler/cups.path.in
+similarity index 80%
+rename from scheduler/org.cups.cupsd.path.in
+rename to scheduler/cups.path.in
+index 0f1cc46..7c8509f 100644
+--- a/scheduler/org.cups.cupsd.path.in
++++ b/scheduler/cups.path.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=CUPS Scheduler
+-PartOf=org.cups.cupsd.service
++PartOf=cups.service
+ 
+ [Path]
+ PathExists=@CUPS_CACHEDIR@/org.cups.cupsd
+diff --git a/scheduler/org.cups.cupsd.service.in b/scheduler/cups.service.in
+similarity index 79%
+rename from scheduler/org.cups.cupsd.service.in
+rename to scheduler/cups.service.in
+index 5273762..cd23343 100644
+--- a/scheduler/org.cups.cupsd.service.in
++++ b/scheduler/cups.service.in
+@@ -9,5 +9,5 @@ Type=simple
+ Restart=on-failure
+ 
+ [Install]
+-Also=org.cups.cupsd.socket org.cups.cupsd.path
++Also=cups.socket cups.path
+ WantedBy=printer.target
+diff --git a/scheduler/org.cups.cupsd.socket.in b/scheduler/cups.socket.in
+similarity index 80%
+rename from scheduler/org.cups.cupsd.socket.in
+rename to scheduler/cups.socket.in
+index 613b977..3c37d72 100644
+--- a/scheduler/org.cups.cupsd.socket.in
++++ b/scheduler/cups.socket.in
+@@ -1,6 +1,6 @@
+ [Unit]
+ Description=CUPS Scheduler
+-PartOf=org.cups.cupsd.service
++PartOf=cups.service
+ 
+ [Socket]
+ ListenStream=@CUPS_DEFAULT_DOMAINSOCKET@

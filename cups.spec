@@ -49,6 +49,7 @@ Patch10: cups-uri-compat.patch
 # change to notify type, because when it fails to start, it gives a error
 # message + renaming org.cups.cupsd names, because we have cups units in
 # in older Fedoras
+# https://github.com/OpenPrinting/cups/pull/51
 Patch13: cups-systemd-socket.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
@@ -60,6 +61,7 @@ Patch16: cups-web-devices-timeout.patch
 # needs to be set to Yes to avoid race conditions
 Patch17: cups-synconclose.patch
 # ypbind must be started before cups if NIS configured
+# https://github.com/OpenPrinting/cups/pull/51
 Patch18: cups-ypbind.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
@@ -109,7 +111,14 @@ Patch29: cups-manual-copies.patch
 # freed as a different attribute type than it was allocated
 # backported from upstream https://github.com/OpenPrinting/cups/pull/43
 Patch30: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
+# https://github.com/OpenPrinting/cups/pull/49
+# https://github.com/OpenPrinting/cups/pull/52
 Patch31: 0001-Fix-memory-leak-Issue-49.patch
+# https://github.com/OpenPrinting/cups/commit/a72b0140ee9ad72f7ffc1f46fbe962bde159cbb8
+# https://github.com/OpenPrinting/cups/commit/4999193d4778288e6bbddbbb86dbbb70835ea982
+Patch32: cups-unit-files.patch
+# https://github.com/OpenPrinting/cups/pull/31
+Patch33: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -285,8 +294,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch10 -p1 -b .uri-compat
 # Add an SNMP query for HP's device ID OID (STR #3552).
 %patch11 -p1 -b .deviceid-oid
-# Make cups.service Type=notify (bug #1088918).
-%patch13 -p1 -b .systemd-socket
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
 %patch14 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
@@ -295,8 +302,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch16 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
 %patch17 -p1 -b .synconclose
-# CUPS may fail to start if NIS groups are used (bug #1494558)
-%patch18 -p1 -b .ypbind
 # Add failover backend (bug #1689209)
 %patch19 -p1 -b .failover
 
@@ -309,8 +314,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch20 -p1 -b .filter-debug
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch21 -p1 -b .dymo-deviceid
-# 1822154 - cups.service doesn't execute automatically on request
-%patch22 -p1 -b .autostart-when-enabled
 %patch23 -p1 -b .print-color-mode
 %patch24 -p1 -b .ppdleak
 %patch25 -p1 -b .rastertopwg-crash
@@ -322,6 +325,15 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch29 -p1 -b .manual-copies
 %patch30 -p1 -b .printer-alert
 %patch31 -p1 -b .avahi-leak
+%patch32 -p1 -b .unit-files
+# Make cups.service Type=notify (bug #1088918).
+%patch13 -p1 -b .systemd-socket
+# CUPS may fail to start if NIS groups are used (bug #1494558)
+%patch18 -p1 -b .ypbind
+# https://github.com/OpenPrinting/cups/pull/31
+%patch33 -p1 -b .require-socket
+# 1822154 - cups.service doesn't execute automatically on request
+%patch22 -p1 -b .autostart-when-enabled
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -396,13 +408,6 @@ cd %{buildroot}%{_mandir}/man8
 mv lpc.8 lpc-cups.8
 popd
 %endif
-
-mv %{buildroot}%{_unitdir}/org.cups.cupsd.path %{buildroot}%{_unitdir}/cups.path
-mv %{buildroot}%{_unitdir}/org.cups.cupsd.service %{buildroot}%{_unitdir}/cups.service
-mv %{buildroot}%{_unitdir}/org.cups.cupsd.socket %{buildroot}%{_unitdir}/cups.socket
-mv %{buildroot}%{_unitdir}/org.cups.cups-lpd.socket %{buildroot}%{_unitdir}/cups-lpd.socket
-mv %{buildroot}%{_unitdir}/org.cups.cups-lpd@.service %{buildroot}%{_unitdir}/cups-lpd@.service
-/bin/sed -i -e "s,org.cups.cupsd,cups,g" %{buildroot}%{_unitdir}/cups.service
 
 mkdir -p %{buildroot}%{_datadir}/pixmaps %{buildroot}%{_sysconfdir}/X11/sysconfig %{buildroot}%{_sysconfdir}/X11/applnk/System
 install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/pixmaps
@@ -548,7 +553,7 @@ exit 0
 exit 0
 
 %postun
-# ignore the messages due #1614751 (systemd bug) and #1897023 (CUPS unit file design)
+# ignore the messages due #1614751 (systemd bug)
 %systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service > /dev/null 2>&1
 exit 0
 
@@ -735,6 +740,7 @@ rm -f %{cups_serverbin}/backend/smb
 - CREDITS is now in markdown format, so we don't need to convert
 - fix requires on nss-mdns for cups-printerapp
 - take SNMP OID from upstream
+- rename unit files and update their patches
 
 * Thu Nov 12 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-19
 - 1897023 - Cups service restart sequence during upgrade incorrect
