@@ -118,9 +118,6 @@ Patch27: cups-systemd-socket.patch
 Patch28: cups-ypbind.patch
 # https://github.com/OpenPrinting/cups/pull/31
 Patch29: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
-# 1822154 - cups.service doesn't execute automatically on request
-# https://github.com/apple/cups/issues/5708
-Patch30: cups-autostart-when-enabled.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -329,8 +326,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch28 -p1 -b .ypbind
 # https://github.com/OpenPrinting/cups/pull/31
 %patch29 -p1 -b .require-socket
-# 1822154 - cups.service doesn't execute automatically on request
-%patch30 -p1 -b .autostart-when-enabled
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -433,8 +428,8 @@ rm -rf %{buildroot}%{_datadir}/cups/banners
 rm -f %{buildroot}%{_datadir}/cups/data/testprint
 
 # install /usr/lib/tmpfiles.d/cups.conf (bug #656566, bug #893834)
-mkdir -p ${RPM_BUILD_ROOT}%{_tmpfilesdir}
-cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups.conf <<EOF
+mkdir -p %{buildroot}%{_tmpfilesdir}
+cat > %{buildroot}%{_tmpfilesdir}/cups.conf <<EOF
 # See tmpfiles.d(5) for details
 
 d %{_rundir}/cups 0755 root lp -
@@ -444,7 +439,7 @@ d /var/spool/cups/tmp - - - 30d
 EOF
 
 # /usr/lib/tmpfiles.d/cups-lp.conf (bug #812641)
-cat > ${RPM_BUILD_ROOT}%{_tmpfilesdir}/cups-lp.conf <<EOF
+cat > %{buildroot}%{_tmpfilesdir}/cups-lp.conf <<EOF
 # Legacy parallel port character device nodes, to trigger the
 # auto-loading of the kernel module on access.
 #
@@ -454,6 +449,14 @@ c /dev/lp0 0660 root lp - 6:0
 c /dev/lp1 0660 root lp - 6:1
 c /dev/lp2 0660 root lp - 6:2
 c /dev/lp3 0660 root lp - 6:3
+EOF
+
+# create server.conf into cups.service.d directory. The file is needed
+# to automatically start cups.service during startup if enabled
+mkdir -p %{buildroot}%{_unitdir}/cups.service.d
+cat > %{buildroot}%{_unitdir}/cups.service.d/server.conf <<EOF
+[Install]
+WantedBy=multi-user.target
 EOF
 
 find %{buildroot} -type f -o -type l | sed '
@@ -664,6 +667,8 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
+%dir %{_unitdir}/%{name}.service.d
+%{_unitdir}/%{name}.service.d/server.conf
 %{_unitdir}/%{name}.service
 %{_unitdir}/%{name}.socket
 %{_unitdir}/%{name}.path
@@ -726,6 +731,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Nov 26 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
+- remove downstream autostart patch - use systemd drop-in
+
 * Tue Nov 24 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - fix memory leak during device discovery
 - remove logrotate patches and support - journal is now default
