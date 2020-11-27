@@ -53,11 +53,9 @@ Patch9: cups-freebind.patch
 Patch10: cups-ipp-multifile.patch
 # prolongs web ui timeout
 Patch11: cups-web-devices-timeout.patch
-# needs to be set to Yes to avoid race conditions
-Patch12: cups-synconclose.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch13: cups-failover-backend.patch
+Patch12: cups-failover-backend.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -112,6 +110,8 @@ Patch1011: cups-systemd-socket.patch
 Patch1012: cups-ypbind.patch
 # https://github.com/OpenPrinting/cups/pull/31
 Patch1013: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
+# needs to be set to Yes to avoid race conditions
+Patch1014: cups-synconclose.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -286,10 +286,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch10 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch11 -p1 -b .web-devices-timeout
-# Set the default for SyncOnClose to Yes.
-%patch12 -p1 -b .synconclose
 # Add failover backend (bug #1689209)
-%patch13 -p1 -b .failover
+%patch12 -p1 -b .failover
 
 %if %{lspp}
 # LSPP support.
@@ -317,6 +315,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1012 -p1 -b .ypbind
 # https://github.com/OpenPrinting/cups/pull/31
 %patch1013 -p1 -b .require-socket
+# Set the default for SyncOnClose to Yes.
+%patch1014 -p1 -b .synconclose
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -357,6 +357,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-access-log-level=actions \
 	--enable-page-logging \
 	--with-rundir=%{_rundir}/cups \
+	--enable-sync-on-close \
 	localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
@@ -721,6 +722,7 @@ rm -f %{cups_serverbin}/backend/smb
 - remove %%post scriptlet - it is covered by drop-in now
 - remove cups-filter-debug.patch
 - remove cups-dymo-deviceid.patch
+- backport cups-synconclose.patch from upstream
 
 * Thu Nov 26 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - remove downstream autostart patch - use systemd drop-in
