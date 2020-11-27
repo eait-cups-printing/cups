@@ -503,12 +503,6 @@ do
 done
 %endif
 
-# needed for #1822154 for upgrade path, remove in newer releases
-if [ -e /etc/systemd/system/printer.target.wants/cups.service ]
-then
-  %{_bindir}/systemctl enable cups.service > /dev/null 2>&1
-fi
-
 exit 0
 
 %post client
@@ -668,10 +662,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %dir %{_unitdir}/%{name}.service.d
-%{_unitdir}/%{name}.service.d/server.conf
-%{_unitdir}/%{name}.service
-%{_unitdir}/%{name}.socket
-%{_unitdir}/%{name}.path
+%attr(0644, root, root)%{_unitdir}/%{name}.service.d/server.conf
+%attr(0644, root, root)%{_unitdir}/%{name}.service
+%attr(0644, root, root)%{_unitdir}/%{name}.socket
+%attr(0644, root, root)%{_unitdir}/%{name}.path
 
 %files client
 %{_bindir}/cancel*
@@ -710,8 +704,8 @@ rm -f %{cups_serverbin}/backend/smb
 %files lpd
 %{cups_serverbin}/daemon/cups-lpd
 %{_mandir}/man8/cups-lpd.8.gz
-%{_unitdir}/cups-lpd.socket
-%{_unitdir}/cups-lpd@.service
+%attr(0644, root, root)%{_unitdir}/cups-lpd.socket
+%attr(0644, root, root)%{_unitdir}/cups-lpd@.service
 
 %files ipptool
 %{_bindir}/ippfind
@@ -731,6 +725,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Nov 27 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
+- make unit files writeable by root
+- remove %%post scriptlet - it is covered by drop-in now
+
 * Thu Nov 26 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - remove downstream autostart patch - use systemd drop-in
 
