@@ -48,19 +48,19 @@ Patch7: cups-usb-paperout.patch
 Patch8: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch9: cups-freebind.patch
+Patch10: cups-freebind.patch
 # add support of multifile
-Patch10: cups-ipp-multifile.patch
+Patch11: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch11: cups-web-devices-timeout.patch
+Patch12: cups-web-devices-timeout.patch
 # needs to be set to Yes to avoid race conditions
-Patch12: cups-synconclose.patch
+Patch13: cups-synconclose.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch13: cups-failover-backend.patch
+Patch14: cups-failover-backend.patch
 
 # add device id for dymo printer
-Patch15: cups-dymo-deviceid.patch
+Patch16: cups-dymo-deviceid.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -70,7 +70,7 @@ Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
 # fixing snmp oid for hp and ricoh printers - taken from upstream
-Patch16: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
+Patch9: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
 # needed for correct color support of Canon printers, which
 # reports better options in print-color-mode-supported than
 # in pwg-raster-document-type-supported
