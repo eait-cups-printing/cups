@@ -59,9 +59,6 @@ Patch12: cups-synconclose.patch
 # TODO: move it to the cups-filters upstream
 Patch13: cups-failover-backend.patch
 
-# reported upstream
-# adds logs when job fails due bad conversion
-Patch14: cups-filter-debug.patch
 # add device id for dymo printer
 Patch15: cups-dymo-deviceid.patch
 
@@ -304,8 +301,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch100 -p1 -b .lspp
 %endif
 
-# Log extra debugging information if no filters are available.
-%patch15 -p1 -b .filter-debug
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch16 -p1 -b .dymo-deviceid
 %patch17 -p1 -b .print-color-mode
@@ -728,6 +723,7 @@ rm -f %{cups_serverbin}/backend/smb
 * Fri Nov 27 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - make unit files writeable by root
 - remove %%post scriptlet - it is covered by drop-in now
+- remove cups-filter-debug.patch
 
 * Thu Nov 26 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - remove downstream autostart patch - use systemd drop-in
