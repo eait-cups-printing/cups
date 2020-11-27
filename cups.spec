@@ -48,19 +48,18 @@ Patch7: cups-usb-paperout.patch
 Patch8: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch10: cups-freebind.patch
+Patch9: cups-freebind.patch
 # add support of multifile
-Patch11: cups-ipp-multifile.patch
+Patch10: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch12: cups-web-devices-timeout.patch
+Patch11: cups-web-devices-timeout.patch
 # needs to be set to Yes to avoid race conditions
-Patch13: cups-synconclose.patch
+Patch12: cups-synconclose.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch14: cups-failover-backend.patch
-
+Patch13: cups-failover-backend.patch
 # add device id for dymo printer
-Patch16: cups-dymo-deviceid.patch
+Patch14: cups-dymo-deviceid.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -70,51 +69,51 @@ Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES ####
 # fixing snmp oid for hp and ricoh printers - taken from upstream
-Patch9: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
+Patch1000: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
 # needed for correct color support of Canon printers, which
 # reports better options in print-color-mode-supported than
 # in pwg-raster-document-type-supported
 # https://github.com/apple/cups/pull/5722/
-Patch17: cups-prioritize-print-color-mode.patch
+Patch1001: cups-prioritize-print-color-mode.patch
 # leaks ppd struct in ppdc
 # https://github.com/apple/cups/pull/5738/
-Patch18: cups-ppdleak.patch
+Patch1002: cups-ppdleak.patch
 # crashes with wide roll printers in rastertopwg filter
 # https://github.com/apple/cups/pull/5773/
-Patch19: cups-rastertopwg-crash.patch
+Patch1003: cups-rastertopwg-crash.patch
 # job for disconnected devices are processing for eternity
 # https://github.com/apple/cups/pull/5782
-Patch20: cups-etimedout.patch
+Patch1004: cups-etimedout.patch
 # cgi script creates a bad uri in web ui
 # https://github.com/apple/cups/pull/5792
-Patch21: cups-webui-uri.patch
+Patch1005: cups-webui-uri.patch
 # ipptool doesn't support mdns uris
 # https://github.com/apple/cups/pull/5793
-Patch22: cups-ipptool-mdns-uri.patch
+Patch1006: cups-ipptool-mdns-uri.patch
 # ppd generator creates invalid cupsManualCopies entry, causing
 # printing only one copy everytime
 # https://github.com/apple/cups/pull/5807
-Patch23: cups-manual-copies.patch
+Patch1007: cups-manual-copies.patch
 # invalid free for printer-alert IPP attribute, because it was
 # freed as a different attribute type than it was allocated
 # backported from upstream https://github.com/OpenPrinting/cups/pull/43
-Patch24: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
+Patch1008: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
 # https://github.com/OpenPrinting/cups/pull/49
 # https://github.com/OpenPrinting/cups/pull/52
-Patch25: 0001-Fix-memory-leak-Issue-49.patch
+Patch1009: 0001-Fix-memory-leak-Issue-49.patch
 # https://github.com/OpenPrinting/cups/commit/a72b0140ee9ad72f7ffc1f46fbe962bde159cbb8
 # https://github.com/OpenPrinting/cups/commit/4999193d4778288e6bbddbbb86dbbb70835ea982
-Patch26: cups-unit-files.patch
+Patch1010: cups-unit-files.patch
 # change to notify type, because when it fails to start, it gives a error
 # message + renaming org.cups.cupsd names, because we have cups units in
 # in older Fedoras
 # https://github.com/OpenPrinting/cups/pull/51
-Patch27: cups-systemd-socket.patch
+Patch1011: cups-systemd-socket.patch
 # ypbind must be started before cups if NIS configured
 # https://github.com/OpenPrinting/cups/pull/51
-Patch28: cups-ypbind.patch
+Patch1012: cups-ypbind.patch
 # https://github.com/OpenPrinting/cups/pull/31
-Patch29: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
+Patch1013: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -283,44 +282,45 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch7 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
 %patch8 -p1 -b .uri-compat
-# Add an SNMP query for HP's device ID OID (STR #3552).
-%patch9 -p1 -b .deviceid-oid
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch10 -p1 -b .freebind
+%patch9 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-%patch11 -p1 -b .ipp-multifile
+%patch10 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch12 -p1 -b .web-devices-timeout
+%patch11 -p1 -b .web-devices-timeout
 # Set the default for SyncOnClose to Yes.
-%patch13 -p1 -b .synconclose
+%patch12 -p1 -b .synconclose
 # Add failover backend (bug #1689209)
-%patch14 -p1 -b .failover
+%patch13 -p1 -b .failover
+# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+%patch14 -p1 -b .dymo-deviceid
 
 %if %{lspp}
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
 
-# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch16 -p1 -b .dymo-deviceid
-%patch17 -p1 -b .print-color-mode
-%patch18 -p1 -b .ppdleak
-%patch19 -p1 -b .rastertopwg-crash
+# Taken from upstream
+# Add an SNMP query for HP's device ID OID (STR #3552).
+%patch1000 -p1 -b .deviceid-oid
+%patch1001 -p1 -b .print-color-mode
+%patch1002 -p1 -b .ppdleak
+%patch1003 -p1 -b .rastertopwg-crash
 # job for disconnected devices are processing for eternity
 # https://github.com/apple/cups/pull/5782
-%patch20 -p1 -b .etimedout
-%patch21 -p1 -b .webui-uri
-%patch22 -p1 -b .ipptool-mdns-uri
-%patch23 -p1 -b .manual-copies
-%patch24 -p1 -b .printer-alert
-%patch25 -p1 -b .avahi-leak
-%patch26 -p1 -b .unit-files
+%patch1004 -p1 -b .etimedout
+%patch1005 -p1 -b .webui-uri
+%patch1006 -p1 -b .ipptool-mdns-uri
+%patch1007 -p1 -b .manual-copies
+%patch1008 -p1 -b .printer-alert
+%patch1009 -p1 -b .avahi-leak
+%patch1010 -p1 -b .unit-files
 # Make cups.service Type=notify (bug #1088918).
-%patch27 -p1 -b .systemd-socket
+%patch1011 -p1 -b .systemd-socket
 # CUPS may fail to start if NIS groups are used (bug #1494558)
-%patch28 -p1 -b .ypbind
+%patch1012 -p1 -b .ypbind
 # https://github.com/OpenPrinting/cups/pull/31
-%patch29 -p1 -b .require-socket
+%patch1013 -p1 -b .require-socket
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
