@@ -10,15 +10,18 @@
 #%%global prever rc1
 #%%global VERSION %%{version}%%{prever}
 %global VERSION %{version}
+# Openprinting version
+%global OP_VER op1
 
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.3.3
-Release: 20%{?dist}
+Version: 2.3.3%{OP_VER}
+Release: 1%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
-Source0: https://github.com/apple/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
+# Apple stopped uploading the new versions into github, use OpenPrinting fork
+Source0: https://github.com/OpenPrinting/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
 Source1: cupsprinter.png
 # cups_serverbin macro definition for use during builds
@@ -65,55 +68,7 @@ Patch13: cups-dymo-deviceid.patch
 Patch100: cups-lspp.patch
 %endif
 
-#### UPSTREAM PATCHES ####
-# fixing snmp oid for hp and ricoh printers - taken from upstream
-Patch1000: 0001-Let-snmp-backend-also-use-manufacturer-specific-MIBs.patch
-# needed for correct color support of Canon printers, which
-# reports better options in print-color-mode-supported than
-# in pwg-raster-document-type-supported
-# https://github.com/apple/cups/pull/5722/
-Patch1001: cups-prioritize-print-color-mode.patch
-# leaks ppd struct in ppdc
-# https://github.com/apple/cups/pull/5738/
-Patch1002: cups-ppdleak.patch
-# crashes with wide roll printers in rastertopwg filter
-# https://github.com/apple/cups/pull/5773/
-Patch1003: cups-rastertopwg-crash.patch
-# job for disconnected devices are processing for eternity
-# https://github.com/apple/cups/pull/5782
-Patch1004: cups-etimedout.patch
-# cgi script creates a bad uri in web ui
-# https://github.com/apple/cups/pull/5792
-Patch1005: cups-webui-uri.patch
-# ipptool doesn't support mdns uris
-# https://github.com/apple/cups/pull/5793
-Patch1006: cups-ipptool-mdns-uri.patch
-# ppd generator creates invalid cupsManualCopies entry, causing
-# printing only one copy everytime
-# https://github.com/apple/cups/pull/5807
-Patch1007: cups-manual-copies.patch
-# invalid free for printer-alert IPP attribute, because it was
-# freed as a different attribute type than it was allocated
-# backported from upstream https://github.com/OpenPrinting/cups/pull/43
-Patch1008: 0001-backend-scheduler-ipp.c-Fix-printer-alert-invalid-fr.patch
-# https://github.com/OpenPrinting/cups/pull/49
-# https://github.com/OpenPrinting/cups/pull/52
-Patch1009: 0001-Fix-memory-leak-Issue-49.patch
-# https://github.com/OpenPrinting/cups/commit/a72b0140ee9ad72f7ffc1f46fbe962bde159cbb8
-# https://github.com/OpenPrinting/cups/commit/4999193d4778288e6bbddbbb86dbbb70835ea982
-Patch1010: cups-unit-files.patch
-# change to notify type, because when it fails to start, it gives a error
-# message + renaming org.cups.cupsd names, because we have cups units in
-# in older Fedoras
-# https://github.com/OpenPrinting/cups/pull/51
-Patch1011: cups-systemd-socket.patch
-# ypbind must be started before cups if NIS configured
-# https://github.com/OpenPrinting/cups/pull/51
-Patch1012: cups-ypbind.patch
-# https://github.com/OpenPrinting/cups/pull/31
-Patch1013: 0001-Add-Requires-cups.socket-to-cups.service-to-make-sur.patch
-# needs to be set to Yes to avoid race conditions
-Patch1014: cups-synconclose.patch
+#### UPSTREAM PATCHES (starts with 1000) ####
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -297,30 +252,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # LSPP support.
 %patch100 -p1 -b .lspp
 %endif
-
-# Taken from upstream
-# Add an SNMP query for HP's device ID OID (STR #3552).
-%patch1000 -p1 -b .deviceid-oid
-%patch1001 -p1 -b .print-color-mode
-%patch1002 -p1 -b .ppdleak
-%patch1003 -p1 -b .rastertopwg-crash
-# job for disconnected devices are processing for eternity
-# https://github.com/apple/cups/pull/5782
-%patch1004 -p1 -b .etimedout
-%patch1005 -p1 -b .webui-uri
-%patch1006 -p1 -b .ipptool-mdns-uri
-%patch1007 -p1 -b .manual-copies
-%patch1008 -p1 -b .printer-alert
-%patch1009 -p1 -b .avahi-leak
-%patch1010 -p1 -b .unit-files
-# Make cups.service Type=notify (bug #1088918).
-%patch1011 -p1 -b .systemd-socket
-# CUPS may fail to start if NIS groups are used (bug #1494558)
-%patch1012 -p1 -b .ypbind
-# https://github.com/OpenPrinting/cups/pull/31
-%patch1013 -p1 -b .require-socket
-# Set the default for SyncOnClose to Yes.
-%patch1014 -p1 -b .synconclose
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -721,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Nov 30 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-1
+- 2.3.3op1
+
 * Fri Nov 27 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
 - make unit files writeable by root
 - remove %%post scriptlet - it is covered by drop-in now
