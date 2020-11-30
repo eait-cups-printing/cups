@@ -56,6 +56,8 @@ Patch11: cups-web-devices-timeout.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
 Patch12: cups-failover-backend.patch
+# add device id for dymo printer
+Patch13: cups-dymo-deviceid.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -288,6 +290,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch11 -p1 -b .web-devices-timeout
 # Add failover backend (bug #1689209)
 %patch12 -p1 -b .failover
+# Added IEEE 1284 Device ID for a Dymo device (bug #747866).
+%patch13 -p1 -b .dymo-deviceid
 
 %if %{lspp}
 # LSPP support.
@@ -721,7 +725,6 @@ rm -f %{cups_serverbin}/backend/smb
 - make unit files writeable by root
 - remove %%post scriptlet - it is covered by drop-in now
 - remove cups-filter-debug.patch
-- remove cups-dymo-deviceid.patch
 - backport cups-synconclose.patch from upstream
 
 * Thu Nov 26 2020 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3-20
