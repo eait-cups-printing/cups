@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -106,11 +106,10 @@ BuildRequires: libselinux-devel
 BuildRequires: audit-libs-devel
 %endif
 
-# getaddrinfo from glibc needs nss-mdns for resolving mdns .local addresses
-# it is needed only for new devices (2012+), so make it only recommended for
-# users with older devices
-Recommends: nss-mdns
-# avahi is needed for mDNS discovery
+# getaddrinfo from glibc needs nss-mdns or systemd-resolved for resolving
+# mdns .local addresses. Don't require a specific package for now and let
+# the user to decide what to use
+# avahi is needed for mDNS discovery and sharing queues
 Recommends: avahi
 
 # We ship udev rules which use setfacl.
@@ -119,7 +118,6 @@ Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 # Make sure we have some filters for converting to raster format.
 Requires: cups-filters
-Requires: %{name}-ipptool%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: dbus
 Requires: systemd
@@ -167,13 +165,20 @@ Provides: lpd
 %package ipptool
 Summary: CUPS printing system - tool for performing IPP requests
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
+# ippfind needs avahi for printer discovery
+Requires: avahi
+# mdns address resolver (nss-mdns or systemd-resolved) is needed too,
+# but don't require a specific package for now and let the user to choose
+# what to use
 
 %package printerapp
 Summary: CUPS printing system - tools for printer application
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 # ippeveprinter needs avahi for registering and sharing printer
 Requires: avahi
-Requires: nss-mdns
+# mdns address resolver (nss-mdns or systemd-resolved) is needed too,
+# but don't require a specific package for now and let the user to choose
+# what to use
 
 %description
 CUPS printing system provides a portable printing layer for
@@ -652,6 +657,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Jan 28 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-3
+- remove nss-mdns dependency - let the user decide whether use resolved or nss-mdns
+- remove cups dependency on cups-ipptool - actually not needed
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.3.3op1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
