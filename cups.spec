@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -69,6 +69,7 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+Patch1000: cve-2020-10001-ippReadIO-buffer.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -252,6 +253,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch12 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch13 -p1 -b .dymo-deviceid
+
+# UPSTREAM PATCHES
+%patch1000 -p1 -b .cve2020-10001
 
 %if %{lspp}
 # LSPP support.
@@ -657,6 +661,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Feb 01 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-4
+- fix for CVE-2020-10001
+
 * Thu Jan 28 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-3
 - remove nss-mdns dependency - let the user decide whether use resolved or nss-mdns
 - remove cups dependency on cups-ipptool - actually not needed
