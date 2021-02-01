@@ -75,6 +75,9 @@ Patch1000: cve-2020-10001-ippReadIO-buffer.patch
 # help.cgi segfaulted because it compared NULL in strcmp()
 # backported from upstream https://github.com/OpenPrinting/cups/pull/81
 Patch1001: cups-helpcgi-segfault.patch
+# 1909980 - cupsd crashes on parsing malformed Brother PPD
+# backported from upstream https://github.com/OpenPrinting/cups/pull/78
+Patch1002: 0001-Add-check-for-whether-option-variable-exists-or-not-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -279,6 +282,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1000 -p1 -b .cve2020-10001
 # 1921881 - [abrt] cups: __strcmp_avx2(): help.cgi killed by SIGSEGV
 %patch1001 -p1 -b .helpcgi-segfault
+# 1909980 - cupsd crashes on parsing malformed Brother PPD
+%patch1002 -p1 -b .malformed-ppd-crash
+
 
 
 %if %{lspp}
@@ -689,6 +695,7 @@ rm -f %{cups_serverbin}/backend/smb
 - fix for CVE-2020-10001
 - recommend nss-mdns for Fedora to have a working default for now
 - 1921881 - [abrt] cups: __strcmp_avx2(): help.cgi killed by SIGSEGV
+- 1909980 - cupsd crashes on parsing malformed Brother PPD
 
 * Thu Jan 28 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-3
 - remove nss-mdns dependency - let the user decide whether use resolved or nss-mdns
