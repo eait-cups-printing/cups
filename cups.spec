@@ -110,6 +110,11 @@ BuildRequires: audit-libs-devel
 # getaddrinfo from glibc needs nss-mdns or systemd-resolved for resolving
 # mdns .local addresses. Don't require a specific package for now and let
 # the user to decide what to use
+# just recommend nss-mdns for Fedora for now to have working default, but
+# don't hardwire it for resolved users
+%if 0%{?fedora}
+Recommends: nss-mdns
+%endif
 # avahi is needed for mDNS discovery and sharing queues
 Recommends: avahi
 
@@ -171,6 +176,11 @@ Requires: avahi
 # mdns address resolver (nss-mdns or systemd-resolved) is needed too,
 # but don't require a specific package for now and let the user to choose
 # what to use
+# just recommend nss-mdns for Fedora for now to have working default, but
+# don't hardwire it for resolved users
+%if 0%{?fedora}
+Recommends: nss-mdns
+%endif
 
 %package printerapp
 Summary: CUPS printing system - tools for printer application
@@ -180,6 +190,11 @@ Requires: avahi
 # mdns address resolver (nss-mdns or systemd-resolved) is needed too,
 # but don't require a specific package for now and let the user to choose
 # what to use
+# just recommend nss-mdns for Fedora for now to have working default, but
+# don't hardwire it for resolved users
+%if 0%{?fedora}
+Recommends: nss-mdns
+%endif
 
 %description
 CUPS printing system provides a portable printing layer for
@@ -663,6 +678,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Mon Feb 01 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-4
 - fix for CVE-2020-10001
+- recommend nss-mdns for Fedora to have a working default for now
 
 * Thu Jan 28 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-3
 - remove nss-mdns dependency - let the user decide whether use resolved or nss-mdns
