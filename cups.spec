@@ -11,13 +11,13 @@
 #%%global VERSION %%{version}%%{prever}
 %global VERSION %{version}
 # Openprinting version
-%global OP_VER op1
+%global OP_VER op2
 
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 4%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -69,15 +69,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# backported from upstream
-Patch1000: cve-2020-10001-ippReadIO-buffer.patch
-# 1921881 - [abrt] cups: __strcmp_avx2(): help.cgi killed by SIGSEGV
-# help.cgi segfaulted because it compared NULL in strcmp()
-# backported from upstream https://github.com/OpenPrinting/cups/pull/81
-Patch1001: cups-helpcgi-segfault.patch
-# 1909980 - cupsd crashes on parsing malformed Brother PPD
-# backported from upstream https://github.com/OpenPrinting/cups/pull/78
-Patch1002: 0001-Add-check-for-whether-option-variable-exists-or-not-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -278,13 +269,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# cve-2020-10001
-%patch1000 -p1 -b .cve2020-10001
-# 1921881 - [abrt] cups: __strcmp_avx2(): help.cgi killed by SIGSEGV
-%patch1001 -p1 -b .helpcgi-segfault
-# 1909980 - cupsd crashes on parsing malformed Brother PPD
-%patch1002 -p1 -b .malformed-ppd-crash
-
 
 
 %if %{lspp}
@@ -691,6 +675,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Feb 02 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-1
+- 1923828 - cups-2.3.3op2 is available
+
 * Mon Feb 01 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op1-4
 - fix for CVE-2020-10001
 - recommend nss-mdns for Fedora to have a working default for now
