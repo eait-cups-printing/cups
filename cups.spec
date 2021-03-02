@@ -470,44 +470,35 @@ exit 0
 	 --slave %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
 	 --slave %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
 	 --slave %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
-	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz
+	 --slave %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz || :
 %endif
-exit 0
 
 %post lpd
 %systemd_post cups-lpd.socket
-exit 0
 
 %ldconfig_scriptlets libs
 
 %preun
 %systemd_preun %{name}.path %{name}.socket %{name}.service
-exit 0
 
 %preun client
 %if %{use_alternatives}
 if [ $1 -eq 0 ] ; then
-	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups
+	/usr/sbin/alternatives --remove print %{_bindir}/lpr.cups || :
 fi
 %endif
-exit 0
 
 %preun lpd
 %systemd_preun cups-lpd.socket
-exit 0
 
 %postun
-# ignore the messages due #1614751 (systemd bug)
-%systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service > /dev/null 2>&1
-exit 0
+%systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service
 
 %postun lpd
 %systemd_postun_with_restart cups-lpd.socket
-exit 0
 
 %triggerin -- samba-client
 ln -sf %{_libexecdir}/samba/cups_backend_smb %{cups_serverbin}/backend/smb || :
-exit 0
 
 %triggerun -- samba-client
 [ $2 = 0 ] || exit 0
