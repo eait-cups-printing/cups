@@ -62,7 +62,7 @@ Patch12: cups-failover-backend.patch
 # add device id for dymo printer
 Patch13: cups-dymo-deviceid.patch
 # add [Job N] in logs
-Patch16: cups-logs.patch
+Patch14: cups-logs.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
