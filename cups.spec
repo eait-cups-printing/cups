@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -61,6 +61,8 @@ Patch11: cups-web-devices-timeout.patch
 Patch12: cups-failover-backend.patch
 # add device id for dymo printer
 Patch13: cups-dymo-deviceid.patch
+# add [Job N] in logs
+Patch16: cups-logs.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -267,6 +269,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch12 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch13 -p1 -b .dymo-deviceid
+# add [Job N] to logs
+%patch14 -p1 -b .logs
 
 # UPSTREAM PATCHES
 
@@ -666,6 +670,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Mar 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-3
+- add [Job N] in logs for better debugging
+
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1:2.3.3op2-2
 - Rebuilt for updated systemd-rpm-macros
   See https://pagure.io/fesco/issue/2583.
