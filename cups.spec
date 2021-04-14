@@ -81,6 +81,8 @@ Patch16: cups-nssuserlookup-target.patch
 # 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
 # https://github.com/OpenPrinting/cups/pull/132
 Patch17: 0001-Retry-Validate-Job-once-if-needed-Issue-132.patch
+# https://github.com/OpenPrinting/cups/pull/143
+Patch18: 0001-cups.service.in-Add-SYSTEMD_WANTED_BY-variable.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -290,6 +292,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch16 -p1 -b .nssuserlookup-target
 # 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
 %patch17 -p1 -b .validate-retry
+# put multi-user.target into service file if configured with web interface
+%patch18 -p1 -b .multiuser-target
 
 
 %if %{lspp}
@@ -420,14 +424,6 @@ c /dev/lp0 0660 root lp - 6:0
 c /dev/lp1 0660 root lp - 6:1
 c /dev/lp2 0660 root lp - 6:2
 c /dev/lp3 0660 root lp - 6:3
-EOF
-
-# create server.conf into cups.service.d directory. The file is needed
-# to automatically start cups.service during startup if enabled
-mkdir -p %{buildroot}%{_unitdir}/cups.service.d
-cat > %{buildroot}%{_unitdir}/cups.service.d/server.conf <<EOF
-[Install]
-WantedBy=multi-user.target
 EOF
 
 find %{buildroot} -type f -o -type l | sed '
@@ -623,8 +619,6 @@ rm -f %{cups_serverbin}/backend/smb
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
-%dir %{_unitdir}/%{name}.service.d
-%attr(0644, root, root)%{_unitdir}/%{name}.service.d/server.conf
 %attr(0644, root, root)%{_unitdir}/%{name}.service
 %attr(0644, root, root)%{_unitdir}/%{name}.socket
 %attr(0644, root, root)%{_unitdir}/%{name}.path
@@ -691,6 +685,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 1935318 - old samsung USB devices malfunction with the current (250ms) timeout for usb bulk transaction
 - 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
 - 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
+- backport setting multi-user.target via configure, not via drop-in
 
 * Mon Mar 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-3
 - add [Job N] in logs for better debugging
