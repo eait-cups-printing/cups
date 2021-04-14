@@ -73,7 +73,11 @@ Patch100: cups-lspp.patch
 Patch14: cups-logs.patch
 # 1935318 - old samsung USB devices malfunction with the current
 # (250ms) timeout for usb bulk transaction
+# https://github.com/OpenPrinting/cups/pull/174
 Patch15: 0001-backend-usb-libusb.c-Use-60s-timeout-for-reading-at-.patch
+# 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
+# https://github.com/OpenPrinting/cups/pull/141
+Patch16: cups-nssuserlookup-target.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -279,6 +283,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # 1935318 - old samsung USB devices malfunction with the current
 #(250ms) timeout for usb bulk transaction
 %patch15 -p1 -b .usb-read-timeout
+# 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
+%patch16 -p1 -b .nssuserlookup-target
 
 
 %if %{lspp}
@@ -678,6 +684,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Apr 14 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-4
 - 1935318 - old samsung USB devices malfunction with the current (250ms) timeout for usb bulk transaction
+- 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
 
 * Mon Mar 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-3
 - add [Job N] in logs for better debugging
