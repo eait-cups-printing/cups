@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -61,8 +61,6 @@ Patch11: cups-web-devices-timeout.patch
 Patch12: cups-failover-backend.patch
 # add device id for dymo printer
 Patch13: cups-dymo-deviceid.patch
-# add [Job N] in logs
-Patch14: cups-logs.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -71,6 +69,11 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+# add [Job N] in logs
+Patch14: cups-logs.patch
+# 1935318 - old samsung USB devices malfunction with the current
+# (250ms) timeout for usb bulk transaction
+Patch15: 0001-backend-usb-libusb.c-Use-60s-timeout-for-reading-at-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -269,10 +272,13 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch12 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch13 -p1 -b .dymo-deviceid
-# add [Job N] to logs
-%patch14 -p1 -b .logs
 
 # UPSTREAM PATCHES
+# add [Job N] to logs
+%patch14 -p1 -b .logs
+# 1935318 - old samsung USB devices malfunction with the current
+#(250ms) timeout for usb bulk transaction
+%patch15 -p1 -b .usb-read-timeout
 
 
 %if %{lspp}
@@ -670,6 +676,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed Apr 14 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-4
+- 1935318 - old samsung USB devices malfunction with the current (250ms) timeout for usb bulk transaction
+
 * Mon Mar 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-3
 - add [Job N] in logs for better debugging
 
