@@ -78,6 +78,9 @@ Patch15: 0001-backend-usb-libusb.c-Use-60s-timeout-for-reading-at-.patch
 # 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
 # https://github.com/OpenPrinting/cups/pull/141
 Patch16: cups-nssuserlookup-target.patch
+# 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
+# https://github.com/OpenPrinting/cups/pull/132
+Patch17: 0001-Retry-Validate-Job-once-if-needed-Issue-132.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -285,6 +288,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch15 -p1 -b .usb-read-timeout
 # 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
 %patch16 -p1 -b .nssuserlookup-target
+# 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
+%patch17 -p1 -b .validate-retry
 
 
 %if %{lspp}
@@ -685,6 +690,7 @@ rm -f %{cups_serverbin}/backend/smb
 * Wed Apr 14 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-4
 - 1935318 - old samsung USB devices malfunction with the current (250ms) timeout for usb bulk transaction
 - 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
+- 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
 
 * Mon Mar 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-3
 - add [Job N] in logs for better debugging
