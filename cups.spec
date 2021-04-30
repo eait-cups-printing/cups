@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: ASL 2.0
 Url: http://www.cups.org/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -582,7 +582,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/pixmaps/cupsprinter.png
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
-%dir %attr(0755,lp,sys) %{_localstatedir}/log/cups
+%dir %attr(0700,root,root) %{_localstatedir}/log/cups
 %{_mandir}/man[1578]/*
 # client subpackage
 %exclude %{_mandir}/man1/lp*.1.gz
@@ -681,6 +681,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Apr 30 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-5
+- 1955090 - CVE-2021-25317 cups: insecure permissions of /var/log/cups allows for symlink attack
+
 * Wed Apr 14 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-4
 - 1935318 - old samsung USB devices malfunction with the current (250ms) timeout for usb bulk transaction
 - 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
