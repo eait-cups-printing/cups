@@ -435,43 +435,6 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
-# Because of moving logs to journal, we need to create placeholder files
-# at /var/log/cups for users, whose are going to install CUPS on new OS
-# machine with info message
-%if 0%{?rhel} > 7 || 0%{?fedora} > 27
-confignames=( "ErrorLog" "AccessLog" "PageLog" )
-lognames=( "error_log" "access_log" "page_log" )
-message="This CUPS log has been moved into journal by default unless changes have     been made in /etc/cups/cups-files.conf. Log messages can be got by \"$ journalctl -u  cups -e\""
-for ((i=0;i<${#confignames[@]};i++));
-do
-  found=`%{_bindir}/grep -i "${confignames[i]} syslog" /etc/cups/cups-files.conf`
-  if [ ! -z "$found" ]
-  then
-    if [ ! -f %{_localstatedir}/log/cups/${lognames[i]} ]
-    then
-      %{_bindir}/touch %{_localstatedir}/log/cups/${lognames[i]} || :
-    fi
-    perms=`%{_bindir}/ls -lah %{_localstatedir}/log/cups/${lognames[i]} | %{_bindir}/grep -v -e "\-rw-------" -e "root lp"`
-    if [ ! -z "$perms" ]
-    then
-      # we need to set correct permissions and ownership because of possible
-      # security issues
-      # we need to have it here, because previous CUPS releases had the bug.
-      # Checking permissions and ownership here fixes it.
-      %{_bindir}/chown root:lp %{_localstatedir}/log/cups/${lognames[i]} || :
-      %{_bindir}/chmod 600 %{_localstatedir}/log/cups/${lognames[i]} || :
-    fi
-    lastmessage=`%{_bindir}/tail -n 1 %{_localstatedir}/log/cups/${lognames[i]} | %{_bindir}/grep "$message"`
-    if [ -z "$lastmessage" ]
-    then
-      %{_bindir}/echo $message >> %{_localstatedir}/log/cups/${lognames[i]} || :
-    fi
-  fi
-done
-%endif
-
-exit 0
-
 %post client
 %if %{use_alternatives}
 /usr/sbin/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
