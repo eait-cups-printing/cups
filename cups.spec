@@ -17,9 +17,9 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0
-Url: http://www.cups.org/
+Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
 Source0: https://github.com/OpenPrinting/cups/releases/download/v%{VERSION}/cups-%{VERSION}-source.tar.gz
 # Pixmap for desktop file
@@ -644,6 +644,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu May 06 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-6
+- reflect change of upstream in url too
+
 * Fri Apr 30 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-5
 - 1955090 - CVE-2021-25317 cups: insecure permissions of /var/log/cups allows for symlink attack
 
