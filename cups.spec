@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -83,6 +83,8 @@ Patch16: cups-nssuserlookup-target.patch
 Patch17: 0001-Retry-Validate-Job-once-if-needed-Issue-132.patch
 # https://github.com/OpenPrinting/cups/pull/143
 Patch18: 0001-cups.service.in-Add-SYSTEMD_WANTED_BY-variable.patch
+# 1960170 - PreserveJobHistory/JobFiles aren't applied after the first cupsd restart right after successful print
+Patch19: cups-cleanfiles.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -294,6 +296,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch17 -p1 -b .validate-retry
 # put multi-user.target into service file if configured with web interface
 %patch18 -p1 -b .multiuser-target
+# 1960170 - PreserveJobHistory/JobFiles aren't applied after the first cupsd restart right after successful print
+%patch19 -p1 -b .cleanfiles
 
 
 %if %{lspp}
@@ -644,6 +648,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu May 13 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-7
+- 1960170 - PreserveJobHistory/JobFiles aren't applied after the first cupsd restart right after successful print
+
 * Thu May 06 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-6
 - reflect change of upstream in url too
 
