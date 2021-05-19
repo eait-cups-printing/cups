@@ -335,7 +335,6 @@ export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
 	--with-log-file-perm=0600 \
 	--enable-relro \
 	--with-dbusdir=%{_sysconfdir}/dbus-1 \
-	--with-php=/usr/bin/php-cgi \
 	--enable-avahi \
 	--enable-threads \
 	--enable-gnutls \
