@@ -87,6 +87,8 @@ Patch18: 0001-cups.service.in-Add-SYSTEMD_WANTED_BY-variable.patch
 Patch19: cups-cleanfiles.patch
 # 2018950 - Unauthenticated users can't move print jobs in Web UI
 Patch20: 0001-cgi-bin-ipp-var.c-Use-guest-user-for-Move-Job-when-n.patch
+# 1999957 - Printing of banner before PCL file only prints banner
+Patch21: 0001-scheduler-job.c-use-gziptoany-for-raw-files-not-just.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -302,6 +304,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch19 -p1 -b .cleanfiles
 # 2018950 - Unauthenticated users can't move print jobs in Web UI
 %patch20 -p1 -b .move-job
+# 1999957 - Printing of banner before PCL file only prints banner
+%patch21 -p1 -b .banner-rawfile
 
 
 %if %{lspp}
@@ -653,6 +657,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Nov 03 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - 2018950 - Unauthenticated users can't move print jobs in Web UI
+- 1999957 - Printing of banner before PCL file only prints banner
 
 * Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.3.3op2-8
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
