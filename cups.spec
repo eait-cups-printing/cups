@@ -93,6 +93,8 @@ Patch21: 0001-scheduler-job.c-use-gziptoany-for-raw-files-not-just.patch
 Patch22: cups-restart-job-hold-until.patch
 # stub out httpMD5 functions
 Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
+# 2019845 - Add more warning messages about drivers going deprecated
+Patch24: cups-deprecate-drivers-webui.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -314,6 +316,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch22 -p1 -b .restart-hold-job
 # no httpMD5 functions
 %patch23 -p1 -b .no-httpmd5
+# 2019845 - Add more warning messages about drivers going deprecated
+%patch24 -p1 -b .deprecated-drivers-webui
 
 
 %if %{lspp}
@@ -665,6 +669,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Thu Nov 04 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - no httpMD5 functions
+- 2019845 - Add more warning messages about drivers going deprecated (web ui part)
 
 * Wed Nov 03 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - 2018950 - Unauthenticated users can't move print jobs in Web UI
