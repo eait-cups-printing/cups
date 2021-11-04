@@ -91,6 +91,8 @@ Patch20: 0001-cgi-bin-ipp-var.c-Use-guest-user-for-Move-Job-when-n.patch
 Patch21: 0001-scheduler-job.c-use-gziptoany-for-raw-files-not-just.patch
 # 2006715 - Trying to restart and hold a job doesn't work
 Patch22: cups-restart-job-hold-until.patch
+# stub out httpMD5 functions
+Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -310,6 +312,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch21 -p1 -b .banner-rawfile
 # 2006715 - Trying to restart and hold a job doesn't work
 %patch22 -p1 -b .restart-hold-job
+# no httpMD5 functions
+%patch23 -p1 -b .no-httpmd5
 
 
 %if %{lspp}
@@ -659,6 +663,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Nov 04 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
+- no httpMD5 functions
+
 * Wed Nov 03 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - 2018950 - Unauthenticated users can't move print jobs in Web UI
 - 1999957 - Printing of banner before PCL file only prints banner
