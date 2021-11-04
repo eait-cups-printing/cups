@@ -314,7 +314,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch21 -p1 -b .banner-rawfile
 # 2006715 - Trying to restart and hold a job doesn't work
 %patch22 -p1 -b .restart-hold-job
-# no httpMD5 functions
+# stubbed out httpMD5 functions
 %patch23 -p1 -b .no-httpmd5
 # 2019845 - Add more warning messages about drivers going deprecated
 %patch24 -p1 -b .deprecated-drivers-webui
@@ -668,7 +668,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Thu Nov 04 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
-- no httpMD5 functions
+- stubbed out deprecated httpMD5 functions
 - 2019845 - Add more warning messages about drivers going deprecated (web ui part)
 
 * Wed Nov 03 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
