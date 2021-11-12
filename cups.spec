@@ -94,7 +94,7 @@ Patch22: cups-restart-job-hold-until.patch
 # stub out httpMD5 functions
 Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
 # 2019845 - Add more warning messages about drivers going deprecated
-Patch24: cups-deprecate-drivers-webui.patch
+Patch24: cups-deprecate-drivers.patch
 # 2022610 - compile with -fstack-protector-strong if available
 Patch25: cups-fstack-strong.patch
 
@@ -319,7 +319,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # stubbed out httpMD5 functions
 %patch23 -p1 -b .no-httpmd5
 # 2019845 - Add more warning messages about drivers going deprecated
-%patch24 -p1 -b .deprecated-drivers-webui
+%patch24 -p1 -b .deprecated-drivers
 # 2022610 - compile with fstack-protector-strong if available
 %patch25 -p1 -b .fstack-strong
 
@@ -675,6 +675,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Fri Nov 12 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-10
 - 2022610 - fix compilation issues reported by annocheck
+- 2019845 - Add more warning messages about driver going deprecated (completed)
 
 * Thu Nov 04 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - stubbed out deprecated httpMD5 functions
