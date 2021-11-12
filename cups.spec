@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -95,6 +95,8 @@ Patch22: cups-restart-job-hold-until.patch
 Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
 # 2019845 - Add more warning messages about drivers going deprecated
 Patch24: cups-deprecate-drivers-webui.patch
+# 2022610 - compile with -fstack-protector-strong if available
+Patch25: cups-fstack-strong.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -318,6 +320,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch23 -p1 -b .no-httpmd5
 # 2019845 - Add more warning messages about drivers going deprecated
 %patch24 -p1 -b .deprecated-drivers-webui
+# 2022610 - compile with fstack-protector-strong if available
+%patch25 -p1 -b .fstack-strong
 
 
 %if %{lspp}
@@ -343,8 +347,10 @@ autoconf -f -I config-scripts
 export CC=%{__cc}
 export CXX=%{__cxx}
 # add Fedora specific flags to DSOFLAGS
-export DSOFLAGS="$DSOFLAGS -L../cgi-bin -L../filter -L../ppdc -L../scheduler -Wl,-z,relro -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -Wl,-z,relro,-z,now -fPIE -pie" 
-export CFLAGS="$RPM_OPT_FLAGS -fstack-protector-all -DLDAP_DEPRECATED=1"
+export DSOFLAGS="$DSOFLAGS $RPM_LD_FLAGS"
+export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
+export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
+export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY_SOURCE=2"
 # --enable-debug to avoid stripping binaries
 %configure --with-docdir=%{_datadir}/%{name}/www --enable-debug \
 %if %{lspp}
@@ -667,6 +673,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Nov 12 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-10
+- 2022610 - fix compilation issues reported by annocheck
+
 * Thu Nov 04 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-9
 - stubbed out deprecated httpMD5 functions
 - 2019845 - Add more warning messages about drivers going deprecated (web ui part)
