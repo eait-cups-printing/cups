@@ -1,0 +1,36 @@
+From 887041aaa3f61b87c55b2a746a8813be3d584034 Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Fri, 19 Nov 2021 12:23:08 +0100
+Subject: [PATCH] cups/http-support.c: Apply DigestOptions to RFC 2069 support
+
+Earlier we applied DigestOptions only for devices which implement RFC
+2617 or RFC 7616, this commit applies it even for RFC 2069 support.
+
+This issue came up during CentOS Stream/RHEL 9 development, where MD5
+digest is marked as insecure for authentication/authorization, so it
+should be turned off in default configurations to prevent security
+issues.
+---
+ cups/http-support.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/cups/http-support.c b/cups/http-support.c
+index 209235ee6..3d1208789 100644
+--- a/cups/http-support.c
++++ b/cups/http-support.c
+@@ -1430,6 +1430,12 @@ _httpSetDigestAuthString(
+     * Use old RFC 2069 Digest method...
+     */
+ 
++    if (cg->digestoptions == _CUPS_DIGESTOPTIONS_DENYMD5)
++    {
++      DEBUG_puts("3_httpSetDigestAuthString: MD5 Digest is disabled.");
++      return (0);
++    }
++
+     /* H(A1) = H(username:realm:password) */
+     snprintf(temp, sizeof(temp), "%s:%s:%s", username, http->realm, password);
+     hashsize = (size_t)cupsHashData("md5", (unsigned char *)temp, strlen(temp), hash, sizeof(hash));
+-- 
+2.31.1
+

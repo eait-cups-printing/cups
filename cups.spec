@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -97,6 +97,8 @@ Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
 Patch24: cups-deprecate-drivers.patch
 # 2022610 - compile with -fstack-protector-strong if available
 Patch25: cups-fstack-strong.patch
+# Applying DigestOptions to MD5 Digest authentication defined by RFC 2069
+Patch26: 0001-cups-http-support.c-Apply-DigestOptions-to-RFC-2069-.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -322,6 +324,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch24 -p1 -b .deprecated-drivers
 # 2022610 - compile with fstack-protector-strong if available
 %patch25 -p1 -b .fstack-strong
+# apply DigestOptions for MD5 Digest authentication defined by RFC 2069
+%patch26 -p1 -b .no-digest-rfc2069
 
 
 %if %{lspp}
@@ -420,6 +424,18 @@ touch %{buildroot}%{_sysconfdir}/cups/client.conf
 touch %{buildroot}%{_sysconfdir}/cups/subscriptions.conf
 touch %{buildroot}%{_sysconfdir}/cups/lpoptions
 
+# deny MD5 digest authentication by default in client.conf
+cat > %{buildroot}%{_sysconfdir}/cups/client.conf <<EOF
+# MD5 Digest authentication is turned off by default
+# because MD5 is marked as insecure for authentication.
+#
+# If you need MD5 Digest authentication and you are aware of
+# potential security risk, turn MD5 Digest authentication on
+# by changing the directive value to 'None'.
+
+DigestOptions DenyMD5
+EOF
+
 # LSB 3.2 printer driver directory
 mkdir -p %{buildroot}%{_datadir}/ppd
 
@@ -463,6 +479,15 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 
 %post
 %systemd_post %{name}.path %{name}.socket %{name}.service
+
+# remove this after F36 is EOL
+# - previously the file was empty by default, so check whether the directive exists
+#   and if not, add the directive+value
+# - we don't check for directive value in case some users already know they need MD5
+#   Digest authentication, so we won't break their setup with every update
+# - ^\s* prevents matching comments and ignores whitespaces at the beginning
+grep '^\s*DigestOptions' %{_sysconfdir}/cups/client.conf &> /dev/null || echo 'DigestOptions DenyMD5' \
+>> %{_sysconfdir}/cups/client.conf
 
 %post client
 %if %{use_alternatives}
@@ -673,6 +698,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Nov 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
+- turn off MD5 Digest authentication by default, because MD5 is marked insecure
+
 * Fri Nov 12 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-10
 - 2022610 - fix compilation issues reported by annocheck
 - 2019845 - Add more warning messages about driver going deprecated (completed)
