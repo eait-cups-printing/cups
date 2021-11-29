@@ -101,6 +101,8 @@ Patch25: cups-fstack-strong.patch
 Patch26: 0001-cups-http-support.c-Apply-DigestOptions-to-RFC-2069-.patch
 # 2018957 - RFE: Implement IdleExitTimeout configuration during build
 Patch27: 0001-Add-with-idle-exit-timeout-configure-option.patch
+# 2018953 - RFE: Implement TimeoutStartSec configuration during build
+Patch28: 0001-Add-with-systemd-timeoutstartsec-configure-option.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -330,6 +332,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch26 -p1 -b .no-digest-rfc2069
 # 2018957 - RFE: Implement IdleExitTimeout configuration during build
 %patch27 -p1 -b .conf-idleexittimeout
+# 2018953 - RFE: Implement TimeoutStartSec configuration during build
+%patch28 -p1 -b .conf-timeoutstartsec
 
 
 %if %{lspp}
@@ -380,6 +384,7 @@ export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY
   --enable-sync-on-close \
 %if 0%{?rhel}
   --without-idle-exit-timeout \
+  --without-systemd-timeoutstartsec \
 %endif
   localedir=%{_datadir}/locale
 
@@ -707,6 +712,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Mon Nov 29 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
 - 2018957 - RFE: Implement IdleExitTimeout configuration during build
+- 2018953 - RFE: Implement TimeoutStartSec configuration during build
 
 * Mon Nov 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
 - turn off MD5 Digest authentication by default, because MD5 is marked insecure
