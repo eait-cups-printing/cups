@@ -17,7 +17,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.3.3%{OP_VER}
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -99,6 +99,8 @@ Patch24: cups-deprecate-drivers.patch
 Patch25: cups-fstack-strong.patch
 # Applying DigestOptions to MD5 Digest authentication defined by RFC 2069
 Patch26: 0001-cups-http-support.c-Apply-DigestOptions-to-RFC-2069-.patch
+# 2018957 - RFE: Implement IdleExitTimeout configuration during build
+Patch27: 0001-Add-with-idle-exit-timeout-configure-option.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -326,6 +328,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch25 -p1 -b .fstack-strong
 # apply DigestOptions for MD5 Digest authentication defined by RFC 2069
 %patch26 -p1 -b .no-digest-rfc2069
+# 2018957 - RFE: Implement IdleExitTimeout configuration during build
+%patch27 -p1 -b .conf-idleexittimeout
 
 
 %if %{lspp}
@@ -358,23 +362,26 @@ export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY
 # --enable-debug to avoid stripping binaries
 %configure --with-docdir=%{_datadir}/%{name}/www --enable-debug \
 %if %{lspp}
-	--enable-lspp \
+  --enable-lspp \
 %endif
   --with-exe-file-perm=0755 \
-	--with-cupsd-file-perm=0755 \
-	--with-log-file-perm=0600 \
-	--enable-relro \
-	--with-dbusdir=%{_sysconfdir}/dbus-1 \
-	--enable-avahi \
-	--enable-threads \
-	--enable-gnutls \
-	--enable-webif \
-	--with-xinetd=no \
-	--with-access-log-level=actions \
-	--enable-page-logging \
-	--with-rundir=%{_rundir}/cups \
-	--enable-sync-on-close \
-	localedir=%{_datadir}/locale
+  --with-cupsd-file-perm=0755 \
+  --with-log-file-perm=0600 \
+  --enable-relro \
+  --with-dbusdir=%{_sysconfdir}/dbus-1 \
+  --enable-avahi \
+  --enable-threads \
+  --enable-gnutls \
+  --enable-webif \
+  --with-xinetd=no \
+  --with-access-log-level=actions \
+  --enable-page-logging \
+  --with-rundir=%{_rundir}/cups \
+  --enable-sync-on-close \
+%if 0%{?rhel}
+  --without-idle-exit-timeout \
+%endif
+  localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
 %make_build
@@ -698,6 +705,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Nov 29 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
+- 2018957 - RFE: Implement IdleExitTimeout configuration during build
+
 * Mon Nov 22 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
 - turn off MD5 Digest authentication by default, because MD5 is marked insecure
 
