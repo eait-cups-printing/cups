@@ -1,30 +1,10 @@
-From 5233699867911d536a3a67184cc5bf3f8476e5e9 Mon Sep 17 00:00:00 2001
-From: Zdenek Dohnal <zdohnal@redhat.com>
-Date: Mon, 29 Nov 2021 13:18:18 +0100
-Subject: [PATCH] Add --with-systemd-timeoutstartsec configure option
-
-cupsd can be killed by systemd if the daemon takes too much time when
-starting - f.e. when loading many queues and/or not enough memory for
-loading the daemon quicker.
-
-TimeoutStartSec directive for systemd services defines the time after
-which the daemon is killed - if set to 'infinity', a service is not
-killed.
----
- CHANGES.md                      |  1 +
- config-scripts/cups-defaults.m4 | 15 +++++++++++++++
- configure                       | 29 +++++++++++++++++++++++++++++
- scheduler/cups.service.in       |  1 +
- 4 files changed, 46 insertions(+)
-
-diff --git a/config-scripts/cups-defaults.m4 b/config-scripts/cups-defaults.m4
-index 240a95229..f44c11a13 100644
---- a/config-scripts/cups-defaults.m4
-+++ b/config-scripts/cups-defaults.m4
-@@ -428,3 +428,18 @@ AS_IF([test $CUPS_WEBIF = Yes || test $CUPS_BROWSING = Yes], [
-   SYSTEMD_WANTED_BY="$SYSTEMD_WANTED_BY multi-user.target"], [
-   ])
- AC_SUBST([SYSTEMD_WANTED_BY])
+diff -up cups-2.3.3op2/config-scripts/cups-defaults.m4.conf-timeoutstartsec cups-2.3.3op2/config-scripts/cups-defaults.m4
+--- cups-2.3.3op2/config-scripts/cups-defaults.m4.conf-timeoutstartsec	2021-11-29 13:50:14.568976028 +0100
++++ cups-2.3.3op2/config-scripts/cups-defaults.m4	2021-11-29 13:51:02.785567762 +0100
+@@ -482,3 +482,18 @@ AC_ARG_WITH([idle_exit_timeout], AS_HELP
+ ])
+ 
+ AC_SUBST([EXIT_TIMEOUT])
 +
 +dnl set TimeoutStartSec for cups.service
 +dnl - if used as --without-*, it sets TimeoutStartSec to infinity
@@ -40,10 +20,9 @@ index 240a95229..f44c11a13 100644
 +    TIMEOUTSTARTSEC=""
 +])
 +AC_SUBST([TIMEOUTSTARTSEC])
-diff --git a/scheduler/cups.service.in b/scheduler/cups.service.in
-index f0d7e2f88..7a6831b31 100644
---- a/scheduler/cups.service.in
-+++ b/scheduler/cups.service.in
+diff -up cups-2.3.3op2/scheduler/cups.service.in.conf-timeoutstartsec cups-2.3.3op2/scheduler/cups.service.in
+--- cups-2.3.3op2/scheduler/cups.service.in.conf-timeoutstartsec	2021-11-29 13:50:14.551976172 +0100
++++ cups-2.3.3op2/scheduler/cups.service.in	2021-11-29 13:50:14.568976028 +0100
 @@ -8,6 +8,7 @@ Requires=cups.socket
  ExecStart=@sbindir@/cupsd -l
  Type=notify
@@ -52,6 +31,3 @@ index f0d7e2f88..7a6831b31 100644
  
  [Install]
  Also=cups.socket cups.path
--- 
-2.31.1
-
