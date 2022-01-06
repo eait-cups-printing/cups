@@ -10,14 +10,12 @@
 #%%global prever rc1
 #%%global VERSION %%{version}%%{prever}
 %global VERSION %{version}
-# Openprinting version
-%global OP_VER op2
 
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.3.3%{OP_VER}
-Release: 11%{?dist}
+Version: 2.4.0
+Release: 1%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -69,40 +67,8 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# add [Job N] in logs
-Patch14: cups-logs.patch
-# 1935318 - old samsung USB devices malfunction with the current
-# (250ms) timeout for usb bulk transaction
-# https://github.com/OpenPrinting/cups/pull/174
-Patch15: 0001-backend-usb-libusb.c-Use-60s-timeout-for-reading-at-.patch
-# 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
-# https://github.com/OpenPrinting/cups/pull/141
-Patch16: cups-nssuserlookup-target.patch
-# 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
-# https://github.com/OpenPrinting/cups/pull/132
-Patch17: 0001-Retry-Validate-Job-once-if-needed-Issue-132.patch
-# https://github.com/OpenPrinting/cups/pull/143
-Patch18: 0001-cups.service.in-Add-SYSTEMD_WANTED_BY-variable.patch
-# 1960170 - PreserveJobHistory/JobFiles aren't applied after the first cupsd restart right after successful print
-Patch19: cups-cleanfiles.patch
-# 2018950 - Unauthenticated users can't move print jobs in Web UI
-Patch20: 0001-cgi-bin-ipp-var.c-Use-guest-user-for-Move-Job-when-n.patch
-# 1999957 - Printing of banner before PCL file only prints banner
-Patch21: 0001-scheduler-job.c-use-gziptoany-for-raw-files-not-just.patch
-# 2006715 - Trying to restart and hold a job doesn't work
-Patch22: cups-restart-job-hold-until.patch
-# stub out httpMD5 functions
-Patch23: 0001-cups-md5passwd.c-Stub-out-httpMD5-functions.patch
-# 2019845 - Add more warning messages about drivers going deprecated
-Patch24: cups-deprecate-drivers.patch
-# 2022610 - compile with -fstack-protector-strong if available
-Patch25: cups-fstack-strong.patch
-# Applying DigestOptions to MD5 Digest authentication defined by RFC 2069
-Patch26: 0001-cups-http-support.c-Apply-DigestOptions-to-RFC-2069-.patch
-# 2018957 - RFE: Implement IdleExitTimeout configuration during build
-Patch27: 0001-Add-with-idle-exit-timeout-configure-option.patch
-# 2018953 - RFE: Implement TimeoutStartSec configuration during build
-Patch28: 0001-Add-with-systemd-timeoutstartsec-configure-option.patch
+Patch1000: cups-service-typo.patch
+Patch1001: 0001-de-index.html-Fix-missing-bracket-fixes-issue-299.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -303,37 +269,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# add [Job N] to logs
-%patch14 -p1 -b .logs
-# 1935318 - old samsung USB devices malfunction with the current
-#(250ms) timeout for usb bulk transaction
-%patch15 -p1 -b .usb-read-timeout
-# 1949054 - Use nss-user-lookup.target instead of sssd.service and ypbind.service
-%patch16 -p1 -b .nssuserlookup-target
-# 1949068 - Print queue is paused after ipp backend ends with CUPS_BACKEND_STOP
-%patch17 -p1 -b .validate-retry
-# put multi-user.target into service file if configured with web interface
-%patch18 -p1 -b .multiuser-target
-# 1960170 - PreserveJobHistory/JobFiles aren't applied after the first cupsd restart right after successful print
-%patch19 -p1 -b .cleanfiles
-# 2018950 - Unauthenticated users can't move print jobs in Web UI
-%patch20 -p1 -b .move-job
-# 1999957 - Printing of banner before PCL file only prints banner
-%patch21 -p1 -b .banner-rawfile
-# 2006715 - Trying to restart and hold a job doesn't work
-%patch22 -p1 -b .restart-hold-job
-# stubbed out httpMD5 functions
-%patch23 -p1 -b .no-httpmd5
-# 2019845 - Add more warning messages about drivers going deprecated
-%patch24 -p1 -b .deprecated-drivers
-# 2022610 - compile with fstack-protector-strong if available
-%patch25 -p1 -b .fstack-strong
-# apply DigestOptions for MD5 Digest authentication defined by RFC 2069
-%patch26 -p1 -b .no-digest-rfc2069
-# 2018957 - RFE: Implement IdleExitTimeout configuration during build
-%patch27 -p1 -b .conf-idleexittimeout
-# 2018953 - RFE: Implement TimeoutStartSec configuration during build
-%patch28 -p1 -b .conf-timeoutstartsec
+%patch1000 -p1 -b .service-typo
+%patch1001 -p1 -b .de-index-missing-bracket
 
 
 %if %{lspp}
@@ -368,25 +305,25 @@ export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY
 %if %{lspp}
   --enable-lspp \
 %endif
-  --with-exe-file-perm=0755 \
-  --with-cupsd-file-perm=0755 \
-  --with-log-file-perm=0600 \
-  --enable-relro \
-  --with-dbusdir=%{_sysconfdir}/dbus-1 \
-  --enable-avahi \
-  --enable-threads \
-  --enable-gnutls \
-  --enable-webif \
-  --with-xinetd=no \
-  --with-access-log-level=actions \
   --enable-page-logging \
-  --with-rundir=%{_rundir}/cups \
+  --enable-relro \
   --enable-sync-on-close \
+  --enable-webif \
+  --with-access-log-level=actions \
+  --with-cupsd-file-perm=0755 \
+  --with-dbusdir=%{_sysconfdir}/dbus-1 \
+  --with-dnssd=avahi \
+  --with-log-file-perm=0600 \
+  --with-ondemand=systemd \
+  --with-pkgconfpath=%{_libdir}/pkgconfig \
+  --with-rundir=%{_rundir}/cups \
+  --with-tls=gnutls \
+  --with-xinetd=no \
 %if 0%{?rhel}
   --without-idle-exit-timeout \
   --without-systemd-timeoutstartsec \
 %endif
-  localedir=%{_datadir}/locale
+  --localedir=%{_datadir}/locale
 
 # If we got this far, all prerequisite libraries must be here.
 %make_build
@@ -574,6 +511,8 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/cups/ppdc/*.h
 %dir %{_datadir}/cups/templates
 %{_datadir}/cups/templates/*.tmpl
+%dir %{_datadir}/cups/templates/da
+%{_datadir}/cups/templates/da/*.tmpl
 %dir %{_datadir}/cups/templates/de
 %{_datadir}/cups/templates/de/*.tmpl
 %dir %{_datadir}/cups/templates/es
@@ -597,8 +536,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/%{name}/www/index.html
 %{_datadir}/%{name}/www/help
 %{_datadir}/%{name}/www/robots.txt
+%{_datadir}/%{name}/www/da/index.html
 %{_datadir}/%{name}/www/de/index.html
 %{_datadir}/%{name}/www/es/index.html
+%{_datadir}/%{name}/www/fr/index.html
 %{_datadir}/%{name}/www/ja/index.html
 %{_datadir}/%{name}/www/ru/index.html
 %{_datadir}/%{name}/www/pt_BR/index.html
@@ -683,6 +624,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/cups-config
 %{_includedir}/cups
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/cups.pc
 %{_mandir}/man1/cups-config.1.gz
 %{_rpmconfigdir}/macros.d/macros.cups
 
@@ -710,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Jan 04 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.0-1
+- 2027497 - cups-2.4.0 is available
+
 * Mon Nov 29 2021 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.3.3op2-11
 - 2018957 - RFE: Implement IdleExitTimeout configuration during build
 - 2018953 - RFE: Implement TimeoutStartSec configuration during build
