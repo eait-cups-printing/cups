@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -69,6 +69,9 @@ Patch100: cups-lspp.patch
 #### UPSTREAM PATCHES (starts with 1000) ####
 Patch1000: cups-service-typo.patch
 Patch1001: 0001-de-index.html-Fix-missing-bracket-fixes-issue-299.patch
+# Memory leak fixes (bug #1964975)
+# https://github.com/OpenPrinting/cups/pull/322
+Patch1002: 0001-cups-http-encode-memleaks-fixes-issue-322.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -271,6 +274,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # UPSTREAM PATCHES
 %patch1000 -p1 -b .service-typo
 %patch1001 -p1 -b .de-index-missing-bracket
+%patch1002 -p1 -b .memleak-fixes
 
 
 %if %{lspp}
@@ -652,6 +656,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed Jan 12 2022 Richard Lescak <rlescak@redhat.com> - 1:2.4.0-2
+- 1964975 - cups: memory leaks in http_tls_upgrade() and _cupsEncodeOption()
+
 * Tue Jan 04 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.0-1
 - 2027497 - cups-2.4.0 is available
 
