@@ -69,7 +69,7 @@ Patch100: cups-lspp.patch
 #### UPSTREAM PATCHES (starts with 1000) ####
 Patch1000: cups-service-typo.patch
 Patch1001: 0001-de-index.html-Fix-missing-bracket-fixes-issue-299.patch
-# Memory leak fixes (bug #1964975)
+# Memory leak fixes
 # https://github.com/OpenPrinting/cups/pull/322
 Patch1002: 0001-cups-http-encode-memleaks-fixes-issue-322.patch
 
@@ -657,7 +657,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 %changelog
 * Wed Jan 12 2022 Richard Lescak <rlescak@redhat.com> - 1:2.4.0-2
-- 1964975 - cups: memory leaks in http_tls_upgrade() and _cupsEncodeOption()
+- cups: memory leaks in http_tls_upgrade() and _cupsEncodeOption()
 
 * Tue Jan 04 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.0-1
 - 2027497 - cups-2.4.0 is available
