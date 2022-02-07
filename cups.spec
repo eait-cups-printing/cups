@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.0
-Release: 3%{?dist}
+Version: 2.4.1
+Release: 1%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -67,11 +67,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-Patch1000: cups-service-typo.patch
-Patch1001: 0001-de-index.html-Fix-missing-bracket-fixes-issue-299.patch
-# Memory leak fixes
-# https://github.com/OpenPrinting/cups/pull/322
-Patch1002: 0001-cups-http-encode-memleaks-fixes-issue-322.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -272,9 +267,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-%patch1000 -p1 -b .service-typo
-%patch1001 -p1 -b .de-index-missing-bracket
-%patch1002 -p1 -b .memleak-fixes
 
 
 %if %{lspp}
@@ -656,6 +648,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Feb 07 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-1
+- 2047665 - cups-2.4.1 is available
+
 * Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
