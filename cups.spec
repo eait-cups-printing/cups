@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -542,8 +542,10 @@ rm -f %{cups_serverbin}/backend/smb
 %{_datadir}/%{name}/www/ru/index.html
 %{_datadir}/%{name}/www/pt_BR/index.html
 %{_datadir}/%{name}/www/apple-touch-icon.png
+%dir %{_datadir}/%{name}/www/da
 %dir %{_datadir}/%{name}/www/de
 %dir %{_datadir}/%{name}/www/es
+%dir %{_datadir}/%{name}/www/fr
 %dir %{_datadir}/%{name}/www/ja
 %dir %{_datadir}/%{name}/www/pt_BR
 %dir %{_datadir}/%{name}/www/ru
@@ -650,6 +652,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Feb 22 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-3
+- own www/da and www/fr dirs
+
 * Wed Feb 16 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-2
 - recommend ipp-usb in case there are devices which support IPP-over-USB
 
