@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -67,6 +67,9 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+# uninitialized value in cups library on ppc64le
+# https://github.com/OpenPrinting/cups/pull/329
+Patch1000: 0001-cups-fix-uninit-value-jump.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -269,6 +272,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
+# uninitialized value in PPD CUPS API
+%patch1000 -p1 -b .ppd-memleak
 
 
 %if %{lspp}
@@ -652,6 +657,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Feb 24 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-4
+- jump based on uninitialized value in PPD related CUPS API on ppc64le
+
 * Tue Feb 22 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-3
 - own www/da and www/fr dirs
 
