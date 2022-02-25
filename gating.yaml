@@ -4,7 +4,7 @@ product_versions:
 decision_context: bodhi_update_push_testing
 subject_type: koji_build
 rules:
-  - !PassingTestCaseRule {test_case_name: fedora-ci.koji-build./plans/all.functional}
+  - !PassingTestCaseRule {test_case_name: fedora-ci.koji-build.tier0.functional}
 
 #Rawhide
 --- !Policy
@@ -13,7 +13,7 @@ product_versions:
 decision_context: bodhi_update_push_stable
 subject_type: koji_build
 rules:
-  - !PassingTestCaseRule {test_case_name: fedora-ci.koji-build./plans/all.functional}
+  - !PassingTestCaseRule {test_case_name: fedora-ci.koji-build.tier0.functional}
 
 #gating rhel
 --- !Policy
