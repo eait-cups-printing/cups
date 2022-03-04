@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -70,6 +70,10 @@ Patch100: cups-lspp.patch
 # uninitialized value in cups library on ppc64le
 # https://github.com/OpenPrinting/cups/pull/329
 Patch1000: 0001-cups-fix-uninit-value-jump.patch
+# background thread for adding IPP Everywhere printers didn't resolve
+# mDNS URIs
+# https://github.com/OpenPrinting/cups/issues/340
+Patch1001: cups-resolve-uri.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -274,6 +278,10 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # UPSTREAM PATCHES
 # uninitialized value in PPD CUPS API
 %patch1000 -p1 -b .ppd-memleak
+# background thread for adding IPP Everywhere printers didn't resolve
+# mDNS URIs
+# https://github.com/OpenPrinting/cups/issues/340
+%patch1001 -p1 -b .resolve-uri
 
 
 %if %{lspp}
@@ -657,6 +665,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed Mar 02 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-5
+- background thread for add IPP Everywhere printers permanently didn't resolve mDNS
+
 * Thu Feb 24 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-4
 - jump based on uninitialized value in PPD related CUPS API on ppc64le
 
