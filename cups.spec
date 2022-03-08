@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -74,6 +74,8 @@ Patch1000: 0001-cups-fix-uninit-value-jump.patch
 # mDNS URIs
 # https://github.com/OpenPrinting/cups/issues/340
 Patch1001: cups-resolve-uri.patch
+# Fix copyright in trailer templates
+Patch1002: 0001-Footer-message-corrected.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -282,6 +284,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # mDNS URIs
 # https://github.com/OpenPrinting/cups/issues/340
 %patch1001 -p1 -b .resolve-uri
+# Fixed copyright in trailers
+%patch1002 -p1 -b .trailer-copyright
 
 
 %if %{lspp}
@@ -665,6 +669,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Mar 08 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-6
+- fix copyrights in trailer templates
+
 * Wed Mar 02 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-5
 - background thread for add IPP Everywhere printers permanently didn't resolve mDNS
 
