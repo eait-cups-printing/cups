@@ -76,6 +76,8 @@ Patch1000: 0001-cups-fix-uninit-value-jump.patch
 Patch1001: cups-resolve-uri.patch
 # Fix copyright in trailer templates
 Patch1002: 0001-Footer-message-corrected.patch
+# CSS issues in web ui
+Patch1003: 0001-Fix-some-web-interface-issues.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -286,6 +288,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1001 -p1 -b .resolve-uri
 # Fixed copyright in trailers
 %patch1002 -p1 -b .trailer-copyright
+# CSS issues in web ui
+%patch1003 -p1 -b .css-issues
 
 
 %if %{lspp}
@@ -671,6 +675,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Tue Mar 08 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-6
 - fix copyrights in trailer templates
+- fix CSS issues in web ui
 
 * Wed Mar 02 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-5
 - background thread for add IPP Everywhere printers permanently didn't resolve mDNS
