@@ -6,7 +6,7 @@ index aede375..d448d7e 100644
        </div>
      </div>
 -    <div class="footer">CUPS og CUPS-logoet er varemærker som tilhører <a href="http://www.apple.com">Apple Inc.</a> Ophavsret &copy; 2007-2019 Apple Inc. Alle rettigheder forbeholdt.</div>
-+    <div class="footer">Copyright &copy; 2021-2022 OpenPrinting. Alle rettigheder forbeholdt.</div>
++    <div class="footer">Ophavsret &copy; 2021-2022 OpenPrinting. Alle rettigheder forbeholdt.</div>
    </body>
  </html>
 diff --git a/templates/de/trailer.tmpl b/templates/de/trailer.tmpl
@@ -28,7 +28,7 @@ index c1cb58f..9b9047e 100644
        </div>
      </div>
 -    <div class="footer">CUPS y el logo de CUPS son marcas registradas de <a href="http://www.apple.com">Apple Inc.</a> Derechos de autor &copy; 2007-2019 Apple Inc. Todos los derechos reservados.</div>
-+    <div class="footer">Copyright &copy; 2021-2022 OpenPrinting. Todos los derechos reservados.</div>
++    <div class="footer">Derechos de autor &copy; 2021-2022 OpenPrinting. Todos los derechos reservados.</div>
    </body>
  </html>
 diff --git a/templates/fr/trailer.tmpl b/templates/fr/trailer.tmpl
