@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -126,7 +126,8 @@ Recommends: nss-mdns
 # avahi is needed for mDNS discovery and sharing queues
 Recommends: avahi
 # for IPP-over-USB device support
-Recommends: ipp-usb
+# remove until there is a migration path
+#Recommends: ipp-usb
 
 # We ship udev rules which use setfacl.
 Requires: acl
@@ -673,6 +674,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Mar 31 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-7
+- remove ipp-usb for now until there is a migration path
+
 * Tue Mar 08 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-6
 - fix copyrights in trailer templates
 - fix CSS issues in web ui
