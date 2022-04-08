@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -78,6 +78,8 @@ Patch1001: cups-resolve-uri.patch
 Patch1002: 0001-Footer-message-corrected.patch
 # CSS issues in web ui
 Patch1003: 0001-Fix-some-web-interface-issues.patch
+# 2073268 - 30-second delays printing to Windows 2016 server via HTTPS
+Patch1004: 0001-cups-tls-gnutls.c-Use-always-GNUTLS_SHUT_WR.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -291,6 +293,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1002 -p1 -b .trailer-copyright
 # CSS issues in web ui
 %patch1003 -p1 -b .css-issues
+# 2073268 - 30-second delays printing to Windows 2016 server via HTTPS
+%patch1004 -p1 -b .gnutlsbye
 
 
 %if %{lspp}
@@ -674,6 +678,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Apr 08 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-8
+- 2073268 - 30-second delays printing to Windows 2016 server via HTTPS
+
 * Thu Mar 31 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-7
 - remove ipp-usb for now until there is a migration path
 
