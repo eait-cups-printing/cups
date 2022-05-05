@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -366,6 +366,13 @@ mkdir -p %{buildroot}%{_unitdir}
 
 find %{buildroot}%{_datadir}/cups/model -name "*.ppd" |xargs gzip -n9f
 
+pushd %{buildroot}%{_datadir}/%{name}/ipptool
+for file in color.jpg document-a4.pdf document-a4.ps document-letter.pdf document-letter.ps gray.jpg onepage-a4.pdf onepage-a4.ps onepage-letter.pdf onepage-letter.ps testfile.jpg testfile.pcl testfile.pdf testfile.ps testfile.txt
+do
+  mv $file{,.gz}
+done
+popd
+
 %if %{use_alternatives}
 pushd %{buildroot}%{_bindir}
 for i in cancel lp lpq lpr lprm lpstat; do
@@ -678,6 +685,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu May 05 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-9
+- add .gz to several files, which are compressed during installation script
+
 * Fri Apr 08 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.1-8
 - 2073268 - 30-second delays printing to Windows 2016 server via HTTPS
 
