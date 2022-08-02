@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -67,6 +67,7 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+Patch1001: 0001-scheduler-ipp.c-Allocate-device_uri-via-cupsdSetStri.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -270,6 +271,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
+%patch1001 -p1 -b .invalid-pointer-uri
 
 
 %if %{lspp}
@@ -660,6 +662,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Aug 02 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-3
+- fix invalid pointer during resolving mDNS uri
+
 * Wed Jul 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
