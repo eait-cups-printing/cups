@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 Url: https://openprinting.github.io/cups/
 # Apple stopped uploading the new versions into github, use OpenPrinting fork
@@ -302,7 +302,9 @@ export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
 export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
 export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY_SOURCE=2"
 # --enable-debug to avoid stripping binaries
-%configure --with-docdir=%{_datadir}/%{name}/www --enable-debug \
+%configure --with-docdir=%{_datadir}/%{name}/www \
+  --enable-debug \
+  --enable-gssapi \
 %if %{lspp}
   --enable-lspp \
 %endif
@@ -662,6 +664,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Aug 11 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-4
+- 2115002 - Reenable kerberos/gssapi support
+
 * Tue Aug 02 2022 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-3
 - fix invalid pointer during resolving mDNS uri
 
