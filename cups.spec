@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 # the CUPS exception text is the same as LLVM exception, so using that name with
 # agreement from legal team
 # https://lists.fedoraproject.org/archives/list/legal@lists.fedoraproject.org/message/A7GFSD6M3GYGSI32L2FC5KB22DUAEQI3/
@@ -72,6 +72,7 @@ Patch100: cups-lspp.patch
 #### UPSTREAM PATCHES (starts with 1000) ####
 Patch1001: 0001-scheduler-ipp.c-Allocate-device_uri-via-cupsdSetStri.patch
 Patch1002: cups-resolve-local.patch
+Patch1003: cups-ippeveprinter-typo.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -286,6 +287,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # UPSTREAM PATCHES
 %patch1001 -p1 -b .invalid-pointer-uri
 %patch1002 -p1 -b .localhost
+# https://github.com/OpenPrinting/cups/pull/629
+%patch1003 -p1 -b .ippeveprinter-typo
 
 
 %if %{lspp}
@@ -692,6 +695,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Mar 02 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-10
+- fix loading ippeveps in ippeveprinter if only the command name is provided
+
 * Mon Feb 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-9
 - move /etc/cups into cups-filesystem, since cups-browsed needs it
 
