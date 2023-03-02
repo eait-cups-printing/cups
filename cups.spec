@@ -73,6 +73,7 @@ Patch100: cups-lspp.patch
 Patch1001: 0001-scheduler-ipp.c-Allocate-device_uri-via-cupsdSetStri.patch
 Patch1002: cups-resolve-local.patch
 Patch1003: cups-ippeveprinter-typo.patch
+Patch1004: 0001-Don-t-override-color-settings-from-print-dialog.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -289,6 +290,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1002 -p1 -b .localhost
 # https://github.com/OpenPrinting/cups/pull/629
 %patch1003 -p1 -b .ippeveprinter-typo
+%patch1004 -p1 -b .no_color_override
 
 
 %if %{lspp}
@@ -697,6 +699,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Thu Mar 02 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-10
 - fix loading ippeveps in ippeveprinter if only the command name is provided
+- don't override color settings from print dialog
 
 * Mon Feb 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-9
 - move /etc/cups into cups-filesystem, since cups-browsed needs it
