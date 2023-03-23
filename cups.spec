@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 # the CUPS exception text is the same as LLVM exception, so using that name with
 # agreement from legal team
 # https://lists.fedoraproject.org/archives/list/legal@lists.fedoraproject.org/message/A7GFSD6M3GYGSI32L2FC5KB22DUAEQI3/
@@ -326,7 +326,6 @@ export CXX=%{__cxx}
 export DSOFLAGS="$DSOFLAGS $RPM_LD_FLAGS"
 export CFLAGS="$CFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
 export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
-export LDFLAGS="$LDFLAGS $RPM_LD_FLAGS -Wall -fstack-clash-protection -D_FORTIFY_SOURCE=2"
 # --enable-debug to avoid stripping binaries
 %configure --with-docdir=%{_datadir}/%{name}/www \
   --enable-debug \
@@ -704,6 +703,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Mar 23 2023 Siddhesh Poyarekar <siddhesh@redhat.com> - 1:2.4.2-11
+- Drop unnecessary LDFLAGS addition.
+
 * Thu Mar 02 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.2-10
 - fix loading ippeveps in ippeveprinter if only the command name is provided
 - don't override color settings from print dialog
