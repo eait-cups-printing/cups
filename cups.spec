@@ -76,6 +76,7 @@ Patch1003: cups-ippeveprinter-typo.patch
 Patch1004: 0001-Don-t-override-color-settings-from-print-dialog.patch
 Patch1005: 0001-scheduler-ipp.c-Convert-incoming-ColorModel-attribut.patch
 Patch1006: 0001-scheduler-printers.c-Check-for-CMYK-as-well-fixes-42.patch
+Patch1007: 0001-configure-Raise-FORTIFY_SOURCE-level-to-3.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -298,6 +299,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch1005 -p1 -b .save-color-settings
 # https://github.com/OpenPrinting/cups/pull/500
 %patch1006 -p1 -b .check-for-cmyk
+# https://github.com/OpenPrinting/cups/pull/642
+%patch1007 -p1 -b .raise-fortify
 
 
 %if %{lspp}
