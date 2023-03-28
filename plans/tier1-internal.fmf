@@ -8,5 +8,5 @@ execute:
     how: tmt
 adjust:
     enabled: false
-    when: distro == centos-stream-* or distro == fedora-*
+    when: distro == centos-stream or distro == fedora
     because: They don't have access to internal repos.
