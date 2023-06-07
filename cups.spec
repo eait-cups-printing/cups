@@ -262,38 +262,38 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %prep
 %setup -q -n cups-%{VERSION}
 # Use the system pam configuration.
-%patch 1 -p1 -b .system-auth
+%patch -P 1 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
-%patch 2 -p1 -b .multilib
+%patch -P 2 -p1 -b .multilib
 # Ignore rpm save/new files in the banners directory.
-%patch 3 -p1 -b .banners
+%patch -P 3 -p1 -b .banners
 # Don't export SSLLIBS to cups-config.
-%patch 4 -p1 -b .no-export-ssllibs
+%patch -P 4 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
-%patch 5 -p1 -b .direct-usb
+%patch -P 5 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch 6 -p1 -b .driverd-timeout
+%patch -P 6 -p1 -b .driverd-timeout
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch 7 -p1 -b .usb-paperout
+%patch -P 7 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
-%patch 8 -p1 -b .uri-compat
+%patch -P 8 -p1 -b .uri-compat
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch 9 -p1 -b .freebind
+%patch -P 9 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-%patch 10 -p1 -b .ipp-multifile
+%patch -P 10 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch 11 -p1 -b .web-devices-timeout
+%patch -P 11 -p1 -b .web-devices-timeout
 # Add failover backend (bug #1689209)
-%patch 12 -p1 -b .failover
+%patch -P 12 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch 13 -p1 -b .dymo-deviceid
+%patch -P 13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
 
 
 %if %{lspp}
 # LSPP support.
-%patch 100 -p1 -b .lspp
+%patch -P 100 -p1 -b .lspp
 %endif
 
 
