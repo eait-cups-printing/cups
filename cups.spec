@@ -168,7 +168,11 @@ Requires(preun): systemd
 Requires(postun): systemd
 
 # for upgrade-get-document script - remove after C10S is released and F40 is EOL
+%if %{with python3}
 Requires(post): python3
+%else
+Requires(post): python
+%endif
 
 
 %package client
