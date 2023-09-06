@@ -1,5 +1,5 @@
 %global use_alternatives 1
-%global lspp 1 
+%global lspp 1
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -49,26 +49,26 @@ Patch1: cups-system-auth.patch
 # fixed hack with pkg-config calling for gnutls' libdir variable
 Patch2: cups-multilib.patch
 # if someone makes a change to banner files, then there will <banner>.rpmnew
-# with next update of cups-filters - this patch makes sure the banner file 
+# with next update of cups-filters - this patch makes sure the banner file
 # changed by user is used and .rpmnew or .rpmsave is ignored
 # Note: This could be rewrite with use a kind of #define and send to upstream
 Patch3: cups-banners.patch
 # don't export ssl libs to cups-config - can't find the reason.
 Patch4: cups-no-export-ssllibs.patch
 # enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
-Patch5: cups-direct-usb.patch
+#Patch5: cups-direct-usb.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
 Patch6: cups-driverd-timeout.patch
-# usb backend didn't get any notification about out-of-paper because of kernel 
-Patch7: cups-usb-paperout.patch
+# usb backend didn't get any notification about out-of-paper because of kernel
+#Patch7: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
-Patch8: cups-uri-compat.patch
+#Patch8: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
 Patch9: cups-freebind.patch
 # add support of multifile
-Patch10: cups-ipp-multifile.patch
+#Patch10: cups-ipp-multifile.patch
 # prolongs web ui timeout
 Patch11: cups-web-devices-timeout.patch
 # failover backend for implementing failover functionality
@@ -94,15 +94,36 @@ Patch1001: 0001-Use-purge-job-instead-of-purge-jobs-when-canceling-a.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
-##### breaks something. 
+##### breaks something.
 
+#### Custom EAIT patches (starts with 2000) ####
+
+# Re-open the log if it has been logrotated under us.
+Patch2001: cups-logrotate.patch
+
+# provide debuging info for the username atempting to authenticate with PAM
+Patch2002: cups-pam_auth.patch
+
+# Force Windows IPP 1.0 to use Microsoft IPP Class Driver for printer-make-and-model,
+# also force a username/password prompt when using IPP 1.0 and adding a printer.
+Patch2003: cups-windows-ipp-1.0.patch
+
+# Workaround for Konica Minolta "Reset Modes" status bug
+# https://github.com/OpenPrinting/cups/issues/428
+Patch2004: cups-konica-minolta-submission-interrupted.patch
+
+# Konica Minolta PPD->IPP mappings
+Patch2005: cups-konica-minolta-ppd-to-ipp-mappings.patch
+
+# Brother PPD->IPP BRMediaType mapping
+Patch2006: cups-brother-ppd-to-ipp-mapping.patch
 
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
-Buildrequires: gcc-c++ 
+Buildrequires: gcc-c++
 BuildRequires: krb5-devel
 BuildRequires: libacl-devel
 # make is used for compilation
@@ -297,17 +318,17 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # Don't export SSLLIBS to cups-config.
 %patch -P 4 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
-%patch -P 5 -p1 -b .direct-usb
+#patch -P 5 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
 %patch -P 6 -p1 -b .driverd-timeout
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch -P 7 -p1 -b .usb-paperout
+#patch -P 7 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
-%patch -P 8 -p1 -b .uri-compat
+#patch -P 8 -p1 -b .uri-compat
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
 %patch -P 9 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-%patch -P 10 -p1 -b .ipp-multifile
+#patch -P 10 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
 %patch -P 11 -p1 -b .web-devices-timeout
 # Add failover backend (bug #1689209)
@@ -322,16 +343,19 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1001 -p1 -b .purge-job
 
 
+# EAIT PATCHES
+%patch -P 2001 -p1 -b .logrotate
+%patch -P 2002 -p1 -b .pam_auth
+%patch -P 2003 -p1 -b .windows-ipp-1.0
+%patch -P 2004 -p1 -b .submission-interrupted
+%patch -P 2005 -p1 -b .konica-minolta-ppd2ipp
+%patch -P 2006 -p1 -b .brother-ppd2ipp
+
 %if %{lspp}
 # LSPP support.
 %patch -P 100 -p1 -b .lspp
 %endif
 
-
-# Log to the system journal by default (bug #1078781, bug #1519331).
-sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
-sed -i -e 's,^AccessLog .*$,AccessLog syslog,' conf/cups-files.conf.in
-sed -i -e 's,^PageLog .*,PageLog syslog,' conf/cups-files.conf.in
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -364,6 +388,7 @@ export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
   --with-dbusdir=%{_sysconfdir}/dbus-1 \
   --with-dnssd=avahi \
   --with-log-file-perm=0600 \
+  --with-max-log-size=0 \
   --with-ondemand=systemd \
   --with-pkgconfpath=%{_libdir}/pkgconfig \
   --with-rundir=%{_rundir}/cups \
@@ -475,6 +500,16 @@ c /dev/lp0 0660 root lp - 6:0
 c /dev/lp1 0660 root lp - 6:1
 c /dev/lp2 0660 root lp - 6:2
 c /dev/lp3 0660 root lp - 6:3
+EOF
+
+# /etc/logrotate.d/cups
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
+cat > %{buildroot}%{_sysconfdir}/logrotate.d/cups <<EOF
+/var/log/cups/*_log {
+	missingok
+	notifempty
+	sharedscripts
+}
 EOF
 
 find %{buildroot} -type f -o -type l | sed '
@@ -724,6 +759,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
 %config(noreplace) %{_sysconfdir}/pam.d/cups
+%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %attr(0644, root, root)%{_unitdir}/%{name}.service
@@ -796,6 +832,14 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed Sep 06 2023 Douglas Kosovic <doug@uq.edu.au> - 1:2.4.6-6
+- send log output to /var/log/cups/error_log rather than system journal
+- add logrotate support for log output
+- Show username atempting to auth before PAM calls in debug log
+- disable LSPP
+- disable USB related patches and multifile patch
+- add some PPD->IPP mappings for Konica Minolta and Brother printers
+
 * Mon Aug 14 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.6-5
 - comply the upgrade script with python2 as well if needed
 
@@ -1155,7 +1199,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 1590123 - cups-driverd doesn't recognize static gzipped ppds
 
 * Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
-- rebase to 2.2.7 
+- rebase to 2.2.7
 - substitute default values for invalid job attributes (upstream issues #5229 and #5186)
 
 * Thu Mar 29 2018 Pavel Zhukov <pzhukov@redhat.com> - 1:2.2.6-13
@@ -1234,7 +1278,7 @@ rm -f %{cups_serverbin}/backend/smb
 - disable patch for #1437065 for now until issue with stat is solved
 
 * Thu Mar 30 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-2
-- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart 
+- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart
 
 * Wed Mar 29 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-1
 - rebase to 2.2.3
@@ -1264,7 +1308,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 2.2.0
 
 * Fri Aug 12 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.4rc1
-- fixing release number 
+- fixing release number
 
 * Tue Aug 09 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.2rc1
 - rebase to cups-2.2rc1
@@ -1707,7 +1751,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 * Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-5
 - The cups-libs subpackage contains code distributed under the zlib
-  license (md5.c). 
+  license (md5.c).
 
 * Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-4
 - quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
@@ -3405,7 +3449,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Fixed up dbus patch so that it compiles.
 
 * Wed Mar  9 2005 John (J5) Palmieri <johnp@redhat.com>
-- Fix up dbus patch 
+- Fix up dbus patch
 
 * Mon Mar  7 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-13
 - Fixed up dbus patch to work with dbus 0.31
@@ -3771,7 +3815,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Mark banners as config files (bug #89069).
 
 * Sat Apr 12 2003 Havoc Pennington <hp@redhat.com> 1:1.1.18-4
-- adjust dbus patch - dbus_bus_get() sends the hello for you, 
+- adjust dbus patch - dbus_bus_get() sends the hello for you,
   and there were a couple of memleaks
 - buildprereq dbus 0.9
 - rebuild for new dbus
@@ -4083,7 +4127,7 @@ rm -f %{cups_serverbin}/backend/smb
 - PreReq initscripts >= 5.20
 
 * Mon Jun 26 2000 Tim Powers <timp@redhat.com>
-- started changelog 
+- started changelog
 - fixed init.d script location
 - changed script in init.d quite a bit and made more like the rest of our
-  startup scripts 
+  startup scripts
