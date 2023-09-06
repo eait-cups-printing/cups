@@ -1,0 +1,89 @@
+diff --git a/scheduler/ipp.c b/scheduler/ipp.c
+index b722712f6..d2fdd0d2e 100644
+--- a/scheduler/ipp.c
++++ b/scheduler/ipp.c
+@@ -67,7 +67,8 @@ static void	copy_job_attrs(cupsd_client_t *con,
+ 			       cups_array_t *ra, cups_array_t *exclude);
+ static void	copy_printer_attrs(cupsd_client_t *con,
+ 		                   cupsd_printer_t *printer,
+-				   cups_array_t *ra);
++				   cups_array_t *ra,
++				   int use_ms_ipp_class);
+ static void	copy_subscription_attrs(cupsd_client_t *con,
+ 		                        cupsd_subscription_t *sub,
+ 					cups_array_t *ra,
+@@ -4879,7 +4880,8 @@ static void
+ copy_printer_attrs(
+     cupsd_client_t  *con,		/* I - Client connection */
+     cupsd_printer_t *printer,		/* I - Printer */
+-    cups_array_t    *ra)		/* I - Requested attributes array */
++    cups_array_t    *ra,		/* I - Requested attributes array */
++    int use_ms_ipp_class)
+ {
+   char		uri[HTTP_MAX_URI];	/* URI value */
+   time_t	curtime;		/* Current time */
+@@ -5058,7 +5060,21 @@ copy_printer_attrs(
+   copy_attrs(con->response, printer->attrs, ra, IPP_TAG_ZERO, 0, NULL);
+   if (printer->ppd_attrs)
+     copy_attrs(con->response, printer->ppd_attrs, ra, IPP_TAG_ZERO, 0, NULL);
+-  copy_attrs(con->response, CommonData, ra, IPP_TAG_ZERO, IPP_TAG_COPY, NULL);
++  if (use_ms_ipp_class) {
++    cups_array_t    *exclude;
++    ipp_t *printer_make_and_model;
++
++    exclude = cupsArrayNew((cups_array_func_t)strcmp, NULL);
++    cupsArrayAdd(exclude, _cupsStrAlloc("printer-make-and-model"));
++    copy_attrs(con->response, CommonData, ra, IPP_TAG_ZERO, 0, exclude);
++    cupsArrayDelete(exclude);
++    printer_make_and_model = ippNew();
++    ippAddString(printer_make_and_model, IPP_TAG_PRINTER, IPP_TAG_TEXT,
++                 "printer-make-and-model", NULL, "Microsoft IPP Class Driver");
++    copy_attrs(con->response, printer_make_and_model, ra, IPP_TAG_ZERO, IPP_TAG_COPY, NULL);
++    ippDelete(printer_make_and_model);
++  } else
++    copy_attrs(con->response, CommonData, ra, IPP_TAG_ZERO, IPP_TAG_COPY, NULL);
+ 
+   _cupsRWUnlock(&printer->lock);
+ }
+@@ -6208,7 +6224,7 @@ get_default(cupsd_client_t *con)	/* I - Client connection */
+   {
+     ra = create_requested_array(con->request);
+ 
+-    copy_printer_attrs(con, DefaultPrinter, ra);
++    copy_printer_attrs(con, DefaultPrinter, ra, 0);
+ 
+     cupsArrayDelete(ra);
+ 
+@@ -7487,8 +7503,22 @@ get_printer_attrs(cupsd_client_t  *con,	/* I - Client connection */
+ 
+   ra = create_requested_array(con->request);
+ 
+-  copy_printer_attrs(con, printer, ra);
++  /* Only Windows clients would be using IPP 1.0 */
++  if (con->request->request.op.version[0] == 1 && con->request->request.op.version[1] == 0) {
+ 
++    cupsdLogMessage(CUPSD_LOG_DEBUG2, "get_printer_attrs(printer->auth_info_required[0]=\"%s\", con->username[0]=\"%i\")", printer->auth_info_required[0], con->username[0]);
++
++    /* Force Windows to prompt for the username/password when adding a printer */
++    if (!con->username[0])
++    {
++      send_http_error(con, HTTP_UNAUTHORIZED, printer);
++      return;
++    }
++
++    copy_printer_attrs(con, printer, ra, 1);
++  } else {
++    copy_printer_attrs(con, printer, ra, 0);
++  }
+   cupsArrayDelete(ra);
+ 
+   con->response->request.status.status_code = IPP_OK;
+@@ -7712,7 +7742,7 @@ get_printers(cupsd_client_t *con,	/* I - Client connection */
+       * Send the attributes...
+       */
+ 
+-      copy_printer_attrs(con, printer, ra);
++      copy_printer_attrs(con, printer, ra, 0);
+     }
+   }
+ 

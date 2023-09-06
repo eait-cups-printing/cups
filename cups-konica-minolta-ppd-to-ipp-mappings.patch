@@ -1,0 +1,135 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..a1f0c579d 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -1727,6 +1727,7 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+     if ((duplex = ppdFindOption(ppd, "JCLDuplex")) == NULL)
+       if ((duplex = ppdFindOption(ppd, "EFDuplex")) == NULL)
+         if ((duplex = ppdFindOption(ppd, "EFDuplexing")) == NULL)
++          if ((duplex = ppdFindOption(ppd, "KMDuplex")) == NULL)
+ 	  duplex = ppdFindOption(ppd, "KD03Duplex");
+ 
+   if (duplex)
+@@ -1738,15 +1739,18 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+ 	 i --, choice ++)
+     {
+       if ((!_cups_strcasecmp(choice->choice, "None") ||
+-	   !_cups_strcasecmp(choice->choice, "False")) && !pc->sides_1sided)
++	   !_cups_strcasecmp(choice->choice, "False") ||
++	   !_cups_strcasecmp(choice->choice, "Single")) && !pc->sides_1sided)
+         pc->sides_1sided = strdup(choice->choice);
+       else if ((!_cups_strcasecmp(choice->choice, "DuplexNoTumble") ||
+ 	        !_cups_strcasecmp(choice->choice, "LongEdge") ||
+-	        !_cups_strcasecmp(choice->choice, "Top")) && !pc->sides_2sided_long)
++	        !_cups_strcasecmp(choice->choice, "Top") ||
++	        !_cups_strcasecmp(choice->choice, "Double")) && !pc->sides_2sided_long)
+         pc->sides_2sided_long = strdup(choice->choice);
+       else if ((!_cups_strcasecmp(choice->choice, "DuplexTumble") ||
+ 	        !_cups_strcasecmp(choice->choice, "ShortEdge") ||
+-	        !_cups_strcasecmp(choice->choice, "Bottom")) &&
++	        !_cups_strcasecmp(choice->choice, "Bottom") ||
++	        !_cups_strcasecmp(choice->choice, "Booklet")) &&
+ 	       !pc->sides_2sided_short)
+         pc->sides_2sided_short = strdup(choice->choice);
+     }
+@@ -1887,6 +1891,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleLocation", "DualLandscape");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "StapleOption")) != NULL)
++    {
++     /*
++      * Add (Konica Minolta) staple finishings...
++      */
++
++      if (ppdFindChoice(ppd_option, "1StapleLeft"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_LEFT, "StapleOption", "1StapleLeft");
++      if (ppdFindChoice(ppd_option, "1StapleRight"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_RIGHT, "StapleOption", "1StapleRight");
++      if (ppdFindChoice(ppd_option, "1StapleZeroLeft"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_BOTTOM_LEFT, "StapleOption", "1StapleZeroLeft");
++      if (ppdFindChoice(ppd_option, "2Staples"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOptionN", "2Staples");
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "RIPunch")) != NULL)
+     {
+      /*
+@@ -1913,6 +1933,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_TOP, "RIPunch", "Upper4");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "PunchOption")) != NULL)
++    {
++     /*
++      * Add (Konica Minolta) punch finishings...
++      */
++
++      if (ppdFindChoice(ppd_option, "2holes"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_DUAL_LEFT, "PunchOption", "2holes");
++      if (ppdFindChoice(ppd_option, "3holes"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_TRIPLE_LEFT, "PunchOption", "3holes");
++      if (ppdFindChoice(ppd_option, "4holes"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_LEFT, "PunchOption", "4holes");
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "BindEdge")) != NULL)
+     {
+      /*
+@@ -1929,6 +1963,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "BindEdge", "Bottom");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "Binding")) != NULL)
++    {
++     /*
++      * Add (Konica Minolta) bind finishings...
++      */
++
++      if (ppdFindChoice(ppd_option, "LeftBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_LEFT, "Binding", "LeftBinding");
++      if (ppdFindChoice(ppd_option, "RightBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_RIGHT, "Binding", "RightBinding");
++      if (ppdFindChoice(ppd_option, "TopBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_TOP, "Binding", "TopBinding");
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "FoldType")) != NULL)
+     {
+      /*
+@@ -1961,6 +2009,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "RIFoldType", "OutsideTwoFold");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "Fold")) != NULL)
++    {
++     /*
++      * Add (Konica Minolta) fold finishings...
++      */
++
++      if (ppdFindChoice(ppd_option, "TriFold"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_Z, "Fold", "TriFold");
++      if (ppdFindChoice(ppd_option, "HalfFold"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_HALF, "Fold", "HalfFold");
++      if (ppdFindChoice(ppd_option, "TFoldOne"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "Fold", "TFoldOne");
++    }
++
+     if (cupsArrayCount(pc->finishings) == 0)
+     {
+       cupsArrayDelete(pc->finishings);
+diff --git a/filter/common.c b/filter/common.c
+index 1d3c73736..19d4aabaf 100644
+--- a/filter/common.c
++++ b/filter/common.c
+@@ -187,7 +187,9 @@ SetCommonOptions(
+       ppdIsMarked(ppd, "EFDuplex", "DuplexNoTumble") ||
+       ppdIsMarked(ppd, "EFDuplex", "DuplexTumble") ||
+       ppdIsMarked(ppd, "KD03Duplex", "DuplexNoTumble") ||
+-      ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble"))
++      ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble") ||
++      ppdIsMarked(ppd, "KMDuplex", "DuplexNoTumble") ||
++      ppdIsMarked(ppd, "KMDuplex", "DuplexTumble"))
+     Duplex = 1;
+ 
+   return (ppd);
