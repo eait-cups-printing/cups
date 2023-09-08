@@ -1,5 +1,5 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..a1f0c579d 100644
+index 40881cd39..bc68a022a 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
 @@ -1727,6 +1727,7 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
@@ -49,7 +49,7 @@ index 40881cd39..a1f0c579d 100644
 +      if (ppdFindChoice(ppd_option, "1StapleZeroLeft"))
 +        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_BOTTOM_LEFT, "StapleOption", "1StapleZeroLeft");
 +      if (ppdFindChoice(ppd_option, "2Staples"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOptionN", "2Staples");
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOption", "2Staples");
 +    }
 +
      if ((ppd_option = ppdFindOption(ppd, "RIPunch")) != NULL)
@@ -76,7 +76,7 @@ index 40881cd39..a1f0c579d 100644
      if ((ppd_option = ppdFindOption(ppd, "BindEdge")) != NULL)
      {
       /*
-@@ -1929,6 +1963,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1929,6 +1963,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "BindEdge", "Bottom");
      }
  
@@ -92,12 +92,14 @@ index 40881cd39..a1f0c579d 100644
 +        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_RIGHT, "Binding", "RightBinding");
 +      if (ppdFindChoice(ppd_option, "TopBinding"))
 +        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_TOP, "Binding", "TopBinding");
++      if (ppdFindChoice(ppd_option, "BottomBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "Binding", "BottomBinding");
 +    }
 +
      if ((ppd_option = ppdFindOption(ppd, "FoldType")) != NULL)
      {
       /*
-@@ -1961,6 +2009,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1961,6 +2011,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "RIFoldType", "OutsideTwoFold");
      }
  
