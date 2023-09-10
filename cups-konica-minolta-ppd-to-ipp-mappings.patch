@@ -1,5 +1,5 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..bc68a022a 100644
+index 40881cd39..dfc72c69b 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
 @@ -1727,6 +1727,7 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
@@ -32,51 +32,60 @@ index 40881cd39..bc68a022a 100644
  	       !pc->sides_2sided_short)
          pc->sides_2sided_short = strdup(choice->choice);
      }
-@@ -1887,6 +1891,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1887,6 +1891,27 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleLocation", "DualLandscape");
      }
  
 +    if ((ppd_option = ppdFindOption(ppd, "StapleOption")) != NULL)
 +    {
-+     /*
-+      * Add (Konica Minolta) staple finishings...
-+      */
++      ppd_attr = ppdFindAttr(ppd, "DefaultFinisher", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
 +
-+      if (ppdFindChoice(ppd_option, "1StapleLeft"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_LEFT, "StapleOption", "1StapleLeft");
-+      if (ppdFindChoice(ppd_option, "1StapleRight"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_RIGHT, "StapleOption", "1StapleRight");
-+      if (ppdFindChoice(ppd_option, "1StapleZeroLeft"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_BOTTOM_LEFT, "StapleOption", "1StapleZeroLeft");
-+      if (ppdFindChoice(ppd_option, "2Staples"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOption", "2Staples");
++       /*
++        * Add (Konica Minolta) staple finishings...
++        */
++
++        if (ppdFindChoice(ppd_option, "1StapleLeft"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_LEFT, "StapleOption", "1StapleLeft");
++        if (ppdFindChoice(ppd_option, "1StapleRight"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_RIGHT, "StapleOption", "1StapleRight");
++        if (ppdFindChoice(ppd_option, "1StapleZeroLeft"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_BOTTOM_LEFT, "StapleOption", "1StapleZeroLeft");
++        if (ppdFindChoice(ppd_option, "2Staples"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOptionN", "2Staples");
++        }
 +    }
 +
      if ((ppd_option = ppdFindOption(ppd, "RIPunch")) != NULL)
      {
       /*
-@@ -1913,6 +1933,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1913,6 +1938,24 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_TOP, "RIPunch", "Upper4");
      }
  
 +    if ((ppd_option = ppdFindOption(ppd, "PunchOption")) != NULL)
 +    {
-+     /*
-+      * Add (Konica Minolta) punch finishings...
-+      */
++      ppd_attr = ppdFindAttr(ppd, "DefaultPunchOption", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
++       /*
++        * Add (Konica Minolta) punch finishings...
++        */
 +
-+      if (ppdFindChoice(ppd_option, "2holes"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_DUAL_LEFT, "PunchOption", "2holes");
-+      if (ppdFindChoice(ppd_option, "3holes"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_TRIPLE_LEFT, "PunchOption", "3holes");
-+      if (ppdFindChoice(ppd_option, "4holes"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_LEFT, "PunchOption", "4holes");
++        if (ppdFindChoice(ppd_option, "2holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_DUAL_LEFT, "PunchOption", "2holes");
++        if (ppdFindChoice(ppd_option, "3holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_TRIPLE_LEFT, "PunchOption", "3holes");
++        if (ppdFindChoice(ppd_option, "4holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_LEFT, "PunchOption", "4holes");
++      }
 +    }
 +
      if ((ppd_option = ppdFindOption(ppd, "BindEdge")) != NULL)
      {
       /*
-@@ -1929,6 +1963,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1929,6 +1972,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "BindEdge", "Bottom");
      }
  
@@ -99,22 +108,26 @@ index 40881cd39..bc68a022a 100644
      if ((ppd_option = ppdFindOption(ppd, "FoldType")) != NULL)
      {
       /*
-@@ -1961,6 +2011,20 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1961,6 +2020,24 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "RIFoldType", "OutsideTwoFold");
      }
  
 +    if ((ppd_option = ppdFindOption(ppd, "Fold")) != NULL)
 +    {
-+     /*
-+      * Add (Konica Minolta) fold finishings...
-+      */
++      ppd_attr = ppdFindAttr(ppd, "DefaultZFoldPunch", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
++       /*
++        * Add (Konica Minolta) fold finishings...
++        */
 +
-+      if (ppdFindChoice(ppd_option, "TriFold"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_Z, "Fold", "TriFold");
-+      if (ppdFindChoice(ppd_option, "HalfFold"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_HALF, "Fold", "HalfFold");
-+      if (ppdFindChoice(ppd_option, "TFoldOne"))
-+        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "Fold", "TFoldOne");
++        if (ppdFindChoice(ppd_option, "TriFold"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_Z, "Fold", "TriFold");
++        if (ppdFindChoice(ppd_option, "HalfFold"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_HALF, "Fold", "HalfFold");
++        if (ppdFindChoice(ppd_option, "TFoldOne"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "Fold", "TFoldOne");
++      }
 +    }
 +
      if (cupsArrayCount(pc->finishings) == 0)
