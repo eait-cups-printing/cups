@@ -1,15 +1,17 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..dfc72c69b 100644
+index 40881cd39..e43ab7738 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
-@@ -1727,6 +1727,7 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+@@ -1727,7 +1727,8 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
      if ((duplex = ppdFindOption(ppd, "JCLDuplex")) == NULL)
        if ((duplex = ppdFindOption(ppd, "EFDuplex")) == NULL)
          if ((duplex = ppdFindOption(ppd, "EFDuplexing")) == NULL)
+-	  duplex = ppdFindOption(ppd, "KD03Duplex");
 +          if ((duplex = ppdFindOption(ppd, "KMDuplex")) == NULL)
- 	  duplex = ppdFindOption(ppd, "KD03Duplex");
++	    duplex = ppdFindOption(ppd, "KD03Duplex");
  
    if (duplex)
+   {
 @@ -1738,15 +1739,18 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
  	 i --, choice ++)
      {
@@ -134,17 +136,68 @@ index 40881cd39..dfc72c69b 100644
      {
        cupsArrayDelete(pc->finishings);
 diff --git a/filter/common.c b/filter/common.c
-index 1d3c73736..19d4aabaf 100644
+index 1d3c73736..249b9dcfd 100644
 --- a/filter/common.c
 +++ b/filter/common.c
-@@ -187,7 +187,9 @@ SetCommonOptions(
+@@ -186,6 +186,8 @@ SetCommonOptions(
+       ppdIsMarked(ppd, "JCLDuplex", "DuplexTumble") ||
        ppdIsMarked(ppd, "EFDuplex", "DuplexNoTumble") ||
        ppdIsMarked(ppd, "EFDuplex", "DuplexTumble") ||
-       ppdIsMarked(ppd, "KD03Duplex", "DuplexNoTumble") ||
--      ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble"))
-+      ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble") ||
 +      ppdIsMarked(ppd, "KMDuplex", "DuplexNoTumble") ||
-+      ppdIsMarked(ppd, "KMDuplex", "DuplexTumble"))
++      ppdIsMarked(ppd, "KMDuplex", "DuplexTumble") ||
+       ppdIsMarked(ppd, "KD03Duplex", "DuplexNoTumble") ||
+       ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble"))
      Duplex = 1;
+diff --git a/filter/pstops.c b/filter/pstops.c
+index 3b10ea221..7afab84d5 100644
+--- a/filter/pstops.c
++++ b/filter/pstops.c
+@@ -635,6 +635,10 @@ copy_comments(cups_file_t  *fp,		/* I - File to read from */
+ 	  doc->num_options = cupsAddOption("EFDuplexing", "False",
+ 	                                   doc->num_options, &(doc->options));
  
-   return (ppd);
++	if (cupsGetOption("KMDuplex", doc->num_options, doc->options))
++	  doc->num_options = cupsAddOption("KMDuplex", "None",
++	                                   doc->num_options, &(doc->options));
++
+ 	if (cupsGetOption("KD03Duplex", doc->num_options, doc->options))
+ 	  doc->num_options = cupsAddOption("KD03Duplex", "None",
+ 	                                   doc->num_options, &(doc->options));
+@@ -646,6 +650,7 @@ copy_comments(cups_file_t  *fp,		/* I - File to read from */
+ 	ppdMarkOption(ppd, "Duplex", "None");
+ 	ppdMarkOption(ppd, "EFDuplex", "None");
+ 	ppdMarkOption(ppd, "EFDuplexing", "False");
++	ppdMarkOption(ppd, "KMDuplex", "None");
+ 	ppdMarkOption(ppd, "KD03Duplex", "None");
+ 	ppdMarkOption(ppd, "JCLDuplex", "None");
+       }
+diff --git a/scheduler/printers.c b/scheduler/printers.c
+index 5f9852e64..25f169fd2 100644
+--- a/scheduler/printers.c
++++ b/scheduler/printers.c
+@@ -4751,8 +4751,9 @@ load_ppd(cupsd_printer_t *p)		/* I - Printer */
+     if ((duplex = ppdFindOption(ppd, "Duplex")) == NULL)
+       if ((duplex = ppdFindOption(ppd, "EFDuplex")) == NULL)
+ 	if ((duplex = ppdFindOption(ppd, "EFDuplexing")) == NULL)
+-	  if ((duplex = ppdFindOption(ppd, "KD03Duplex")) == NULL)
+-	    duplex = ppdFindOption(ppd, "JCLDuplex");
++	  if ((duplex = ppdFindOption(ppd, "KMDuplex")) == NULL)
++	    if ((duplex = ppdFindOption(ppd, "KD03Duplex")) == NULL)
++	      duplex = ppdFindOption(ppd, "JCLDuplex");
+ 
+     if (duplex && duplex->num_choices > 1 &&
+ 	!ppdInstallableConflict(ppd, duplex->keyword, "DuplexTumble"))
+diff --git a/systemv/cupstestppd.c b/systemv/cupstestppd.c
+index d9f9c0126..3cabbacac 100644
+--- a/systemv/cupstestppd.c
++++ b/systemv/cupstestppd.c
+@@ -1314,7 +1314,8 @@ main(int  argc,				/* I - Number of command-line args */
+ 
+ 	if ((option = ppdFindOption(ppd, "JCLDuplex")) == NULL)
+ 	  if ((option = ppdFindOption(ppd, "EFDuplex")) == NULL)
+-	    option = ppdFindOption(ppd, "KD03Duplex");
++	    if ((option = ppdFindOption(ppd, "KMDuplex")) == NULL)
++	      option = ppdFindOption(ppd, "KD03Duplex");
+ 
+ 	if (option)
+ 	  _cupsLangPrintf(stdout,
