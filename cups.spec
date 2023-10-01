@@ -1,5 +1,5 @@
 %global use_alternatives 1
-%global lspp 1
+%global lspp 0
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -9,9 +9,9 @@
 
 # we still need something for python2...
 %if 0%{?rhel} >= 8 || 0%{?fedora}
-%bcond_without python3
+%global __python %{__python3}
 %else
-%bcond_with python3
+%global __python /usr/bin/python2
 %endif
 
 #%%global prever rc1
@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.6
-Release: 5%{?dist}
+Version: 2.4.7
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -84,9 +84,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/pull/741
-# 2218123 - Delays printing to lpd when reserved ports are exhausted
-Patch1000: 0001-Fix-delays-printing-to-lpd-when-reserved-ports-are-e.patch
 # https://github.com/OpenPrinting/cups/pull/742
 # 2218124 - The command "cancel -x <job>" does not remove job files
 Patch1001: 0001-Use-purge-job-instead-of-purge-jobs-when-canceling-a.patch
@@ -189,11 +186,7 @@ Requires(preun): systemd
 Requires(postun): systemd
 
 # for upgrade-get-document script - remove after C10S is released and F40 is EOL
-%if %{with python3}
-Requires(post): python3
-%else
-Requires(post): python
-%endif
+Requires(post): %{__python}
 
 
 %package client
@@ -337,8 +330,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# 2218123 - Delays printing to lpd when reserved ports are exhausted
-%patch -P 1000 -p1 -b .lpd-delay
 # 2218124 - The command "cancel -x <job>" does not remove job files
 %patch -P 1001 -p1 -b .purge-job
 
@@ -523,11 +514,7 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 install -m 0755 %{SOURCE3} %{buildroot}%{_sbindir}/upgrade_get_document
 
 # adjust shebang for old python2 if needed - remove once C10S is released and F40 EOL
-%if %{with python3}
-  sed -i 's,@PYTHON_SHEBANG@,#!/usr/bin/python3,' %{buildroot}%{_sbindir}/upgrade_get_document
-%else
-  sed -i 's,@PYTHON_SHEBANG@,#!/usr/bin/python,' %{buildroot}%{_sbindir}/upgrade_get_document
-%endif
+sed -i 's,@PYTHON_SHEBANG@,#!%{__python},' %{buildroot}%{_sbindir}/upgrade_get_document
 
 %post
 # remove after CentOS Stream 10 is released
@@ -832,13 +819,20 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Wed Sep 06 2023 Douglas Kosovic <doug@uq.edu.au> - 1:2.4.6-6
+* Fri Sep 29 2023 Douglas Kosovic <doug@uq.edu.au> - 1:2.4.7-2
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - Show username atempting to auth before PAM calls in debug log
 - disable LSPP
 - disable USB related patches and multifile patch
+- add Konica Minolta submission interupted patch
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
+
+* Wed Sep 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-1
+- 2239982 - cups-2.4.7 is available
+
+* Mon Sep 11 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.6-6
+- use unified __python macro
 
 * Mon Aug 14 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.6-5
 - comply the upgrade script with python2 as well if needed

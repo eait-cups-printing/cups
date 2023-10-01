@@ -1,6 +1,7 @@
-diff -up cups-2.4.2/scheduler/log.c.logrotate cups-2.4.2/scheduler/log.c
---- cups-2.4.2/scheduler/log.c.logrotate	2022-05-26 16:17:21 +1000
-+++ cups-2.4.2/scheduler/log.c	2023-03-12 14:47:47 +1000
+diff --git a/scheduler/log.c b/scheduler/log.c
+index 8a2996e30..4429b6510 100644
+--- a/scheduler/log.c
++++ b/scheduler/log.c
 @@ -22,6 +22,9 @@
  #  include <systemd/sd-journal.h>
  #endif /* HAVE_ASL_H */
@@ -8,10 +9,10 @@ diff -up cups-2.4.2/scheduler/log.c.logrotate cups-2.4.2/scheduler/log.c
 +#include <sys/types.h>
 +#include <sys/stat.h>
 +#include <unistd.h>
- 
- 
- /*
-@@ -131,12 +134,10 @@ cupsdCheckLogFile(cups_file_t **lf,	/* I
+ #ifndef va_copy
+ #  define va_copy(__list1, __list2) ((void)(__list1 = __list2))
+ #endif
+@@ -134,12 +137,10 @@ cupsdCheckLogFile(cups_file_t **lf,	/* IO - Log file */
    }
  
   /*
@@ -26,11 +27,10 @@ diff -up cups-2.4.2/scheduler/log.c.logrotate cups-2.4.2/scheduler/log.c
    {
     /*
      * Handle format strings...
-@@ -246,6 +247,34 @@ cupsdCheckLogFile(cups_file_t **lf,	/* I
-       fchmod(cupsFileNumber(*lf), LogFilePerm);
+@@ -250,6 +251,34 @@ cupsdCheckLogFile(cups_file_t **lf,	/* IO - Log file */
      }
    }
-+
+ 
 + /*
 +  * Has someone else (i.e. logrotate) already rotated the log for us?
 +  */
@@ -58,6 +58,7 @@ diff -up cups-2.4.2/scheduler/log.c.logrotate cups-2.4.2/scheduler/log.c
 +      fchmod(cupsFileNumber(*lf), LogFilePerm);
 +    }
 +  }
- 
++
   /*
    * Do we need to rotate the log?
+   */
