@@ -115,7 +115,7 @@ Patch2005: cups-konica-minolta-ppd-to-ipp-mappings.patch
 # Brother PPD->IPP BRMediaType mapping
 Patch2006: cups-brother-ppd-to-ipp-mapping.patch
 
-# LandscapeOrientation, Throughput & APAirPrint PPD attributes
+# LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
 Patch2007: cups-extra-ppd-attributes.patch
 
 BuildRequires: automake
@@ -833,7 +833,8 @@ rm -f %{cups_serverbin}/backend/smb
 - force Windows IPP 1.0 to use Microsoft IPP Class Driver
 - add Konica Minolta submission interupted patch
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
-- add LandscapeOrientation, Throughput & APAirPrint PPD attributes
+- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
+  PPD attributes
 
 * Wed Sep 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-1
 - 2239982 - cups-2.4.7 is available

@@ -1,5 +1,5 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..25ddaf814 100644
+index 40881cd39..27b6f8770 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
 @@ -3277,10 +3277,22 @@ _ppdCreateFromIPP2(
@@ -19,11 +19,11 @@ index 40881cd39..25ddaf814 100644
 +  if ((attr = ippFindAttribute(supported, "pages-per-minute", IPP_TAG_INTEGER)) != NULL)
 +    cupsFilePrintf(fp, "*Throughput: \"%d\"\n", ippGetInteger(attr, 0));
 +
-+
    cupsFilePrintf(fp, "*cupsVersion: %d.%d\n", CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR);
 -#ifdef __APPLE__
    cupsFilePrintf(fp, "*APAirPrint: True\n");
 -#endif // __APPLE__
++  cupsFilePuts(fp, "*cupsIPPSupplies: True\n");
    cupsFilePuts(fp, "*cupsSNMPSupplies: False\n");
    cupsFilePrintf(fp, "*cupsLanguages: \"%s", lang->language);
    if ((lang_supp = ippFindAttribute(supported, "printer-strings-languages-supported", IPP_TAG_LANGUAGE)) != NULL)
