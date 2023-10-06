@@ -118,6 +118,10 @@ Patch2006: cups-brother-ppd-to-ipp-mapping.patch
 # LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
 Patch2007: cups-extra-ppd-attributes.patch
 
+# Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes
+# and those with strlen > 40 chars
+Patch2008: cups-ignore-some-media-types.patch
+
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
@@ -345,6 +349,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2005 -p1 -b .konica-minolta-ppd2ipp
 %patch -P 2006 -p1 -b .brother-ppd2ipp
 %patch -P 2007 -p1 -b .extra-ppd-attributes
+%patch -P 2008 -p1 -b .ignore-some-media-types
 
 %if %{lspp}
 # LSPP support.
