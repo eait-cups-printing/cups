@@ -98,7 +98,7 @@ Patch1001: 0001-Use-purge-job-instead-of-purge-jobs-when-canceling-a.patch
 # Re-open the log if it has been logrotated under us.
 Patch2001: cups-logrotate.patch
 
-# provide debuging info for the username atempting to authenticate with PAM
+# provide debugging info for the username attempting to authenticate with PAM
 Patch2002: cups-pam_auth.patch
 
 # Force Windows IPP 1.0 to use Microsoft IPP Class Driver for printer-make-and-model,
@@ -114,6 +114,9 @@ Patch2005: cups-konica-minolta-ppd-to-ipp-mappings.patch
 
 # Brother PPD->IPP BRMediaType mapping
 Patch2006: cups-brother-ppd-to-ipp-mapping.patch
+
+# LandscapeOrientation, Throughput & APAirPrint PPD attributes
+Patch2007: cups-extra-ppd-attributes.patch
 
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
@@ -341,6 +344,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2004 -p1 -b .submission-interrupted
 %patch -P 2005 -p1 -b .konica-minolta-ppd2ipp
 %patch -P 2006 -p1 -b .brother-ppd2ipp
+%patch -P 2007 -p1 -b .extra-ppd-attributes
 
 %if %{lspp}
 # LSPP support.
@@ -825,8 +829,11 @@ rm -f %{cups_serverbin}/backend/smb
 - Show username atempting to auth before PAM calls in debug log
 - disable LSPP
 - disable USB related patches and multifile patch
+- provide username debug info when attempting to auth using PAM
+- force Windows IPP 1.0 to use Microsoft IPP Class Driver
 - add Konica Minolta submission interupted patch
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
+- add LandscapeOrientation, Throughput & APAirPrint PPD attributes
 
 * Wed Sep 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-1
 - 2239982 - cups-2.4.7 is available
