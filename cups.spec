@@ -122,6 +122,10 @@ Patch2007: cups-extra-ppd-attributes.patch
 # and those with strlen > 40 chars
 Patch2008: cups-ignore-some-media-types.patch
 
+# printer make and model corrections for PPD generation including
+# KONICA MINOLTA make detection
+Patch2009: cups-printer-make-model.patch
+
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
@@ -350,6 +354,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2006 -p1 -b .brother-ppd2ipp
 %patch -P 2007 -p1 -b .extra-ppd-attributes
 %patch -P 2008 -p1 -b .ignore-some-media-types
+%patch -P 2009 -p1 -b .printer-make-model
 
 %if %{lspp}
 # LSPP support.
@@ -828,7 +833,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Fri Sep 29 2023 Douglas Kosovic <doug@uq.edu.au> - 1:2.4.7-2
+* Mon Oct 09 2023 Douglas Kosovic <doug@uq.edu.au> - 1:2.4.7-2
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - Show username atempting to auth before PAM calls in debug log
@@ -840,6 +845,7 @@ rm -f %{cups_serverbin}/backend/smb
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
 - add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
   PPD attributes
+- printer make and model corrections for PPD generation
 
 * Wed Sep 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-1
 - 2239982 - cups-2.4.7 is available
