@@ -126,6 +126,11 @@ Patch2008: cups-ignore-some-media-types.patch
 # KONICA MINOLTA make detection
 Patch2009: cups-printer-make-model.patch
 
+# macOS UI has support for job-password (i.e. PIN), but not document-password
+# map document-password to job-password and use another patch in cups-filters
+# to PDF encrypt documnet with document-password sent to printer
+Patch2010: cups-document-password-job-password-mapping.patch
+
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
@@ -355,6 +360,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2007 -p1 -b .extra-ppd-attributes
 %patch -P 2008 -p1 -b .ignore-some-media-types
 %patch -P 2009 -p1 -b .printer-make-model
+%patch -P 2010 -p1 -b .document-password-job-password-mapping
 
 %if %{lspp}
 # LSPP support.
