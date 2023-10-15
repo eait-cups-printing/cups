@@ -10,10 +10,10 @@ index 40881cd39..27b6f8770 100644
 +			       "landscape-orientation-requested-preferred",
 +			       IPP_TAG_INTEGER)) != NULL)
 +  {
-+    if (ippGetInteger(attr, 0) == 4)
-+      cupsFilePuts(fp, "*LandscapeOrientation: Plus90\n");
-+    else if (ippGetInteger(attr, 0) == 5)
++    if (ippGetInteger(attr, 0) == 5)
 +      cupsFilePuts(fp, "*LandscapeOrientation: Minus90\n");
++    else
++      cupsFilePuts(fp, "*LandscapeOrientation: Plus90\n");
 +  }
 +
 +  if ((attr = ippFindAttribute(supported, "pages-per-minute", IPP_TAG_INTEGER)) != NULL)
