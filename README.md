@@ -3,7 +3,7 @@ VCS CUPS repository for :
 * https://copr.fedorainfracloud.org/coprs/dkosovic/printing-el8/
 * https://copr.fedorainfracloud.org/coprs/dkosovic/printing-el9/
 
-This respository started of as a git clone of the rawhide branch of cups
+This repository started off as a git clone of the rawhide branch of cups
 from Fedora Package Sources:
 * https://src.fedoraproject.org/rpms/cups/tree/rawhide
 
