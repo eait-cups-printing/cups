@@ -101,39 +101,46 @@ Patch2001: cups-logrotate.patch
 # provide debugging info for the username attempting to authenticate with PAM
 Patch2002: cups-pam_auth.patch
 
-# Force Windows IPP 1.0 to use Microsoft IPP Class Driver for printer-make-and-model,
-# also force a username/password prompt when using IPP 1.0 and adding a printer.
-Patch2003: cups-windows-ipp-1.0.patch
-
 # Workaround for Konica Minolta "Reset Modes" status bug
 # https://github.com/OpenPrinting/cups/issues/428
-Patch2004: cups-konica-minolta-submission-interrupted.patch
+Patch2003: cups-konica-minolta-submission-interrupted.patch
 
 # Konica Minolta PPD->IPP mappings
-Patch2005: cups-konica-minolta-ppd-to-ipp-mappings.patch
+Patch2004: cups-konica-minolta-ppd-to-ipp-mappings.patch
 
 # Brother PPD->IPP BRMediaType mapping
-Patch2006: cups-brother-ppd-to-ipp-mapping.patch
+Patch2005: cups-brother-ppd-to-ipp-mapping.patch
 
 # LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
-Patch2007: cups-extra-ppd-attributes.patch
+Patch2006: cups-extra-ppd-attributes.patch
 
 # Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes
 # and those with strlen > 40 chars
-Patch2008: cups-ignore-some-media-types.patch
+Patch2007: cups-ignore-some-media-types.patch
 
 # printer make and model corrections for PPD generation including
 # KONICA MINOLTA make detection
-Patch2009: cups-printer-make-model.patch
+Patch2008: cups-printer-make-model.patch
 
-# Replace requesting-user-name value with more useful validated username
-Patch2010: cups-replace-requesting-user-name-with-validated-username.patch
+# Custom check authorization support
+Patch2009: cups-check-custom-auth-command.patch
+
+
+#### Custom EAIT patches that are work in progress or will be deleted in future
+#### (start with 2100)
 
 # macOS UI has support for job-password (i.e. PIN), but not document-password
 # map document-password to job-password and use another patch in cups-filters
 # to PDF encrypt documnet with document-password sent to printer
 # Work in progress
-Patch2020: cups-document-password-job-password-mapping.patch
+Patch2100: cups-document-password-job-password-mapping.patch
+
+# Force Windows IPP 1.0 to use Microsoft IPP Class Driver for printer-make-and-model,
+# also force a username/password prompt when using IPP 1.0 and adding a printer.
+Patch2101: cups-windows-ipp-1.0.patch
+
+# Replace requesting-user-name value with more useful validated username
+Patch2102: cups-replace-requesting-user-name-with-validated-username.patch
 
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
@@ -357,16 +364,17 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
 %patch -P 2002 -p1 -b .pam_auth
-%patch -P 2003 -p1 -b .windows-ipp-1.0
-%patch -P 2004 -p1 -b .submission-interrupted
-%patch -P 2005 -p1 -b .konica-minolta-ppd2ipp
-%patch -P 2006 -p1 -b .brother-ppd2ipp
-%patch -P 2007 -p1 -b .extra-ppd-attributes
-%patch -P 2008 -p1 -b .ignore-some-media-types
-%patch -P 2009 -p1 -b .printer-make-model
-%patch -P 2010 -p1 -b .replace-requesting-username-with-validated-username
+%patch -P 2003 -p1 -b .submission-interrupted
+%patch -P 2004 -p1 -b .konica-minolta-ppd2ipp
+%patch -P 2005 -p1 -b .brother-ppd2ipp
+%patch -P 2006 -p1 -b .extra-ppd-attributes
+%patch -P 2007 -p1 -b .ignore-some-media-types
+%patch -P 2008 -p1 -b .printer-make-model
+%patch -P 2019 -p1 -b .check-custom-auth-command.patch
 
-%patch -P 2020 -p1 -b .document-password-job-password-mapping
+# %patch -P 2100 -p1 -b .document-password-job-password-mapping
+# %patch -P 2101 -p1 -b .windows-ipp-1.0
+# %patch -P 2102 -p1 -b .replace-requesting-username-with-validated-username
 
 %if %{lspp}
 # LSPP support.
