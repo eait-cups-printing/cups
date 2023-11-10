@@ -1,8 +1,8 @@
 diff --git a/scheduler/auth.c b/scheduler/auth.c
-index 7f6c3f6d2..cf9c6c082 100644
+index 7f6c3f6d2..9fc2f2c72 100644
 --- a/scheduler/auth.c
 +++ b/scheduler/auth.c
-@@ -1657,6 +1657,143 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
+@@ -1657,6 +1657,144 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
        (type == CUPSD_AUTH_NONE && cupsArrayCount(best->names) == 0))
      return (HTTP_OK);
  
@@ -108,6 +108,7 @@ index 7f6c3f6d2..cf9c6c082 100644
 +        }
 +      }
 +
++      username[0] = '\0';
 +      while (fgets(buf, sizeof(buf), outfp) != NULL)
 +      {
 +        buf[strcspn(buf, "\r\n")] = '\0';      /* chomp any kind of newline */
