@@ -122,8 +122,8 @@ Patch2007: cups-ignore-some-media-types.patch
 # KONICA MINOLTA make detection
 Patch2008: cups-printer-make-model.patch
 
-# Custom check authorization support
-Patch2009: cups-check-custom-auth-command.patch
+# Custom authorization support
+Patch2009: cups-custom-auth-command.patch
 
 
 #### Custom EAIT patches that are work in progress or will be deleted in future
@@ -370,7 +370,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2006 -p1 -b .extra-ppd-attributes
 %patch -P 2007 -p1 -b .ignore-some-media-types
 %patch -P 2008 -p1 -b .printer-make-model
-%patch -P 2009 -p1 -b .check-custom-auth-command.patch
+%patch -P 2009 -p1 -b .custom-auth-command.patch
 
 # %patch -P 2100 -p1 -b .document-password-job-password-mapping
 # %patch -P 2101 -p1 -b .windows-ipp-1.0
