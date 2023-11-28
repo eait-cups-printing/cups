@@ -1,5 +1,5 @@
 diff --git a/scheduler/auth.c b/scheduler/auth.c
-index 7f6c3f6d2..294c9c8f2 100644
+index 7f6c3f6d2..d5ce413e4 100644
 --- a/scheduler/auth.c
 +++ b/scheduler/auth.c
 @@ -1557,6 +1557,9 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
@@ -17,7 +17,7 @@ index 7f6c3f6d2..294c9c8f2 100644
  	            con->username);
  
 +  /* Prevent Windows IPP inbox class driver from infinitely retrying */
-+  if (con->is_win_mopria && _cups_strcasecmp(ippOpString(best->op), "Validate-Job") && !con->username[0] && type != CUPSD_AUTH_NONE)
++  if (con->is_win_mopria && !strncmp(ippOpString(best->op), "Validate-Job", 12) && !con->username[0] && type != CUPSD_AUTH_NONE)
 +    return (HTTP_FORBIDDEN);
 +
  #ifdef HAVE_AUTHORIZATION_H
