@@ -122,11 +122,16 @@ Patch2007: cups-ignore-some-media-types.patch
 # KONICA MINOLTA make detection
 Patch2008: cups-printer-make-model.patch
 
+# Exclude some cups filter options when _cups dns-sd subtype is not used with
+# macOS clients as the filter options will be applied twice otherwise as the macOS clients
+# see the CUPS print server as a printer.
+Patch2009: cups-exclude-filter-options.patch
+
 # Custom authorization support
-Patch2009: cups-custom-auth-command.patch
+Patch2010: cups-custom-auth-command.patch
 
 # User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
-Patch2010: cups-user-agent.patch
+Patch2011: cups-user-agent.patch
 
 #### Custom EAIT patches that are work in progress or will be deleted in future
 #### (start with 2100)
@@ -372,8 +377,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2006 -p1 -b .extra-ppd-attributes
 %patch -P 2007 -p1 -b .ignore-some-media-types
 %patch -P 2008 -p1 -b .printer-make-model
-%patch -P 2009 -p1 -b .custom-auth-command.patch
-%patch -P 2010 -p1 -b .user-agent.patch
+%patch -P 2009 -p1 -b .exclude-filter-options
+%patch -P 2010 -p1 -b .custom-auth-command.patch
+%patch -P 2011 -p1 -b .user-agent.patch
 
 # %patch -P 2100 -p1 -b .document-password-job-password-mapping
 # %patch -P 2101 -p1 -b .windows-ipp-1.0
