@@ -1,5 +1,5 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..27b6f8770 100644
+index 40881cd39..08aa1b906 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
 @@ -3277,10 +3277,22 @@ _ppdCreateFromIPP2(
@@ -27,3 +27,13 @@ index 40881cd39..27b6f8770 100644
    cupsFilePuts(fp, "*cupsSNMPSupplies: False\n");
    cupsFilePrintf(fp, "*cupsLanguages: \"%s", lang->language);
    if ((lang_supp = ippFindAttribute(supported, "printer-strings-languages-supported", IPP_TAG_LANGUAGE)) != NULL)
+@@ -3295,9 +3307,6 @@ _ppdCreateFromIPP2(
+   }
+   cupsFilePuts(fp, "\"\n");
+ 
+-  if ((attr = ippFindAttribute(supported, "printer-more-info", IPP_TAG_URI)) != NULL)
+-    cupsFilePrintf(fp, "*APSupplies: \"%s\"\n", ippGetString(attr, 0, NULL));
+-
+   if ((attr = ippFindAttribute(supported, "printer-charge-info-uri", IPP_TAG_URI)) != NULL)
+     cupsFilePrintf(fp, "*cupsChargeInfoURI: \"%s\"\n", ippGetString(attr, 0, NULL));
+ 
