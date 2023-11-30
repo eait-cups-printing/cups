@@ -1,8 +1,8 @@
 diff --git a/scheduler/job.c b/scheduler/job.c
-index 49e4fa337..2ba7ea8f1 100644
+index 49e4fa337..cb8fc01ac 100644
 --- a/scheduler/job.c
 +++ b/scheduler/job.c
-@@ -4004,6 +4004,48 @@ get_options(cupsd_job_t *job,		/* I - Job */
+@@ -4004,6 +4004,47 @@ get_options(cupsd_job_t *job,		/* I - Job */
  	  banner_page)
          continue;
  
@@ -20,7 +20,6 @@ index 49e4fa337..2ba7ea8f1 100644
 +           !strcmp(attr->name, "landscape") ||
 +           !strcmp(attr->name, "orientation-requested") ||
 +           !strcmp(attr->name, "brightness") ||
-+           !strcmp(attr->name, "Collate") ||
 +           !strcmp(attr->name, "cupsEvenDuplex") ||
 +           !strcmp(attr->name, "gamma") ||
 +           !strcmp(attr->name, "hue") ||
@@ -44,7 +43,7 @@ index 49e4fa337..2ba7ea8f1 100644
 +           !strcmp(attr->name, "saturation") ||
 +           !strcmp(attr->name, "scaling")) &&
 +          strstr(DNSSDSubTypes, "_cups") == NULL &&
-+          ippFindAttribute(job->attrs, "com.apple.print.pageRange", IPP_TAG_ZERO))
++          ippFindAttribute(job->attrs, "com.apple.print.totalPages..n.", IPP_TAG_ZERO))
 +        continue;
 +#endif /* HAVE_DNSSD */
 +
