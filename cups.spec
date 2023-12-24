@@ -543,6 +543,7 @@ EOF
 mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 cat > %{buildroot}%{_sysconfdir}/logrotate.d/cups <<EOF
 /var/log/cups/*_log {
+	compress
 	missingok
 	notifempty
 	sharedscripts
