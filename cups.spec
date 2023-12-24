@@ -504,6 +504,9 @@ EOF
 # LSB 3.2 printer driver directory
 mkdir -p %{buildroot}%{_datadir}/ppd
 
+# Printer icon images directory
+mkdir -p %{buildroot}%{_localstatedir}/cache/cups/images
+
 # Remove unshipped files.
 rm -rf %{buildroot}%{_mandir}/cat? %{buildroot}%{_mandir}/*/cat?
 rm -f %{buildroot}%{_datadir}/applications/cups.desktop
@@ -578,6 +581,10 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 
 # required for systemd units
 %systemd_post %{name}.path %{name}.socket %{name}.service
+
+# chown lp:lp /var/spool/lpd
+# required for custom authorization script that runs as lpd user
+chown lp:lp %{_localstatedir}/lpd
 
 %post client
 %if %{use_alternatives}
@@ -732,6 +739,9 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/pt_BR
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/pixmaps/cupsprinter.png
+%dir %attr(0770,root,lp) %{_localstatedir}/cache/cups
+%dir %attr(0755,root,lp) %{_localstatedir}/cache/cups/images
+%dir %attr(0775,root,lp) %{_localstatedir}/cache/cups/rss
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
 %dir %attr(0755,root,lp) %{_localstatedir}/log/cups
@@ -869,12 +879,18 @@ rm -f %{cups_serverbin}/backend/smb
 - disable LSPP
 - disable USB related patches and multifile patch
 - provide username debug info when attempting to auth using PAM
-- force Windows IPP 1.0 to use Microsoft IPP Class Driver
 - add Konica Minolta submission interupted patch
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
 - add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
   PPD attributes
 - printer make and model corrections for PPD generation
+- add User-Agent detection patch which also prevents Windows IPP 1.0
+  clients
+- add /var/cache/cups/ and sub-dirs to file list of main package
+- add patch to exclude some cups filter options when not using
+  _cups dns-sd subtype
+- add patch for custom auth script
+- chown lp:lp /var/spool/lpd required for custom auth script
 
 * Wed Sep 20 2023 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-1
 - 2239982 - cups-2.4.7 is available
