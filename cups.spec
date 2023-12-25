@@ -585,7 +585,7 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 
 # chown lp:lp /var/spool/lpd
 # required for custom authorization script that runs as lpd user
-chown lp:lp %{_localstatedir}/lpd
+chown lp:lp %{_localstatedir}/spool/lpd
 
 %post client
 %if %{use_alternatives}
