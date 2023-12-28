@@ -1,0 +1,91 @@
+diff --git a/scheduler/job.c b/scheduler/job.c
+index 49e4fa337..f4680d0d1 100644
+--- a/scheduler/job.c
++++ b/scheduler/job.c
+@@ -3165,6 +3165,86 @@ finalize_job(cupsd_job_t *job,		/* I - Job */
+   snprintf(buffer, sizeof(buffer), "total %d", ippGetInteger(job->impressions, 0));
+   cupsdLogPage(job, buffer);
+ 
++
++  /*
++   * Custom final impression (page) count...
++   */
++  int impressions = ippGetInteger(job->impressions, 0);
++  static char *cups_custom_impression_count_command = "/usr/local/libexec/cups_custom_impression_count";
++  if (access(cups_custom_impression_count_command, X_OK) == 0 && impressions > 0)
++  {
++    char *argv[10];           /* Command-line arguments */
++    char *envp[MAX_ENV];      /* Environment */
++    char  job_id[16];         /* Print Job ID */
++    char  impression_count[16]; /* final impression (page) count */
++    char  copies_count[16];     /* Copies */
++    int   color_supported;
++    int   copies;             /* Number of copies */
++    int   temppid;            /* Process ID for custom impression count process */
++    ipp_attribute_t *attr;
++
++    snprintf(job_id, sizeof(job_id), "%d", job->id);
++
++    color_supported = 0;
++    attr = ippFindAttribute(job->printer->attrs, "color-supported", IPP_TAG_BOOLEAN);
++    if (attr)
++    {
++      color_supported = ippGetBoolean(attr, 0);
++    }
++
++    /* Page number */
++    snprintf(impression_count, sizeof(impression_count), "%d", impressions);
++
++    /* Number of copies */
++    copies = 1;
++    attr = ippFindAttribute(job->attrs, "copies", IPP_TAG_ZERO);
++    if (attr)
++    {
++      copies = ippGetInteger(attr, 0);
++    }
++
++    snprintf(copies_count, sizeof(copies_count), "%d", copies);
++
++    const char *media = NULL;
++    attr = ippFindAttribute(job->attrs, "media", IPP_TAG_ZERO);
++    if (attr)
++    {
++      media = ippGetString(attr, 0, NULL);
++    }
++
++    argv[0] = cups_custom_impression_count_command;
++    argv[0] = job->dest; /* Printer name */
++    argv[1] = job_id; /* Print Job ID */
++    argv[2] = color_supported ? "1" : "0"; /* color supported */
++    argv[3] = job->username ? job->username : "-"; /* Username */
++    argv[4] = impression_count;  /* final impression (page) count */
++    argv[5] = copies_count; /* Number of copies */
++    argv[6] = media ? (char *)media : "-"; /* media type */
++    argv[7] = job->printer->filetype->super; /* destination mime super type */
++    argv[8] = job->printer->filetype->type; /* destination mime file type */
++    argv[9] = NULL;
++
++   cupsdLoadEnv(envp, (int)(sizeof(envp) / sizeof(envp[0])));
++
++   if(cupsdStartProcess(cups_custom_impression_count_command, argv, envp, -1, -1, -1, -1, -1, 0, DefaultProfile, NULL, &temppid) < 0)
++   {
++     /*
++      * Error - can't fork!
++      */
++
++     cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to fork %s - %s",
++                     cups_custom_impression_count_command, strerror(errno));
++   }
++   else
++   {
++     /*
++      * Fork successful ...
++      */
++
++     cupsdLogMessage(CUPSD_LOG_DEBUG, "Started %s- PID = %d", cups_custom_impression_count_command, temppid);
++   }
++  }
++
+  /*
+   * Process the exit status...
+   */

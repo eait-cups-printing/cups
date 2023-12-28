@@ -130,8 +130,17 @@ Patch2009: cups-exclude-filter-options.patch
 # Custom authorization support
 Patch2010: cups-custom-auth-command.patch
 
+# Custom custom impression (page) count support
+Patch2011: cups-custom-impression-count.patch
+
 # User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
-Patch2011: cups-user-agent.patch
+Patch2012: cups-user-agent.patch
+
+# Patch to allow more than 2 Apple Raster (URF) resolutions
+Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
+
+# Patch to allow printer-icon symlinks to /usr/local/share/images/
+Patch2014: cups-allow-symlink-printer-icons.patch
 
 #### Custom EAIT patches that are work in progress or will be deleted in future
 #### (start with 2100)
@@ -139,15 +148,13 @@ Patch2011: cups-user-agent.patch
 # macOS UI has support for job-password (i.e. PIN), but not document-password
 # map document-password to job-password and use another patch in cups-filters
 # to PDF encrypt documnet with document-password sent to printer
+# Intended for older Konica Minolta printers that support document-password
+# but not job-password
 # Work in progress
 Patch2100: cups-document-password-job-password-mapping.patch
 
-# Force Windows IPP 1.0 to use Microsoft IPP Class Driver for printer-make-and-model,
-# also force a username/password prompt when using IPP 1.0 and adding a printer.
-Patch2101: cups-windows-ipp-1.0.patch
-
 # Replace requesting-user-name value with more useful validated username
-Patch2102: cups-replace-requesting-user-name-with-validated-username.patch
+Patch2101: cups-replace-requesting-user-name-with-validated-username.patch
 
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
@@ -379,11 +386,13 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2008 -p1 -b .printer-make-model
 %patch -P 2009 -p1 -b .exclude-filter-options
 %patch -P 2010 -p1 -b .custom-auth-command.patch
-%patch -P 2011 -p1 -b .user-agent.patch
+%patch -P 2011 -p1 -b .custom-impression-count.patch
+%patch -P 2012 -p1 -b .user-agent.patch
+%patch -P 2013 -p1 -b .multiple-apple-raster-resolutions.patch
+%patch -P 2014 -p1 -b .allow-symlink-printer-icons.patch
 
 # %patch -P 2100 -p1 -b .document-password-job-password-mapping
-# %patch -P 2101 -p1 -b .windows-ipp-1.0
-# %patch -P 2102 -p1 -b .replace-requesting-username-with-validated-username
+# %patch -P 2101 -p1 -b .replace-requesting-username-with-validated-username
 
 %if %{lspp}
 # LSPP support.
@@ -881,6 +890,8 @@ rm -f %{cups_serverbin}/backend/smb
 - disable USB related patches and multifile patch
 - provide username debug info when attempting to auth using PAM
 - add Konica Minolta submission interupted patch
+- add custom authorization support patch
+- add custom impression (page) count patch
 - add some PPD->IPP mappings for Konica Minolta and Brother printers
 - add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
   PPD attributes
