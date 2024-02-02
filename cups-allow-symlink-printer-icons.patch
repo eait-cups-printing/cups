@@ -1,0 +1,37 @@
+diff --git a/scheduler/client.c b/scheduler/client.c
+index 327473a4d..a632150ab 100644
+--- a/scheduler/client.c
++++ b/scheduler/client.c
+@@ -2694,8 +2694,6 @@ get_file(cupsd_client_t *con,		/* I  - Client connection */
+ 		dest[1024];		/* Destination name */
+   int		perm_check = 1;		/* Do permissions check? */
+   cupsd_printer_t *p;			/* Printer */
+-
+-
+  /*
+   * Figure out the real filename...
+   */
+@@ -2894,10 +2892,20 @@ get_file(cupsd_client_t *con,		/* I  - Client connection */
+   * If we've found a symlink, 404 the sucker to avoid disclosing information.
+   */
+ 
+-  if (!status && S_ISLNK(filestats->st_mode))
++  if (!status && perm_check && S_ISLNK(filestats->st_mode))
+   {
+-    cupsdLogClient(con, CUPSD_LOG_INFO, "Symlinks such as \"%s\" are not allowed.", filename);
+-    return (NULL);
++    /* allow symlinks to /usr/local/share/images/ */
++
++    char resolved_path[PATH_MAX];
++
++    resolved_path[0] = '\0';
++    realpath(filename, resolved_path);
++
++    if (strncmp(resolved_path, "/usr/local/share/images/", 24) != 0)
++    {
++      cupsdLogClient(con, CUPSD_LOG_INFO, "Symlinks such as \"%s\" are not allowed.", filename);
++      return (NULL);
++    }
+   }
+ 
+  /*

@@ -1,0 +1,30 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..453ed52f6 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -3261,16 +3261,21 @@ _ppdCreateFromIPP2(
+     model = make + 16;
+     strlcpy(make, "HP", sizeof(make));
+   }
++  else if (!_cups_strncasecmp(make, "KONICA MINOLTA ", 15))
++  {
++    model = make + 15;
++    strlcpy(make, "KONICA MINOLTA", sizeof(make));
++  }
+   else if ((model = strchr(make, ' ')) != NULL)
+     *model++ = '\0';
+   else
+     model = make;
+ 
+   cupsFilePrintf(fp, "*Manufacturer: \"%s\"\n", make);
+-  cupsFilePrintf(fp, "*ModelName: \"%s\"\n", model);
+-  cupsFilePrintf(fp, "*Product: \"(%s)\"\n", model);
+-  cupsFilePrintf(fp, "*NickName: \"%s - IPP Everywhere\"\n", model);
+-  cupsFilePrintf(fp, "*ShortNickName: \"%s - IPP Everywhere\"\n", model);
++  cupsFilePrintf(fp, "*ModelName: \"%s %s\"\n", make, model);
++  cupsFilePrintf(fp, "*Product: \"(%s %s)\"\n", make, model);
++  cupsFilePrintf(fp, "*NickName: \"%s %s - IPP Everywhere\"\n", make, model);
++  cupsFilePrintf(fp, "*ShortNickName: \"%s %s\"\n", make, model);
+ 
+   if ((attr = ippFindAttribute(supported, "color-supported", IPP_TAG_BOOLEAN)) != NULL && ippGetBoolean(attr, 0))
+     cupsFilePuts(fp, "*ColorDevice: True\n");

@@ -1,0 +1,150 @@
+diff --git a/scheduler/auth.c b/scheduler/auth.c
+index 7f6c3f6d2..ae7d711be 100644
+--- a/scheduler/auth.c
++++ b/scheduler/auth.c
+@@ -1657,6 +1657,145 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
+       (type == CUPSD_AUTH_NONE && cupsArrayCount(best->names) == 0))
+     return (HTTP_OK);
+ 
++ /*
++  * Custom authorization...
++  */
++  static char *cups_custom_auth_command = "/usr/local/libexec/cups_custom_auth";
++  if (access(cups_custom_auth_command, X_OK) == 0 &&
++      best->level == CUPSD_AUTH_USER &&
++      best->limit == CUPSD_AUTH_LIMIT_IPP &&
++      !(con->is_browser) && con->request->request.op.version[0] >= 2)
++  {
++    char *argv[10];           /* Command-line arguments */
++    char *envp[MAX_ENV];      /* Environment */
++    char  req_username[256];  /* requesting-user-name */
++    char  orig_username[256]; /* job-originating-user-name */
++    char  accounting_id[256]; /* job-accounting-user-id */
++    int   temppid;            /* Process ID for custom auth processes */
++    int   outfds[2];          /* Pipe file descriptors for stdout */
++    int   errfds[2];        /* Pipe file descriptors for stderr output */
++    ipp_attribute_t *attr;
++
++    req_username[0] = '\0';
++    attr = ippFindAttribute(con->request, "requesting-user-name", IPP_TAG_NAME);
++    if (attr)
++    {
++      strlcpy(req_username, attr->values[0].string.text, sizeof(req_username));
++    }
++
++    orig_username[0] = '\0';
++    attr = ippFindAttribute(con->request, "job-originating-user-name", IPP_TAG_NAME);
++    if (attr)
++    {
++      strlcpy(orig_username, attr->values[0].string.text, sizeof(orig_username));
++    }
++
++    accounting_id[0] = '\0';
++    attr = ippFindAttribute(con->request, "job-accounting-user-id", IPP_TAG_NAME);
++    if (attr)
++    {
++      strlcpy(accounting_id, attr->values[0].string.text, sizeof(accounting_id));
++    }
++
++    argv[0] = cups_custom_auth_command;
++    argv[1] = (char *)ippOpString(best->op); /* IPP operation */
++    argv[2] = con->uri;
++    argv[3] = (char *)httpGetHostname(con->http, NULL, 0); /* client hostname or IP address */
++    argv[4] = con->username;
++    argv[5] = owner ? (char *)owner : "";
++    argv[6] = req_username;
++    argv[7] = orig_username;
++    argv[8] = accounting_id;
++    argv[9] = NULL;
++
++    cupsdLoadEnv(envp, (int)(sizeof(envp) / sizeof(envp[0])));
++
++    if (cupsdOpenPipe(outfds) || cupsdOpenPipe(errfds))
++    {
++      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to create pipe for %s - %s",
++                      cups_custom_auth_command, strerror(errno));
++      return (HTTP_UNAUTHORIZED);
++    }
++
++    if(cupsdStartProcess(cups_custom_auth_command, argv, envp, -1, outfds[1], errfds[1], -1, -1, 0, DefaultProfile, NULL, &temppid) < 0)
++    {
++      /*
++       * Error - can't fork!
++       */
++
++      cupsdLogMessage(CUPSD_LOG_ERROR, "Unable to fork %s - %s",
++                      cups_custom_auth_command, strerror(errno));
++
++      cupsdClosePipe(outfds);
++      cupsdClosePipe(errfds);
++      return (HTTP_UNAUTHORIZED);
++    }
++    else
++    {
++      /*
++       * Fork successful ...
++       */
++      char  buf[2048];
++      FILE* outfp = fdopen(outfds[0], "r");
++      FILE* errfp = fdopen(errfds[0], "r");
++
++      cupsdLogMessage(CUPSD_LOG_DEBUG, "Started %s- PID = %d", cups_custom_auth_command, temppid);
++
++      close(outfds[1]);
++      close(errfds[1]);
++
++      buf[0] = '\0';
++      while (fgets(buf, sizeof(buf), errfp) != NULL)
++      {
++        buf[strcspn(buf, "\r\n")] = '\0';      /* chomp any kind of newline */
++        if (strncmp(buf, "DEBUG:", 6) == 0) {
++          cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdIsAuthorized custom authorization:%s", &buf[6]);
++        } else if (strncmp(buf, "WARN:", 5) == 0) {
++          cupsdLogMessage(CUPSD_LOG_WARN, "cupsdIsAuthorized custom authorization:%s", &buf[5]);
++        } else if (strncmp(buf, "ERROR:", 6) == 0) {
++          cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdIsAuthorized custom authorization:%s", &buf[6]);
++        } else {
++          cupsdLogMessage(CUPSD_LOG_ERROR, "cupsdIsAuthorized custom authorization: %s", buf);
++        }
++      }
++
++      username[0] = '\0';
++      while (fgets(buf, sizeof(buf), outfp) != NULL)
++      {
++        buf[strcspn(buf, "\r\n")] = '\0';      /* chomp any kind of newline */
++        if (strncmp(buf, "username=", 9) == 0) {
++          cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdIsAuthorized using custom authorization: username=\"%s\"",
++                          &buf[9]);
++          strlcpy(username, &buf[9], sizeof(username));
++          strlcpy(con->username, username, sizeof(con->username));
++          /* replace requesting-user-name with custom authorization username */
++          if (strncmp(req_username, username, sizeof(username) != 0))
++          {
++            attr = ippFindAttribute(con->request, "requesting-user-name", IPP_TAG_NAME);
++            if (attr)
++            {
++              if (attr->values[0].string.text) _cupsStrFree(attr->values[0].string.text);
++              attr->values[0].string.text = _cupsStrAlloc(username);
++            }
++          }
++
++        } else if (strncmp(buf, "auth-type=", 10) == 0) {
++          cupsdLogMessage(CUPSD_LOG_WARN, "cupsdIsAuthorized custom authorization auth-type:%s", &buf[10]);
++          /* TO-DO, overide authentication type with custom authentication type */
++        }
++      }
++
++      fclose(outfp);
++      fclose(errfp);
++
++      if (username[0])
++      {
++
++        return (HTTP_OK);
++      }
++    }
++  }
++
+   if (!con->username[0] && type == CUPSD_AUTH_NONE &&
+       best->limit == CUPSD_AUTH_LIMIT_IPP)
+   {

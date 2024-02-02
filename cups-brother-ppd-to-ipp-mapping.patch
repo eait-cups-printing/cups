@@ -1,0 +1,14 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..618753daa 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -1362,7 +1362,8 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+   * Copy and convert MediaType data...
+   */
+ 
+-  if ((media_type = ppdFindOption(ppd, "MediaType")) != NULL)
++  if ((media_type = ppdFindOption(ppd, "MediaType")) != NULL ||
++      (media_type = ppdFindOption(ppd, "BRMediaType")) != NULL)
+   {
+     static const struct
+     {
