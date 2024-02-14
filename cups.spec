@@ -44,6 +44,7 @@ Source3: upgrade_get_document.py.in
 
 # PAM enablement, very old patch, not even git can track when or why
 # the patch was added.
+# merged upstream https://github.com/OpenPrinting/cups/pull/892
 Patch1: cups-system-auth.patch
 # cups-config from devel package conflicted on multilib arches,
 # fixed hack with pkg-config calling for gnutls' libdir variable
@@ -816,6 +817,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Feb 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-10
 - require authselect-libs, since we use PAM modules password-auth or system-auth
+- got pam downstream patch upstream, use the commit from there
 
 * Wed Jan 24 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.7-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
