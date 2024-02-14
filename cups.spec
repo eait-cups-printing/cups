@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.7
-Release: 9%{?dist}
+Release: 10%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -100,6 +100,9 @@ Patch1004: 0001-httpAddrConnect2-Check-for-error-if-POLLHUP-is-in-va.patch
 ##### breaks something. 
 
 
+# we need /etc/pam.d/password-auth or /etc/pam.d/system-auth in buildroot sooner or later,
+# provided by authselect-libs atm
+BuildRequires: authselect-libs
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
@@ -163,6 +166,9 @@ Recommends: ipp-usb
 Recommends: cups-filters-driverless
 %endif
 
+# we use password-auth or system-auth PAM modules for authentication,
+# provided by authselect-libs
+Requires: authselect-libs
 # We ship udev rules which use setfacl.
 Requires: acl
 Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
@@ -808,6 +814,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed Feb 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-10
+- require authselect-libs, since we use PAM modules password-auth or system-auth
+
 * Wed Jan 24 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.7-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
 
