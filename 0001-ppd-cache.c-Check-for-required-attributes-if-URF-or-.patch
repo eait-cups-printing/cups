@@ -1,0 +1,39 @@
+From 0003f78a107b399feb2e493181a307fac5123e35 Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Thu, 15 Feb 2024 18:15:55 +0100
+Subject: [PATCH] ppd-cache.c: Check for required attributes if URF or PWG
+ Raster are found
+
+Some devices have image/urf in document-format-supported, but is missing urf-supported
+if AirPrint support is turned off, which breaks PPD generation. Check for attribute
+urf-supported when we are about to decide whether the printer uses AirPrint, so in case
+the device supports another driverless standard, we can use it for PPD generation.
+Apply the same for PWG Raster too.
+
+Fixes Fedora issue #2263053
+---
+ CHANGES.md       | 1 +
+ cups/ppd-cache.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index d664812a2..711a29f99 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -3469,9 +3469,11 @@ _ppdCreateFromIPP2(
+ 
+   if ((attr = ippFindAttribute(supported, "document-format-supported", IPP_TAG_MIMETYPE)) != NULL)
+   {
+-    is_apple = ippContainsString(attr, "image/urf");
++    is_apple = ippContainsString(attr, "image/urf") && (ippFindAttribute(supported, "urf-supported", IPP_TAG_KEYWORD) != NULL);
+     is_pdf   = ippContainsString(attr, "application/pdf");
+-    is_pwg   = ippContainsString(attr, "image/pwg-raster") && !is_apple;
++    is_pwg   = ippContainsString(attr, "image/pwg-raster") && !is_apple &&
++	       (ippFindAttribute(supported, "pwg-raster-document-resolution-supported", IPP_TAG_KEYWORD) != NULL) &&
++	       (ippFindAttribute(supported, "pwg-raster-document-type-supported", IPP_TAG_KEYWORD) != NULL);
+ 
+     if (ippContainsString(attr, "image/jpeg"))
+       cupsFilePuts(fp, "*cupsFilter2: \"image/jpeg image/jpeg 0 -\"\n");
+-- 
+2.43.2
+
