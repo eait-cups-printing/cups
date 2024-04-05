@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.7
-Release: 12%{?dist}
+Release: 13%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -96,6 +96,8 @@ Patch1003: cups-unload-job-leak.patch
 Patch1004: 0001-httpAddrConnect2-Check-for-error-if-POLLHUP-is-in-va.patch
 # https://github.com/OpenPrinting/cups/commit/0003f78a107b39
 Patch1005: 0001-ppd-cache.c-Check-for-required-attributes-if-URF-or-.patch
+# https://github.com/OpenPrinting/cups/pull/927
+Patch1006: 0001-scheduler-Fix-sending-response-headers-to-client.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -345,6 +347,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1004 -p1 -b .httpaddrconnect-pollhup
 # https://github.com/OpenPrinting/cups/commit/0003f78a107b39
 %patch -P 1005 -p1 -b .check-required-attrs
+# https://github.com/OpenPrinting/cups/pull/927
+%patch -P 1006 -p1 -b .sent-headers
 
 
 %if %{lspp}
@@ -819,6 +823,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Apr 05 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-13
+- fix sending headers in responses to clients
+
 * Mon Feb 19 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-12
 - add epochs into conflicts
 
