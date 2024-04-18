@@ -114,42 +114,45 @@ Patch2003: cups-konica-minolta-submission-interrupted.patch
 # Konica Minolta PPD->IPP mappings
 Patch2004: cups-konica-minolta-ppd-to-ipp-mappings.patch
 
+# Konica Minolta bizhub C458 do not try to use Create-Job
+patch2005: cups-konica-minolta-no-create-job.patch
+
 # Brother PPD->IPP BRMediaType mapping
-Patch2005: cups-brother-ppd-to-ipp-mapping.patch
+Patch2006: cups-brother-ppd-to-ipp-mapping.patch
 
 # LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
-Patch2006: cups-extra-ppd-attributes.patch
+Patch2007: cups-extra-ppd-attributes.patch
 
 # Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes
 # and those with strlen > 40 chars
-Patch2007: cups-ignore-some-media-types.patch
+Patch2008: cups-ignore-some-media-types.patch
 
 # printer make and model corrections for PPD generation including
 # KONICA MINOLTA make detection
-Patch2008: cups-printer-make-model.patch
+Patch2009: cups-printer-make-model.patch
 
 # Exclude some cups filter options when _cups dns-sd subtype is not used with
 # macOS clients as the filter options will be applied twice otherwise as the macOS clients
 # see the CUPS print server as a printer.
-Patch2009: cups-exclude-filter-options.patch
+Patch2010: cups-exclude-filter-options.patch
 
 # Custom authorization support
-Patch2010: cups-custom-auth-command.patch
+Patch2011: cups-custom-auth-command.patch
 
 # Custom custom impression (page) count support
-Patch2011: cups-custom-impression-count.patch
+Patch2012: cups-custom-impression-count.patch
 
 # User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
-Patch2012: cups-user-agent.patch
+Patch2013: cups-user-agent.patch
 
 # Patch to allow more than 2 Apple Raster (URF) resolutions
-Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
+Patch2014: cups-support-more-than-2-apple-raster-resolutions.patch
 
 # Patch for job-password-repertoire-configured &  job-password-repertoire-supported
-Patch2014: cups-job-password-repertoire.patch
+Patch2015: cups-job-password-repertoire.patch
 
 # Patch to allow more than 2 Apple Raster (URF) resolutions
-Patch2015: cups-allow-symlink-printer-icons.patch
+Patch2016: cups-allow-symlink-printer-icons.patch
 
 
 BuildRequires: automake
@@ -393,17 +396,18 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2002 -p1 -b .pam_auth
 %patch -P 2003 -p1 -b .submission-interrupted
 %patch -P 2004 -p1 -b .konica-minolta-ppd2ipp
-%patch -P 2005 -p1 -b .brother-ppd2ipp
-%patch -P 2006 -p1 -b .extra-ppd-attributes
-%patch -P 2007 -p1 -b .ignore-some-media-types
-%patch -P 2008 -p1 -b .printer-make-model
-%patch -P 2009 -p1 -b .exclude-filter-options
-%patch -P 2010 -p1 -b .custom-auth-command
-%patch -P 2011 -p1 -b .custom-impression-count
-%patch -P 2012 -p1 -b .user-agent
-%patch -P 2013 -p1 -b .multiple-apple-raster-resolutions
-%patch -P 2014 -p1 -b .password-repertoire
-%patch -P 2015 -p1 -b .allow-symlink-printer-icons
+%patch -P 2005 -p1 -b .konica-minolta-no-create-job
+%patch -P 2006 -p1 -b .brother-ppd2ipp
+%patch -P 2007 -p1 -b .extra-ppd-attributes
+%patch -P 2008 -p1 -b .ignore-some-media-types
+%patch -P 2009 -p1 -b .printer-make-model
+%patch -P 2010 -p1 -b .exclude-filter-options
+%patch -P 2011 -p1 -b .custom-auth-command
+%patch -P 2012 -p1 -b .custom-impression-count
+%patch -P 2013 -p1 -b .user-agent
+%patch -P 2014 -p1 -b .multiple-apple-raster-resolutions
+%patch -P 2015 -p1 -b .password-repertoire
+%patch -P 2016 -p1 -b .allow-symlink-printer-icons
 
 %if %{lspp}
 # LSPP support.
@@ -457,12 +461,16 @@ export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
 # If we got this far, all prerequisite libraries must be here.
 %make_build
 
+%make_build unittests
+
 %install
 # %%make_install macro results into permission error during install phase,
 # because it sets INSTALL env to 'install -p'.
 # use the old make invocation for now, fix this upstream when upstream will
 # have a time for github issues
 make install DESTDIR=%{buildroot}
+
+install -m 0755 cups/testipp %{buildroot}%{_bindir}
 
 rm -rf	%{buildroot}%{_initddir} \
 	%{buildroot}%{_sysconfdir}/init.d \
@@ -877,6 +885,7 @@ rm -f %{cups_serverbin}/backend/smb
 %files ipptool
 %{_bindir}/ippfind
 %{_bindir}/ipptool
+%{_bindir}/testipp
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ippfind.1.gz
@@ -896,6 +905,7 @@ rm -f %{cups_serverbin}/backend/smb
 * Fri Feb 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.7-10
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
+- make unittests so /usr/bin/testipp utility gets built
 - Show username attempting to auth before PAM calls in debug log
 - disable LSPP
 - disable USB related patches and multifile patch

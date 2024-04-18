@@ -1,0 +1,37 @@
+diff --git a/backend/ipp.c b/backend/ipp.c
+index be1f2c048..2c8b57b0c 100644
+--- a/backend/ipp.c
++++ b/backend/ipp.c
+@@ -114,6 +114,7 @@ static const char * const pattrs[] =	/* Printer attributes we want */
+   "printer-alert",
+   "printer-alert-description",
+   "printer-is-accepting-jobs",
++  "printer-make-and-model",
+   "printer-mandatory-job-attributes",
+   "printer-state",
+   "printer-state-message",
+@@ -251,6 +252,7 @@ main(int  argc,				/* I - Number of command-line args */
+   ipp_attribute_t *printer_state;	/* printer-state attribute */
+   ipp_attribute_t *printer_accepting;	/* printer-is-accepting-jobs */
+   ipp_attribute_t *print_color_mode_sup;/* Does printer support print-color-mode? */
++  ipp_attribute_t *make_and_model;	/* printer-make-and-model */
+   int		create_job = 0,		/* Does printer support Create-Job? */
+ 		get_job_attrs = 0,	/* Does printer support Get-Job-Attributes? */
+ 		send_document = 0,	/* Does printer support Send-Document? */
+@@ -1432,6 +1434,16 @@ main(int  argc,				/* I - Number of command-line args */
+   if (version == 10)
+     create_job = 0;
+ 
++ /* KONICA MINOLTA bizhub C458 has issues with Create-Job and some PDFs
++  * where it reports 'document-format-error'
++  */
++  if ((make_and_model = ippFindAttribute(response, "printer-make-and-model", IPP_TAG_TEXT)) != NULL)
++  {
++    if (strcmp(make_and_model->values[0].string.text, "KONICA MINOLTA bizhub C458") == 0) {
++      create_job = 0;
++    }
++  }
++
+  /*
+   * Start monitoring the printer in the background...
+   */
