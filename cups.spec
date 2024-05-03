@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.7
-Release: 10%{?dist}
+Version: 2.4.8
+Release: 1%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -84,15 +84,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/pull/742
-# 2218124 - The command "cancel -x <job>" does not remove job files
-Patch1001: 0001-Use-purge-job-instead-of-purge-jobs-when-canceling-a.patch
-# https://github.com/OpenPrinting/cups/pull/814
-Patch1002: cups-colorman-leak.patch
-# https://github.com/OpenPrinting/cups/pull/813/
-Patch1003: cups-unload-job-leak.patch
-# https://github.com/OpenPrinting/cups/pull/839
-Patch1004: 0001-httpAddrConnect2-Check-for-error-if-POLLHUP-is-in-va.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -114,8 +105,8 @@ Patch2003: cups-konica-minolta-submission-interrupted.patch
 # Konica Minolta PPD->IPP mappings
 Patch2004: cups-konica-minolta-ppd-to-ipp-mappings.patch
 
-# Konica Minolta bizhub C458 do not try to use Create-Job
-patch2005: cups-konica-minolta-no-create-job.patch
+# Konica Minolta bizhub C458 workarounds work in progress
+patch2005: cups-konica-minolta-c458-workarounds.patch
 
 # Brother PPD->IPP BRMediaType mapping
 Patch2006: cups-brother-ppd-to-ipp-mapping.patch
@@ -381,14 +372,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 13 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# 2218124 - The command "cancel -x <job>" does not remove job files
-%patch -P 1001 -p1 -b .purge-job
-# https://github.com/OpenPrinting/cups/pull/814
-%patch -P 1002 -p1 -b .colorman
-# https://github.com/OpenPrinting/cups/pull/813/
-%patch -P 1003 -p1 -b .unloadjob
-# https://github.com/OpenPrinting/cups/pull/839
-%patch -P 1004 -p1 -b .httpaddrconnect-pollhup
 
 
 # EAIT PATCHES
@@ -396,7 +379,7 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2002 -p1 -b .pam_auth
 %patch -P 2003 -p1 -b .submission-interrupted
 %patch -P 2004 -p1 -b .konica-minolta-ppd2ipp
-%patch -P 2005 -p1 -b .konica-minolta-no-create-job
+%patch -P 2005 -p1 -b .konica-minolta-c458-workarounds
 %patch -P 2006 -p1 -b .brother-ppd2ipp
 %patch -P 2007 -p1 -b .extra-ppd-attributes
 %patch -P 2008 -p1 -b .ignore-some-media-types
@@ -902,7 +885,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Fri Feb 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.7-10
+* Fri May 03 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.8-1
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - make unittests so /usr/bin/testipp utility gets built

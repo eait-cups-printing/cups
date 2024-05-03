@@ -1,5 +1,5 @@
 diff --git a/backend/ipp.c b/backend/ipp.c
-index 619bbb7d4..09aa56a76 100644
+index 8609e3a28..7604927bc 100644
 --- a/backend/ipp.c
 +++ b/backend/ipp.c
 @@ -41,7 +41,7 @@ extern void	xpc_connection_set_target_uid(xpc_connection_t connection,
@@ -11,16 +11,16 @@ index 619bbb7d4..09aa56a76 100644
  
  /*
   * Types...
-@@ -2628,6 +2628,8 @@ monitor_printer(
+@@ -2710,6 +2710,8 @@ monitor_printer(
              new_reasons |= _CUPS_JSR_DOCUMENT_FORMAT_ERROR;
-           else if (!strcmp(attr->values[i].string.text, "document-unprintable"))
+           else if (!strcmp(attr->values[i].string.text, "document-unprintable-error"))
              new_reasons |= _CUPS_JSR_DOCUMENT_UNPRINTABLE;
 +          else if (!strcmp(attr->values[i].string.text, "submission-interrupted"))
 +            new_reasons |= _CUPS_JSR_SUBMISSION_INTERRUPTED;
  
  	  if (!job_canceled && (!strncmp(attr->values[i].string.text, "job-canceled-", 13) || !strcmp(attr->values[i].string.text, "aborted-by-system")))
              job_canceled = 1;
-@@ -2667,6 +2669,8 @@ monitor_printer(
+@@ -2749,6 +2751,8 @@ monitor_printer(
  	      fputs("JOBSTATE: document-unprintable\n", stderr);
  	    }
            }
@@ -29,7 +29,7 @@ index 619bbb7d4..09aa56a76 100644
  	  else
  	    fputs("JOBSTATE: job-printing\n", stderr);
  
-@@ -2676,6 +2680,15 @@ monitor_printer(
+@@ -2758,6 +2762,15 @@ monitor_printer(
  
        ippDelete(response);
  
