@@ -197,7 +197,6 @@ Requires(post): %{__python}
 
 %package client
 Summary: CUPS printing system - client programs
-License: GPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %{use_alternatives}
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
@@ -207,7 +206,6 @@ Provides: lpr
 
 %package devel
 Summary: CUPS printing system - development environment
-License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
@@ -216,7 +214,6 @@ Requires: zlib-devel
 
 %package libs
 Summary: CUPS printing system - libraries
-License: LGPLv2 and zlib
 
 %package filesystem
 Summary: CUPS printing system - directory layout
