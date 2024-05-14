@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.7
-Release: 13%{?dist}
+Version: 2.4.8
+Release: 1%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -42,41 +42,37 @@ Source2: macros.cups
 # remove after Fedora 40 is EOL and C10S is released
 Source3: upgrade_get_document.py.in
 
-# PAM enablement, very old patch, not even git can track when or why
-# the patch was added.
-# merged upstream https://github.com/OpenPrinting/cups/pull/892
-Patch1: cups-system-auth.patch
 # cups-config from devel package conflicted on multilib arches,
 # fixed hack with pkg-config calling for gnutls' libdir variable
-Patch2: cups-multilib.patch
+Patch1: cups-multilib.patch
 # if someone makes a change to banner files, then there will <banner>.rpmnew
 # with next update of cups-filters - this patch makes sure the banner file 
 # changed by user is used and .rpmnew or .rpmsave is ignored
 # Note: This could be rewrite with use a kind of #define and send to upstream
-Patch3: cups-banners.patch
+Patch2: cups-banners.patch
 # don't export ssl libs to cups-config - can't find the reason.
-Patch4: cups-no-export-ssllibs.patch
+Patch3: cups-no-export-ssllibs.patch
 # enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
-Patch5: cups-direct-usb.patch
+Patch4: cups-direct-usb.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
-Patch6: cups-driverd-timeout.patch
+Patch5: cups-driverd-timeout.patch
 # usb backend didn't get any notification about out-of-paper because of kernel 
-Patch7: cups-usb-paperout.patch
+Patch6: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
-Patch8: cups-uri-compat.patch
+Patch7: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch9: cups-freebind.patch
+Patch8: cups-freebind.patch
 # add support of multifile
-Patch10: cups-ipp-multifile.patch
+Patch9: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch11: cups-web-devices-timeout.patch
+Patch10: cups-web-devices-timeout.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch12: cups-failover-backend.patch
+Patch11: cups-failover-backend.patch
 # add device id for dymo printer
-Patch13: cups-dymo-deviceid.patch
+Patch12: cups-dymo-deviceid.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -85,19 +81,8 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/pull/742
-# 2218124 - The command "cancel -x <job>" does not remove job files
-Patch1001: 0001-Use-purge-job-instead-of-purge-jobs-when-canceling-a.patch
-# https://github.com/OpenPrinting/cups/pull/814
-Patch1002: cups-colorman-leak.patch
-# https://github.com/OpenPrinting/cups/pull/813/
-Patch1003: cups-unload-job-leak.patch
-# https://github.com/OpenPrinting/cups/pull/839
-Patch1004: 0001-httpAddrConnect2-Check-for-error-if-POLLHUP-is-in-va.patch
-# https://github.com/OpenPrinting/cups/commit/0003f78a107b39
-Patch1005: 0001-ppd-cache.c-Check-for-required-attributes-if-URF-or-.patch
-# https://github.com/OpenPrinting/cups/pull/927
-Patch1006: 0001-scheduler-Fix-sending-response-headers-to-client.patch
+# https://github.com/OpenPrinting/cups/pull/957
+Patch1000: 0001-Fix-HTTP-query-in-web-interface-fixes-954.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -306,46 +291,34 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 
 %prep
 %setup -q -n cups-%{VERSION}
-# Use the system pam configuration.
-%patch -P 1 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
-%patch -P 2 -p1 -b .multilib
+%patch -P 1 -p1 -b .multilib
 # Ignore rpm save/new files in the banners directory.
-%patch -P 3 -p1 -b .banners
+%patch -P 2 -p1 -b .banners
 # Don't export SSLLIBS to cups-config.
-%patch -P 4 -p1 -b .no-export-ssllibs
+%patch -P 3 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
-%patch -P 5 -p1 -b .direct-usb
+%patch -P 4 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch -P 6 -p1 -b .driverd-timeout
+%patch -P 5 -p1 -b .driverd-timeout
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-%patch -P 7 -p1 -b .usb-paperout
+%patch -P 6 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
-%patch -P 8 -p1 -b .uri-compat
+%patch -P 7 -p1 -b .uri-compat
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch -P 9 -p1 -b .freebind
+%patch -P 8 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-%patch -P 10 -p1 -b .ipp-multifile
+%patch -P 9 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch -P 11 -p1 -b .web-devices-timeout
+%patch -P 10 -p1 -b .web-devices-timeout
 # Add failover backend (bug #1689209)
-%patch -P 12 -p1 -b .failover
+%patch -P 11 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch -P 13 -p1 -b .dymo-deviceid
+%patch -P 12 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# 2218124 - The command "cancel -x <job>" does not remove job files
-%patch -P 1001 -p1 -b .purge-job
-# https://github.com/OpenPrinting/cups/pull/814
-%patch -P 1002 -p1 -b .colorman
-# https://github.com/OpenPrinting/cups/pull/813/
-%patch -P 1003 -p1 -b .unloadjob
-# https://github.com/OpenPrinting/cups/pull/839
-%patch -P 1004 -p1 -b .httpaddrconnect-pollhup
-# https://github.com/OpenPrinting/cups/commit/0003f78a107b39
-%patch -P 1005 -p1 -b .check-required-attrs
-# https://github.com/OpenPrinting/cups/pull/927
-%patch -P 1006 -p1 -b .sent-headers
+# https://github.com/OpenPrinting/cups/pull/957
+%patch -P 1000 -p1 -b .web-query
 
 
 %if %{lspp}
@@ -820,6 +793,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue May 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-1
+- 2277385 - cups-2.4.8 is available
+
 * Fri Apr 05 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-13
 - fix sending headers in responses to clients
 
