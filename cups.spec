@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -793,6 +793,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Wed May 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-2
+- update web ui patch to match with upstream
+
 * Tue May 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-1
 - 2277385 - cups-2.4.8 is available
 
