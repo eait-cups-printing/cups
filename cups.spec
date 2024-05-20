@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.8
-Release: 3%{?dist}
+Release: 2%{?dist}.test.4
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -740,8 +740,27 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/lprm.cups
 %{_bindir}/lpstat.cups
 %{_sbindir}/lpc.cups
+%ghost %{_bindir}/cancel
+%ghost %{_bindir}/lp
+%ghost %{_bindir}/lpq
+%ghost %{_bindir}/lpr
+%ghost %{_bindir}/lprm
+%ghost %{_bindir}/lpstat
+%ghost %{_mandir}/man1/cancel.1.gz
+%ghost %{_mandir}/man1/lp.1.gz
+%ghost %{_mandir}/man1/lpq.1.gz
+%ghost %{_mandir}/man1/lpr.1.gz
+%ghost %{_mandir}/man1/lprm.1.gz
+%ghost %{_mandir}/man1/lpstat.1.gz
+%ghost %{_mandir}/man8/lpc.8.gz
+%ghost %{_sbindir}/lpc
 %{_mandir}/man1/cancel-cups.1.gz
-%{_mandir}/man1/lp*.1.gz
+%{_mandir}/man1/lp-cups.1.gz
+%{_mandir}/man1/lpoptions.1.gz
+%{_mandir}/man1/lpq-cups.1.gz
+%{_mandir}/man1/lpr-cups.1.gz
+%{_mandir}/man1/lprm-cups.1.gz
+%{_mandir}/man1/lpstat-cups.1.gz
 %{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
@@ -797,6 +816,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon May 20 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-4
+- 2280978 - The file /usr/sbin/lpc is not in the RPM database.
+
 * Thu May 16 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-3
 - fix cgiGetTextfield() return value if the original value is invalid
 
