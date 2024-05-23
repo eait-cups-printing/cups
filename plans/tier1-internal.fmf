@@ -3,7 +3,7 @@ discover:
   - name: rhel
     how: fmf
     filter: 'tier: 1'
-    url: git://pkgs.devel.redhat.com/tests/cups
+    url: https://pkgs.devel.redhat.com/git/tests/cups
 execute:
     how: tmt
 adjust:
