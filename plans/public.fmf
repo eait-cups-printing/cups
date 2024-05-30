@@ -1,4 +1,4 @@
-summary: Test plan that runs all tests from cups tests repo.
+summary: Test plan that runs all Fedora tests.
 discover:
     how: fmf
     url: https://src.fedoraproject.org/tests/cups.git

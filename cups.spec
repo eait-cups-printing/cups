@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.8
-Release: 1%{?dist}
+Release: 5%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -42,40 +42,37 @@ Source2: macros.cups
 # remove after Fedora 40 is EOL and C10S is released
 Source3: upgrade_get_document.py.in
 
-# PAM enablement, very old patch, not even git can track when or why
-# the patch was added.
-Patch1: cups-system-auth.patch
 # cups-config from devel package conflicted on multilib arches,
 # fixed hack with pkg-config calling for gnutls' libdir variable
-Patch2: cups-multilib.patch
+Patch1: cups-multilib.patch
 # if someone makes a change to banner files, then there will <banner>.rpmnew
-# with next update of cups-filters - this patch makes sure the banner file
+# with next update of cups-filters - this patch makes sure the banner file 
 # changed by user is used and .rpmnew or .rpmsave is ignored
 # Note: This could be rewrite with use a kind of #define and send to upstream
-Patch3: cups-banners.patch
+Patch2: cups-banners.patch
 # don't export ssl libs to cups-config - can't find the reason.
-Patch4: cups-no-export-ssllibs.patch
+Patch3: cups-no-export-ssllibs.patch
 # enables old uri usb:/dev/usb/lp0 - leave it here for users of old printers
-#Patch5: cups-direct-usb.patch
+Patch4: cups-direct-usb.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
-Patch6: cups-driverd-timeout.patch
-# usb backend didn't get any notification about out-of-paper because of kernel
-#Patch7: cups-usb-paperout.patch
+Patch5: cups-driverd-timeout.patch
+# usb backend didn't get any notification about out-of-paper because of kernel 
+Patch6: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
-#Patch8: cups-uri-compat.patch
+Patch7: cups-uri-compat.patch
 # use IP_FREEBIND, because cupsd cannot bind to not yet existing IP address
 # by default
-Patch9: cups-freebind.patch
+Patch8: cups-freebind.patch
 # add support of multifile
-#Patch10: cups-ipp-multifile.patch
+Patch9: cups-ipp-multifile.patch
 # prolongs web ui timeout
-Patch11: cups-web-devices-timeout.patch
+Patch10: cups-web-devices-timeout.patch
 # failover backend for implementing failover functionality
 # TODO: move it to the cups-filters upstream
-Patch12: cups-failover-backend.patch
+Patch11: cups-failover-backend.patch
 # add device id for dymo printer
-Patch13: cups-dymo-deviceid.patch
+Patch12: cups-dymo-deviceid.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -84,11 +81,15 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+# https://github.com/OpenPrinting/cups/pull/957
+Patch1000: 0001-Fix-HTTP-query-in-web-interface-fixes-954.patch
+# https://github.com/OpenPrinting/cups/pull/961
+Patch1001: cups-fix-cgigettext.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
-##### breaks something.
+##### breaks something. 
 
 #### Custom EAIT patches (starts with 2000) ####
 
@@ -105,53 +106,52 @@ Patch2003: cups-konica-minolta-submission-interrupted.patch
 # Konica Minolta PPD->IPP mappings
 Patch2004: cups-konica-minolta-ppd-to-ipp-mappings.patch
 
-# Konica Minolta bizhub C458 workarounds work in progress
-patch2005: cups-konica-minolta-c458-workarounds.patch
-
 # Brother PPD->IPP BRMediaType mapping
-Patch2006: cups-brother-ppd-to-ipp-mapping.patch
+Patch2005: cups-brother-ppd-to-ipp-mapping.patch
 
 # LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
-Patch2007: cups-extra-ppd-attributes.patch
+Patch2006: cups-extra-ppd-attributes.patch
 
 # Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes
 # and those with strlen > 40 chars
-Patch2008: cups-ignore-some-media-types.patch
+Patch2007: cups-ignore-some-media-types.patch
 
 # printer make and model corrections for PPD generation including
 # KONICA MINOLTA make detection
-Patch2009: cups-printer-make-model.patch
+Patch2008: cups-printer-make-model.patch
 
 # Exclude some cups filter options when _cups dns-sd subtype is not used with
 # macOS clients as the filter options will be applied twice otherwise as the macOS clients
 # see the CUPS print server as a printer.
-Patch2010: cups-exclude-filter-options.patch
+Patch2009: cups-exclude-filter-options.patch
 
 # Custom authorization support
-Patch2011: cups-custom-auth-command.patch
+Patch2010: cups-custom-auth-command.patch
 
 # Custom custom impression (page) count support
-Patch2012: cups-custom-impression-count.patch
+Patch2011: cups-custom-impression-count.patch
 
 # User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
-Patch2013: cups-user-agent.patch
+Patch2012: cups-user-agent.patch
 
 # Patch to allow more than 2 Apple Raster (URF) resolutions
-Patch2014: cups-support-more-than-2-apple-raster-resolutions.patch
+Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
 
 # Patch for job-password-repertoire-configured &  job-password-repertoire-supported
-Patch2015: cups-job-password-repertoire.patch
+Patch2014: cups-job-password-repertoire.patch
 
-# Patch to allow more than 2 Apple Raster (URF) resolutions
-Patch2016: cups-allow-symlink-printer-icons.patch
+# Patch to allow sylinks in printer icons directory
+Patch2015: cups-allow-symlink-printer-icons.patch
 
-
+# we need /etc/pam.d/password-auth or /etc/pam.d/system-auth in buildroot sooner or later,
+# provided by authselect-libs atm
+BuildRequires: authselect-libs
 BuildRequires: automake
 # gcc and gcc-c++ is no longer in buildroot by default
 # gcc for most of files
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
-Buildrequires: gcc-c++
+Buildrequires: gcc-c++ 
 BuildRequires: krb5-devel
 BuildRequires: libacl-devel
 # make is used for compilation
@@ -179,10 +179,10 @@ BuildRequires: audit-libs-devel
 
 # /etc/cups was moved from main package to filesystem package
 # remove once CentOS Stream 10 is released
-Conflicts: %{name}-filesystem < 2.4.2-9
+Conflicts: %{name}-filesystem < 1:2.4.2-9
 # ippfind manpage was moved to cups-ipptool
 # remove once C10S is released
-Conflicts: %{name}-ipptool < 2.4.3-1
+Conflicts: %{name}-ipptool < 1:2.4.3-1
 
 # getaddrinfo from glibc needs nss-mdns or systemd-resolved for resolving
 # mdns .local addresses. Don't require a specific package for now and let
@@ -209,6 +209,9 @@ Recommends: ipp-usb
 Recommends: cups-filters-driverless
 %endif
 
+# we use password-auth or system-auth PAM modules for authentication,
+# provided by authselect-libs
+Requires: authselect-libs
 # We ship udev rules which use setfacl.
 Requires: acl
 Requires: %{name}-client%{?_isa} = %{epoch}:%{version}-%{release}
@@ -232,7 +235,6 @@ Requires(post): %{__python}
 
 %package client
 Summary: CUPS printing system - client programs
-License: GPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 %if %{use_alternatives}
 Provides: /usr/bin/lpq /usr/bin/lpr /usr/bin/lp /usr/bin/cancel /usr/bin/lprm /usr/bin/lpstat
@@ -242,7 +244,6 @@ Provides: lpr
 
 %package devel
 Summary: CUPS printing system - development environment
-License: LGPLv2
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires: gnutls-devel
 Requires: krb5-devel
@@ -251,14 +252,13 @@ Requires: zlib-devel
 
 %package libs
 Summary: CUPS printing system - libraries
-License: LGPLv2 and zlib
 
 %package filesystem
 Summary: CUPS printing system - directory layout
 BuildArch: noarch
 # /etc/cups was moved from main package to filesystem package
 # remove once CentOS Stream 10 is released
-Conflicts: %{name} < 2.4.2-9
+Conflicts: %{name} < 1:2.4.2-9
 
 
 %package lpd
@@ -271,7 +271,7 @@ Provides: lpd
 Summary: CUPS printing system - tool for performing IPP requests
 # ippfind manpage was moved to cups-ipptool
 # remove once C10S is released
-Conflicts: %{name} < 2.4.3-1
+Conflicts: %{name} < 1:2.4.3-1
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 # ippfind needs avahi for printer discovery
 Requires: avahi
@@ -344,53 +344,53 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 
 %prep
 %setup -q -n cups-%{VERSION}
-# Use the system pam configuration.
-%patch -P 1 -p1 -b .system-auth
 # Prevent multilib conflict in cups-config script.
-%patch -P 2 -p1 -b .multilib
+%patch -P 1 -p1 -b .multilib
 # Ignore rpm save/new files in the banners directory.
-%patch -P 3 -p1 -b .banners
+%patch -P 2 -p1 -b .banners
 # Don't export SSLLIBS to cups-config.
-%patch -P 4 -p1 -b .no-export-ssllibs
+%patch -P 3 -p1 -b .no-export-ssllibs
 # Allow file-based usb device URIs.
-#patch -P 5 -p1 -b .direct-usb
+%patch -P 4 -p1 -b .direct-usb
 # Increase driverd timeout to 70s to accommodate foomatic (bug #744715).
-%patch -P 6 -p1 -b .driverd-timeout
+%patch -P 5 -p1 -b .driverd-timeout
 # Support for errno==ENOSPACE-based USB paper-out reporting.
-#patch -P 7 -p1 -b .usb-paperout
+%patch -P 6 -p1 -b .usb-paperout
 # Allow the usb backend to understand old-style URI formats.
-#patch -P 8 -p1 -b .uri-compat
+%patch -P 7 -p1 -b .uri-compat
 # Use IP_FREEBIND socket option when binding listening sockets (bug #970809).
-%patch -P 9 -p1 -b .freebind
+%patch -P 8 -p1 -b .freebind
 # Fixes for jobs with multiple files and multiple formats.
-#patch -P 10 -p1 -b .ipp-multifile
+%patch -P 9 -p1 -b .ipp-multifile
 # Increase web interface get-devices timeout to 10s (bug #996664).
-%patch -P 11 -p1 -b .web-devices-timeout
+%patch -P 10 -p1 -b .web-devices-timeout
 # Add failover backend (bug #1689209)
-%patch -P 12 -p1 -b .failover
+%patch -P 11 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
-%patch -P 13 -p1 -b .dymo-deviceid
+%patch -P 12 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-
+# https://github.com/OpenPrinting/cups/pull/957
+%patch -P 1000 -p1 -b .web-query
+# https://github.com/OpenPrinting/cups/pull/961
+%patch -P 1001 -p1 -b .fix-cgigettext
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
 %patch -P 2002 -p1 -b .pam_auth
 %patch -P 2003 -p1 -b .submission-interrupted
 %patch -P 2004 -p1 -b .konica-minolta-ppd2ipp
-%patch -P 2005 -p1 -b .konica-minolta-c458-workarounds
-%patch -P 2006 -p1 -b .brother-ppd2ipp
-%patch -P 2007 -p1 -b .extra-ppd-attributes
-%patch -P 2008 -p1 -b .ignore-some-media-types
-%patch -P 2009 -p1 -b .printer-make-model
-%patch -P 2010 -p1 -b .exclude-filter-options
-%patch -P 2011 -p1 -b .custom-auth-command
-%patch -P 2012 -p1 -b .custom-impression-count
-%patch -P 2013 -p1 -b .user-agent
-%patch -P 2014 -p1 -b .multiple-apple-raster-resolutions
-%patch -P 2015 -p1 -b .password-repertoire
-%patch -P 2016 -p1 -b .allow-symlink-printer-icons
+%patch -P 2005 -p1 -b .brother-ppd2ipp
+%patch -P 2006 -p1 -b .extra-ppd-attributes
+%patch -P 2007 -p1 -b .ignore-some-media-types
+%patch -P 2008 -p1 -b .printer-make-model
+%patch -P 2009 -p1 -b .exclude-filter-options
+%patch -P 2010 -p1 -b .custom-auth-command
+%patch -P 2011 -p1 -b .custom-impression-count
+%patch -P 2012 -p1 -b .user-agent
+%patch -P 2013 -p1 -b .multiple-apple-raster-resolutions
+%patch -P 2014 -p1 -b .password-repertoire
+%patch -P 2015 -p1 -b .allow-symlink-printer-icons
 
 %if %{lspp}
 # LSPP support.
@@ -827,8 +827,27 @@ rm -f %{cups_serverbin}/backend/smb
 %{_bindir}/lprm.cups
 %{_bindir}/lpstat.cups
 %{_sbindir}/lpc.cups
+%ghost %{_bindir}/cancel
+%ghost %{_bindir}/lp
+%ghost %{_bindir}/lpq
+%ghost %{_bindir}/lpr
+%ghost %{_bindir}/lprm
+%ghost %{_bindir}/lpstat
+%ghost %{_mandir}/man1/cancel.1.gz
+%ghost %{_mandir}/man1/lp.1.gz
+%ghost %{_mandir}/man1/lpq.1.gz
+%ghost %{_mandir}/man1/lpr.1.gz
+%ghost %{_mandir}/man1/lprm.1.gz
+%ghost %{_mandir}/man1/lpstat.1.gz
+%ghost %{_mandir}/man8/lpc.8.gz
+%ghost %{_sbindir}/lpc
 %{_mandir}/man1/cancel-cups.1.gz
-%{_mandir}/man1/lp*.1.gz
+%{_mandir}/man1/lp-cups.1.gz
+%{_mandir}/man1/lpoptions.1.gz
+%{_mandir}/man1/lpq-cups.1.gz
+%{_mandir}/man1/lpr-cups.1.gz
+%{_mandir}/man1/lprm-cups.1.gz
+%{_mandir}/man1/lpstat-cups.1.gz
 %{_mandir}/man8/lpc-cups.8.gz
 
 %files libs
@@ -885,7 +904,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Fri May 03 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.8-1
+* Fri May 30 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.8-5
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - make unittests so /usr/bin/testipp utility gets built
@@ -908,6 +927,32 @@ rm -f %{cups_serverbin}/backend/smb
 - add patch for custom auth script
 - add patch for custom impression (page) count script
 - chown lp:lp /var/spool/lpd required for custom auth script
+
+* Mon May 20 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-4
+- 2280978 - The file /usr/sbin/lpc is not in the RPM database.
+
+* Thu May 16 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-3
+- fix cgiGetTextfield() return value if the original value is invalid
+
+* Wed May 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-2
+- update web ui patch to match with upstream
+
+* Tue May 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-1
+- 2277385 - cups-2.4.8 is available
+
+* Fri Apr 05 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-13
+- fix sending headers in responses to clients
+
+* Mon Feb 19 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-12
+- add epochs into conflicts
+
+* Fri Feb 16 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-11
+- 2263053 - CUPS/libppd PPD generators didn't check required attrs when deciding which driverless format to use,
+  causing PPD generation to fail
+
+* Wed Feb 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.7-10
+- require authselect-libs, since we use PAM modules password-auth or system-auth
+- got pam downstream patch upstream, use the commit from there
 
 * Wed Jan 24 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.7-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
@@ -1299,7 +1344,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 1590123 - cups-driverd doesn't recognize static gzipped ppds
 
 * Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
-- rebase to 2.2.7
+- rebase to 2.2.7 
 - substitute default values for invalid job attributes (upstream issues #5229 and #5186)
 
 * Thu Mar 29 2018 Pavel Zhukov <pzhukov@redhat.com> - 1:2.2.6-13
@@ -1378,7 +1423,7 @@ rm -f %{cups_serverbin}/backend/smb
 - disable patch for #1437065 for now until issue with stat is solved
 
 * Thu Mar 30 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-2
-- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart
+- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart 
 
 * Wed Mar 29 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-1
 - rebase to 2.2.3
@@ -1408,7 +1453,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 2.2.0
 
 * Fri Aug 12 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.4rc1
-- fixing release number
+- fixing release number 
 
 * Tue Aug 09 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.2rc1
 - rebase to cups-2.2rc1
@@ -1851,7 +1896,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 * Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-5
 - The cups-libs subpackage contains code distributed under the zlib
-  license (md5.c).
+  license (md5.c). 
 
 * Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-4
 - quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
@@ -3549,7 +3594,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Fixed up dbus patch so that it compiles.
 
 * Wed Mar  9 2005 John (J5) Palmieri <johnp@redhat.com>
-- Fix up dbus patch
+- Fix up dbus patch 
 
 * Mon Mar  7 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-13
 - Fixed up dbus patch to work with dbus 0.31
@@ -3915,7 +3960,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Mark banners as config files (bug #89069).
 
 * Sat Apr 12 2003 Havoc Pennington <hp@redhat.com> 1:1.1.18-4
-- adjust dbus patch - dbus_bus_get() sends the hello for you,
+- adjust dbus patch - dbus_bus_get() sends the hello for you, 
   and there were a couple of memleaks
 - buildprereq dbus 0.9
 - rebuild for new dbus
@@ -4227,7 +4272,7 @@ rm -f %{cups_serverbin}/backend/smb
 - PreReq initscripts >= 5.20
 
 * Mon Jun 26 2000 Tim Powers <timp@redhat.com>
-- started changelog
+- started changelog 
 - fixed init.d script location
 - changed script in init.d quite a bit and made more like the rest of our
-  startup scripts
+  startup scripts 
