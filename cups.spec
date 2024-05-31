@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -593,6 +593,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{cups_serverbin}/backend/ipp
 %{cups_serverbin}/backend/ipps
 %{cups_serverbin}/backend/lpd
+%ghost %{cups_serverbin}/backend/smb
 %{cups_serverbin}/backend/snmp
 %{cups_serverbin}/backend/socket
 %{cups_serverbin}/backend/usb
@@ -816,6 +817,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri May 31 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-5
+- 2284081 - File smb is missing in RPM database
+
 * Mon May 20 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-4
 - 2280978 - The file /usr/sbin/lpc is not in the RPM database.
 
