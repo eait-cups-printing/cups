@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.8
-Release: 5%{?dist}
+Version: 2.4.9
+Release: 1%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -81,10 +81,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/pull/957
-Patch1000: 0001-Fix-HTTP-query-in-web-interface-fixes-954.patch
-# https://github.com/OpenPrinting/cups/pull/961
-Patch1001: cups-fix-cgigettext.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -319,10 +315,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 12 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# https://github.com/OpenPrinting/cups/pull/957
-%patch -P 1000 -p1 -b .web-query
-# https://github.com/OpenPrinting/cups/pull/961
-%patch -P 1001 -p1 -b .fix-cgigettext
 
 
 %if %{lspp}
@@ -817,6 +809,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Jun 11 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.9-1
+- 2291335 - cups-2.4.9 is available
+
 * Fri May 31 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-5
 - 2284081 - File smb is missing in RPM database
 
