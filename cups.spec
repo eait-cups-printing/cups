@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.8
-Release: 5%{?dist}
+Version: 2.4.10
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -81,10 +81,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/pull/957
-Patch1000: 0001-Fix-HTTP-query-in-web-interface-fixes-954.patch
-# https://github.com/OpenPrinting/cups/pull/961
-Patch1001: cups-fix-cgigettext.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -370,10 +366,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 12 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
-# https://github.com/OpenPrinting/cups/pull/957
-%patch -P 1000 -p1 -b .web-query
-# https://github.com/OpenPrinting/cups/pull/961
-%patch -P 1001 -p1 -b .fix-cgigettext
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
@@ -904,7 +896,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Fri May 30 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.8-5
+* Fri Jul 09 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-2
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - make unittests so /usr/bin/testipp utility gets built
@@ -927,6 +919,12 @@ rm -f %{cups_serverbin}/backend/smb
 - add patch for custom auth script
 - add patch for custom impression (page) count script
 - chown lp:lp /var/spool/lpd required for custom auth script
+
+* Tue Jun 18 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-1
+- 2291335 - cups-2.4.10 is available
+
+* Tue Jun 11 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.9-1
+- 2291335 - cups-2.4.9 is available
 
 * Mon May 20 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-4
 - 2280978 - The file /usr/sbin/lpc is not in the RPM database.
