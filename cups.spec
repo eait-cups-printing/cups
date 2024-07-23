@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -81,6 +81,7 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+Patch1000: 0001-cgi-Fix-checkbox-support-fixes-1008.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -315,6 +316,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 12 -p1 -b .dymo-deviceid
 
 # UPSTREAM PATCHES
+# https://github.com/OpenPrinting/cups/commit/09bfbb6df5
+%patch -P 1000 -p1 -b .cgi-checkboxes
 
 
 %if %{lspp}
@@ -809,6 +812,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue Jul 23 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-3
+- fix checkbox support in web ui
+
 * Wed Jul 17 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.10-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
