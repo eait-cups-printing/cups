@@ -1,6 +1,0 @@
-summary: Test plan that runs all Fedora tests.
-discover:
-    how: fmf
-    url: https://src.fedoraproject.org/tests/cups.git
-execute:
-    how: tmt
