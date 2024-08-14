@@ -821,6 +821,7 @@ rm -f %{cups_serverbin}/backend/smb
 %changelog
 * Wed Aug 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-4
 - fix device URI in web ui
+- fix lspp build
 
 * Tue Jul 23 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-3
 - fix checkbox support in web ui
