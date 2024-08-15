@@ -8,18 +8,6 @@ Subject: [PATCH] Fix IPP everywhere printer setup (Issue #1033)
  scheduler/ipp.c | 6 +++---
  2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/CHANGES.md b/CHANGES.md
-index 15ee4100f..50827dfc6 100644
---- a/CHANGES.md
-+++ b/CHANGES.md
-@@ -14,6 +14,7 @@ Changes in CUPS v2.4.11 (YYYY-MM-DD)
- - Fixed HTTP PeerCred authentication for domain users (Issue #1001)
- - Fixed checkbox support (Issue #1008)
- - Fixed printer state notifications (Issue #1013)
-+- Fixed IPP Everywhere printer setup (Issue #1033)
- 
- 
- Changes in CUPS v2.4.10 (2024-06-18)
 diff --git a/scheduler/ipp.c b/scheduler/ipp.c
 index 37623c54e..d334f70cf 100644
 --- a/scheduler/ipp.c
