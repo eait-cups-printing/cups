@@ -321,6 +321,11 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch -P 12 -p1 -b .dymo-deviceid
 
+%if %{lspp}
+# LSPP support.
+%patch -P 100 -p1 -b .lspp
+%endif
+
 # UPSTREAM PATCHES
 # https://github.com/OpenPrinting/cups/commit/09bfbb6df5
 %patch -P 1000 -p1 -b .cgi-checkboxes
@@ -329,12 +334,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1001 -p1 -b .fix-device-uri-in-webui
 # https://github.com/OpenPrinting/cups/commit/313c388db
 %patch -P 1002 -p1 -b .fix-ippeve-thread-uri
-
-
-%if %{lspp}
-# LSPP support.
-%patch -P 100 -p1 -b .lspp
-%endif
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
