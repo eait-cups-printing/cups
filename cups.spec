@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.10
-Release: 4%{?dist}
+Release: 5%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -86,6 +86,8 @@ Patch1000: 0001-cgi-Fix-checkbox-support-fixes-1008.patch
 # https://github.com/OpenPrinting/cups/commit/eb34f2698
 # https://github.com/OpenPrinting/cups/commit/21a392d87
 Patch1001: cups-fix-device-uri-in-webui.patch
+# https://github.com/OpenPrinting/cups/commit/313c388db
+Patch1002: 0001-Fix-IPP-everywhere-printer-setup-Issue-1033.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -325,6 +327,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # https://github.com/OpenPrinting/cups/commit/eb34f2698
 # https://github.com/OpenPrinting/cups/commit/21a392d87
 %patch -P 1001 -p1 -b .fix-device-uri-in-webui
+# https://github.com/OpenPrinting/cups/commit/313c388db
+%patch -P 1002 -p1 -b .fix-ippeve-thread-uri
 
 
 %if %{lspp}
@@ -819,6 +823,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-5
+- fix race condition when creating IPP everywhere printer
+
 * Wed Aug 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-4
 - fix device URI in web ui
 - fix lspp build

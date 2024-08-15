@@ -1,0 +1,56 @@
+From 313c388dbc023bbcb75d1efed800d0cfc992a6cc Mon Sep 17 00:00:00 2001
+From: Michael R Sweet <msweet@msweet.org>
+Date: Wed, 14 Aug 2024 21:18:54 -0400
+Subject: [PATCH] Fix IPP everywhere printer setup (Issue #1033)
+
+---
+ CHANGES.md      | 1 +
+ scheduler/ipp.c | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/CHANGES.md b/CHANGES.md
+index 15ee4100f..50827dfc6 100644
+--- a/CHANGES.md
++++ b/CHANGES.md
+@@ -14,6 +14,7 @@ Changes in CUPS v2.4.11 (YYYY-MM-DD)
+ - Fixed HTTP PeerCred authentication for domain users (Issue #1001)
+ - Fixed checkbox support (Issue #1008)
+ - Fixed printer state notifications (Issue #1013)
++- Fixed IPP Everywhere printer setup (Issue #1033)
+ 
+ 
+ Changes in CUPS v2.4.10 (2024-06-18)
+diff --git a/scheduler/ipp.c b/scheduler/ipp.c
+index 37623c54e..d334f70cf 100644
+--- a/scheduler/ipp.c
++++ b/scheduler/ipp.c
+@@ -5346,7 +5346,7 @@ create_local_bg_thread(
+ 
+   request = ippNewRequest(IPP_OP_GET_PRINTER_ATTRIBUTES);
+   ippSetVersion(request, 2, 0);
+-  ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri", NULL, printer->device_uri);
++  ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri", NULL, device_uri);
+   ippAddStrings(request, IPP_TAG_OPERATION, IPP_TAG_KEYWORD, "requested-attributes", (int)(sizeof(pattrs) / sizeof(pattrs[0])), NULL, pattrs);
+ 
+   response = cupsDoRequest(http, request, resource);
+@@ -5367,7 +5367,7 @@ create_local_bg_thread(
+ 
+     request = ippNewRequest(IPP_OP_GET_PRINTER_ATTRIBUTES);
+     ippSetVersion(request, 1, 1);
+-    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri", NULL, printer->device_uri);
++    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri", NULL, device_uri);
+     ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_KEYWORD, "requested-attributes", NULL, "all");
+ 
+     response = cupsDoRequest(http, request, resource);
+@@ -5390,7 +5390,7 @@ create_local_bg_thread(
+     request = ippNewRequest(IPP_OP_GET_PRINTER_ATTRIBUTES);
+     ippSetVersion(request, 2, 0);
+     ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+-		 "printer-uri", NULL, uri);
++		 "printer-uri", NULL, device_uri);
+     ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_KEYWORD,
+ 		 "requested-attributes", NULL, "media-col-database");
+     response2 = cupsDoRequest(http, request, resource);
+-- 
+2.46.0
+
