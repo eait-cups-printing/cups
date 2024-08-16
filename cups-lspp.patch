@@ -85,7 +85,7 @@ index 3b5dd73..0e61044 100644
  dnl files as needed...
  INSTALL_LANGUAGES=""
 diff --git a/filter/common.c b/filter/common.c
-index 22217be..070662f 100644
+index 22217be..b8629e6 100644
 --- a/filter/common.c
 +++ b/filter/common.c
 @@ -12,6 +12,12 @@
@@ -120,7 +120,7 @@ index 22217be..070662f 100644
  
  
   /*
-@@ -316,6 +334,124 @@ WriteLabelProlog(const char *label,	/* I - Page label */
+@@ -316,6 +334,128 @@ WriteLabelProlog(const char *label,	/* I - Page label */
      return;
    }
  
@@ -211,8 +211,10 @@ index 22217be..070662f 100644
 +           "  ESPlf setfont\n");
 +    printf("  ESPp%c stringwidth pop dup 12 add exch -0.5 mul %.0f add\n ",
 +           'a' + longest_line, width * 0.5f);
++
 +    for (n = 1; n < lines; n++)
 +      printf(" dup");
++
 +    printf("\n  1 setgray\n");
 +    printf("  dup 6 sub %.0f %d index %.0f ESPrf\n",
 +           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
@@ -223,12 +225,14 @@ index 22217be..070662f 100644
 +           (bottom - 2.0), (2 + lines), 6.0 + (16.0 * lines));
 +    printf("  dup 6 sub %.0f %d index %.0f ESPrs\n",
 +           (top - 6.0 - (16.0 * lines)), (2 + lines), 4.0 + (16.0 * lines));
++
 +    for (n = 0; n < lines; n ++)
 +    {
 +      printf("  dup %.0f moveto ESPp%c show\n",
 +             bottom + 6.0 + ((lines - (n+1)) * 16.0), 'a' + n);
 +      printf("  %.0f moveto ESPp%c show\n", top + 2.0 - ((n + 1) * 16.0), 'a' + n);
 +    }
++
 +    printf("  pop\n"
 +           "}bind put\n");
 +
@@ -245,7 +249,7 @@ index 22217be..070662f 100644
   /*
    * Set the classification + page label string...
    */
-@@ -396,7 +532,10 @@ WriteLabelProlog(const char *label,	/* I - Page label */
+@@ -396,7 +536,10 @@ WriteLabelProlog(const char *label,	/* I - Page label */
    printf("  %.0f moveto ESPpl show\n", top - 14.0);
    puts("pop");
    puts("}bind put");
@@ -416,7 +420,7 @@ index 41090c8..87da143 100644
  
  /*
 diff --git a/scheduler/client.c b/scheduler/client.c
-index 779404c..bfb9210 100644
+index 779404c..7044ebd 100644
 --- a/scheduler/client.c
 +++ b/scheduler/client.c
 @@ -20,12 +20,20 @@
@@ -458,12 +462,12 @@ index 779404c..bfb9210 100644
 +      */
 +      if ((con->auid = client_pid_to_auid(cr.pid)) == -1)
 +      {
-+        httpClose(con->http);
-+        cupsdLogClient(con, CUPSD_LOG_ERROR,
++	httpClose(con->http);
++	cupsdLogClient(con, CUPSD_LOG_ERROR,
 +		       "Unable to determine client auid for client pid=%d",
 +		       cr.pid);
-+        free(con);
-+        return;
++	free(con);
++	return;
 +      }
 +      cupsdLogClient(con, CUPSD_LOG_INFO,
 +		     "peer's pid=%d, uid=%d, gid=%d, auid=%d",
@@ -526,81 +530,84 @@ index 779404c..bfb9210 100644
  
  
    status = HTTP_STATUS_CONTINUE;
-@@ -1737,7 +1810,73 @@ cupsdReadClient(cupsd_client_t *con)	/* I - Client to read from */
+@@ -1737,7 +1810,75 @@ cupsdReadClient(cupsd_client_t *con)	/* I - Client to read from */
  	    fchmod(con->file, 0640);
  	    fchown(con->file, RunUser, Group);
              fcntl(con->file, F_SETFD, fcntl(con->file, F_GETFD) | FD_CLOEXEC);
+-	  }
++
 +#ifdef WITH_LSPP
-+	  if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
-+	  {
-+	    if (getfilecon(con->filename, &spoolcon) == -1)
++	    if (strncmp(con->scon, UNKNOWN_SL, strlen(UNKNOWN_SL)) != 0)
 +	    {
-+	      cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
-+	      cupsdCloseClient(con);
-+	      return;
-+	    }
-+	    clicon = context_new(con->scon);
-+	    tmpcon = context_new(spoolcon);
-+	    freecon(spoolcon);
-+	    if (!clicon || !tmpcon)
-+	    {
-+	      cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
-+	      if (clicon)
-+		context_free(clicon);
-+	      if (tmpcon)
++	      if (getfilecon(con->filename, &spoolcon) == -1)
++	      {
++		cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
++		cupsdCloseClient(con);
++		return;
++	      }
++	      clicon = context_new(con->scon);
++	      tmpcon = context_new(spoolcon);
++	      freecon(spoolcon);
++	      if (!clicon || !tmpcon)
++	      {
++		cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
++		if (clicon)
++		  context_free(clicon);
++		if (tmpcon)
++		  context_free(tmpcon);
++		cupsdCloseClient(con);
++		return;
++	      }
++	      clirange = (char *) context_range_get(clicon);
++	      if (clirange)
++	      {
++		clirange = strdup(clirange);
++		if ((cliclearance = strtok(clirange, "-")) != NULL)
++		{
++		  if (context_range_set(tmpcon, cliclearance) == -1)
++		  {
++		    cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
++		    free(clirange);
++		    context_free(tmpcon);
++		    context_free(clicon);
++		    cupsdCloseClient(con);
++		    return;
++		  }
++		}
++		else
++		{
++		  if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
++		  {
++		    cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
++		    free(clirange);
++		    context_free(tmpcon);
++		    context_free(clicon);
++		    cupsdCloseClient(con);
++		    return;
++		  }
++		}
++		free(clirange);
++	      }
++	      if (setfilecon(con->filename, context_str(tmpcon)) == -1)
++	      {
++		cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
 +		context_free(tmpcon);
-+	      cupsdCloseClient(con);
-+	      return;
-+	    }
-+	    clirange = (char *) context_range_get(clicon);
-+	    if (clirange)
-+	    {
-+	      clirange = strdup(clirange);
-+	      if ((cliclearance = strtok(clirange, "-")) != NULL)
-+	      {
-+		if (context_range_set(tmpcon, cliclearance) == -1)
-+		{
-+		  cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		  free(clirange);
-+		  context_free(tmpcon);
-+		  context_free(clicon);
-+		  cupsdCloseClient(con);
-+		  return;
-+		}
++		context_free(clicon);
++		cupsdCloseClient(con);
++		return;
 +	      }
-+	      else
-+	      {
-+		if (context_range_set(tmpcon, (context_range_get(clicon))) == -1)
-+		{
-+		  cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
-+		  free(clirange);
-+		  context_free(tmpcon);
-+		  context_free(clicon);
-+		  cupsdCloseClient(con);
-+		  return;
-+		}
-+	      }
-+	      free(clirange);
-+	    }
-+	    if (setfilecon(con->filename, context_str(tmpcon)) == -1)
-+	    {
-+	      cupsdSendError(con, HTTP_STATUS_SERVER_ERROR, CUPSD_AUTH_NONE);
++	      cupsdLogClient(con, CUPSD_LOG_DEBUG2, "%s set to %s",
++			     con->filename, context_str(tmpcon));
 +	      context_free(tmpcon);
 +	      context_free(clicon);
-+	      cupsdCloseClient(con);
-+	      return;
 +	    }
-+	    cupsdLogClient(con, CUPSD_LOG_DEBUG2, "%s set to %s",
-+			   con->filename, context_str(tmpcon));
-+	    context_free(tmpcon);
-+	    context_free(clicon);
- 	  }
 +#endif /* WITH_LSPP */
++
 +	}
  
  	  if (httpGetState(con->http) != HTTP_STATE_POST_SEND)
  	  {
-@@ -3235,6 +3374,49 @@ is_path_absolute(const char *path)	/* I - Input path */
+@@ -3235,6 +3376,49 @@ is_path_absolute(const char *path)	/* I - Input path */
    return (1);
  }
  
