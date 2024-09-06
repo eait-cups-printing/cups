@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.10
-Release: 2%{?dist}
+Release: 7%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -81,6 +81,13 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+# https://github.com/OpenPrinting/cups/commit/09bfbb6df5
+Patch1000: 0001-cgi-Fix-checkbox-support-fixes-1008.patch
+# https://github.com/OpenPrinting/cups/commit/eb34f2698
+# https://github.com/OpenPrinting/cups/commit/21a392d87
+Patch1001: cups-fix-device-uri-in-webui.patch
+# https://github.com/OpenPrinting/cups/commit/313c388db
+Patch1002: 0001-Fix-IPP-everywhere-printer-setup-Issue-1033.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -365,7 +372,19 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch -P 12 -p1 -b .dymo-deviceid
 
+%if %{lspp}
+# LSPP support.
+%patch -P 100 -p1 -b .lspp
+%endif
+
 # UPSTREAM PATCHES
+# https://github.com/OpenPrinting/cups/commit/09bfbb6df5
+%patch -P 1000 -p1 -b .cgi-checkboxes
+# https://github.com/OpenPrinting/cups/commit/eb34f2698
+# https://github.com/OpenPrinting/cups/commit/21a392d87
+%patch -P 1001 -p1 -b .fix-device-uri-in-webui
+# https://github.com/OpenPrinting/cups/commit/313c388db
+%patch -P 1002 -p1 -b .fix-ippeve-thread-uri
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
@@ -383,12 +402,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2013 -p1 -b .multiple-apple-raster-resolutions
 %patch -P 2014 -p1 -b .password-repertoire
 %patch -P 2015 -p1 -b .allow-symlink-printer-icons
-
-%if %{lspp}
-# LSPP support.
-%patch -P 100 -p1 -b .lspp
-%endif
-
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -670,6 +683,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{cups_serverbin}/backend/ipp
 %{cups_serverbin}/backend/ipps
 %{cups_serverbin}/backend/lpd
+%ghost %{cups_serverbin}/backend/smb
 %{cups_serverbin}/backend/snmp
 %{cups_serverbin}/backend/socket
 %{cups_serverbin}/backend/usb
@@ -896,35 +910,54 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Fri Jul 09 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-2
-- send log output to /var/log/cups/error_log rather than system journal
-- add logrotate support for log output
-- make unittests so /usr/bin/testipp utility gets built
-- Show username attempting to auth before PAM calls in debug log
-- disable LSPP
-- disable USB related patches and multifile patch
-- provide username debug info when attempting to auth using PAM
-- add Konica Minolta submission interrupted patch
-- add custom authorization support patch
-- add custom impression (page) count patch
-- add some PPD->IPP mappings for Konica Minolta and Brother printers
-- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
-  PPD attributes
-- printer make and model corrections for PPD generation
-- add User-Agent detection patch which also prevents Windows IPP 1.0
-  clients
-- add /var/cache/cups/ and sub-dirs to file list of main package
-- add patch to exclude some cups filter options when not using
-  _cups dns-sd subtype
-- add patch for custom auth script
-- add patch for custom impression (page) count script
-- chown lp:lp /var/spool/lpd required for custom auth script
+-* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
+-- send log output to /var/log/cups/error_log rather than system journal
+-- add logrotate support for log output
+-- make unittests so /usr/bin/testipp utility gets built
+-- Show username attempting to auth before PAM calls in debug log
+-- disable LSPP
+-- disable USB related patches and multifile patch
+-- provide username debug info when attempting to auth using PAM
+-- add Konica Minolta submission interrupted patch
+-- add custom authorization support patch
+-- add custom impression (page) count patch
+-- add some PPD->IPP mappings for Konica Minolta and Brother printers
+-- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
+-  PPD attributes
+-- printer make and model corrections for PPD generation
+-- add User-Agent detection patch which also prevents Windows IPP 1.0
+-  clients
+-- add /var/cache/cups/ and sub-dirs to file list of main package
+-- add patch to exclude some cups filter options when not using
+-  _cups dns-sd subtype
+-- add patch for custom auth script
+-- add patch for custom impression (page) count script
+-- chown lp:lp /var/spool/lpd required for custom auth script
+
+* Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-6
+- lspp leaked memory
+
+* Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-5
+- fix race condition when creating IPP everywhere printer
+
+* Wed Aug 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-4
+- fix device URI in web ui
+- fix lspp build
+
+* Tue Jul 23 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-3
+- fix checkbox support in web ui
+
+* Wed Jul 17 2024 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.10-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
 
 * Tue Jun 18 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-1
 - 2291335 - cups-2.4.10 is available
 
 * Tue Jun 11 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.9-1
 - 2291335 - cups-2.4.9 is available
+
+* Fri May 31 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-5
+- 2284081 - File smb is missing in RPM database
 
 * Mon May 20 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.8-4
 - 2280978 - The file /usr/sbin/lpc is not in the RPM database.
