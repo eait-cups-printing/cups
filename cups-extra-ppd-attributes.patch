@@ -1,16 +1,16 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..2aea80d59 100644
+index 18c38d0ee..9e7bfc04a 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
-@@ -3180,6 +3180,7 @@ _ppdCreateFromIPP2(
- 		    			/* PPD keyword */
+@@ -3202,6 +3202,7 @@ _ppdCreateFromIPP2(
+   const char		*model;		/* Model name */
    int			i, j,		/* Looping vars */
  			count,		/* Number of values */
 +			count2,		/* Number of values */
  			bottom,		/* Largest bottom margin */
  			left,		/* Largest left margin */
  			right,		/* Largest right margin */
-@@ -3277,10 +3278,24 @@ _ppdCreateFromIPP2(
+@@ -3369,10 +3370,24 @@ _ppdCreateFromIPP2(
    else
      cupsFilePuts(fp, "*ColorDevice: False\n");
  
@@ -37,27 +37,17 @@ index 40881cd39..2aea80d59 100644
    cupsFilePuts(fp, "*cupsSNMPSupplies: False\n");
    cupsFilePrintf(fp, "*cupsLanguages: \"%s", lang->language);
    if ((lang_supp = ippFindAttribute(supported, "printer-strings-languages-supported", IPP_TAG_LANGUAGE)) != NULL)
-@@ -3295,9 +3310,6 @@ _ppdCreateFromIPP2(
-   }
-   cupsFilePuts(fp, "\"\n");
- 
--  if ((attr = ippFindAttribute(supported, "printer-more-info", IPP_TAG_URI)) != NULL)
--    cupsFilePrintf(fp, "*APSupplies: \"%s\"\n", ippGetString(attr, 0, NULL));
--
-   if ((attr = ippFindAttribute(supported, "printer-charge-info-uri", IPP_TAG_URI)) != NULL)
-     cupsFilePrintf(fp, "*cupsChargeInfoURI: \"%s\"\n", ippGetString(attr, 0, NULL));
- 
-@@ -4872,7 +4884,8 @@ _ppdCreateFromIPP2(
+@@ -4982,7 +4997,8 @@ _ppdCreateFromIPP2(
  	if ((msgstr = _cupsMessageLookup(strings, msgid)) == msgid)
  	  msgstr = keyword;
  
--      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"\n", keyword);
-+      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"", keyword);
+-      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"\n", ppdname);
++      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"", ppdname);
 +      count2 = 0;
        for (finishing_attr = ippFirstAttribute(finishing_col); finishing_attr; finishing_attr = ippNextAttribute(finishing_col))
        {
          if (ippGetValueTag(finishing_attr) == IPP_TAG_BEGIN_COLLECTION)
-@@ -4880,8 +4893,12 @@ _ppdCreateFromIPP2(
+@@ -4990,8 +5006,12 @@ _ppdCreateFromIPP2(
  	  const char *name = ippGetName(finishing_attr);
  					/* Member attribute name */
  

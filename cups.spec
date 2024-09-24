@@ -89,6 +89,12 @@ Patch1001: cups-fix-device-uri-in-webui.patch
 # https://github.com/OpenPrinting/cups/commit/313c388db
 Patch1002: 0001-Fix-IPP-everywhere-printer-setup-Issue-1033.patch
 
+# https://github.com/OpenPrinting/cups/commit/04bb2af
+Patch1010: 0001-Refactor-make-and-model-code.patch
+# https://github.com/OpenPrinting/cups/commit/e0630cd
+Patch1011: 0001-PPDize-preset-and-template-names.patch
+# https://github.com/OpenPrinting/cups/commit/9939a70
+Patch1012: 0001-Mirror-IPP-Everywhere-printer-changes-from-master.patch
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
@@ -140,7 +146,7 @@ Patch2012: cups-user-agent.patch
 # Patch to allow more than 2 Apple Raster (URF) resolutions
 Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
 
-# Patch for job-password-repertoire-configured &  job-password-repertoire-supported
+# Patch for job-password-repertoire-configured & job-password-repertoire-supported
 Patch2014: cups-job-password-repertoire.patch
 
 # Patch to allow sylinks in printer icons directory
@@ -385,6 +391,13 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1001 -p1 -b .fix-device-uri-in-webui
 # https://github.com/OpenPrinting/cups/commit/313c388db
 %patch -P 1002 -p1 -b .fix-ippeve-thread-uri
+
+# https://github.com/OpenPrinting/cups/commit/04bb2af
+%patch -P 1010 -p1 -b .refactor-make-and-model-code
+# https://github.com/OpenPrinting/cups/commit/e0630cd
+%patch -P 1011 -p1 -b .pdfize-preset-and-template-names
+# https://github.com/OpenPrinting/cups/commit/9939a70
+%patch -P 1012 -p1 -b .mirror-ipp-everywhere-printer-changes-from-master
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
@@ -910,29 +923,29 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
-- send log output to /var/log/cups/error_log rather than system journal
-- add logrotate support for log output
-- make unittests so /usr/bin/testipp utility gets built
-- Show username attempting to auth before PAM calls in debug log
-- disable LSPP
-- disable USB related patches and multifile patch
-- provide username debug info when attempting to auth using PAM
-- add Konica Minolta submission interrupted patch
-- add custom authorization support patch
-- add custom impression (page) count patch
-- add some PPD->IPP mappings for Konica Minolta and Brother printers
-- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
-  PPD attributes
-- printer make and model corrections for PPD generation
-- add User-Agent detection patch which also prevents Windows IPP 1.0-
-  clients
-- add /var/cache/cups/ and sub-dirs to file list of main package
-- add patch to exclude some cups filter options when not using
-  _cups dns-sd subtype
-- add patch for custom auth script
-- add patch for custom impression (page) count script
-- chown lp:lp /var/spool/lpd required for custom auth script
+-* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
+-- send log output to /var/log/cups/error_log rather than system journal
+-- add logrotate support for log output
+-- make unittests so /usr/bin/testipp utility gets built
+-- Show username attempting to auth before PAM calls in debug log
+-- disable LSPP
+-- disable USB related patches and multifile patch
+-- provide username debug info when attempting to auth using PAM
+-- add Konica Minolta submission interrupted patch
+-- add custom authorization support patch
+-- add custom impression (page) count patch
+-- add some PPD->IPP mappings for Konica Minolta and Brother printers
+-- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
+-  PPD attributes
+-- printer make and model corrections for PPD generation
+-- add User-Agent detection patch which also prevents Windows IPP 1.0
+-  clients
+-- add /var/cache/cups/ and sub-dirs to file list of main package
+-- add patch to exclude some cups filter options when not using
+-  _cups dns-sd subtype
+-- add patch for custom auth script
+-- add patch for custom impression (page) count script
+-- chown lp:lp /var/spool/lpd required for custom auth script
 
 * Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-6
 - lspp leaked memory

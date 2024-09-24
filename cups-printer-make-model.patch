@@ -1,21 +1,22 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 40881cd39..453ed52f6 100644
+index 18c38d0ee..61b473f44 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
-@@ -3261,16 +3261,21 @@ _ppdCreateFromIPP2(
-     model = make + 16;
-     strlcpy(make, "HP", sizeof(make));
+@@ -3325,6 +3325,11 @@ _ppdCreateFromIPP2(
+     if (!_cups_strncasecmp(model, "HP ", 3))
+       model += 3;
    }
 +  else if (!_cups_strncasecmp(make, "KONICA MINOLTA ", 15))
 +  {
 +    model = make + 15;
 +    strlcpy(make, "KONICA MINOLTA", sizeof(make));
 +  }
-   else if ((model = strchr(make, ' ')) != NULL)
-     *model++ = '\0';
-   else
-     model = make;
- 
+   else if ((mptr = strchr(make, ' ')) != NULL)
+   {
+    /*
+@@ -3359,10 +3364,10 @@ _ppdCreateFromIPP2(
+   cupsFilePuts(fp, "*FileSystem: False\n");
+   cupsFilePuts(fp, "*PCFileName: \"ippeve.ppd\"\n");
    cupsFilePrintf(fp, "*Manufacturer: \"%s\"\n", make);
 -  cupsFilePrintf(fp, "*ModelName: \"%s\"\n", model);
 -  cupsFilePrintf(fp, "*Product: \"(%s)\"\n", model);
