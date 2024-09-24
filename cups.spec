@@ -923,29 +923,29 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
--* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
--- send log output to /var/log/cups/error_log rather than system journal
--- add logrotate support for log output
--- make unittests so /usr/bin/testipp utility gets built
--- Show username attempting to auth before PAM calls in debug log
--- disable LSPP
--- disable USB related patches and multifile patch
--- provide username debug info when attempting to auth using PAM
--- add Konica Minolta submission interrupted patch
--- add custom authorization support patch
--- add custom impression (page) count patch
--- add some PPD->IPP mappings for Konica Minolta and Brother printers
--- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
--  PPD attributes
--- printer make and model corrections for PPD generation
--- add User-Agent detection patch which also prevents Windows IPP 1.0
--  clients
--- add /var/cache/cups/ and sub-dirs to file list of main package
--- add patch to exclude some cups filter options when not using
--  _cups dns-sd subtype
--- add patch for custom auth script
--- add patch for custom impression (page) count script
--- chown lp:lp /var/spool/lpd required for custom auth script
+* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
+- send log output to /var/log/cups/error_log rather than system journal
+- add logrotate support for log output
+- make unittests so /usr/bin/testipp utility gets built
+- Show username attempting to auth before PAM calls in debug log
+- disable LSPP
+- disable USB related patches and multifile patch
+- provide username debug info when attempting to auth using PAM
+- add Konica Minolta submission interrupted patch
+- add custom authorization support patch
+- add custom impression (page) count patch
+- add some PPD->IPP mappings for Konica Minolta and Brother printers
+- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
+  PPD attributes
+- printer make and model corrections for PPD generation
+- add User-Agent detection patch which also prevents Windows IPP 1.0
+  clients
+- add /var/cache/cups/ and sub-dirs to file list of main package
+- add patch to exclude some cups filter options when not using
+  _cups dns-sd subtype
+- add patch for custom auth script
+- add patch for custom impression (page) count script
+- chown lp:lp /var/spool/lpd required for custom auth script
 
 * Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-6
 - lspp leaked memory
