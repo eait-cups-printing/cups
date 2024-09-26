@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.10
-Release: 6%{?dist}
+Release: 7%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -73,6 +73,12 @@ Patch10: cups-web-devices-timeout.patch
 Patch11: cups-failover-backend.patch
 # add device id for dymo printer
 Patch12: cups-dymo-deviceid.patch
+# Fix for CVE
+Patch13: 0001-mirror-ipp-everywhere-printer-changes-from-master.patch
+Patch14: 0001-refactor-make-and-model-code.patch
+Patch15: 0001-ppdize-preset-and-template-names.patch
+Patch16: 0001-quote-ppd-localized-strings.patch
+Patch17: 0001-fix-warnings-for-unused-vars.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -320,6 +326,12 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 11 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch -P 12 -p1 -b .dymo-deviceid
+# CVE Fixes
+%patch -P 13 -p1 -b .ipp-everywhere
+%patch -P 14 -p1 -b .refactor-make-model
+%patch -P 15 -p1 -b .ppdize-preset
+%patch -P 16 -p1 -b .quote-ppd-strings
+%patch -P 17 -p1 -b .unused-vars
 
 %if %{lspp}
 # LSPP support.
@@ -822,6 +834,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Sep 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> - 1:2.4.10-7
+- Validate several IPP attributes and quote PPD localized string
+
 * Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-6
 - lspp leaked memory
 
