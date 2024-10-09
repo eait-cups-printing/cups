@@ -720,6 +720,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %attr(0644, root, root)%{_unitdir}/%{name}.service
+%attr(0644, root, root)%{_unitdir}/system-%{name}.slice
 %attr(0644, root, root)%{_unitdir}/%{name}.socket
 %attr(0644, root, root)%{_unitdir}/%{name}.path
 
