@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 1%{?dist}
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -73,6 +73,9 @@ Patch10: cups-web-devices-timeout.patch
 Patch11: cups-failover-backend.patch
 # add device id for dymo printer
 Patch12: cups-dymo-deviceid.patch
+# use monotonic time for cups_enum_dests (rhbz #2316066)
+# https://github.com/OpenPrinting/cups/pull/1083
+Patch13: 0001-Use-monotonic-time-clock_gettime-for-cups_enum_dests.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -313,6 +316,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 11 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch -P 12 -p1 -b .dymo-deviceid
+# use monotonic time (clock_gettime) for cups_enum_dests (bug #2316066).
+%patch -P 13 -p1 -b .monotonic
 
 %if %{lspp}
 # LSPP support.
@@ -809,6 +814,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Sun Oct 20 2024 Adam Williamson <awilliam@redhat.com> - 2.4.11-2
+- use monotonic time for cups_enum_dests (fedora#2316066)
+
 * Wed Oct 09 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-1
 - 2.4.11 (fedora#2315862)
 
