@@ -21,8 +21,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.10
-Release: 7%{?dist}
+Version: 2.4.11
+Release: 3%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -73,6 +73,9 @@ Patch10: cups-web-devices-timeout.patch
 Patch11: cups-failover-backend.patch
 # add device id for dymo printer
 Patch12: cups-dymo-deviceid.patch
+# use monotonic time for cups_enum_dests (rhbz #2316066)
+# https://github.com/OpenPrinting/cups/pull/1083
+Patch13: 0001-Use-monotonic-time-clock_gettime-for-cups_enum_dests.patch
 
 %if %{lspp}
 # selinux and audit enablement for CUPS - needs work and CUPS upstream wants
@@ -81,13 +84,6 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-# https://github.com/OpenPrinting/cups/commit/09bfbb6df5
-Patch1000: 0001-cgi-Fix-checkbox-support-fixes-1008.patch
-# https://github.com/OpenPrinting/cups/commit/eb34f2698
-# https://github.com/OpenPrinting/cups/commit/21a392d87
-Patch1001: cups-fix-device-uri-in-webui.patch
-# https://github.com/OpenPrinting/cups/commit/313c388db
-Patch1002: 0001-Fix-IPP-everywhere-printer-setup-Issue-1033.patch
 
 # https://github.com/OpenPrinting/cups/commit/04bb2af
 Patch1010: 0001-Refactor-make-and-model-code.patch
@@ -377,6 +373,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 11 -p1 -b .failover
 # Added IEEE 1284 Device ID for a Dymo device (bug #747866).
 %patch -P 12 -p1 -b .dymo-deviceid
+# use monotonic time (clock_gettime) for cups_enum_dests (bug #2316066).            
+%patch -P 13 -p1 -b .monotonic
 
 %if %{lspp}
 # LSPP support.
@@ -384,20 +382,6 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %endif
 
 # UPSTREAM PATCHES
-# https://github.com/OpenPrinting/cups/commit/09bfbb6df5
-%patch -P 1000 -p1 -b .cgi-checkboxes
-# https://github.com/OpenPrinting/cups/commit/eb34f2698
-# https://github.com/OpenPrinting/cups/commit/21a392d87
-%patch -P 1001 -p1 -b .fix-device-uri-in-webui
-# https://github.com/OpenPrinting/cups/commit/313c388db
-%patch -P 1002 -p1 -b .fix-ippeve-thread-uri
-
-# https://github.com/OpenPrinting/cups/commit/04bb2af
-%patch -P 1010 -p1 -b .refactor-make-and-model-code
-# https://github.com/OpenPrinting/cups/commit/e0630cd
-%patch -P 1011 -p1 -b .pdfize-preset-and-template-names
-# https://github.com/OpenPrinting/cups/commit/9939a70
-%patch -P 1012 -p1 -b .mirror-ipp-everywhere-printer-changes-from-master
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
@@ -834,6 +818,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %attr(0644, root, root)%{_unitdir}/%{name}.service
+%attr(0644, root, root)%{_unitdir}/system-%{name}.slice
 %attr(0644, root, root)%{_unitdir}/%{name}.socket
 %attr(0644, root, root)%{_unitdir}/%{name}.path
 
@@ -923,7 +908,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Mon Sep 02 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.10-7
+* Thu Nov 07 2024 Douglas Kosovic doug@uq.edu.au - 1:2.4.11-2
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - make unittests so /usr/bin/testipp utility gets built
@@ -946,6 +931,15 @@ rm -f %{cups_serverbin}/backend/smb
 - add patch for custom auth script
 - add patch for custom impression (page) count script
 - chown lp:lp /var/spool/lpd required for custom auth script
+
+* Sun Oct 20 2024 Adam Williamson <awilliam@redhat.com> - 2.4.11-2
+- use monotonic time for cups_enum_dests (fedora#2316066)
+ 
+* Wed Oct 09 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-1
+- 2.4.11 (fedora#2315862)
+ 
+* Thu Sep 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> - 1:2.4.10-7
+- Validate several IPP attributes and quote PPD localized string
 
 * Thu Aug 15 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.10-6
 - lspp leaked memory

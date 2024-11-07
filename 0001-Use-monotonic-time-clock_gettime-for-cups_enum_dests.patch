@@ -1,0 +1,67 @@
+From c515f789d309e1c32ec4d1d0e6ce8c014554c2c4 Mon Sep 17 00:00:00 2001
+From: Adam Williamson <awilliam@redhat.com>
+Date: Sun, 20 Oct 2024 10:16:36 -0700
+Subject: [PATCH] Use monotonic time (clock_gettime) for cups_enum_dests
+
+Using gettimeofday here is not safe against clock jumps (e.g. a
+manual setting of the clock). Use clock_gettime instead.
+
+Signed-off-by: Adam Williamson <awilliam@redhat.com>
+---
+ cups/dest.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/cups/dest.c b/cups/dest.c
+index b48d8f219..ece273555 100644
+--- a/cups/dest.c
++++ b/cups/dest.c
+@@ -222,7 +222,7 @@ static const char	*cups_dnssd_resolve(cups_dest_t *dest, const char *uri,
+ static int		cups_dnssd_resolve_cb(void *context);
+ static void		cups_dnssd_unquote(char *dst, const char *src,
+ 			                   size_t dstsize);
+-static int		cups_elapsed(struct timeval *t);
++static int		cups_elapsed(struct timespec *t);
+ #endif /* HAVE_DNSSD */
+ static int              cups_enum_dests(http_t *http, unsigned flags, int msec, int *cancel, cups_ptype_t type, cups_ptype_t mask, cups_dest_cb_t cb, void *user_data);
+ static int		cups_find_dest(const char *name, const char *instance,
+@@ -3396,15 +3396,15 @@ cups_dnssd_unquote(char       *dst,	/* I - Destination buffer */
+  */
+ 
+ static int				/* O  - Elapsed time in milliseconds */
+-cups_elapsed(struct timeval *t)		/* IO - Previous time */
++cups_elapsed(struct timespec *t)		/* IO - Previous time */
+ {
+   int			msecs;		/* Milliseconds */
+-  struct timeval	nt;		/* New time */
++  struct timespec	nt;		/* New time */
+ 
+ 
+-  gettimeofday(&nt, NULL);
++  clock_gettime(CLOCK_MONOTONIC, &nt);
+ 
+-  msecs = (int)(1000 * (nt.tv_sec - t->tv_sec) + (nt.tv_usec - t->tv_usec) / 1000);
++  msecs = (int)(1000 * (nt.tv_sec - t->tv_sec) + (nt.tv_nsec - t->tv_nsec) / 1000 / 1000);
+ 
+   *t = nt;
+ 
+@@ -3438,7 +3438,7 @@ cups_enum_dests(
+   int           count,                  /* Number of queries started */
+                 completed,              /* Number of completed queries */
+                 remaining;              /* Remainder of timeout */
+-  struct timeval curtime;               /* Current time */
++  struct timespec curtime;               /* Current time */
+   _cups_dnssd_data_t data;		/* Data for callback */
+   _cups_dnssd_device_t *device;         /* Current device */
+ #  ifdef HAVE_MDNSRESPONDER
+@@ -3660,7 +3660,7 @@ cups_enum_dests(
+   * Get Bonjour-shared printers...
+   */
+ 
+-  gettimeofday(&curtime, NULL);
++  clock_gettime(CLOCK_MONOTONIC, &curtime);
+ 
+ #  ifdef HAVE_MDNSRESPONDER
+   if (DNSServiceCreateConnection(&data.main_ref) != kDNSServiceErr_NoError)
+-- 
+2.46.2
+
