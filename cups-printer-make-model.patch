@@ -1,8 +1,39 @@
 diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
-index 18c38d0ee..61b473f44 100644
+index a6163a0e1..28cfe83c1 100644
 --- a/cups/ppd-cache.c
 +++ b/cups/ppd-cache.c
-@@ -3325,6 +3325,11 @@ _ppdCreateFromIPP2(
+@@ -3271,30 +3271,6 @@ _ppdCreateFromIPP2(
+ 
+     strlcpy(make, ippGetString(attr, 0, NULL), sizeof(make));
+ 
+-    for (mptr = make; *mptr; mptr ++)
+-    {
+-      if (*mptr < ' ' || *mptr >= 127 || *mptr == '\"')
+-      {
+-       /*
+-	* Truncate the make and model on the first bad character...
+-	*/
+-
+-	*mptr = '\0';
+-	break;
+-      }
+-    }
+-
+-    while (mptr > make)
+-    {
+-     /*
+-      * Strip trailing whitespace...
+-      */
+-
+-      mptr --;
+-      if (*mptr == ' ')
+-	*mptr = '\0';
+-    }
+-
+     if (!make[0])
+     {
+      /*
+@@ -3325,6 +3301,11 @@ _ppdCreateFromIPP2(
      if (!_cups_strncasecmp(model, "HP ", 3))
        model += 3;
    }
@@ -14,7 +45,7 @@ index 18c38d0ee..61b473f44 100644
    else if ((mptr = strchr(make, ' ')) != NULL)
    {
     /*
-@@ -3359,10 +3364,10 @@ _ppdCreateFromIPP2(
+@@ -3359,10 +3340,10 @@ _ppdCreateFromIPP2(
    cupsFilePuts(fp, "*FileSystem: False\n");
    cupsFilePuts(fp, "*PCFileName: \"ippeve.ppd\"\n");
    cupsFilePrintf(fp, "*Manufacturer: \"%s\"\n", make);
