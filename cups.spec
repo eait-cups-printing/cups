@@ -85,13 +85,6 @@ Patch100: cups-lspp.patch
 
 #### UPSTREAM PATCHES (starts with 1000) ####
 
-# https://github.com/OpenPrinting/cups/commit/04bb2af
-Patch1010: 0001-Refactor-make-and-model-code.patch
-# https://github.com/OpenPrinting/cups/commit/e0630cd
-Patch1011: 0001-PPDize-preset-and-template-names.patch
-# https://github.com/OpenPrinting/cups/commit/9939a70
-Patch1012: 0001-Mirror-IPP-Everywhere-printer-changes-from-master.patch
-
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
 ##### breaks something. 
