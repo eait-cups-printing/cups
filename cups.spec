@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 2%{?dist}
+Release: 3%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -125,12 +125,9 @@ BuildRequires: libselinux-devel
 BuildRequires: audit-libs-devel
 %endif
 
-# /etc/cups was moved from main package to filesystem package
-# remove once CentOS Stream 10 is released
-Conflicts: %{name}-filesystem < 1:2.4.2-9
-# ippfind manpage was moved to cups-ipptool
-# remove once C10S is released
-Conflicts: %{name}-ipptool < 1:2.4.3-1
+# /etc/cups/ssl was moved from main package to filesystem package
+# remove once CentOS Stream 11 is released
+Conflicts: %{name}-filesystem < 1:2.4.11-3
 
 # getaddrinfo from glibc needs nss-mdns or systemd-resolved for resolving
 # mdns .local addresses. Don't require a specific package for now and let
@@ -200,13 +197,14 @@ Requires: zlib-devel
 
 %package libs
 Summary: CUPS printing system - libraries
+Requires: %{name}-filesystem = %{epoch}:%{version}-%{release}
 
 %package filesystem
 Summary: CUPS printing system - directory layout
 BuildArch: noarch
-# /etc/cups was moved from main package to filesystem package
-# remove once CentOS Stream 10 is released
-Conflicts: %{name} < 1:2.4.2-9
+# /etc/cups/ssl was moved from main package to filesystem package
+# remove once CentOS Stream 11 is released
+Conflicts: %{name} < 1:2.4.11-3
 
 
 %package lpd
@@ -217,9 +215,6 @@ Provides: lpd
 
 %package ipptool
 Summary: CUPS printing system - tool for performing IPP requests
-# ippfind manpage was moved to cups-ipptool
-# remove once C10S is released
-Conflicts: %{name} < 1:2.4.3-1
 Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 # ippfind needs avahi for printer discovery
 Requires: avahi
@@ -719,7 +714,6 @@ rm -f %{cups_serverbin}/backend/smb
 %verify(not md5 size mtime) %config(noreplace) %attr(0640,root,lp) %{_sysconfdir}/cups/subscriptions.conf
 %verify(not md5 size mtime) %config(noreplace) %attr(0644,root,lp) %{_sysconfdir}/cups/lpoptions
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
-%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
 %config(noreplace) %{_sysconfdir}/pam.d/cups
 %{_tmpfilesdir}/cups.conf
@@ -780,6 +774,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/cups/ppdc
 %dir %{_datadir}/ppd
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups
+%dir %attr(0700,root,lp) %{_sysconfdir}/cups/ssl
 
 %files devel
 %{_bindir}/cups-config
@@ -814,6 +809,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Nov 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-3
+- move /etc/cups/ssl into filesystem and make -libs require -filesystem
+
 * Sun Oct 20 2024 Adam Williamson <awilliam@redhat.com> - 2.4.11-2
 - use monotonic time for cups_enum_dests (fedora#2316066)
 
