@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 3%{?dist}
+Release: 4%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -84,6 +84,9 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
+# fix reading proper configs as root via cupsGetNamedDest()
+# https://github.com/OpenPrinting/cups/commit/8dce8d76c
+Patch14: 0001-dest.c-Don-t-look-for-user-config-in-cupsGetNamedDes.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -320,6 +323,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %endif
 
 # UPSTREAM PATCHES
+# fix reading proper configs as root via cupsGetNamedDest()
+%patch -P 14 -p1 -b .root-getnameddest
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -809,6 +814,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Nov 22 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-4
+- fix reading proper configs as root via cupsGetNamedDest()
+
 * Thu Nov 14 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-3
 - move /etc/cups/ssl into filesystem and make -libs require -filesystem
 
