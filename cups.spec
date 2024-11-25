@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 4%{?dist}
+Release: 5%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -86,7 +86,10 @@ Patch100: cups-lspp.patch
 #### UPSTREAM PATCHES (starts with 1000) ####
 # fix reading proper configs as root via cupsGetNamedDest()
 # https://github.com/OpenPrinting/cups/commit/8dce8d76c
-Patch14: 0001-dest.c-Don-t-look-for-user-config-in-cupsGetNamedDes.patch
+Patch1000: 0001-dest.c-Don-t-look-for-user-config-in-cupsGetNamedDes.patch
+# coverity fix
+# https://github.com/OpenPrinting/cups/commit/08d2576b02fc
+Patch1001: 0001-Fix-Coverity-discovered-issues.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -324,7 +327,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 
 # UPSTREAM PATCHES
 # fix reading proper configs as root via cupsGetNamedDest()
-%patch -P 14 -p1 -b .root-getnameddest
+%patch -P 1000 -p1 -b .root-getnameddest
+# coverity fixes
+%patch -P 1001 -p1 -b .coverity-fix
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -814,6 +819,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Nov 25 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-5
+- fix issues found by Coverity
+
 * Fri Nov 22 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-4
 - fix reading proper configs as root via cupsGetNamedDest()
 
