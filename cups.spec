@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 6%{?dist}
+Release: 7%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -92,6 +92,8 @@ Patch1000: 0001-dest.c-Don-t-look-for-user-config-in-cupsGetNamedDes.patch
 Patch1001: 0001-Fix-Coverity-discovered-issues.patch
 # https://github.com/OpenPrinting/cups/commit/5cc470c8d9
 Patch1002: 0001-Fix-make-and-model-whitespace-trimming-Issue-1096.patch
+# https://github.com/OpenPrinting/cups/commit/2e3f1583
+Patch1003: 0001-scheduler-Clean-up-failed-IPP-Everywhere-permanent-q.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -334,6 +336,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1001 -p1 -b .coverity-fix
 # fix make model trimming issue
 %patch -P 1002 -p1 -b .make-model-trim
+# clean up failed IPP Everywhere queues
+%patch -P 1003 -p1 -b .ipp-eve-fail
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -823,6 +827,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Dec 02 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-7
+- do not leave IPP Everywhere permanent queues installed if PPD generation fails
+
 * Mon Nov 25 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-6
 - fix trimming issue of make-model
 
