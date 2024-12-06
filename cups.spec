@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 7%{?dist}
+Release: 8%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -94,6 +94,9 @@ Patch1001: 0001-Fix-Coverity-discovered-issues.patch
 Patch1002: 0001-Fix-make-and-model-whitespace-trimming-Issue-1096.patch
 # https://github.com/OpenPrinting/cups/commit/2e3f1583
 Patch1003: 0001-scheduler-Clean-up-failed-IPP-Everywhere-permanent-q.patch
+# inability to disable cipher via crypto policies
+# https://github.com/OpenPrinting/cups/commit/331a202a87
+Patch1004: 0001-tls-gnutls.c-Use-system-crypto-policy-if-available.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
@@ -338,6 +341,8 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 1002 -p1 -b .make-model-trim
 # clean up failed IPP Everywhere queues
 %patch -P 1003 -p1 -b .ipp-eve-fail
+# inability to disable cipher via crypto policies
+%patch -P 1004 -p1 -b .tls-system-policy
 
 
 # Log to the system journal by default (bug #1078781, bug #1519331).
@@ -827,6 +832,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Dec 06 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-8
+- fix inability to disable a cipher via crypto-policies
+
 * Mon Dec 02 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-7
 - do not leave IPP Everywhere permanent queues installed if PPD generation fails
 

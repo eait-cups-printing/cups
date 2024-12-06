@@ -1,0 +1,31 @@
+From 331a202a87db30b5d1d5386ccc99de6843eef03e Mon Sep 17 00:00:00 2001
+From: Zdenek Dohnal <zdohnal@redhat.com>
+Date: Fri, 6 Dec 2024 07:59:16 +0100
+Subject: [PATCH] tls-gnutls.c: Use system crypto policy if available
+
+Some Linux systems provide a way how to control cryptography on system or service level via cryptographic policies. OpenSSL implementation reflects system changes to some degree, however GnuTLS implementation does not take system policy into account.
+
+GnuTLS supports fallback mechanism, so we can fallback to NORMAL if @System is not defined on the system.
+
+Fortunately, the current GnuTLS implementation allows overrides via priority strings (so no "this cipher/hash is disabled" if we enabled them in our application by priority string), so allowing to honor system policy can save us work if someone wants to disable a specific cipher, so we don't have to implement it in libcups.
+---
+ CHANGES.md        | 2 ++
+ cups/tls-gnutls.c | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/cups/tls-gnutls.c b/cups/tls-gnutls.c
+index f3f71a055..719161da7 100644
+--- a/cups/tls-gnutls.c
++++ b/cups/tls-gnutls.c
+@@ -1504,7 +1504,7 @@ _httpTLSStart(http_t *http)		/* I - Connection to server */
+     return (-1);
+   }
+ 
+-  strlcpy(priority_string, "NORMAL", sizeof(priority_string));
++  strlcpy(priority_string, "@SYSTEM,NORMAL", sizeof(priority_string));
+ 
+   if (tls_max_version < _HTTP_TLS_MAX)
+   {
+-- 
+2.47.1
+
