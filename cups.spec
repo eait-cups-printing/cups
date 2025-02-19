@@ -538,7 +538,10 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 # remove alternatives workaround once C11S is released
 %if 0%{?fedora} >= 42 || 0%{?rhel} > 10
   %if %{use_alternatives}
-    %{_sbindir}/alternatives --remove-follower print %{_bindir}/lpr.cups print-lpc
+  # only run on upgrade (not fresh install)
+  if [ $1 -gt 1 ] ; then
+    %{_sbindir}/alternatives --remove-follower print %{_bindir}/lpr.cups print-lpc || :
+  fi
   %endif
 %endif
 
