@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.11
-Release: 12%{?dist}
+Release: 13%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -850,6 +850,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Feb 20 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-13
+- every scriptlet has to return 0 (fedora#2346160)
+
 * Wed Feb 19 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-12
 - fix upgrade path for lpc after sbin->bin change (fedora#2346160)
 
