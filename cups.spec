@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -533,6 +533,13 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 	 --follower %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
 	 --follower %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
 	 --follower %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz || :
+
+%if "%{_sbindir}" == "%{_bindir}"
+# Make sure that the symlink in /usr/sbin/ is not missing, if /usr/sbin is a
+# directory. The symlink will only be created if there is no symlink
+# or file already.
+test -h /usr/sbin || ln -s ../bin/lpc /usr/sbin/lpc 2>/dev/null || :
+%endif
 %endif
 
 %post lpd
@@ -822,6 +829,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Tue May 13 2025 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1:2.4.12-3
+- Make sure the /usr/sbin/lpc symlink is created on unmerged systems
+
 * Mon Apr 14 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.12-2
 - Fixed memory leak in cupsdAcceptClient
 
