@@ -519,27 +519,30 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 
 %post client
 %if %{use_alternatives}
-%{_sbindir}/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
-	 --follower %{_bindir}/lp print-lp %{_bindir}/lp.cups \
-	 --follower %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
-	 --follower %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
-	 --follower %{_bindir}/lpstat print-lpstat %{_bindir}/lpstat.cups \
-	 --follower %{_bindir}/cancel print-cancel %{_bindir}/cancel.cups \
-	 --follower %{_sbindir}/lpc print-lpc %{_sbindir}/lpc.cups \
-	 --follower %{_mandir}/man1/cancel.1.gz print-cancelman %{_mandir}/man1/cancel-cups.1.gz \
-	 --follower %{_mandir}/man1/lp.1.gz print-lpman %{_mandir}/man1/lp-cups.1.gz \
-	 --follower %{_mandir}/man8/lpc.8.gz print-lpcman %{_mandir}/man8/lpc-cups.8.gz \
-	 --follower %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
-	 --follower %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
-	 --follower %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
-	 --follower %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz || :
+  %{_sbindir}/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
+	  --follower %{_bindir}/lp print-lp %{_bindir}/lp.cups \
+	  --follower %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
+	  --follower %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
+	  --follower %{_bindir}/lpstat print-lpstat %{_bindir}/lpstat.cups \
+	  --follower %{_bindir}/cancel print-cancel %{_bindir}/cancel.cups \
+	  --follower %{_sbindir}/lpc print-lpc %{_sbindir}/lpc.cups \
+	  --follower %{_mandir}/man1/cancel.1.gz print-cancelman %{_mandir}/man1/cancel-cups.1.gz \
+	  --follower %{_mandir}/man1/lp.1.gz print-lpman %{_mandir}/man1/lp-cups.1.gz \
+	  --follower %{_mandir}/man8/lpc.8.gz print-lpcman %{_mandir}/man8/lpc-cups.8.gz \
+	  --follower %{_mandir}/man1/lpq.1.gz print-lpqman %{_mandir}/man1/lpq-cups.1.gz \
+	  --follower %{_mandir}/man1/lpr.1.gz print-lprman %{_mandir}/man1/lpr-cups.1.gz \
+	  --follower %{_mandir}/man1/lprm.1.gz print-lprmman %{_mandir}/man1/lprm-cups.1.gz \
+	  --follower %{_mandir}/man1/lpstat.1.gz print-lpstatman %{_mandir}/man1/lpstat-cups.1.gz || :
 
-%if "%{_sbindir}" == "%{_bindir}"
-# Make sure that the symlink in /usr/sbin/ is not missing, if /usr/sbin is a
-# directory. The symlink will only be created if there is no symlink
-# or file already.
-test -h /usr/sbin || ln -s ../bin/lpc /usr/sbin/lpc 2>/dev/null || :
-%endif
+  # remove sbin symlink creation once C11S is released
+  %if 0%{?fedora} >= 42 || 0%{?rhel} > 10
+    %if "%{_sbindir}" == "%{_bindir}"
+      # Make sure that the symlink in /usr/sbin/ is not missing, if /usr/sbin is a
+      # directory. The symlink will only be created if there is no symlink
+      # or file already.
+      test -h /usr/sbin || ln -s ../bin/lpc /usr/sbin/lpc 2>/dev/null || :
+    %endif
+  %endif
 %endif
 
 %post lpd
