@@ -1,5 +1,5 @@
 %global use_alternatives 1
-%global lspp 1 
+%global lspp 0
 
 # {_exec_prefix}/lib/cups is correct, even on x86_64.
 # It is not used for shared objects but for executables.
@@ -22,7 +22,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.12
-Release: 3%{?dist}
+Release: 4%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -90,6 +90,57 @@ Patch1000: 0001-Fix-memory-leak-in-httpClose-Issue-1223.patch
 ##### but still I'll leave them in git in case their removal
 ##### breaks something. 
 
+#### Custom EAIT patches (starts with 2000) ####
+
+# Re-open the log if it has been logrotated under us.
+Patch2001: cups-logrotate.patch
+
+# provide debugging info for the username attempting to authenticate with PAM
+Patch2002: cups-pam_auth.patch
+
+# Workaround for Konica Minolta "Reset Modes" status bug
+# https://github.com/OpenPrinting/cups/issues/428
+Patch2003: cups-konica-minolta-submission-interrupted.patch
+
+# Konica Minolta PPD->IPP mappings
+Patch2004: cups-konica-minolta-ppd-to-ipp-mappings.patch
+
+# Brother PPD->IPP BRMediaType mapping
+Patch2005: cups-brother-ppd-to-ipp-mapping.patch
+
+# LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies PPD attributes
+Patch2006: cups-extra-ppd-attributes.patch
+
+# Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes
+# and those with strlen > 40 chars
+Patch2007: cups-ignore-some-media-types.patch
+
+# printer make and model corrections for PPD generation including
+# KONICA MINOLTA make detection
+Patch2008: cups-printer-make-model.patch
+
+# Exclude some cups filter options when _cups dns-sd subtype is not used with
+# macOS clients as the filter options will be applied twice otherwise as the macOS clients
+# see the CUPS print server as a printer.
+Patch2009: cups-exclude-filter-options.patch
+
+# Custom authorization support
+Patch2010: cups-custom-auth-command.patch
+
+# Custom custom impression (page) count support
+Patch2011: cups-custom-impression-count.patch
+
+# User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
+Patch2012: cups-user-agent.patch
+
+# Patch to allow more than 2 Apple Raster (URF) resolutions
+Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
+
+# Patch for job-password-repertoire-configured & job-password-repertoire-supported
+Patch2014: cups-job-password-repertoire.patch
+
+# Patch to allow sylinks in printer icons directory
+Patch2015: cups-allow-symlink-printer-icons.patch
 
 # we need /etc/pam.d/password-auth or /etc/pam.d/system-auth in buildroot sooner or later,
 # provided by authselect-libs atm
@@ -323,11 +374,22 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 # Fixed memory leak in cupsdAcceptClient
 %patch -P 1000 -p1 -b .field-leak
 
-
-# Log to the system journal by default (bug #1078781, bug #1519331).
-sed -i -e 's,^ErrorLog .*$,ErrorLog syslog,' conf/cups-files.conf.in
-sed -i -e 's,^AccessLog .*$,AccessLog syslog,' conf/cups-files.conf.in
-sed -i -e 's,^PageLog .*,PageLog syslog,' conf/cups-files.conf.in
+# EAIT PATCHES
+%patch -P 2001 -p1 -b .logrotate
+%patch -P 2002 -p1 -b .pam_auth
+%patch -P 2003 -p1 -b .submission-interrupted
+%patch -P 2004 -p1 -b .konica-minolta-ppd2ipp
+%patch -P 2005 -p1 -b .brother-ppd2ipp
+%patch -P 2006 -p1 -b .extra-ppd-attributes
+%patch -P 2007 -p1 -b .ignore-some-media-types
+%patch -P 2008 -p1 -b .printer-make-model
+%patch -P 2009 -p1 -b .exclude-filter-options
+%patch -P 2010 -p1 -b .custom-auth-command
+%patch -P 2011 -p1 -b .custom-impression-count
+%patch -P 2012 -p1 -b .user-agent
+%patch -P 2013 -p1 -b .multiple-apple-raster-resolutions
+%patch -P 2014 -p1 -b .password-repertoire
+%patch -P 2015 -p1 -b .allow-symlink-printer-icons
 
 # Let's look at the compilation command lines.
 perl -pi -e "s,^.SILENT:,," Makedefs.in
@@ -360,6 +422,7 @@ export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
   --with-dbusdir=%{_sysconfdir}/dbus-1 \
   --with-dnssd=avahi \
   --with-log-file-perm=0600 \
+  --with-max-log-size=0 \
   --with-ondemand=systemd \
   --with-pkgconfpath=%{_libdir}/pkgconfig \
   --with-rundir=%{_rundir}/cups \
@@ -374,12 +437,16 @@ export CXXFLAGS="$CXXFLAGS $RPM_OPT_FLAGS -DLDAP_DEPRECATED=1"
 # If we got this far, all prerequisite libraries must be here.
 %make_build
 
+%make_build unittests
+
 %install
 # %%make_install macro results into permission error during install phase,
 # because it sets INSTALL env to 'install -p'.
 # use the old make invocation for now, fix this upstream when upstream will
 # have a time for github issues
 make install DESTDIR=%{buildroot}
+
+install -m 0755 cups/testipp %{buildroot}%{_bindir}
 
 rm -rf	%{buildroot}%{_initddir} \
 	%{buildroot}%{_sysconfdir}/init.d \
@@ -441,6 +508,9 @@ EOF
 # LSB 3.2 printer driver directory
 mkdir -p %{buildroot}%{_datadir}/ppd
 
+# Printer icon images directory
+mkdir -p %{buildroot}%{_localstatedir}/cache/cups/images
+
 # Remove unshipped files.
 rm -rf %{buildroot}%{_mandir}/cat? %{buildroot}%{_mandir}/*/cat?
 rm -f %{buildroot}%{_datadir}/applications/cups.desktop
@@ -471,6 +541,17 @@ c /dev/lp0 0660 root lp - 6:0
 c /dev/lp1 0660 root lp - 6:1
 c /dev/lp2 0660 root lp - 6:2
 c /dev/lp3 0660 root lp - 6:3
+EOF
+
+# /etc/logrotate.d/cups
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
+cat > %{buildroot}%{_sysconfdir}/logrotate.d/cups <<EOF
+/var/log/cups/*_log {
+	compress
+	missingok
+	notifempty
+	sharedscripts
+}
 EOF
 
 find %{buildroot} -type f -o -type l | sed '
@@ -506,6 +587,10 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 # required for systemd units
 %systemd_post %{name}.path %{name}.socket %{name}.service
 
+# chown lp:lp /var/spool/lpd
+# required for custom authorization script that runs as lpd user
+chown lp:lp %{_localstatedir}/spool/lpd
+
 %pre client
 # remove alternatives workaround once C11S is released
 %if 0%{?fedora} >= 42 || 0%{?rhel} > 10
@@ -519,7 +604,7 @@ sed -i.rpmsave '/^\s*<Location \/admin>/a\  AuthType Default\n  Require user @SY
 
 %post client
 %if %{use_alternatives}
-  %{_sbindir}/alternatives --install %{_bindir}/lpr print %{_bindir}/lpr.cups 40 \
+    %{_sbindir}/alternatives --remove-follower print %{_bindir}/lpr.cups print-lpc || :
 	  --follower %{_bindir}/lp print-lp %{_bindir}/lp.cups \
 	  --follower %{_bindir}/lpq print-lpq %{_bindir}/lpq.cups \
 	  --follower %{_bindir}/lprm print-lprm %{_bindir}/lprm.cups \
@@ -682,6 +767,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %{_datadir}/%{name}/www/ru
 %{_datadir}/pixmaps/cupsprinter.png
 %ghost %dir %attr(0770,root,lp) %{_localstatedir}/cache/cups
+%ghost %dir %attr(0755,root,lp) %{_localstatedir}/cache/cups/images
 %ghost %dir %attr(0775,root,lp) %{_localstatedir}/cache/cups/rss
 %dir %attr(1770,root,lp) %{_localstatedir}/spool/cups/tmp
 %dir %attr(0710,root,lp) %{_localstatedir}/spool/cups
@@ -739,6 +825,7 @@ rm -f %{cups_serverbin}/backend/smb
 %dir %attr(0755,root,lp) %{_sysconfdir}/cups/ppd
 %config(noreplace) %{_sysconfdir}/dbus-1/system.d/cups.conf
 %config(noreplace) %{_sysconfdir}/pam.d/cups
+%config(noreplace) %{_sysconfdir}/logrotate.d/cups
 %{_tmpfilesdir}/cups.conf
 %{_tmpfilesdir}/cups-lp.conf
 %attr(0644, root, root)%{_unitdir}/%{name}.service
@@ -816,6 +903,7 @@ rm -f %{cups_serverbin}/backend/smb
 %files ipptool
 %{_bindir}/ippfind
 %{_bindir}/ipptool
+%{_bindir}/testipp
 %dir %{_datadir}/cups/ipptool
 %{_datadir}/cups/ipptool/*
 %{_mandir}/man1/ippfind.1.gz
@@ -832,6 +920,30 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Mon Jun 06 2025 Douglas Kosovic doug@uq.edu.au - :2.4.12-4
+- send log output to /var/log/cups/error_log rather than system journal
+- add logrotate support for log output
+- make unittests so /usr/bin/testipp utility gets built
+- Show username attempting to auth before PAM calls in debug log
+- disable LSPP
+- disable USB related patches and multifile patch
+- provide username debug info when attempting to auth using PAM
+- add Konica Minolta submission interrupted patch
+- add custom authorization support patch
+- add custom impression (page) count patch
+- add some PPD->IPP mappings for Konica Minolta and Brother printers
+- add LandscapeOrientation, Throughput, APAirPrint & cupsIPPSupplies
+  PPD attributes
+- printer make and model corrections for PPD generation
+- add User-Agent detection patch which also prevents Windows IPP 1.0
+  clients
+- add /var/cache/cups/ and sub-dirs to file list of main package
+- add patch to exclude some cups filter options when not using
+  _cups dns-sd subtype
+- add patch for custom auth script
+- add patch for custom impression (page) count script
+- chown lp:lp /var/spool/lpd required for custom auth script
+
 * Tue May 13 2025 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 1:2.4.12-3
 - Make sure the /usr/sbin/lpc symlink is created on unmerged systems
 
@@ -876,10 +988,10 @@ rm -f %{cups_serverbin}/backend/smb
 
 * Sun Oct 20 2024 Adam Williamson <awilliam@redhat.com> - 2.4.11-2
 - use monotonic time for cups_enum_dests (fedora#2316066)
-
+ 
 * Wed Oct 09 2024 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.11-1
 - 2.4.11 (fedora#2315862)
-
+ 
 * Thu Sep 26 2024 Justin M. Forbes <jforbes@fedoraproject.org> - 1:2.4.10-7
 - Validate several IPP attributes and quote PPD localized string
 
