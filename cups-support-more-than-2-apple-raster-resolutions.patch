@@ -1,0 +1,53 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..76d1be33d 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -3990,21 +3990,26 @@ _ppdCreateFromIPP2(
+ 
+   if ((attr = ippFindAttribute(supported, "urf-supported", IPP_TAG_KEYWORD)) != NULL)
+   {
+-    int lowdpi = 0, hidpi = 0;    /* Lower and higher resolution */
++    int num_res = 0; /* Number of supported Apple Raster resolutions */
++    int res_array[16]; /* Apple Raster resolutions array */
++    int lowdpi = 0, middpi = 0, hidpi = 0; /* Lower , middle and higher resolution */
+ 
+     for (i = 0, count = ippGetCount(attr); i < count; i ++)
+     {
+-      const char *rs = ippGetString(attr, i, NULL);
+-          /* RS value */
+-
++      const char *rs = ippGetString(attr, i, NULL); /* RS value */
+       if (_cups_strncasecmp(rs, "RS", 2))
+         continue;
+-
+-      lowdpi = atoi(rs + 2);
+-      if ((rs = strrchr(rs, '-')) != NULL)
+-        hidpi = atoi(rs + 1);
+-      else
+-        hidpi = lowdpi;
++      num_res = 1;
++      res_array[0] = atoi(rs + 2);
++      while ((rs = strrchr(rs, '-')) != NULL && num_res < sizeof(res_array) / sizeof(res_array[0])) {
++        res_array[num_res] = atoi(++ rs);
++        num_res ++;
++      }
++      /* Finding and storing the important dpi.
++         The middpi takes the rounded down middle value */
++      lowdpi = res_array[0];
++      middpi = res_array[(num_res - 1) / 2];
++      hidpi = res_array[num_res - 1];
+       break;
+     }
+ 
+@@ -4039,9 +4044,9 @@ _ppdCreateFromIPP2(
+ 	have_qdraft = 1;
+       }
+ 
+-      cupsFilePrintf(fp, "*cupsPrintQuality Normal: \"<</HWResolution[%d %d]>>setpagedevice\"\n*%s.cupsPrintQuality Normal/%s: \"\"\n", lowdpi, lowdpi, lang->language, _cupsLangString(lang, _("Normal")));
++      cupsFilePrintf(fp, "*cupsPrintQuality Normal: \"<</HWResolution[%d %d]>>setpagedevice\"\n*%s.cupsPrintQuality Normal/%s: \"\"\n", middpi, middpi, lang->language, _cupsLangString(lang, _("Normal")));
+ 
+-      if (hidpi > lowdpi || ippContainsInteger(quality, IPP_QUALITY_HIGH))
++      if (hidpi > middpi || ippContainsInteger(quality, IPP_QUALITY_HIGH))
+       {
+ 	cupsFilePrintf(fp, "*cupsPrintQuality High: \"<</HWResolution[%d %d]>>setpagedevice\"\n*%s.cupsPrintQuality High/%s: \"\"\n", hidpi, hidpi, lang->language, _cupsLangString(lang, _("High")));
+ 	have_qhigh = 1;

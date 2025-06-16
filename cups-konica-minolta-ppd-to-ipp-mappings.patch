@@ -1,0 +1,203 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..e43ab7738 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -1727,7 +1727,8 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+     if ((duplex = ppdFindOption(ppd, "JCLDuplex")) == NULL)
+       if ((duplex = ppdFindOption(ppd, "EFDuplex")) == NULL)
+         if ((duplex = ppdFindOption(ppd, "EFDuplexing")) == NULL)
+-	  duplex = ppdFindOption(ppd, "KD03Duplex");
++          if ((duplex = ppdFindOption(ppd, "KMDuplex")) == NULL)
++	    duplex = ppdFindOption(ppd, "KD03Duplex");
+ 
+   if (duplex)
+   {
+@@ -1738,15 +1739,18 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+ 	 i --, choice ++)
+     {
+       if ((!_cups_strcasecmp(choice->choice, "None") ||
+-	   !_cups_strcasecmp(choice->choice, "False")) && !pc->sides_1sided)
++	   !_cups_strcasecmp(choice->choice, "False") ||
++	   !_cups_strcasecmp(choice->choice, "Single")) && !pc->sides_1sided)
+         pc->sides_1sided = strdup(choice->choice);
+       else if ((!_cups_strcasecmp(choice->choice, "DuplexNoTumble") ||
+ 	        !_cups_strcasecmp(choice->choice, "LongEdge") ||
+-	        !_cups_strcasecmp(choice->choice, "Top")) && !pc->sides_2sided_long)
++	        !_cups_strcasecmp(choice->choice, "Top") ||
++	        !_cups_strcasecmp(choice->choice, "Double")) && !pc->sides_2sided_long)
+         pc->sides_2sided_long = strdup(choice->choice);
+       else if ((!_cups_strcasecmp(choice->choice, "DuplexTumble") ||
+ 	        !_cups_strcasecmp(choice->choice, "ShortEdge") ||
+-	        !_cups_strcasecmp(choice->choice, "Bottom")) &&
++	        !_cups_strcasecmp(choice->choice, "Bottom") ||
++	        !_cups_strcasecmp(choice->choice, "Booklet")) &&
+ 	       !pc->sides_2sided_short)
+         pc->sides_2sided_short = strdup(choice->choice);
+     }
+@@ -1887,6 +1891,27 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleLocation", "DualLandscape");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "StapleOption")) != NULL)
++    {
++      ppd_attr = ppdFindAttr(ppd, "DefaultFinisher", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
++
++       /*
++        * Add (Konica Minolta) staple finishings...
++        */
++
++        if (ppdFindChoice(ppd_option, "1StapleLeft"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_LEFT, "StapleOption", "1StapleLeft");
++        if (ppdFindChoice(ppd_option, "1StapleRight"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_TOP_RIGHT, "StapleOption", "1StapleRight");
++        if (ppdFindChoice(ppd_option, "1StapleZeroLeft"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_BOTTOM_LEFT, "StapleOption", "1StapleZeroLeft");
++        if (ppdFindChoice(ppd_option, "2Staples"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_STAPLE_DUAL_LEFT, "StapleOptionN", "2Staples");
++        }
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "RIPunch")) != NULL)
+     {
+      /*
+@@ -1913,6 +1938,24 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_TOP, "RIPunch", "Upper4");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "PunchOption")) != NULL)
++    {
++      ppd_attr = ppdFindAttr(ppd, "DefaultPunchOption", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
++       /*
++        * Add (Konica Minolta) punch finishings...
++        */
++
++        if (ppdFindChoice(ppd_option, "2holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_DUAL_LEFT, "PunchOption", "2holes");
++        if (ppdFindChoice(ppd_option, "3holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_TRIPLE_LEFT, "PunchOption", "3holes");
++        if (ppdFindChoice(ppd_option, "4holes"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_PUNCH_QUAD_LEFT, "PunchOption", "4holes");
++      }
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "BindEdge")) != NULL)
+     {
+      /*
+@@ -1929,6 +1972,22 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "BindEdge", "Bottom");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "Binding")) != NULL)
++    {
++     /*
++      * Add (Konica Minolta) bind finishings...
++      */
++
++      if (ppdFindChoice(ppd_option, "LeftBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_LEFT, "Binding", "LeftBinding");
++      if (ppdFindChoice(ppd_option, "RightBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_RIGHT, "Binding", "RightBinding");
++      if (ppdFindChoice(ppd_option, "TopBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_TOP, "Binding", "TopBinding");
++      if (ppdFindChoice(ppd_option, "BottomBinding"))
++        pwg_add_finishing(pc->finishings, IPP_FINISHINGS_BIND_BOTTOM, "Binding", "BottomBinding");
++    }
++
+     if ((ppd_option = ppdFindOption(ppd, "FoldType")) != NULL)
+     {
+      /*
+@@ -1961,6 +2020,24 @@ _ppdCacheCreateWithPPD(ppd_file_t *ppd)	/* I - PPD file */
+         pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "RIFoldType", "OutsideTwoFold");
+     }
+ 
++    if ((ppd_option = ppdFindOption(ppd, "Fold")) != NULL)
++    {
++      ppd_attr = ppdFindAttr(ppd, "DefaultZFoldPunch", NULL);
++      if (ppd_attr != NULL && _cups_strcasecmp(ppd_attr->value, "none"))
++      {
++       /*
++        * Add (Konica Minolta) fold finishings...
++        */
++
++        if (ppdFindChoice(ppd_option, "TriFold"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_Z, "Fold", "TriFold");
++        if (ppdFindChoice(ppd_option, "HalfFold"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_HALF, "Fold", "HalfFold");
++        if (ppdFindChoice(ppd_option, "TFoldOne"))
++          pwg_add_finishing(pc->finishings, IPP_FINISHINGS_FOLD_LETTER, "Fold", "TFoldOne");
++      }
++    }
++
+     if (cupsArrayCount(pc->finishings) == 0)
+     {
+       cupsArrayDelete(pc->finishings);
+diff --git a/filter/common.c b/filter/common.c
+index 1d3c73736..249b9dcfd 100644
+--- a/filter/common.c
++++ b/filter/common.c
+@@ -186,6 +186,8 @@ SetCommonOptions(
+       ppdIsMarked(ppd, "JCLDuplex", "DuplexTumble") ||
+       ppdIsMarked(ppd, "EFDuplex", "DuplexNoTumble") ||
+       ppdIsMarked(ppd, "EFDuplex", "DuplexTumble") ||
++      ppdIsMarked(ppd, "KMDuplex", "DuplexNoTumble") ||
++      ppdIsMarked(ppd, "KMDuplex", "DuplexTumble") ||
+       ppdIsMarked(ppd, "KD03Duplex", "DuplexNoTumble") ||
+       ppdIsMarked(ppd, "KD03Duplex", "DuplexTumble"))
+     Duplex = 1;
+diff --git a/filter/pstops.c b/filter/pstops.c
+index 3b10ea221..7afab84d5 100644
+--- a/filter/pstops.c
++++ b/filter/pstops.c
+@@ -635,6 +635,10 @@ copy_comments(cups_file_t  *fp,		/* I - File to read from */
+ 	  doc->num_options = cupsAddOption("EFDuplexing", "False",
+ 	                                   doc->num_options, &(doc->options));
+ 
++	if (cupsGetOption("KMDuplex", doc->num_options, doc->options))
++	  doc->num_options = cupsAddOption("KMDuplex", "None",
++	                                   doc->num_options, &(doc->options));
++
+ 	if (cupsGetOption("KD03Duplex", doc->num_options, doc->options))
+ 	  doc->num_options = cupsAddOption("KD03Duplex", "None",
+ 	                                   doc->num_options, &(doc->options));
+@@ -646,6 +650,7 @@ copy_comments(cups_file_t  *fp,		/* I - File to read from */
+ 	ppdMarkOption(ppd, "Duplex", "None");
+ 	ppdMarkOption(ppd, "EFDuplex", "None");
+ 	ppdMarkOption(ppd, "EFDuplexing", "False");
++	ppdMarkOption(ppd, "KMDuplex", "None");
+ 	ppdMarkOption(ppd, "KD03Duplex", "None");
+ 	ppdMarkOption(ppd, "JCLDuplex", "None");
+       }
+diff --git a/scheduler/printers.c b/scheduler/printers.c
+index 5f9852e64..25f169fd2 100644
+--- a/scheduler/printers.c
++++ b/scheduler/printers.c
+@@ -4751,8 +4751,9 @@ load_ppd(cupsd_printer_t *p)		/* I - Printer */
+     if ((duplex = ppdFindOption(ppd, "Duplex")) == NULL)
+       if ((duplex = ppdFindOption(ppd, "EFDuplex")) == NULL)
+ 	if ((duplex = ppdFindOption(ppd, "EFDuplexing")) == NULL)
+-	  if ((duplex = ppdFindOption(ppd, "KD03Duplex")) == NULL)
+-	    duplex = ppdFindOption(ppd, "JCLDuplex");
++	  if ((duplex = ppdFindOption(ppd, "KMDuplex")) == NULL)
++	    if ((duplex = ppdFindOption(ppd, "KD03Duplex")) == NULL)
++	      duplex = ppdFindOption(ppd, "JCLDuplex");
+ 
+     if (duplex && duplex->num_choices > 1 &&
+ 	!ppdInstallableConflict(ppd, duplex->keyword, "DuplexTumble"))
+diff --git a/systemv/cupstestppd.c b/systemv/cupstestppd.c
+index d9f9c0126..3cabbacac 100644
+--- a/systemv/cupstestppd.c
++++ b/systemv/cupstestppd.c
+@@ -1314,7 +1314,8 @@ main(int  argc,				/* I - Number of command-line args */
+ 
+ 	if ((option = ppdFindOption(ppd, "JCLDuplex")) == NULL)
+ 	  if ((option = ppdFindOption(ppd, "EFDuplex")) == NULL)
+-	    option = ppdFindOption(ppd, "KD03Duplex");
++	    if ((option = ppdFindOption(ppd, "KMDuplex")) == NULL)
++	      option = ppdFindOption(ppd, "KD03Duplex");
+ 
+ 	if (option)
+ 	  _cupsLangPrintf(stdout,

@@ -1,0 +1,62 @@
+diff -up cups-2.4.11/cups/ppd-cache.c.extra-ppd-attributes cups-2.4.11/cups/ppd-cache.c
+--- cups-2.4.11/cups/ppd-cache.c.extra-ppd-attributes	2024-11-07 18:17:56.459433196 +1000
++++ cups-2.4.11/cups/ppd-cache.c	2024-11-07 18:22:58.662453391 +1000
+@@ -3281,6 +3281,7 @@ _ppdCreateFromIPP2(
+   const char		*model;		/* Model name */
+   int			i, j,		/* Looping vars */
+ 			count,		/* Number of values */
++			count2,		/* Number of values */
+ 			bottom,		/* Largest bottom margin */
+ 			left,		/* Largest left margin */
+ 			right,		/* Largest right margin */
+@@ -3447,10 +3448,24 @@ _ppdCreateFromIPP2(
+   else
+     cupsFilePuts(fp, "*ColorDevice: False\n");
+ 
++  if ((attr = ippFindAttribute(supported,
++			       "landscape-orientation-requested-preferred",
++			       IPP_TAG_INTEGER)) != NULL)
++  {
++    if (ippGetInteger(attr, 0) == IPP_ORIENT_LANDSCAPE)
++      cupsFilePuts(fp, "*LandscapeOrientation: Plus90\n");
++    else if (ippGetInteger(attr, 0) == IPP_ORIENT_REVERSE_LANDSCAPE)
++      cupsFilePuts(fp, "*LandscapeOrientation: Minus90\n");
++  }
++  else
++    cupsFilePuts(fp, "*LandscapeOrientation: Plus90\n");
++
++  if ((attr = ippFindAttribute(supported, "pages-per-minute", IPP_TAG_INTEGER)) != NULL)
++    cupsFilePrintf(fp, "*Throughput: \"%d\"\n", ippGetInteger(attr, 0));
++
+   cupsFilePrintf(fp, "*cupsVersion: %d.%d\n", CUPS_VERSION_MAJOR, CUPS_VERSION_MINOR);
+-#ifdef __APPLE__
+   cupsFilePrintf(fp, "*APAirPrint: True\n");
+-#endif // __APPLE__
++  cupsFilePuts(fp, "*cupsIPPSupplies: True\n");
+   cupsFilePuts(fp, "*cupsSNMPSupplies: False\n");
+   cupsFilePrintf(fp, "*cupsLanguages: \"%s", lang->language);
+   if ((lang_supp = ippFindAttribute(supported, "printer-strings-languages-supported", IPP_TAG_LANGUAGE)) != NULL)
+@@ -5037,7 +5052,8 @@ _ppdCreateFromIPP2(
+ 
+       snprintf(msgid, sizeof(msgid), "finishing-template.%s", keyword);
+ 
+-      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"\n", ppdname);
++      cupsFilePrintf(fp, "*cupsFinishingTemplate %s: \"", ppdname);
++      count2 = 0;
+       for (finishing_attr = ippFirstAttribute(finishing_col); finishing_attr; finishing_attr = ippNextAttribute(finishing_col))
+       {
+         if (ippGetValueTag(finishing_attr) == IPP_TAG_BEGIN_COLLECTION)
+@@ -5045,8 +5061,12 @@ _ppdCreateFromIPP2(
+ 	  const char *name = ippGetName(finishing_attr);
+ 					/* Member attribute name */
+ 
+-          if (strcmp(name, "media-size"))
++          if (strcmp(name, "media-size")) {
++            count2++;
++            if (count2 == 1)
++              cupsFilePrintf(fp, "\n");
+             cupsFilePrintf(fp, "%% %s\n", name);
++          }
+ 	}
+       }
+       cupsFilePuts(fp, "\"\n");

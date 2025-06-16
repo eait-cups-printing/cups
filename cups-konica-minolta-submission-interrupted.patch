@@ -1,0 +1,47 @@
+diff --git a/backend/ipp.c b/backend/ipp.c
+index 8609e3a28..7604927bc 100644
+--- a/backend/ipp.c
++++ b/backend/ipp.c
+@@ -41,7 +41,7 @@ extern void	xpc_connection_set_target_uid(xpc_connection_t connection,
+ #define _CUPS_JSR_JOB_RELEASE_WAIT		0x20
+ #define _CUPS_JSR_DOCUMENT_FORMAT_ERROR		0x40
+ #define _CUPS_JSR_DOCUMENT_UNPRINTABLE		0x80
+-
++#define _CUPS_JSR_SUBMISSION_INTERRUPTED	0x100
+ 
+ /*
+  * Types...
+@@ -2710,6 +2710,8 @@ monitor_printer(
+             new_reasons |= _CUPS_JSR_DOCUMENT_FORMAT_ERROR;
+           else if (!strcmp(attr->values[i].string.text, "document-unprintable-error"))
+             new_reasons |= _CUPS_JSR_DOCUMENT_UNPRINTABLE;
++          else if (!strcmp(attr->values[i].string.text, "submission-interrupted"))
++            new_reasons |= _CUPS_JSR_SUBMISSION_INTERRUPTED;
+ 
+ 	  if (!job_canceled && (!strncmp(attr->values[i].string.text, "job-canceled-", 13) || !strcmp(attr->values[i].string.text, "aborted-by-system")))
+             job_canceled = 1;
+@@ -2749,6 +2751,8 @@ monitor_printer(
+ 	      fputs("JOBSTATE: document-unprintable\n", stderr);
+ 	    }
+           }
++	  else if (new_reasons & _CUPS_JSR_SUBMISSION_INTERRUPTED)
++	    fprintf(stderr, "DEBUG: (monitor) job-state-reasons = submission-interrupted\n");
+ 	  else
+ 	    fputs("JOBSTATE: job-printing\n", stderr);
+ 
+@@ -2758,6 +2762,15 @@ monitor_printer(
+ 
+       ippDelete(response);
+ 
++      /* Konica Minolta workaround where a completed job has
++      job-state of aborted and job-state-reasons is submission-interrupted */
++      if (!job_canceled &&
++          monitor->job_state == IPP_JSTATE_ABORTED &&
++          monitor->job_reasons == _CUPS_JSR_SUBMISSION_INTERRUPTED)
++      {
++		monitor->job_state = IPP_JSTATE_COMPLETED;
++      }
++
+       fprintf(stderr, "DEBUG: (monitor) job-state = %s\n", ippEnumString("job-state", (int)monitor->job_state));
+ 
+       if (!job_canceled &&
