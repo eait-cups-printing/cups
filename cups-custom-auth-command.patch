@@ -1,8 +1,8 @@
 diff --git a/scheduler/auth.c b/scheduler/auth.c
-index 7f6c3f6d2..ae7d711be 100644
+index 59c074d63..e6910562d 100644
 --- a/scheduler/auth.c
 +++ b/scheduler/auth.c
-@@ -1657,6 +1657,145 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
+@@ -1662,6 +1662,155 @@ cupsdIsAuthorized(cupsd_client_t *con,	/* I - Connection */
        (type == CUPSD_AUTH_NONE && cupsArrayCount(best->names) == 0))
      return (HTTP_OK);
  
@@ -15,11 +15,12 @@ index 7f6c3f6d2..ae7d711be 100644
 +      best->limit == CUPSD_AUTH_LIMIT_IPP &&
 +      !(con->is_browser) && con->request->request.op.version[0] >= 2)
 +  {
-+    char *argv[10];           /* Command-line arguments */
++    char *argv[11];           /* Command-line arguments */
 +    char *envp[MAX_ENV];      /* Environment */
 +    char  req_username[256];  /* requesting-user-name */
 +    char  orig_username[256]; /* job-originating-user-name */
 +    char  accounting_id[256]; /* job-accounting-user-id */
++    char  *platform;          /* Windows, macOS or other platform */
 +    int   temppid;            /* Process ID for custom auth processes */
 +    int   outfds[2];          /* Pipe file descriptors for stdout */
 +    int   errfds[2];        /* Pipe file descriptors for stderr output */
@@ -46,6 +47,14 @@ index 7f6c3f6d2..ae7d711be 100644
 +      strlcpy(accounting_id, attr->values[0].string.text, sizeof(accounting_id));
 +    }
 +
++    if (con->is_win_mopria || con->is_win_ipp_10) {
++      platform = "Windows";
++    } else if (con->is_macos_cups) {
++      platform = "macOS";
++    } else {
++      platform = "other";
++	}
++
 +    argv[0] = cups_custom_auth_command;
 +    argv[1] = (char *)ippOpString(best->op); /* IPP operation */
 +    argv[2] = con->uri;
@@ -55,7 +64,8 @@ index 7f6c3f6d2..ae7d711be 100644
 +    argv[6] = req_username;
 +    argv[7] = orig_username;
 +    argv[8] = accounting_id;
-+    argv[9] = NULL;
++    argv[9] = platform;
++    argv[10] = NULL;
 +
 +    cupsdLoadEnv(envp, (int)(sizeof(envp) / sizeof(envp[0])));
 +

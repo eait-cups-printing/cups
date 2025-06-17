@@ -124,14 +124,14 @@ Patch2008: cups-printer-make-model.patch
 # see the CUPS print server as a printer.
 Patch2009: cups-exclude-filter-options.patch
 
+# User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
+Patch2010: cups-user-agent.patch
+
 # Custom authorization support
-Patch2010: cups-custom-auth-command.patch
+Patch2011: cups-custom-auth-command.patch
 
 # Custom custom impression (page) count support
-Patch2011: cups-custom-impression-count.patch
-
-# User-Agent detection for Windows 1PP 1.0, inbox IPP class driver and macOS CUPS clients
-Patch2012: cups-user-agent.patch
+Patch2012: cups-custom-impression-count.patch
 
 # Patch to allow more than 2 Apple Raster (URF) resolutions
 Patch2013: cups-support-more-than-2-apple-raster-resolutions.patch
@@ -384,9 +384,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %patch -P 2007 -p1 -b .ignore-some-media-types
 %patch -P 2008 -p1 -b .printer-make-model
 %patch -P 2009 -p1 -b .exclude-filter-options
-%patch -P 2010 -p1 -b .custom-auth-command
-%patch -P 2011 -p1 -b .custom-impression-count
-%patch -P 2012 -p1 -b .user-agent
+%patch -P 2010 -p1 -b .user-agent
+%patch -P 2011 -p1 -b .custom-auth-command
+%patch -P 2012 -p1 -b .custom-impression-count
 %patch -P 2013 -p1 -b .multiple-apple-raster-resolutions
 %patch -P 2014 -p1 -b .password-repertoire
 %patch -P 2015 -p1 -b .allow-symlink-printer-icons
