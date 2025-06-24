@@ -1,8 +1,8 @@
 diff --git a/scheduler/job.c b/scheduler/job.c
-index 49e4fa337..9cd485567 100644
+index 115798759..16c4c7a6f 100644
 --- a/scheduler/job.c
 +++ b/scheduler/job.c
-@@ -3165,6 +3165,105 @@ finalize_job(cupsd_job_t *job,		/* I - Job */
+@@ -3180,6 +3180,110 @@ finalize_job(cupsd_job_t *job,		/* I - Job */
    snprintf(buffer, sizeof(buffer), "total %d", ippGetInteger(job->impressions, 0));
    cupsdLogPage(job, buffer);
  
@@ -14,13 +14,14 @@ index 49e4fa337..9cd485567 100644
 +  static char *cups_custom_impression_count_command = "/usr/local/libexec/cups_custom_impression_count";
 +  if (access(cups_custom_impression_count_command, X_OK) == 0 && impressions > 0)
 +  {
-+    char *argv[12];			/* Command-line arguments */
++    char *argv[13];			/* Command-line arguments */
 +    char  impression_count[16];		/* final impression (page) count */
 +    char  copies_count[16];		/* copies */
 +    char *color_supported;		/* color-supported */
 +    int   copies;			/* Number of copies */
 +    int   temppid;			/* Process ID for custom impression count process */
-+    char  filename[1024];		/* Job filename */
++    char  job_filename[1024];		/* Job filename */
++    char  job_info_filename[1024];	/* Job info filename */
 +    ipp_attribute_t *attr;		/* Job attribute */
 +
 +    /* Page count  */
@@ -71,7 +72,10 @@ index 49e4fa337..9cd485567 100644
 +    color_supported = (job->printer->type & CUPS_PRINTER_COLOR) ? "1" : "0";
 +
 +    /* Job filename */
-+    snprintf(filename, sizeof(filename), "%s/d%05d-%03d", RequestRoot, job->id, job->current_file);
++    snprintf(job_filename, sizeof(job_filename), "%s/d%05d-%03d", RequestRoot, job->id, job->current_file);
++
++    /* Job info filename */
++    snprintf(job_info_filename, sizeof(job_info_filename), "%s/c%05d", RequestRoot, job->id);
 +
 +    argv[0] = cups_custom_impression_count_command;
 +    argv[1] = job->username ? job->username : "-"; /* Username */
@@ -83,8 +87,9 @@ index 49e4fa337..9cd485567 100644
 +    argv[7] = media ? (char *)media : "-"; /* page size */
 +    argv[8] = sides ? sides : "-"; /* Duplex / sides */
 +    argv[9] = color_supported; /* color supported */
-+    argv[10] = filename; /* Job filename */
-+    argv[11] = NULL;
++    argv[10] = job_filename; /* Job filename */
++    argv[11] = job_info_filename; /* Job filename */
++    argv[12] = NULL;
 +
 +   if (cupsdStartProcess(cups_custom_impression_count_command, argv, NULL, -1, -1, -1, -1, -1, 0, DefaultProfile, NULL, &temppid) < 0)
 +   {
