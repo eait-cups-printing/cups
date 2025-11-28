@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.14
-Release: 3%{?dist}
+Release: 4%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -789,6 +789,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Nov 28 2025 Than Ngo <than@redhat.com> - 1:2.4.14-4
+- Rebuilt with new binutils in rawhide due to rhbz#2415824
+
 * Fri Nov 14 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.14-3
 - install /var/log/cups via systemd-tmpfiles
 
