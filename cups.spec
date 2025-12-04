@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -459,9 +459,53 @@ s:.*\('%{_datadir}'/\)\([^/_]\+\)\(.*\.po$\):%lang(\2) \1\2\3:
 /^\([^%].*\)/d
 ' > %{name}.lang
 
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+
+mkdir -p %{buildroot}%{_libexecdir}/%{name}
+
+cat > %{buildroot}%{_libexecdir}/%{name}/posttrans.sh << EOF
+#!/usr/bin/bash
+
+if ! grep -q 'PeerCred' %{_sysconfdir}/%{name}/cups-files.conf
+then
+  echo 'PeerCred on' >> %{_sysconfdir}/%{name}/cups-files.conf
+fi
+
+exit 0
+EOF
+
+mkdir -p %{buildroot}%{_unitdir}
+
+cat > %{buildroot}%{_unitdir}/cups-upgrade.service << EOF
+[Unit]
+Description=Upgrade script for CUPS
+
+[Service]
+Type=oneshot
+ExecStart=bash -c %{_libexecdir}/%{name}/posttrans.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+mkdir -p %{buildroot}%{_unitdir}/cups.service.d
+
+cat > %{buildroot}%{_unitdir}/cups.service.d/09-cups-upgrade.conf << EOF
+[Unit]
+After=cups-upgrade.service
+Wants=cups-upgrade.service
+EOF
+
+%endif
+
+
 %post
 # required for systemd units
 %systemd_post %{name}.path %{name}.socket %{name}.service
+
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+  %systemd_post cups-upgrade.service
+%endif
 
 %pre client
 # remove alternatives workaround once C11S is released
@@ -517,14 +561,34 @@ if [ $1 -eq 0 ] ; then
 fi
 %endif
 
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+  %systemd_preun cups-upgrade.service
+%endif
+
 %preun lpd
 %systemd_preun cups-lpd.socket
 
 %postun
 %systemd_postun_with_restart %{name}.path %{name}.socket %{name}.service
 
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+  %systemd_postun cups-upgrade.service
+%endif
+
 %postun lpd
 %systemd_postun_with_restart cups-lpd.socket
+
+%posttrans
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+  %systemd_posttrans_with_reload cups-upgrade.service
+%endif
+
+if [ $1 -gt 1 ]
+then
+  %if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+    systemctl start cups-upgrade.service || :
+  %endif
+fi
 
 %triggerin -- samba-client
 ln -sf %{_libexecdir}/samba/cups_backend_smb %{cups_serverbin}/backend/smb || :
@@ -700,6 +764,13 @@ rm -f %{cups_serverbin}/backend/smb
 %attr(0644, root, root)%{_unitdir}/system-%{name}.slice
 %attr(0644, root, root)%{_unitdir}/%{name}.socket
 %attr(0644, root, root)%{_unitdir}/%{name}.path
+%if 0%{?fedora} >= 42 || 0%{?rhel} >= 8
+%dir %{_libexecdir}/%{name}
+%attr(0744,root,root) %{_libexecdir}/%{name}/posttrans.sh
+%dir %{_unitdir}/cups.service.d
+%{_unitdir}/cups.service.d/09-cups-upgrade.conf
+%attr(0644, root, root)%{_unitdir}/%{name}-upgrade.service
+%endif
 
 %files client
 %{_bindir}/cancel.cups
@@ -787,6 +858,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Thu Dec 04 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-2
+- add upgrade script to add PeerCred into cups-files.conf
+
 * Thu Dec 04 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-1
 - 2.4.16 (fedora#2417970)
 - rebuild due binutils bug (fedora#2418285)
