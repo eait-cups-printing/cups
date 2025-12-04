@@ -790,6 +790,7 @@ rm -f %{cups_serverbin}/backend/smb
 * Thu Dec 04 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-1
 - 2.4.16 (fedora#2417970)
 - rebuild due binutils bug (fedora#2418285)
+- fix division by zero crash in pstops (fedora#2415396)
 
 * Fri Nov 28 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.15-1
 - 2.4.15 - fixes for CVE-2025-61915 and CVE-2025-58436
