@@ -15,7 +15,7 @@ Summary: CUPS printing system
 Name: cups
 Epoch: 1
 Version: 2.4.16
-Release: 1%{?dist}
+Release: 3%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -787,6 +787,9 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
+* Fri Dec 05 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-3
+- rebuilt without reverted commit (upgrade script for PeerCred is not needed)
+
 * Thu Dec 04 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-1
 - 2.4.16 (fedora#2417970)
 - rebuild due binutils bug (fedora#2418285)
