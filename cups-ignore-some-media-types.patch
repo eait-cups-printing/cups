@@ -1,0 +1,16 @@
+diff --git a/cups/ppd-cache.c b/cups/ppd-cache.c
+index 40881cd39..494646996 100644
+--- a/cups/ppd-cache.c
++++ b/cups/ppd-cache.c
+@@ -3969,6 +3969,11 @@ _ppdCreateFromIPP2(
+     {
+       keyword = ippGetString(attr, i, NULL);
+ 
++      /* Ignore unfriendly reverse DNS notation Konica Minolta Mediatypes,
++        macOS ignores MediaTypes names > 40 chars, so ignore them also */
++      if (strstr(keyword, "com.konicaminolta") || strlen(keyword) > 40)
++	continue;
++
+       pwg_ppdize_name(keyword, ppdname, sizeof(ppdname));
+ 
+       snprintf(msgid, sizeof(msgid), "media-type.%s", keyword);

@@ -1,0 +1,13 @@
+diff --git a/scheduler/auth.c b/scheduler/auth.c
+index 7f6c3f6d2..7ac83e4db 100644
+--- a/scheduler/auth.c
++++ b/scheduler/auth.c
+@@ -575,6 +575,8 @@ cupsdAuthorize(cupsd_client_t *con)	/* I - Client connection */
+       strlcpy(data.username, username, sizeof(data.username));
+       strlcpy(data.password, password, sizeof(data.password));
+ 
++       cupsdLogClient(con, CUPSD_LOG_DEBUG, "Attempting to authenticate as \"%s\" using PAM.", data.username);
++
+ #  ifdef __sun
+       pamdata.conv        = (int (*)(int, struct pam_message **,
+ 				     struct pam_response **,

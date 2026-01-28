@@ -1,0 +1,52 @@
+diff --git a/scheduler/job.c b/scheduler/job.c
+index 49e4fa337..cb8fc01ac 100644
+--- a/scheduler/job.c
++++ b/scheduler/job.c
+@@ -4004,6 +4004,47 @@ get_options(cupsd_job_t *job,		/* I - Job */
+ 	  banner_page)
+         continue;
+ 
++#ifdef HAVE_DNSSD
++      /*
++       * When calling a filter we exclude the following options from its
++       * command line as the macOS client would have applied these options
++       * already if this CUPS server appears as a printer instead of a print
++       * server which occurs when the _cups dns-sd subtype is not used.
++       */
++      if ((!strcmp(attr->name, "crop-to-fit") ||
++           !strcmp(attr->name, "fill") ||
++           !strcmp(attr->name, "fitplot") ||
++           !strcmp(attr->name, "fit-to-page") ||
++           !strcmp(attr->name, "landscape") ||
++           !strcmp(attr->name, "orientation-requested") ||
++           !strcmp(attr->name, "brightness") ||
++           !strcmp(attr->name, "cupsEvenDuplex") ||
++           !strcmp(attr->name, "gamma") ||
++           !strcmp(attr->name, "hue") ||
++           !strcmp(attr->name, "ipp-attribute-fidelity") ||
++           !strcmp(attr->name, "MirrorPrint") ||
++           !strcmp(attr->name, "mirror") ||
++           !strcmp(attr->name, "multiple-document-handling") ||
++           !strcmp(attr->name, "natural-scaling") ||
++           !strcmp(attr->name, "number-up") ||
++           !strcmp(attr->name, "number-up-layout") ||
++           !strcmp(attr->name, "OutputOrder") ||
++           !strcmp(attr->name, "page-border") ||
++           !strcmp(attr->name, "page-bottom") ||
++           !strcmp(attr->name, "page-label") ||
++           !strcmp(attr->name, "page-left") ||
++           !strcmp(attr->name, "page-ranges") ||
++           !strcmp(attr->name, "page-right") ||
++           !strcmp(attr->name, "page-set") ||
++           !strcmp(attr->name, "page-top") ||
++           !strcmp(attr->name, "position") ||
++           !strcmp(attr->name, "saturation") ||
++           !strcmp(attr->name, "scaling")) &&
++          strstr(DNSSDSubTypes, "_cups") == NULL &&
++          ippFindAttribute(job->attrs, "com.apple.print.totalPages..n.", IPP_TAG_ZERO))
++        continue;
++#endif /* HAVE_DNSSD */
++
+      /*
+       * Otherwise add them to the list...
+       */
