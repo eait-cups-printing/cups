@@ -29,9 +29,11 @@ mv cups/* .
 rm -rf cups plans ci.fmf gating.yaml leapp_upgrades
 
 version=`grep Version: cups.spec | awk '{ print $2 }'`
-source=`grep Source0: cups.spec | awk '{print $2}' | sed "s/%{VERSION}/$version/g"`
+source0=`grep Source0: cups.spec | awk '{ print $2 }' | sed "s/%{VERSION}/$version/g"`
+source3=`grep Source3: cups.spec | awk '{ print $2 }' | sed "s/%{VERSION}/$version/g"`
 
-curl -OL $source
+curl -OL $source0
+curl -OL $source3
 ```
 
 Copy and paste the following into the build dependencies field:
