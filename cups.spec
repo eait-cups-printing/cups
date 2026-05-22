@@ -14,8 +14,8 @@
 Summary: CUPS printing system
 Name: cups
 Epoch: 1
-Version: 2.4.16
-Release: 7%{?dist}
+Version: 2.4.19
+Release: 2%{?dist}
 # backend/failover.c - BSD-3-Clause
 # cups/md5* - Zlib
 # scheduler/colorman.c - Apache-2.0 WITH LLVM-exception AND BSD-2-Clause
@@ -38,7 +38,7 @@ Source3: https://github.com/OpenPrinting/cups/releases/download/v%{VERSION}/cups
 # fixed hack with pkg-config calling for gnutls' libdir variable
 Patch1: cups-multilib.patch
 # if someone makes a change to banner files, then there will <banner>.rpmnew
-# with next update of cups-filters - this patch makes sure the banner file 
+# with next update of cups-filters - this patch makes sure the banner file
 # changed by user is used and .rpmnew or .rpmsave is ignored
 # Note: This could be rewrite with use a kind of #define and send to upstream
 Patch2: cups-banners.patch
@@ -49,7 +49,7 @@ Patch4: cups-direct-usb.patch
 # when system workload is high, timeout for cups-driverd can be reached -
 # increase the timeout
 Patch5: cups-driverd-timeout.patch
-# usb backend didn't get any notification about out-of-paper because of kernel 
+# usb backend didn't get any notification about out-of-paper because of kernel
 Patch6: cups-usb-paperout.patch
 # uri compatibility with old Fedoras
 Patch7: cups-uri-compat.patch
@@ -73,12 +73,15 @@ Patch100: cups-lspp.patch
 %endif
 
 #### UPSTREAM PATCHES (starts with 1000) ####
-Patch1000: 0001-scheduler-Fix-possible-use_after_free-in-cupsdReadCl.patch
+# https://github.com/OpenPrinting/cups/commit/3f2bdc293243
+Patch1000: 0001-Fix-filter-PPD-keyword-processing-Issue-1562.patch
+# https://github.com/OpenPrinting/cups/commit/de63068ba5a7
+Patch1001: 0001-Fixed-Coverity-issues.patch
 
 
 ##### Patches removed because IMHO they aren't no longer needed
 ##### but still I'll leave them in git in case their removal
-##### breaks something. 
+##### breaks something.
 
 #### Custom EAIT patches (starts with 2000) ####
 
@@ -140,7 +143,7 @@ BuildRequires: automake
 # gcc for most of files
 BuildRequires: gcc
 # gcc-c++ for ppdc and cups-driverd
-Buildrequires: gcc-c++ 
+Buildrequires: gcc-c++
 BuildRequires: krb5-devel
 BuildRequires: libacl-devel
 # make is used for compilation
@@ -352,7 +355,9 @@ to CUPS daemon. This solution will substitute printer drivers and raw queues in 
 %endif
 
 # UPSTREAM PATCHES
-%patch -P 1000 -p1 -b .osh-use-after-free
+%patch -P 1000 -p1 -b .fix-filter-ppd-keyword
+%patch -P 1001 -p1 -b .fix-coverity-issues
+
 
 # EAIT PATCHES
 %patch -P 2001 -p1 -b .logrotate
@@ -591,8 +596,6 @@ chown lp:lp %{_localstatedir}/spool/lpd
 
 %post lpd
 %systemd_post cups-lpd.socket
-
-%ldconfig_scriptlets libs
 
 %preun
 %systemd_preun %{name}.path %{name}.socket %{name}.service
@@ -877,7 +880,7 @@ rm -f %{cups_serverbin}/backend/smb
 %{_mandir}/man7/ippeveps.7.gz
 
 %changelog
-* Thu Jan 29 2026 Douglas Kosovic doug@uq.edu.au - :2.4.16-7
+* Fri May 22 2026 Douglas Kosovic doug@uq.edu.au - 1:2.4.19-3
 - send log output to /var/log/cups/error_log rather than system journal
 - add logrotate support for log output
 - make unittests so /usr/bin/testipp utility gets built
@@ -900,6 +903,22 @@ rm -f %{cups_serverbin}/backend/smb
 - add patch for custom auth script
 - add patch for custom impression (page) count script
 - chown lp:lp /var/spool/lpd required for custom auth script
+
+* Mon May 18 2026 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.19-2
+- Fixed issues reported by Coverity
+
+* Wed May 06 2026 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.19-1
+- 2.4.19 (fedora#2463261)
+
+* Wed Apr 22 2026 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.18-1
+- 2.4.18
+
+* Fri Apr 17 2026 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.17-1
+- 2.4.17 (fedora#2456363, fedora#2456362, fedora#2454994, fedora#2454993,
+  fedora#2454992, fedora#2454990)
+
+* Fri Mar 13 2026 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.16-7
+- fix cupsd endless loop on busy servers (fedora#2446938)
 
 * Fri Jan 16 2026 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.16-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
@@ -931,7 +950,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Fix setting print-as-raster default option (fedora#2369654)
 
 * Thu Sep 11 2025 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.4.14-1
-- 2.4.14 (fixes CVE-2025-58060 and CVE-2025-58364) 
+- 2.4.14 (fixes CVE-2025-58060 and CVE-2025-58364)
 
 * Wed Jul 23 2025 Fedora Release Engineering <releng@fedoraproject.org> - 1:2.4.12-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
@@ -1428,7 +1447,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 1590123 - cups-driverd doesn't recognize static gzipped ppds
 
 * Tue Apr 03 2018 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.7-1
-- rebase to 2.2.7 
+- rebase to 2.2.7
 - substitute default values for invalid job attributes (upstream issues #5229 and #5186)
 
 * Thu Mar 29 2018 Pavel Zhukov <pzhukov@redhat.com> - 1:2.2.6-13
@@ -1507,7 +1526,7 @@ rm -f %{cups_serverbin}/backend/smb
 - disable patch for #1437065 for now until issue with stat is solved
 
 * Thu Mar 30 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-2
-- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart 
+- 1437065 - CUPS does not recognize changes to /etc/resolv.conf until CUPS restart
 
 * Wed Mar 29 2017 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2.3-1
 - rebase to 2.2.3
@@ -1537,7 +1556,7 @@ rm -f %{cups_serverbin}/backend/smb
 - 2.2.0
 
 * Fri Aug 12 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.4rc1
-- fixing release number 
+- fixing release number
 
 * Tue Aug 09 2016 Zdenek Dohnal <zdohnal@redhat.com> - 1:2.2-0.2rc1
 - rebase to cups-2.2rc1
@@ -1980,7 +1999,7 @@ rm -f %{cups_serverbin}/backend/smb
 
 * Thu Sep 20 2012 Tim Waugh <twaugh@redhat.com> 1:1.6.1-5
 - The cups-libs subpackage contains code distributed under the zlib
-  license (md5.c). 
+  license (md5.c).
 
 * Thu Aug 23 2012 Jiri Popelka <jpopelka@redhat.com> 1:1.6.1-4
 - quirk handler for port reset done by new USB backend (bug #847923, STR #4155)
@@ -3678,7 +3697,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Fixed up dbus patch so that it compiles.
 
 * Wed Mar  9 2005 John (J5) Palmieri <johnp@redhat.com>
-- Fix up dbus patch 
+- Fix up dbus patch
 
 * Mon Mar  7 2005 John (J5) Palmieri <johnp@redhat.com> 1:1.1.23-13
 - Fixed up dbus patch to work with dbus 0.31
@@ -4044,7 +4063,7 @@ rm -f %{cups_serverbin}/backend/smb
 - Mark banners as config files (bug #89069).
 
 * Sat Apr 12 2003 Havoc Pennington <hp@redhat.com> 1:1.1.18-4
-- adjust dbus patch - dbus_bus_get() sends the hello for you, 
+- adjust dbus patch - dbus_bus_get() sends the hello for you,
   and there were a couple of memleaks
 - buildprereq dbus 0.9
 - rebuild for new dbus
@@ -4356,7 +4375,7 @@ rm -f %{cups_serverbin}/backend/smb
 - PreReq initscripts >= 5.20
 
 * Mon Jun 26 2000 Tim Powers <timp@redhat.com>
-- started changelog 
+- started changelog
 - fixed init.d script location
 - changed script in init.d quite a bit and made more like the rest of our
-  startup scripts 
+  startup scripts
